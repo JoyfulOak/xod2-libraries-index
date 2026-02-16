@@ -1,33 +1,38 @@
-# XOD2 Libraries Index Starter
+# XOD2 Library Index
 
-This folder is a starter for the GitHub repo:
+Mirror of the public XOD.io library catalog with optional, manually maintained discovery metadata for XOD2 search and filtering.
 
-- `JoyfulOak/xod2-libraries-index`
+This repository is read-only with respect to XOD.io package content:
+- Package ids and versions come from `https://xod.io/libs/`
+- Extra metadata is defined locally in `index/overlay.json`
+- Generated output is written to `index/index.json`
+- Canonical install ids follow XOD library conventions: `owner/lib@latest` or `owner/lib@x.y.z` ([XOD docs](https://xod.io/docs/guide/using-libraries/))
 
-## Files
+## Layout
 
-- `index.json`: library catalog read by XOD2
-- `libs/*.xodball.json`: raw xodball JSON files
+```
+index/
+  index.json
+  overlay.json
+  schema.md
+tools/
+  sync-xodio.js
+  package.json
+  package-lock.json
+.github/workflows/
+  sync.yml
+```
 
-## Required schema (per version)
+## Usage
 
-- `version`: string like `v1.0.0`
-- `xodballUrl`: raw GitHub URL to a `.xodball.json` file
-- `dependencies`: array of strings in format `owner/lib@version`
+```bash
+npm install --prefix tools
+node tools/sync-xodio.js
+```
 
-## Quick publish steps
+## Output Contract
 
-1. Copy these files into your `xod2-libraries-index` repo.
-2. Replace `libs/joyfuloak-blink-tools-v1.0.0.xodball.json` with a real XOD export.
-3. Keep the URL in `index.json` exactly in raw form:
-   `https://raw.githubusercontent.com/JoyfulOak/xod2-libraries-index/main/...`
-4. Commit and push.
-
-## Verify
-
-Open in browser:
-
-- `https://raw.githubusercontent.com/JoyfulOak/xod2-libraries-index/main/index.json`
-- the `xodballUrl` from your version record
-
-Both must return valid JSON.
+- Output file: `index/index.json`
+- Stable sort: by `libraries[].id` ascending
+- Overlay merge policy: overlay wins on conflicts
+- Install ids in XOD2 remain canonical, e.g. `owner/lib@latest` and `owner/lib@x.y.z`
