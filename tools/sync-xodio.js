@@ -10,6 +10,9 @@ const REQUEST_TIMEOUT_MS = 20_000;
 const RETRYABLE_STATUS_CODES = new Set([429, 500, 502, 503, 504]);
 const MAX_FETCH_RETRIES = 4;
 const RETRY_BASE_DELAY_MS = 1_500;
+const MAX_NORMALIZE_RETRIES = 3;
+const COMPATIBILITY_STATUSES = ["working", "broken", "untested"];
+const SUPPORT_STATUSES = ["stable", "experimental", "deprecated"];
 
 function normalizeId(value) {
   if (typeof value !== "string") return null;
@@ -17,8 +20,21 @@ function normalizeId(value) {
   return /^[a-z0-9._-]+\/[a-z0-9._-]+$/i.test(cleaned) ? cleaned.toLowerCase() : null;
 }
 
+function toNonEmptyString(value) {
+  return typeof value === "string" && value.trim() !== "" ? value.trim() : null;
+}
+
 function uniqStrings(values) {
   return [...new Set(values.filter((x) => typeof x === "string" && x.trim()).map((x) => x.trim()))];
+}
+
+function normalizeStringList(value) {
+  const list = Array.isArray(value) ? value : typeof value === "string" ? [value] : [];
+  return uniqStrings(list.map(toNonEmptyString).filter(Boolean)).sort((a, b) => a.localeCompare(b));
+}
+
+function toBoolOrNull(value) {
+  return typeof value === "boolean" ? value : null;
 }
 
 function semverCompareDesc(a, b) {
@@ -36,6 +52,19 @@ function semverCompareDesc(a, b) {
   if (!pa.pre && pb.pre) return -1;
   if (pa.pre && !pb.pre) return 1;
   return pa.pre.localeCompare(pb.pre);
+}
+
+function normalizeVersions(versions, latest) {
+  const normalized = uniqStrings(
+    (Array.isArray(versions) ? versions : []).map(toNonEmptyString).filter(Boolean)
+  );
+
+  if (latest && !normalized.includes(latest)) {
+    normalized.unshift(latest);
+  }
+
+  normalized.sort(semverCompareDesc);
+  return normalized.length > 0 ? normalized : [latest || "latest"];
 }
 
 function extractVersionsFromText(text, id) {
@@ -68,6 +97,153 @@ function extractLicense(html) {
   if (byLabel) return byLabel[1].trim();
   const known = html.match(/\b(MIT|BSD(?:-?\d-Clause)?|Apache(?:-?2\.0)?|GPL(?:-?\d(?:\.\d)?)?|LGPL(?:-?\d(?:\.\d)?)?|MPL(?:-?2\.0)?)\b/i);
   return known ? known[1].trim() : null;
+}
+
+function normalizeCompatibilityStatus(status) {
+  return COMPATIBILITY_STATUSES.includes(status) ? status : null;
+}
+
+function normalizeSupportStatus(value) {
+  const supportStatus = toNonEmptyString(value);
+  return SUPPORT_STATUSES.includes(supportStatus) ? supportStatus : null;
+}
+
+function sortObjectKeys(value) {
+  return Object.keys(value)
+    .sort((a, b) => a.localeCompare(b))
+    .reduce((acc, key) => ({ ...acc, [key]: value[key] }), {});
+}
+
+function normalizeBoardCompatibility(rawValue) {
+  const input =
+    rawValue && typeof rawValue === "object" && !Array.isArray(rawValue)
+      ? rawValue
+      : {};
+
+  const normalized = Object.keys(input).reduce((acc, boardIdRaw) => {
+    const boardId = toNonEmptyString(boardIdRaw);
+    const entry = input[boardIdRaw];
+    const parsed =
+      entry && typeof entry === "object" && !Array.isArray(entry) ? entry : {};
+    const status = normalizeCompatibilityStatus(parsed.status);
+    if (!boardId || !status) return acc;
+
+    return {
+      ...acc,
+      [boardId]: {
+        status,
+        ...(toNonEmptyString(parsed.notes)
+          ? { notes: toNonEmptyString(parsed.notes) }
+          : {}),
+      },
+    };
+  }, {});
+
+  return sortObjectKeys(normalized);
+}
+
+function deriveCompatibilitySummary(boardCompatibility) {
+  const summary = {
+    workingBoards: [],
+    brokenBoards: [],
+    untestedBoards: [],
+  };
+
+  Object.keys(boardCompatibility).forEach((boardId) => {
+    const status = boardCompatibility[boardId].status;
+    if (status === "working") summary.workingBoards.push(boardId);
+    if (status === "broken") summary.brokenBoards.push(boardId);
+    if (status === "untested") summary.untestedBoards.push(boardId);
+  });
+
+  return {
+    workingBoards: normalizeStringList(summary.workingBoards),
+    brokenBoards: normalizeStringList(summary.brokenBoards),
+    untestedBoards: normalizeStringList(summary.untestedBoards),
+  };
+}
+
+function normalizeCompatibilitySummary(rawValue, boardCompatibility) {
+  const input =
+    rawValue && typeof rawValue === "object" && !Array.isArray(rawValue)
+      ? rawValue
+      : {};
+
+  const normalized = {
+    workingBoards: normalizeStringList(input.workingBoards),
+    brokenBoards: normalizeStringList(input.brokenBoards),
+    untestedBoards: normalizeStringList(input.untestedBoards),
+  };
+
+  const hasExplicitSummary =
+    normalized.workingBoards.length > 0 ||
+    normalized.brokenBoards.length > 0 ||
+    normalized.untestedBoards.length > 0;
+
+  return hasExplicitSummary
+    ? normalized
+    : deriveCompatibilitySummary(boardCompatibility);
+}
+
+function normalizeQuality(record) {
+  const quality =
+    record.quality && typeof record.quality === "object" && !Array.isArray(record.quality)
+      ? { ...record.quality }
+      : {};
+
+  const hasExamples = toBoolOrNull(
+    quality.hasExamples !== undefined ? quality.hasExamples : record.hasExamples
+  );
+  const hasReadme = toBoolOrNull(
+    quality.hasReadme !== undefined ? quality.hasReadme : record.hasReadme
+  );
+  const maintainerVerified = toBoolOrNull(
+    quality.maintainerVerified !== undefined
+      ? quality.maintainerVerified
+      : record.maintainerVerified
+  );
+
+  return {
+    ...quality,
+    ...(hasExamples === null ? {} : { hasExamples }),
+    ...(hasReadme === null ? {} : { hasReadme }),
+    ...(maintainerVerified === null ? {} : { maintainerVerified }),
+  };
+}
+
+function deepMerge(base, overlay) {
+  const out = { ...(base || {}) };
+  Object.keys(overlay || {}).forEach((key) => {
+    const baseValue = out[key];
+    const overlayValue = overlay[key];
+
+    if (
+      baseValue
+      && overlayValue
+      && typeof baseValue === "object"
+      && typeof overlayValue === "object"
+      && !Array.isArray(baseValue)
+      && !Array.isArray(overlayValue)
+    ) {
+      out[key] = deepMerge(baseValue, overlayValue);
+      return;
+    }
+
+    out[key] = overlayValue;
+  });
+  return out;
+}
+
+function parseLibIdFromRecord(record) {
+  const fromId = normalizeId(record && record.id);
+  if (fromId) return fromId;
+
+  const owner = toNonEmptyString(record && record.owner);
+  const libname = toNonEmptyString(record && record.libname);
+  if (owner && libname) {
+    return normalizeId(`${owner}/${libname}`);
+  }
+  return null;
 }
 
 async function fetchHtml(url) {
@@ -119,6 +295,18 @@ async function fetchHtmlWithRetry(url, retries = MAX_FETCH_RETRIES) {
   }
 
   throw new Error(`Failed to fetch ${url} after ${retries + 1} attempts: ${lastError.message}`);
+}
+
+function retry(fn, attempts = MAX_NORMALIZE_RETRIES) {
+  let lastError = null;
+  for (let i = 0; i < attempts; i += 1) {
+    try {
+      return fn();
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError;
 }
 
 async function fetchListPage(pageNumber) {
@@ -179,46 +367,91 @@ async function fetchLibraryDetail(id) {
     tags: [],
     interfaces: [],
     mcu: [],
+    boardCompatibility: {},
+    compatibilitySummary: {
+      workingBoards: [],
+      brokenBoards: [],
+      untestedBoards: []
+    },
     quality: {}
   };
 }
 
-async function readOverlay() {
+async function readOverlayMap() {
   let overlayRaw = "{}";
   try {
     overlayRaw = await fs.readFile(OVERLAY_PATH, "utf8");
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
   }
+
   const parsed = JSON.parse(overlayRaw);
-  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-    throw new Error("Overlay must be an object map keyed by library id");
+
+  if (Array.isArray(parsed)) {
+    return parsed.reduce((acc, record) => {
+      const id = parseLibIdFromRecord(record || {});
+      if (!id) return acc;
+      return { ...acc, [id]: record };
+    }, {});
   }
-  return parsed;
+
+  if (parsed && typeof parsed === "object" && Array.isArray(parsed.libraries)) {
+    return parsed.libraries.reduce((acc, record) => {
+      const id = parseLibIdFromRecord(record || {});
+      if (!id) return acc;
+      return { ...acc, [id]: record };
+    }, {});
+  }
+
+  if (!parsed || typeof parsed !== "object") {
+    throw new Error("Overlay must be an object map keyed by library id or libraries array");
+  }
+
+  return Object.keys(parsed).reduce((acc, rawId) => {
+    const id = normalizeId(rawId) || parseLibIdFromRecord(parsed[rawId] || {});
+    if (!id) return acc;
+    return { ...acc, [id]: parsed[rawId] };
+  }, {});
 }
 
-function mergeOverlay(baseLib, overlayEntry = {}) {
-  const merged = { ...baseLib, ...overlayEntry };
-  merged.id = baseLib.id;
-  merged.source = { ...baseLib.source, ...(overlayEntry.source || {}) };
-  merged.latest = typeof merged.latest === "string" && merged.latest ? merged.latest : baseLib.latest;
+function normalizeLibraryRecord(baseLib, overlayEntry = {}) {
+  const merged = deepMerge(baseLib, overlayEntry);
 
-  const overlayVersions = Array.isArray(overlayEntry.versions) ? overlayEntry.versions : [];
-  const versions = uniqStrings([...(Array.isArray(baseLib.versions) ? baseLib.versions : []), ...overlayVersions]);
-  versions.sort(semverCompareDesc);
-  merged.versions = versions.length ? versions : [merged.latest];
+  const id = baseLib.id;
+  const source =
+    merged.source && typeof merged.source === "object" && !Array.isArray(merged.source)
+      ? merged.source
+      : {};
 
-  merged.summary = typeof merged.summary === "string" ? merged.summary : "";
-  merged.updatedAt = merged.updatedAt || null;
-  merged.license = merged.license || null;
-  merged.tags = uniqStrings(Array.isArray(merged.tags) ? merged.tags : []);
-  merged.interfaces = uniqStrings(Array.isArray(merged.interfaces) ? merged.interfaces : []);
-  merged.mcu = uniqStrings(Array.isArray(merged.mcu) ? merged.mcu : []);
-  merged.quality = merged.quality && typeof merged.quality === "object" && !Array.isArray(merged.quality)
-    ? merged.quality
-    : {};
+  const latest = toNonEmptyString(merged.latest) || baseLib.latest || "latest";
+  const versions = normalizeVersions(merged.versions, latest);
+  const boardCompatibility = normalizeBoardCompatibility(merged.boardCompatibility);
+  const compatibilitySummary = normalizeCompatibilitySummary(
+    merged.compatibilitySummary,
+    boardCompatibility
+  );
+  const supportStatus = normalizeSupportStatus(merged.supportStatus);
+  const quality = normalizeQuality(merged);
 
-  return merged;
+  return {
+    id,
+    source: {
+      provider: toNonEmptyString(source.provider) || "xod.io",
+      url: toNonEmptyString(source.url) || `${XOD_LIBS_BASE_URL}${id}/`
+    },
+    latest,
+    versions,
+    summary: toNonEmptyString(merged.summary) || "",
+    updatedAt: toNonEmptyString(merged.updatedAt) || null,
+    license: toNonEmptyString(merged.license) || null,
+    tags: normalizeStringList(merged.tags),
+    interfaces: normalizeStringList(merged.interfaces),
+    mcu: normalizeStringList(merged.mcu),
+    boardCompatibility,
+    compatibilitySummary,
+    ...(supportStatus ? { supportStatus } : {}),
+    quality
+  };
 }
 
 async function run() {
@@ -228,7 +461,7 @@ async function run() {
 
   console.log("Sync started");
 
-  const overlay = await readOverlay();
+  const overlay = await readOverlayMap();
   const discoveredIds = [];
   const seenIds = new Set();
   let page = 1;
@@ -262,7 +495,8 @@ async function run() {
   for (const id of uniqueIds) {
     try {
       const detail = await fetchLibraryDetail(id);
-      libraries.push(mergeOverlay(detail, overlay[id]));
+      const normalized = retry(() => normalizeLibraryRecord(detail, overlay[id] || {}));
+      libraries.push(normalized);
       console.log(`Processed ${id}`);
     } catch (error) {
       skippedIds.push(id);
