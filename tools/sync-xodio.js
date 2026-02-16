@@ -258,13 +258,25 @@ async function run() {
   }
 
   const libraries = [];
+  const skippedIds = [];
   for (const id of uniqueIds) {
-    const detail = await fetchLibraryDetail(id);
-    libraries.push(mergeOverlay(detail, overlay[id]));
-    console.log(`Processed ${id}`);
+    try {
+      const detail = await fetchLibraryDetail(id);
+      libraries.push(mergeOverlay(detail, overlay[id]));
+      console.log(`Processed ${id}`);
+    } catch (error) {
+      skippedIds.push(id);
+      console.warn(`Skipped ${id}: ${error.message}`);
+    }
   }
 
   libraries.sort((a, b) => a.id.localeCompare(b.id));
+
+  if (libraries.length === 0) {
+    throw new Error(
+      `All library detail fetches failed. Skipped ${skippedIds.length} libraries.`
+    );
+  }
 
   const duplicateIds = libraries
     .map((lib) => lib.id)
@@ -292,6 +304,11 @@ async function run() {
   await fs.rename(tempPath, OUTPUT_PATH);
 
   console.log(`Wrote ${libraries.length} libraries to ${OUTPUT_PATH}`);
+  if (skippedIds.length > 0) {
+    console.warn(
+      `Skipped ${skippedIds.length} libraries due to fetch errors: ${skippedIds.join(", ")}`
+    );
+  }
 }
 
 run().catch((error) => {
