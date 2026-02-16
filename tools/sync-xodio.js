@@ -7,6 +7,9 @@ const XOD_LIBS_BASE_URL = "https://xod.io/libs/";
 const OUTPUT_PATH = path.resolve(__dirname, "..", "index", "index.json");
 const OVERLAY_PATH = path.resolve(__dirname, "..", "index", "overlay.json");
 const REQUEST_TIMEOUT_MS = 20_000;
+const RETRYABLE_STATUS_CODES = new Set([429, 500, 502, 503, 504]);
+const MAX_FETCH_RETRIES = 4;
+const RETRY_BASE_DELAY_MS = 1_500;
 
 function normalizeId(value) {
   if (typeof value !== "string") return null;
@@ -89,6 +92,35 @@ async function fetchHtml(url) {
   }
 }
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function fetchHtmlWithRetry(url, retries = MAX_FETCH_RETRIES) {
+  let attempt = 0;
+  let lastError = null;
+
+  while (attempt <= retries) {
+    attempt += 1;
+    try {
+      const result = await fetchHtml(url);
+      if (result.ok || !RETRYABLE_STATUS_CODES.has(result.status)) {
+        return result;
+      }
+      lastError = new Error(`HTTP ${result.status}`);
+    } catch (error) {
+      lastError = error;
+    }
+
+    if (attempt > retries) break;
+    const delay = RETRY_BASE_DELAY_MS * attempt;
+    console.warn(
+      `Retrying ${url} (attempt ${attempt}/${retries}) after ${delay}ms due to ${lastError.message}`
+    );
+    await sleep(delay);
+  }
+
+  throw new Error(`Failed to fetch ${url} after ${retries + 1} attempts: ${lastError.message}`);
+}
+
 async function fetchListPage(pageNumber) {
   const candidates = pageNumber === 1
     ? [XOD_LIBS_BASE_URL]
@@ -99,7 +131,7 @@ async function fetchListPage(pageNumber) {
 
   let saw404 = false;
   for (const url of candidates) {
-    const res = await fetchHtml(url);
+    const res = await fetchHtmlWithRetry(url);
     if (res.ok) return res.text;
     if (res.status === 404) {
       saw404 = true;
@@ -124,7 +156,7 @@ function extractLibraryIdsFromList(html) {
 
 async function fetchLibraryDetail(id) {
   const url = `${XOD_LIBS_BASE_URL}${id}/`;
-  const res = await fetchHtml(url);
+  const res = await fetchHtmlWithRetry(url);
   if (!res.ok) {
     throw new Error(`Failed to fetch library detail for ${id} (${url}): HTTP ${res.status}`);
   }
