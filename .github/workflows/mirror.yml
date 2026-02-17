@@ -1,0 +1,46 @@
+name: Mirror XOD.io Libraries
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "47 2 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install tools dependencies
+        run: npm install --prefix tools
+
+      - name: Ensure index exists
+        run: |
+          if [ ! -f index/index.json ]; then
+            echo "Missing index/index.json. Run the sync workflow first."
+            exit 1
+          fi
+
+      - name: Run incremental mirror
+        run: node tools/mirror-xodio.js
+
+      - name: Commit and push mirror changes
+        run: |
+          if git diff --quiet -- mirror/index.json mirror/state.json mirror/libs; then
+            echo "No mirror changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mirror/index.json mirror/state.json mirror/libs
+          git commit -m "chore(mirror): sync xod.io library artifacts"
+          git push
