@@ -1,0 +1,360 @@
+{
+  "description": "Read values from a quadrature rotary encoder (EC11, optical wheel encoders, and others)",
+  "license": "AGPL-3.0",
+  "name": "encoder",
+  "patches": {
+    "@/encoder": {
+      "nodes": {
+        "rJ6HtyF5m": {
+          "id": "rJ6HtyF5m",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 102,
+            "y": 102
+          },
+          "label": "PA",
+          "description": "A board port to which the channel A signal is connected."
+        },
+        "HybLYyFcQ": {
+          "id": "HybLYyFcQ",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "label": "PB",
+          "description": "A board port to which the channel B signal is connected.",
+          "boundLiterals": {
+            "__out__": "D1"
+          }
+        },
+        "SkOdYkF57": {
+          "id": "SkOdYkF57",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 204,
+            "y": 102
+          },
+          "label": "UPD",
+          "description": "Triggers an update. You should fire pulses as quick as possible to avoid rotation misses or wrong direction interpretation.",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        },
+        "Sy_9tyYcm": {
+          "id": "Sy_9tyYcm",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 102,
+            "y": 306
+          },
+          "label": "INC",
+          "description": "Pulses when an increment rotation is detected. Usually corresponds to clockwise rotation."
+        },
+        "HJA9tktcX": {
+          "id": "HJA9tktcX",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 136,
+            "y": 306
+          },
+          "label": "DEC",
+          "description": "Pulses when a decrement rotation is detected. Usually corresponds to counter-clockwise rotation."
+        },
+        "S1qiKyFcX": {
+          "id": "S1qiKyFcX",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 102,
+            "y": 204
+          }
+        }
+      },
+      "path": "@/encoder",
+      "description": "Detects rotation pulses on a hardware encoder",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nusing State = bool;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    bool* stateOld = getState(ctx);\n    auto portA = getValue<input_PA>(ctx);\n    auto portB = getValue<input_PB>(ctx);\n    auto stateA = digitalRead(portA);\n\n    if (isSettingUp()) {\n        // Remember the initial (on boot) encoder state\n        *stateOld = stateA;\n    }\n\n    if (!isInputDirty<input_UPD>(ctx)) {\n        // Update on explicit pulses only\n        return;\n    }\n\n    if (*stateOld == false && stateA == true) {\n        // We only emit rotation pulses when A channel raises.\n        // Use channel B to get the direction.\n        if (digitalRead(portB))\n            emitValue<output_DEC>(ctx, 1);\n        else\n            emitValue<output_INC>(ctx, 1);\n    }\n\n    *stateOld = stateA;\n}\n"
+        }
+      ]
+    },
+    "@/count": {
+      "nodes": {
+        "HJsPxxt5m": {
+          "id": "HJsPxxt5m",
+          "position": {
+            "x": 0,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BkljwelY9m": {
+          "description": "Triggers a single increment.",
+          "id": "BkljwelY9m",
+          "label": "INC",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1WsweeFqm": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Value to add on each increment.",
+          "id": "H1WsweeFqm",
+          "label": "STEP",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "B1zoDegtcQ": {
+          "description": "Resets the accumulated value to zero.",
+          "id": "B1zoDegtcQ",
+          "label": "RST",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ry7swlgY9Q": {
+          "description": "The accumulated value.",
+          "id": "ry7swlgY9Q",
+          "position": {
+            "x": -1,
+            "y": 207
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HkPueeK9m": {
+          "description": "Triggers a single decrement.",
+          "id": "HkPueeK9m",
+          "label": "DEC",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/count",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    Number count = getValue<output_OUT>(ctx);\n\n    if (isInputDirty<input_RST>(ctx))\n        count = 0;\n    else {\n        auto step = getValue<input_STEP>(ctx);\n\n        if (isInputDirty<input_INC>(ctx))\n            count += step;\n\n        if (isInputDirty<input_DEC>(ctx))\n            count -= step;\n    }\n\n    emitValue<output_OUT>(ctx, count);\n}\n"
+        }
+      ]
+    },
+    "@/example-pulses": {
+      "comments": {
+        "HklqQeY9Q": {
+          "id": "HklqQeY9Q",
+          "position": {
+            "x": -34,
+            "y": -306
+          },
+          "size": {
+            "width": 170,
+            "height": 255
+          },
+          "content": "This example increments one counter when the encoder is rotated CW and another when rotated CCW.\n\nThe encoder is connected by default to `D8` and `A0`. Adjust these to match your wiring."
+        }
+      },
+      "links": {
+        "S19RKyFcm": {
+          "id": "S19RKyFcm",
+          "output": {
+            "nodeId": "SJGRKkt5X",
+            "pinKey": "Sy_9tyYcm"
+          },
+          "input": {
+            "nodeId": "Sk8AF1K57",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "Sksy9JF9X": {
+          "id": "Sksy9JF9X",
+          "output": {
+            "nodeId": "Sk8AF1K57",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "SkIJcJYq7",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "BJay9yFcQ": {
+          "id": "BJay9yFcQ",
+          "output": {
+            "nodeId": "HkJyqyKcm",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "HkKy9yt9X",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "BkWDaJFqQ": {
+          "id": "BkWDaJFqQ",
+          "output": {
+            "nodeId": "SJGRKkt5X",
+            "pinKey": "HJA9tktcX"
+          },
+          "input": {
+            "nodeId": "HkJyqyKcm",
+            "pinKey": "HJAq-A_8-"
+          }
+        }
+      },
+      "nodes": {
+        "SJGRKkt5X": {
+          "id": "SJGRKkt5X",
+          "type": "@/encoder",
+          "position": {
+            "x": -238,
+            "y": -306
+          },
+          "boundLiterals": {
+            "rJ6HtyF5m": "D8",
+            "HybLYyFcQ": "A0"
+          }
+        },
+        "Sk8AF1K57": {
+          "id": "Sk8AF1K57",
+          "type": "xod/core/count",
+          "position": {
+            "x": -306,
+            "y": -204
+          }
+        },
+        "HkJyqyKcm": {
+          "id": "HkJyqyKcm",
+          "type": "xod/core/count",
+          "position": {
+            "x": -204,
+            "y": -204
+          }
+        },
+        "SkIJcJYq7": {
+          "id": "SkIJcJYq7",
+          "type": "xod/core/watch",
+          "position": {
+            "x": -306,
+            "y": -102
+          },
+          "size": {
+            "width": 68,
+            "height": 51
+          }
+        },
+        "HkKy9yt9X": {
+          "id": "HkKy9yt9X",
+          "type": "xod/core/watch",
+          "position": {
+            "x": -204,
+            "y": -102
+          },
+          "size": {
+            "width": 68,
+            "height": 51
+          }
+        }
+      },
+      "path": "@/example-pulses"
+    },
+    "@/example-counter": {
+      "nodes": {
+        "BJjyWeF9m": {
+          "id": "BJjyWeF9m",
+          "type": "@/encoder",
+          "position": {
+            "x": 204,
+            "y": 102
+          },
+          "boundLiterals": {
+            "rJ6HtyF5m": "D8",
+            "HybLYyFcQ": "A0"
+          }
+        },
+        "S1_xWgKcm": {
+          "id": "S1_xWgKcm",
+          "type": "@/count",
+          "position": {
+            "x": 170,
+            "y": 204
+          }
+        },
+        "HyxZbgYqX": {
+          "id": "HyxZbgYqX",
+          "type": "xod/core/watch",
+          "position": {
+            "x": 170,
+            "y": 306
+          },
+          "size": {
+            "width": 68,
+            "height": 51
+          }
+        }
+      },
+      "links": {
+        "HJhgZgKq7": {
+          "id": "HJhgZgKq7",
+          "output": {
+            "nodeId": "BJjyWeF9m",
+            "pinKey": "Sy_9tyYcm"
+          },
+          "input": {
+            "nodeId": "S1_xWgKcm",
+            "pinKey": "BkljwelY9m"
+          }
+        },
+        "ry0lZltcm": {
+          "id": "ry0lZltcm",
+          "output": {
+            "nodeId": "BJjyWeF9m",
+            "pinKey": "HJA9tktcX"
+          },
+          "input": {
+            "nodeId": "S1_xWgKcm",
+            "pinKey": "HkPueeK9m"
+          }
+        },
+        "BJf-Wet5Q": {
+          "id": "BJf-Wet5Q",
+          "output": {
+            "nodeId": "S1_xWgKcm",
+            "pinKey": "ry7swlgY9Q"
+          },
+          "input": {
+            "nodeId": "HyxZbgYqX",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "comments": {
+        "SJf4SltcQ": {
+          "id": "SJf4SltcQ",
+          "position": {
+            "x": 374,
+            "y": 102
+          },
+          "size": {
+            "width": 170,
+            "height": 255
+          },
+          "content": "This example shows the current accumulated value controlled by an encoder. CW rotation increments the value and CCW decrements it.\n\nThe encoder is connected by default to `D8` and `A0`. Adjust these to match your wiring."
+        }
+      },
+      "path": "@/example-counter"
+    }
+  },
+  "version": "1.0.0"
+}

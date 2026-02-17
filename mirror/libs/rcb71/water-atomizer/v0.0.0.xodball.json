@@ -1,0 +1,61 @@
+{
+  "description": "Basic library for Grove Water Atomization.",
+  "patches": {
+    "@/water-atomizer": {
+      "nodes": {
+        "SJHKIzeTq": {
+          "id": "SJHKIzeTq",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "S1fM_feT5": {
+          "id": "S1fM_feT5",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "PORT",
+          "boundLiterals": {
+            "__out__": "A2"
+          }
+        },
+        "SyTGOGl6c": {
+          "id": "SyTGOGl6c",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE"
+        },
+        "rktJsMepc": {
+          "id": "rktJsMepc",
+          "type": "xod/patch-nodes/input-boolean",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "EN"
+        }
+      },
+      "path": "@/water-atomizer",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    void evaluate(Context ctx) {\n        static_assert(isValidAnalogPort(constant_input_PORT), \"must be a valid analog port\");\n        \n        auto enable = getValue<input_EN>(ctx);\n        pinMode(constant_input_PORT, OUTPUT);\n\n        if (enable) {\n            digitalWrite(constant_input_PORT, HIGH);\n        }\n        else {\n            digitalWrite(constant_input_PORT, LOW);\n        }\n        \n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "name": "water-atomizer",
+  "apiKey": "8c494ca9-8fc7-4f82-a079-f30f94fe85cc"
+}

@@ -1,0 +1,98 @@
+{
+  "description": "MPU-9250 sensor library",
+  "license": "MIT",
+  "name": "mpu-9250",
+  "patches": {
+    "@/mpu-9250": {
+      "nodes": {
+        "rySJwGKxE": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "update pusle",
+          "id": "rySJwGKxE",
+          "label": "UPDATE",
+          "position": {
+            "x": 67,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rygrJwMKgV": {
+          "id": "rygrJwMKgV",
+          "position": {
+            "x": 33,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1WHyPGtg4": {
+          "id": "H1WHyPGtg4",
+          "label": "YAW",
+          "position": {
+            "x": 33,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rJGB1vfKeN": {
+          "id": "rJGB1vfKeN",
+          "label": "ROLL",
+          "position": {
+            "x": 67,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "B1QHkDzFe4": {
+          "description": "calibrate magnetometer",
+          "id": "B1QHkDzFe4",
+          "label": "CM",
+          "position": {
+            "x": 33,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryNSkDzYgV": {
+          "description": "calibrate accelerometer and gyroscope",
+          "id": "ryNSkDzYgV",
+          "label": "CAG",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BJSSyvGYxE": {
+          "id": "BJSSyvGYxE",
+          "label": "PITCH",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ryN-PfYgE": {
+          "id": "ryN-PfYgE",
+          "type": "xod/patch-nodes/output-boolean",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "label": "CON",
+          "description": "is connected"
+        }
+      },
+      "path": "@/mpu-9250",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/hideakitai/MPU9250\"\n\n{{#global}}\n#include \"MPU9250.h\"\n{{/global}}\n\nstruct State {\n    MPU9250 mpu;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto state=getState(ctx);\n    if(isSettingUp()){\n        Serial.begin(115200);\n        Wire.begin();\n        delay(2000);\n        state->mpu.setup();\n    }\n    if(isInputDirty<input_CAG>(ctx))state->mpu.calibrateAccelGyro();\n    if(isInputDirty<input_CM>(ctx))state->mpu.calibrateMag();\n    if(isInputDirty<input_UPDATE>(ctx)){\n        state->mpu.update();\n        emitValue<output_PITCH>(ctx,state->mpu.getPitch());\n        emitValue<output_YAW>(ctx,state->mpu.getYaw());\n        emitValue<output_ROLL>(ctx,state->mpu.getRoll());\n    }\n    emitValue<output_CON>(ctx,state->mpu.isConnectedMPU9250()||state->mpu.isConnectedAK8963());\n}\n"
+        }
+      ]
+    }
+  },
+  "version": "1.0.3"
+}

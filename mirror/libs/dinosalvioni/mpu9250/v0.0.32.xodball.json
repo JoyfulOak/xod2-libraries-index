@@ -1,0 +1,464 @@
+{
+  "patches": {
+    "@/main": {
+      "path": "@/main"
+    },
+    "@/mpu9250": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/hideakitai/MPU9250\"\n\n{{#global}}\n#include <Arduino.h>\n#include <Wire.h>\n\n#include \"MPU9250.h\"\n{{/global}}\n\nstruct State {\n  MPU9250 mpu;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto state=getState(ctx);\n\n    if(isSettingUp()){\n    Serial.begin(115200);\n    Wire.begin();\n\n        if (!state->mpu.setup(0x68)) {  // change to your own address\n            emitValue<output_CON>(ctx,false);\n        } else {\n           emitValue<output_CON>(ctx,true);\n        }\n    }\n\n    if(isInputDirty<input_CAG>(ctx)){\n        state->mpu.calibrateAccelGyro();\n    }\n    if(isInputDirty<input_CM>(ctx)){\n        state->mpu.calibrateMag();\n    }\n\n    if(isInputDirty<input_UPDATE>(ctx)){\n        state->mpu.update();\n        static uint32_t prev_ms = millis();\n        if (millis() > prev_ms + 5000) {\n        \n        \n        \n        \n        \n        int Pitch = state->mpu.getPitch();\n        int Yaw = state->mpu.getYaw();\n        int Roll = state->mpu.getRoll();\n        emitValue<output_PITCH>(ctx,Pitch);\n        emitValue<output_YAW>(ctx,Yaw);\n        emitValue<output_ROLL>(ctx,Roll);\n        emitValue<output_DONE>(ctx,true);\n        }\n        \n        \n        }\n\n}\n"
+        }
+      ],
+      "nodes": {
+        "HyQgpz2Md": {
+          "description": "Calibra Gyroscopio",
+          "label": "CAG",
+          "id": "HyQgpz2Md",
+          "position": {
+            "x": 14,
+            "y": -2.9285714285714284,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Byemeaz3fd": {
+          "description": "Asse Y",
+          "label": "YAW",
+          "id": "Byemeaz3fd",
+          "position": {
+            "x": 15.05,
+            "y": -0.8785714285714286,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ry-QlaGnz_": {
+          "id": "ry-QlaGnz_",
+          "position": {
+            "x": 15,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BkM7gTfnMd": {
+          "description": "Calibra Magnetometro. Dopo l'impulso muovere l'hardware a figura di 8",
+          "label": "CM",
+          "id": "BkM7gTfnMd",
+          "position": {
+            "x": 15,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Sk7QeTfnGd": {
+          "description": "Asse X",
+          "label": "PITCH",
+          "id": "Sk7QeTfnGd",
+          "position": {
+            "x": 14,
+            "y": -0.8785714285714286,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rkV7l6z2M_": {
+          "description": "Asse Z",
+          "label": "ROLL",
+          "id": "rkV7l6z2M_",
+          "position": {
+            "x": 16.05,
+            "y": -0.8785714285714286,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SJrQlafhMd": {
+          "description": "True se connesso",
+          "label": "CON",
+          "id": "SJrQlafhMd",
+          "position": {
+            "x": 17.05,
+            "y": -0.8785714285714286,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "BkU7eTM3fO": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Update pulse per nuova lettura",
+          "label": "UPDATE",
+          "id": "BkU7eTM3fO",
+          "position": {
+            "x": 16,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkJpLMaf_": {
+          "description": "Lettura avvenuta",
+          "label": "DONE",
+          "id": "rkJpLMaf_",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 18,
+            "y": -1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/mpu9250"
+    },
+    "@/mpu9250-ver1": {
+      "description": "Libreria per gyroscopio mpu9250. Questa versione 1 e come il modulo base mpu9250 ma con l'aggiunta di un output [STARTED] che indica quando il modulo ha completato la fase di avvio ed i valori sono stabili. ",
+      "links": {
+        "rkR0gWTy7O": {
+          "id": "rkR0gWTy7O",
+          "output": {
+            "nodeId": "rkCl-6kX_",
+            "pinKey": "Sk7QeTfnGd"
+          },
+          "input": {
+            "nodeId": "HklCg-pym_",
+            "pinKey": "BJnQUR_BwyZ"
+          }
+        },
+        "S11x0g-Tkmu": {
+          "id": "S11x0g-Tkmu",
+          "output": {
+            "nodeId": "rkCl-6kX_",
+            "pinKey": "Byemeaz3fd"
+          },
+          "input": {
+            "nodeId": "HklCg-pym_",
+            "pinKey": "HkqmLAOrD1W"
+          }
+        },
+        "B1egAg-akXu": {
+          "id": "B1egAg-akXu",
+          "output": {
+            "nodeId": "rkCl-6kX_",
+            "pinKey": "rkV7l6z2M_"
+          },
+          "input": {
+            "nodeId": "HklCg-pym_",
+            "pinKey": "HkqmLAOrD1W-$1"
+          }
+        },
+        "HJbxRgZTkQd": {
+          "id": "HJbxRgZTkQd",
+          "output": {
+            "nodeId": "HklCg-pym_",
+            "pinKey": "SyomIRurDJ-"
+          },
+          "input": {
+            "nodeId": "rJWAxZpkm_",
+            "pinKey": "HJG8C_SPkb"
+          }
+        },
+        "HJze0l-pkXO": {
+          "id": "HJze0l-pkXO",
+          "output": {
+            "nodeId": "rkfRlWayX_",
+            "pinKey": "HkyxURuSPyW"
+          },
+          "input": {
+            "nodeId": "HJX0gbaJ7d",
+            "pinKey": "__in__"
+          }
+        },
+        "SkXgCeZpyQd": {
+          "id": "SkXgCeZpyQd",
+          "output": {
+            "nodeId": "rkCl-6kX_",
+            "pinKey": "Sk7QeTfnGd"
+          },
+          "input": {
+            "nodeId": "BJwAxbTymd",
+            "pinKey": "__in__"
+          }
+        },
+        "rk4lRl-akQO": {
+          "id": "rk4lRl-akQO",
+          "output": {
+            "nodeId": "rkCl-6kX_",
+            "pinKey": "Byemeaz3fd"
+          },
+          "input": {
+            "nodeId": "SkBAlWakmO",
+            "pinKey": "__in__"
+          }
+        },
+        "r1BgAlW6kmd": {
+          "id": "r1BgAlW6kmd",
+          "output": {
+            "nodeId": "rkCl-6kX_",
+            "pinKey": "rkV7l6z2M_"
+          },
+          "input": {
+            "nodeId": "rku0ebT1QO",
+            "pinKey": "__in__"
+          }
+        },
+        "Hy8lRxZpkmu": {
+          "id": "Hy8lRxZpkmu",
+          "output": {
+            "nodeId": "rkCl-6kX_",
+            "pinKey": "SJrQlafhMd"
+          },
+          "input": {
+            "nodeId": "rkF0gW6kXu",
+            "pinKey": "__in__"
+          }
+        },
+        "SyDeCeWay7_": {
+          "id": "SyDeCeWay7_",
+          "output": {
+            "nodeId": "rkCl-6kX_",
+            "pinKey": "rkJpLMaf_"
+          },
+          "input": {
+            "nodeId": "SksAg-pymu",
+            "pinKey": "__in__"
+          }
+        },
+        "B1Ol0eWa1mO": {
+          "id": "B1Ol0eWa1mO",
+          "output": {
+            "nodeId": "rJWAxZpkm_",
+            "pinKey": "H1E8AuSPkZ"
+          },
+          "input": {
+            "nodeId": "Skn0x-Tymu",
+            "pinKey": "H1v3lCu8-"
+          }
+        },
+        "SJYxAe-6yXO": {
+          "id": "SJYxAe-6yXO",
+          "output": {
+            "nodeId": "Skn0x-Tymu",
+            "pinKey": "BJxRgAO8-"
+          },
+          "input": {
+            "nodeId": "rkfRlWayX_",
+            "pinKey": "Bkh8A_Sv1-"
+          }
+        },
+        "SyceAeW61XO": {
+          "id": "SyceAeW61XO",
+          "output": {
+            "nodeId": "rkTAe-6ymd",
+            "pinKey": "ryVmUAOrvkb"
+          },
+          "input": {
+            "nodeId": "rkfRlWayX_",
+            "pinKey": "B1RU0OrDkb"
+          }
+        },
+        "SyjxReZTyQO": {
+          "id": "SyjxReZTyQO",
+          "output": {
+            "nodeId": "rkN0xWTkQ_",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rkCl-6kX_",
+            "pinKey": "HyQgpz2Md"
+          }
+        },
+        "BJhgAlWp1XO": {
+          "id": "BJhgAlWp1XO",
+          "output": {
+            "nodeId": "ryI0eWTJXd",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rkCl-6kX_",
+            "pinKey": "BkM7gTfnMd"
+          }
+        },
+        "H16lRgW61Xu": {
+          "id": "H16lRgW61Xu",
+          "output": {
+            "nodeId": "SJ9CxWay7_",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rkCl-6kX_",
+            "pinKey": "BkU7eTM3fO"
+          }
+        }
+      },
+      "nodes": {
+        "rkCl-6kX_": {
+          "id": "rkCl-6kX_",
+          "type": "@/mpu9250",
+          "position": {
+            "x": 0,
+            "y": 0.75,
+            "units": "slots"
+          }
+        },
+        "HklCg-pym_": {
+          "arityLevel": 2,
+          "id": "HklCg-pym_",
+          "type": "xod/core/add",
+          "position": {
+            "x": 5,
+            "y": 1.75,
+            "units": "slots"
+          }
+        },
+        "rJWAxZpkm_": {
+          "boundLiterals": {
+            "rJXICuSwyW": "0"
+          },
+          "id": "rJWAxZpkm_",
+          "type": "xod/core/equal",
+          "position": {
+            "x": 5,
+            "y": 2.75,
+            "units": "slots"
+          }
+        },
+        "rkfRlWayX_": {
+          "id": "rkfRlWayX_",
+          "type": "xod/core/flip-flop",
+          "position": {
+            "x": 5,
+            "y": 4.75,
+            "units": "slots"
+          }
+        },
+        "HJX0gbaJ7d": {
+          "label": "STARTED",
+          "id": "HJX0gbaJ7d",
+          "type": "xod/patch-nodes/output-boolean",
+          "position": {
+            "x": 5,
+            "y": 5.75,
+            "units": "slots"
+          }
+        },
+        "rkN0xWTkQ_": {
+          "description": "Calibra Gyroscopio",
+          "label": "CAG",
+          "id": "rkN0xWTkQ_",
+          "position": {
+            "x": 0,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkBAlWakmO": {
+          "description": "Asse Y",
+          "label": "YAW",
+          "id": "SkBAlWakmO",
+          "position": {
+            "x": 1,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ryI0eWTJXd": {
+          "description": "Calibra Magnetometro. Dopo l'impulso muovere l'hardware a figura di 8",
+          "label": "CM",
+          "id": "ryI0eWTJXd",
+          "position": {
+            "x": 1,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BJwAxbTymd": {
+          "description": "Asse X",
+          "label": "PITCH",
+          "id": "BJwAxbTymd",
+          "position": {
+            "x": 0,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rku0ebT1QO": {
+          "description": "Asse Z",
+          "label": "ROLL",
+          "id": "rku0ebT1QO",
+          "position": {
+            "x": 2,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rkF0gW6kXu": {
+          "description": "True se connesso",
+          "label": "CON",
+          "id": "rkF0gW6kXu",
+          "position": {
+            "x": 3,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "SJ9CxWay7_": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Update pulse per nuova lettura",
+          "label": "UPDATE",
+          "id": "SJ9CxWay7_",
+          "position": {
+            "x": 2,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SksAg-pymu": {
+          "description": "Lettura avvenuta",
+          "label": "DONE",
+          "id": "SksAg-pymu",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 11,
+            "y": 1.75,
+            "units": "slots"
+          }
+        },
+        "Skn0x-Tymu": {
+          "id": "Skn0x-Tymu",
+          "type": "xod/core/pulse-on-false",
+          "position": {
+            "x": 5,
+            "y": 3.75,
+            "units": "slots"
+          }
+        },
+        "rkTAe-6ymd": {
+          "id": "rkTAe-6ymd",
+          "type": "xod/core/boot",
+          "position": {
+            "x": 7,
+            "y": 3.75,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/mpu9250-ver1"
+    }
+  },
+  "version": "0.0.32",
+  "name": "mpu9250"
+}

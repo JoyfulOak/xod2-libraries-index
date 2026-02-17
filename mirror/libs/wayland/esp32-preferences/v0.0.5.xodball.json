@@ -1,0 +1,3154 @@
+{
+  "patches": {
+    "@/begin": {
+      "nodes": {
+        "SkcO-f3xt": {
+          "description": "A preferences object.",
+          "label": "Prefs",
+          "id": "SkcO-f3xt",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-preferences"
+        },
+        "HJrtWf3lY": {
+          "id": "HJrtWf3lY",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1wiWzngt": {
+          "description": "Namespace name. Limited to 15 chars.",
+          "label": "Name",
+          "id": "r1wiWzngt",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "r1vT-G3xK": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "r1vT-G3xK",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkSC-Gngt": {
+          "description": "Pulse when namespace opened.",
+          "label": "Done",
+          "id": "HkSC-Gngt",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "H1xmMG3gY": {
+          "description": "Open storage read only.",
+          "label": "RO",
+          "id": "H1xmMG3gY",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        }
+      },
+      "path": "@/begin",
+      "description": "Opens storage with specified namespace.  If RO (read only) is set to false, then storage will be opened in read/write mode. If namespace does not exist, then it will be created if RO is set to False. If namespace does not exist and RO is set to True, then the node will raise an error.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto prefs = getValue<input_Prefs>(ctx);\n        auto xStringName = getValue<input_Name>(ctx);\n        auto ro = getValue<input_RO>(ctx);\n\n        int N=length(xStringName);\n        if (N>15 || N<1) {\n            raiseError(ctx);\n            return;\n        }\n        N +=1;\n        char cStringName[N];\n        for(int i=0;i<N;i++)\n            cStringName[i]=0;\n        dump(xStringName, cStringName);\n\n        if (!prefs -> begin(cStringName, ro)) {\n            raiseError(ctx);\n            return;\n        }\n        \n        emitValue<output_Done>(ctx, 1);\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/end": {
+      "nodes": {
+        "Hyo8MG2lt": {
+          "description": "A preferences object.",
+          "label": "Prefs",
+          "id": "Hyo8MG2lt",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-preferences"
+        },
+        "SkxiLzz3eY": {
+          "id": "SkxiLzz3eY",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJzo8MMnlt": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "SJzo8MMnlt",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkQiIfM2gY": {
+          "description": "Pulse when namespace closed.",
+          "label": "Done",
+          "id": "rkQiIfM2gY",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/end",
+      "description": "Close the open namespace.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto prefs = getValue<input_Prefs>(ctx);\n\n        prefs -> end();\n        emitValue<output_Done>(ctx, 1);\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/erase-nvs": {
+      "nodes": {
+        "S1jVpk6gK": {
+          "id": "S1jVpk6gK",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1IrTkTxt": {
+          "label": "Erase",
+          "id": "S1IrTkTxt",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S10La1pxt": {
+          "description": "Pulse when NVS erased and re-initialised.",
+          "label": "Done",
+          "id": "S10La1pxt",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/erase-nvs",
+      "description": "Erase and re-initialise non-volatile storage (NVS).",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#include <nvs_flash.h>\n#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_Erase>(ctx))\n            return;\n\n        nvs_flash_erase();\n        nvs_flash_init();\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example-boot-count": {
+      "nodes": {
+        "rJ02xcyWY": {
+          "id": "rJ02xcyWY",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/preferences"
+        },
+        "S10Um9kWF": {
+          "id": "S10Um9kWF",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/boot"
+        },
+        "HkUP79JWF": {
+          "id": "HkUP79JWF",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/begin"
+        },
+        "rkivmcybt": {
+          "id": "rkivmcybt",
+          "position": {
+            "x": 2,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "@/end"
+        },
+        "H1OYXcyWF": {
+          "id": "H1OYXcyWF",
+          "position": {
+            "x": 3,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "@/put-number"
+        },
+        "rJ3tX9y-K": {
+          "id": "rJ3tX9y-K",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/get-number"
+        },
+        "By0pXcJZt": {
+          "label": "Prefs",
+          "id": "By0pXcJZt",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "SkPm49y-Y": {
+          "label": "Prefs",
+          "id": "SkPm49y-Y",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HkF4N5kWt": {
+          "label": "Prefs",
+          "id": "HkF4N5kWt",
+          "position": {
+            "x": 3,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rJJSV5kWF": {
+          "label": "Prefs",
+          "id": "rJJSV5kWF",
+          "position": {
+            "x": 2,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "H1dLNqJWK": {
+          "boundLiterals": {
+            "HkqmLAOrD1W": "1"
+          },
+          "id": "H1dLNqJWK",
+          "position": {
+            "x": 7,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/add"
+        },
+        "S1K2E9JbY": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "\"boot log\""
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "id": "S1K2E9JbY",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-string"
+        },
+        "SJtZrq1-t": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "\"count\""
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "id": "SJtZrq1-t",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-string"
+        },
+        "BkXqQjybt": {
+          "boundLiterals": {
+            "BJ3DAE1QS": "\"Boot count:\"",
+            "rkedCVkXS": "38h"
+          },
+          "id": "BkXqQjybt",
+          "position": {
+            "x": 5,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod-dev/text-lcd/text-lcd-i2c-16x2"
+        },
+        "r1hoQoJZY": {
+          "boundLiterals": {
+            "HJTIija-W": "0"
+          },
+          "id": "r1hoQoJZY",
+          "position": {
+            "x": 8,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/core/format-number"
+        },
+        "Bk4ZOo1Wt": {
+          "boundLiterals": {
+            "ryTeUROHD1b": "0"
+          },
+          "id": "Bk4ZOo1Wt",
+          "position": {
+            "x": 7,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/if-else"
+        },
+        "BJnHtik-t": {
+          "id": "BJnHtik-t",
+          "position": {
+            "x": 5,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/math/is-nan"
+        }
+      },
+      "links": {
+        "HyP07qkbF": {
+          "id": "HyP07qkbF",
+          "input": {
+            "nodeId": "By0pXcJZt",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJ02xcyWY",
+            "pinKey": "rJCZcsKgt"
+          }
+        },
+        "S1SVE9kZt": {
+          "id": "S1SVE9kZt",
+          "input": {
+            "nodeId": "rJ3tX9y-K",
+            "pinKey": "HksQ-znlY"
+          },
+          "output": {
+            "nodeId": "SkPm49y-Y",
+            "pinKey": "__out__"
+          }
+        },
+        "rJaEVcJbt": {
+          "id": "rJaEVcJbt",
+          "input": {
+            "nodeId": "H1OYXcyWF",
+            "pinKey": "S1Z8xG2xF"
+          },
+          "output": {
+            "nodeId": "HkF4N5kWt",
+            "pinKey": "__out__"
+          }
+        },
+        "S1MrVqyWt": {
+          "id": "S1MrVqyWt",
+          "input": {
+            "nodeId": "rkivmcybt",
+            "pinKey": "Hyo8MG2lt"
+          },
+          "output": {
+            "nodeId": "rJJSV5kWF",
+            "pinKey": "__out__"
+          }
+        },
+        "ryhDEqJZY": {
+          "id": "ryhDEqJZY",
+          "input": {
+            "nodeId": "rJ3tX9y-K",
+            "pinKey": "rJbsm-fnlY"
+          },
+          "output": {
+            "nodeId": "HkUP79JWF",
+            "pinKey": "HkSC-Gngt"
+          }
+        },
+        "H1td491bt": {
+          "id": "H1td491bt",
+          "input": {
+            "nodeId": "H1OYXcyWF",
+            "pinKey": "BJRe0bnlK"
+          },
+          "output": {
+            "nodeId": "H1dLNqJWK",
+            "pinKey": "SyomIRurDJ-"
+          }
+        },
+        "H1oKE5kZF": {
+          "id": "H1oKE5kZF",
+          "input": {
+            "nodeId": "rkivmcybt",
+            "pinKey": "SJzo8MMnlt"
+          },
+          "output": {
+            "nodeId": "H1OYXcyWF",
+            "pinKey": "Hk4rAW2gK"
+          }
+        },
+        "rJWo4qk-F": {
+          "id": "rJWo4qk-F",
+          "input": {
+            "nodeId": "HkUP79JWF",
+            "pinKey": "SkcO-f3xt"
+          },
+          "output": {
+            "nodeId": "rJ02xcyWY",
+            "pinKey": "rJCZcsKgt"
+          }
+        },
+        "ByOREqJ-t": {
+          "id": "ByOREqJ-t",
+          "input": {
+            "nodeId": "HkUP79JWF",
+            "pinKey": "r1wiWzngt"
+          },
+          "output": {
+            "nodeId": "S1K2E9JbY",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "S1mkS91-Y": {
+          "id": "S1mkS91-Y",
+          "input": {
+            "nodeId": "H1OYXcyWF",
+            "pinKey": "HyvpRbhgY"
+          },
+          "output": {
+            "nodeId": "rJ3tX9y-K",
+            "pinKey": "Sy4sX-GnxY"
+          }
+        },
+        "ryh7HqJZY": {
+          "id": "ryh7HqJZY",
+          "input": {
+            "nodeId": "rJ3tX9y-K",
+            "pinKey": "S1Gj7-znxY"
+          },
+          "output": {
+            "nodeId": "SJtZrq1-t",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "SJFhmo1bF": {
+          "id": "SJFhmo1bF",
+          "input": {
+            "nodeId": "BkXqQjybt",
+            "pinKey": "rJgnw0417B"
+          },
+          "output": {
+            "nodeId": "r1hoQoJZY",
+            "pinKey": "r1H_oipZb"
+          }
+        },
+        "rkEgEskWK": {
+          "id": "rkEgEskWK",
+          "input": {
+            "nodeId": "r1hoQoJZY",
+            "pinKey": "BJlHojaWZ"
+          },
+          "output": {
+            "nodeId": "H1dLNqJWK",
+            "pinKey": "SyomIRurDJ-"
+          }
+        },
+        "H1HzuoJZF": {
+          "id": "H1HzuoJZF",
+          "input": {
+            "nodeId": "H1dLNqJWK",
+            "pinKey": "BJnQUR_BwyZ"
+          },
+          "output": {
+            "nodeId": "Bk4ZOo1Wt",
+            "pinKey": "S13xLCuHvkW"
+          }
+        },
+        "r1wLFi1-Y": {
+          "id": "r1wLFi1-Y",
+          "input": {
+            "nodeId": "BJnHtik-t",
+            "pinKey": "rkDGq9laQ"
+          },
+          "output": {
+            "nodeId": "rJ3tX9y-K",
+            "pinKey": "rkBE-GheY"
+          }
+        },
+        "BJYIFj1ZK": {
+          "id": "BJYIFj1ZK",
+          "input": {
+            "nodeId": "Bk4ZOo1Wt",
+            "pinKey": "S1yZIA_rDJZ"
+          },
+          "output": {
+            "nodeId": "BJnHtik-t",
+            "pinKey": "r1HN9cepQ"
+          }
+        },
+        "BkpOYjy-t": {
+          "id": "BkpOYjy-t",
+          "input": {
+            "nodeId": "Bk4ZOo1Wt",
+            "pinKey": "r1AgIROHDJW"
+          },
+          "output": {
+            "nodeId": "rJ3tX9y-K",
+            "pinKey": "rkBE-GheY"
+          }
+        },
+        "ByUttj1WY": {
+          "id": "ByUttj1WY",
+          "input": {
+            "nodeId": "H1OYXcyWF",
+            "pinKey": "rJKXCWhgF"
+          },
+          "output": {
+            "nodeId": "SJtZrq1-t",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "Byt-5jyZK": {
+          "id": "Byt-5jyZK",
+          "input": {
+            "nodeId": "HkUP79JWF",
+            "pinKey": "r1vT-G3xK"
+          },
+          "output": {
+            "nodeId": "S10Um9kWF",
+            "pinKey": "ryVmUAOrvkb"
+          }
+        }
+      },
+      "comments": {
+        "H1Mn7fl-K": {
+          "content": "**1** The *constant-string* \"boot log\" will be the name of our namespace. The *boot* node means that this patch will run once on startup.",
+          "id": "H1Mn7fl-K",
+          "position": {
+            "x": 12,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 8,
+            "units": "slots"
+          }
+        },
+        "BkSEVMeWt": {
+          "content": "**2** The *constant-string* \"count\" will be the name of our key. Open namespace in read/write mode (RO set to false). As RO is set to false, if the namespace does not exist, it will be created.",
+          "id": "BkSEVMeWt",
+          "position": {
+            "x": 12,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 11,
+            "units": "slots"
+          }
+        },
+        "H15lHGgWY": {
+          "content": "**3** Retrieve number identified by the key \"count\".",
+          "id": "H15lHGgWY",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "H1n4Sfe-K": {
+          "content": "**4** If the key \"count\" does not exist, *get-number* will return \"NaN\".",
+          "id": "H1n4Sfe-K",
+          "position": {
+            "x": 9,
+            "y": 4,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 5,
+            "units": "slots"
+          }
+        },
+        "SJn5HGlbF": {
+          "content": "**5** If *get-number* returns \"NaN\", this means that the board has booted up for the first time with this patch, and therefore the number should be set to zero.",
+          "id": "SJn5HGlbF",
+          "position": {
+            "x": 11,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 10,
+            "units": "slots"
+          }
+        },
+        "HkAJwfe-Y": {
+          "content": "**6** Increment count.",
+          "id": "HkAJwfe-Y",
+          "position": {
+            "x": 10,
+            "y": 6,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 3,
+            "units": "slots"
+          }
+        },
+        "By0Uwfl-Y": {
+          "content": "**7** Store new count and format count for display on LCD.",
+          "id": "By0Uwfl-Y",
+          "position": {
+            "x": 11,
+            "y": 7,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "S1yswMgWt": {
+          "content": "**8** The *end* node closes the namespace. The boot count is displayed on the LCD.",
+          "id": "S1yswMgWt",
+          "position": {
+            "x": 11,
+            "y": 8,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 5,
+            "units": "slots"
+          }
+        },
+        "rkSSKn44K": {
+          "content": "# A tutorial on using the esp32-preferences can be found here: https://www.hackster.io/wayland2/access-esp32-non-volatile-storage-using-xod-252ec9",
+          "id": "rkSSKn44K",
+          "position": {
+            "x": 2,
+            "y": 9,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 19,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example-boot-count",
+      "description": "Patch to demonstrate how to record the number of times the ESP32 board has been booted. Result is displayed on an LCD."
+    },
+    "@/example-erase-nvs": {
+      "nodes": {
+        "HyslkWTgt": {
+          "id": "HyslkWTgt",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/erase-nvs"
+        },
+        "rkwFfekbK": {
+          "id": "rkwFfekbK",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/boot"
+        }
+      },
+      "links": {
+        "HJ5tMgkWK": {
+          "id": "HJ5tMgkWK",
+          "input": {
+            "nodeId": "HyslkWTgt",
+            "pinKey": "S1IrTkTxt"
+          },
+          "output": {
+            "nodeId": "rkwFfekbK",
+            "pinKey": "ryVmUAOrvkb"
+          }
+        }
+      },
+      "comments": {
+        "BkD0NgyWK": {
+          "content": "An alternative method for erasing data from NVS is to use [esptool](https://github.com/espressif/esptool). From the command line run:\n\n**esptool.py erase_flash**\n\n",
+          "id": "BkD0NgyWK",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 2,
+            "width": 7,
+            "units": "slots"
+          }
+        },
+        "Syok5nV4K": {
+          "content": "# A tutorial on using the esp32-preferences can be found here: https://www.hackster.io/wayland2/access-esp32-non-volatile-storage-using-xod-252ec9",
+          "id": "Syok5nV4K",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 19,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example-erase-nvs",
+      "description": "Running this patch will erase all data from non-volatile storage."
+    },
+    "@/example-remove-key": {
+      "nodes": {
+        "SkZyaB9RgF": {
+          "id": "SkZyaB9RgF",
+          "position": {
+            "x": 16,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/begin"
+        },
+        "ry7JaHcAlF": {
+          "id": "ry7JaHcAlF",
+          "position": {
+            "x": 19,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        },
+        "HyEypr9CgK": {
+          "label": "Prefs",
+          "id": "HyEypr9CgK",
+          "position": {
+            "x": 8,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SyB1pS5RgK": {
+          "id": "SyB1pS5RgK",
+          "position": {
+            "x": 10,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "@/end"
+        },
+        "SJnIIgJ-F": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "\"test\""
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "id": "SJnIIgJ-F",
+          "position": {
+            "x": 17,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-string"
+        },
+        "BJfj8ly-Y": {
+          "id": "BJfj8ly-Y",
+          "position": {
+            "x": 16,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/preferences"
+        },
+        "rkYj8xkZt": {
+          "label": "Prefs",
+          "id": "rkYj8xkZt",
+          "position": {
+            "x": 15,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "HkIRIe1WK": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "\"Temp. Celsius\""
+          },
+          "size": {
+            "height": 1,
+            "width": 3,
+            "units": "slots"
+          },
+          "id": "HkIRIe1WK",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-string"
+        },
+        "Hk4gulybF": {
+          "id": "Hk4gulybF",
+          "position": {
+            "x": 13,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/put-number"
+        },
+        "H1ubOxkWY": {
+          "label": "TempC",
+          "id": "H1ubOxkWY",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "H17EteyWY": {
+          "id": "H17EteyWY",
+          "position": {
+            "x": 11,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/get-number"
+        },
+        "r1TEYl1bK": {
+          "id": "r1TEYl1bK",
+          "position": {
+            "x": 10,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "@/remove"
+        },
+        "SyTrYl1bF": {
+          "id": "SyTrYl1bF",
+          "position": {
+            "x": 8,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "@/get-number"
+        },
+        "S1sPFxkWt": {
+          "label": "TempC",
+          "id": "S1sPFxkWt",
+          "position": {
+            "x": 12,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "H14pKxJbt": {
+          "label": "TempC",
+          "id": "H14pKxJbt",
+          "position": {
+            "x": 11,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJhTYlJ-K": {
+          "label": "TempC",
+          "id": "HJhTYlJ-K",
+          "position": {
+            "x": 9,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJcbcxyZK": {
+          "id": "HJcbcxyZK",
+          "position": {
+            "x": 9,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "Bydf9gJbK": {
+          "id": "Bydf9gJbK",
+          "position": {
+            "x": 8,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "S1sv5gJbt": {
+          "label": "Prefs",
+          "id": "S1sv5gJbt",
+          "position": {
+            "x": 10,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rk3w9lk-Y": {
+          "label": "Prefs",
+          "id": "rk3w9lk-Y",
+          "position": {
+            "x": 11,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJ1xhP9gk-F": {
+          "label": "Prefs",
+          "id": "SJ1xhP9gk-F",
+          "position": {
+            "x": 13,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S15FqekWF": {
+          "label": "TempC",
+          "id": "S15FqekWF",
+          "position": {
+            "x": 14,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "ry4QilyWY": {
+          "label": "Prefs",
+          "id": "ry4QilyWY",
+          "position": {
+            "x": 9,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rkJqig1WF": {
+          "boundLiterals": {
+            "ByfGSDjQE": "42"
+          },
+          "id": "rkJqig1WF",
+          "position": {
+            "x": 14,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        }
+      },
+      "links": {
+        "H1OyTr50gY": {
+          "id": "H1OyTr50gY",
+          "input": {
+            "nodeId": "SkZyaB9RgF",
+            "pinKey": "r1vT-G3xK"
+          },
+          "output": {
+            "nodeId": "ry7JaHcAlF",
+            "pinKey": "Bkf4BDsmV"
+          }
+        },
+        "Sy-wLgybF": {
+          "id": "Sy-wLgybF",
+          "input": {
+            "nodeId": "SkZyaB9RgF",
+            "pinKey": "r1wiWzngt"
+          },
+          "output": {
+            "nodeId": "SJnIIgJ-F",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "BJps8g1Wt": {
+          "id": "BJps8g1Wt",
+          "input": {
+            "nodeId": "rkYj8xkZt",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJfj8ly-Y",
+            "pinKey": "rJCZcsKgt"
+          }
+        },
+        "HknfKg1WY": {
+          "id": "HknfKg1WY",
+          "input": {
+            "nodeId": "H1ubOxkWY",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HkIRIe1WK",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "H1x6YgyZt": {
+          "id": "H1x6YgyZt",
+          "input": {
+            "nodeId": "H17EteyWY",
+            "pinKey": "S1Gj7-znxY"
+          },
+          "output": {
+            "nodeId": "S1sPFxkWt",
+            "pinKey": "__out__"
+          }
+        },
+        "S1b0KlJbY": {
+          "id": "S1b0KlJbY",
+          "input": {
+            "nodeId": "SyTrYl1bF",
+            "pinKey": "S1Gj7-znxY"
+          },
+          "output": {
+            "nodeId": "HJhTYlJ-K",
+            "pinKey": "__out__"
+          }
+        },
+        "S1XAtg1bt": {
+          "id": "S1XAtg1bt",
+          "input": {
+            "nodeId": "r1TEYl1bK",
+            "pinKey": "HyfpjMzhgK"
+          },
+          "output": {
+            "nodeId": "H14pKxJbt",
+            "pinKey": "__out__"
+          }
+        },
+        "rygb5l1bF": {
+          "id": "rygb5l1bF",
+          "input": {
+            "nodeId": "SyB1pS5RgK",
+            "pinKey": "SJzo8MMnlt"
+          },
+          "output": {
+            "nodeId": "SyTrYl1bF",
+            "pinKey": "Sy4sX-GnxY"
+          }
+        },
+        "Bklfqgk-t": {
+          "id": "Bklfqgk-t",
+          "input": {
+            "nodeId": "HJcbcxyZK",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H17EteyWY",
+            "pinKey": "rkBE-GheY"
+          }
+        },
+        "BJpGcl1ZK": {
+          "id": "BJpGcl1ZK",
+          "input": {
+            "nodeId": "Bydf9gJbK",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "SyTrYl1bF",
+            "pinKey": "rkBE-GheY"
+          }
+        },
+        "BytXceJ-t": {
+          "id": "BytXceJ-t",
+          "input": {
+            "nodeId": "r1TEYl1bK",
+            "pinKey": "rJ-6sMMheY"
+          },
+          "output": {
+            "nodeId": "H17EteyWY",
+            "pinKey": "Sy4sX-GnxY"
+          }
+        },
+        "ryj75g1WK": {
+          "id": "ryj75g1WK",
+          "input": {
+            "nodeId": "SyTrYl1bF",
+            "pinKey": "rJbsm-fnlY"
+          },
+          "output": {
+            "nodeId": "r1TEYl1bK",
+            "pinKey": "By4Tjzzhet"
+          }
+        },
+        "S1T75l1bK": {
+          "id": "S1T75l1bK",
+          "input": {
+            "nodeId": "H17EteyWY",
+            "pinKey": "rJbsm-fnlY"
+          },
+          "output": {
+            "nodeId": "Hk4gulybF",
+            "pinKey": "Hk4rAW2gK"
+          }
+        },
+        "HkRS9lkWt": {
+          "id": "HkRS9lkWt",
+          "input": {
+            "nodeId": "Hk4gulybF",
+            "pinKey": "HyvpRbhgY"
+          },
+          "output": {
+            "nodeId": "SkZyaB9RgF",
+            "pinKey": "HkSC-Gngt"
+          }
+        },
+        "H1SDclybY": {
+          "id": "H1SDclybY",
+          "input": {
+            "nodeId": "SkZyaB9RgF",
+            "pinKey": "SkcO-f3xt"
+          },
+          "output": {
+            "nodeId": "BJfj8ly-Y",
+            "pinKey": "rJCZcsKgt"
+          }
+        },
+        "r1E_9g1ZY": {
+          "id": "r1E_9g1ZY",
+          "input": {
+            "nodeId": "Hk4gulybF",
+            "pinKey": "S1Z8xG2xF"
+          },
+          "output": {
+            "nodeId": "SJ1xhP9gk-F",
+            "pinKey": "__out__"
+          }
+        },
+        "rJ2OqxJbF": {
+          "id": "rJ2OqxJbF",
+          "input": {
+            "nodeId": "H17EteyWY",
+            "pinKey": "HksQ-znlY"
+          },
+          "output": {
+            "nodeId": "rk3w9lk-Y",
+            "pinKey": "__out__"
+          }
+        },
+        "BkF59x1bt": {
+          "id": "BkF59x1bt",
+          "input": {
+            "nodeId": "Hk4gulybF",
+            "pinKey": "rJKXCWhgF"
+          },
+          "output": {
+            "nodeId": "S15FqekWF",
+            "pinKey": "__out__"
+          }
+        },
+        "rkdh5lkZY": {
+          "id": "rkdh5lkZY",
+          "input": {
+            "nodeId": "r1TEYl1bK",
+            "pinKey": "S1TiGz2lK"
+          },
+          "output": {
+            "nodeId": "S1sv5gJbt",
+            "pinKey": "__out__"
+          }
+        },
+        "Byu0cxJZF": {
+          "id": "Byu0cxJZF",
+          "input": {
+            "nodeId": "SyTrYl1bF",
+            "pinKey": "HksQ-znlY"
+          },
+          "output": {
+            "nodeId": "HyEypr9CgK",
+            "pinKey": "__out__"
+          }
+        },
+        "H11Voek-t": {
+          "id": "H11Voek-t",
+          "input": {
+            "nodeId": "SyB1pS5RgK",
+            "pinKey": "Hyo8MG2lt"
+          },
+          "output": {
+            "nodeId": "ry4QilyWY",
+            "pinKey": "__out__"
+          }
+        },
+        "rJDqigkbY": {
+          "id": "rJDqigkbY",
+          "input": {
+            "nodeId": "Hk4gulybF",
+            "pinKey": "BJRe0bnlK"
+          },
+          "output": {
+            "nodeId": "rkJqig1WF",
+            "pinKey": "ByfGSDjQE"
+          }
+        }
+      },
+      "comments": {
+        "r1RB6bxZY": {
+          "content": "**1** The *constant-string* \"Temp. Celsius\" will be the name of our key. Use *tweak-number* node to specify number to be stored. Use *tweak-pulse* to initiate data flow.",
+          "id": "r1RB6bxZY",
+          "position": {
+            "x": 21,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 10,
+            "units": "slots"
+          }
+        },
+        "SJvrxMx-t": {
+          "content": "**2** Open a namespace called \"test\" in read/write mode (RO set to false). As RO is set to false, if the namespace does not exist, it will be created.",
+          "id": "SJvrxMx-t",
+          "position": {
+            "x": 21,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 9,
+            "units": "slots"
+          }
+        },
+        "HkchefxZt": {
+          "content": "**3** Store a number in the namespace which will be identifiable by the key \"Temp. Celsius\".",
+          "id": "HkchefxZt",
+          "position": {
+            "x": 18,
+            "y": 4,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 6,
+            "units": "slots"
+          }
+        },
+        "ryDL-zeZY": {
+          "content": "**4** Retrieve the number identified by the key \"Temp. Celsius\". ",
+          "id": "ryDL-zeZY",
+          "position": {
+            "x": 15,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "rJqbfzxbY": {
+          "content": "**5** Watch node displays number retrieved from storage.",
+          "id": "rJqbfzxbY",
+          "position": {
+            "x": 13,
+            "y": 6,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "BJZ8MzlZK": {
+          "content": "**6** Remove key-value pair with key \"Temp. Celsius\".",
+          "id": "BJZ8MzlZK",
+          "position": {
+            "x": 14,
+            "y": 7,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "HJaiGfl-t": {
+          "content": "**7** Try to retrieve number identified by key \"Temp. Celsius\".",
+          "id": "HJaiGfl-t",
+          "position": {
+            "x": 12,
+            "y": 8,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "r11X7MlWt": {
+          "content": "**8** As the key-value pair no longer exists, *get-number* will return \"NaN\". The *end* node closes the namespace.",
+          "id": "r11X7MlWt",
+          "position": {
+            "x": 13,
+            "y": 9,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 7,
+            "units": "slots"
+          }
+        },
+        "ryslqhE4t": {
+          "content": "# A tutorial on using the esp32-preferences can be found here: https://www.hackster.io/wayland2/access-esp32-non-volatile-storage-using-xod-252ec9",
+          "id": "ryslqhE4t",
+          "position": {
+            "x": 8,
+            "y": 10,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 19,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example-remove-key",
+      "description": "Patch to demonstrate how to remove a key-value pair from a preferences namespace. Run in debug mode."
+    },
+    "@/clear": {
+      "nodes": {
+        "S1o8lzheY": {
+          "description": "A preferences object.",
+          "label": "Prefs",
+          "id": "S1o8lzheY",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-preferences"
+        },
+        "rJzDlfhxF": {
+          "id": "rJzDlfhxF",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJnPez2lF": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "SJnPez2lF",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Syc_xMnlY": {
+          "description": "Pulse on clear.",
+          "label": "Done",
+          "id": "Syc_xMnlY",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/clear",
+      "description": "Clear all preferences under the open namespace (it doesn’t delete the namespace).",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto prefs = getValue<input_Prefs>(ctx);\n\n        if (!prefs -> clear()) {\n            raiseError(ctx);\n            return;\n        }\n\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example-store-retrieve": {
+      "nodes": {
+        "SJZV57aeY": {
+          "id": "SJZV57aeY",
+          "position": {
+            "x": -29,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/preferences"
+        },
+        "SkO497TxK": {
+          "label": "Prefs",
+          "id": "SkO497TxK",
+          "position": {
+            "x": -29,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "BJ7IcmplY": {
+          "label": "Prefs",
+          "id": "BJ7IcmplY",
+          "position": {
+            "x": -22,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "r1uD57axY": {
+          "id": "r1uD57axY",
+          "position": {
+            "x": -24,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/begin"
+        },
+        "H1aYcXplt": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "\"my namespace\""
+          },
+          "size": {
+            "height": 1,
+            "width": 3,
+            "units": "slots"
+          },
+          "id": "H1aYcXplt",
+          "position": {
+            "x": -26,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-string"
+        },
+        "rJSgompeF": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "\"my byte\""
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "id": "rJSgompeF",
+          "position": {
+            "x": -28,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-string"
+        },
+        "rJpLsXaeY": {
+          "id": "rJpLsXaeY",
+          "position": {
+            "x": -20,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        },
+        "Bkmcsm6et": {
+          "id": "Bkmcsm6et",
+          "position": {
+            "x": -26,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/get-byte"
+        },
+        "BJEe3maxt": {
+          "boundLiterals": {
+            "VAL": "True"
+          },
+          "id": "BJEe3maxt",
+          "position": {
+            "x": -22,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-boolean"
+        },
+        "rkubn76lK": {
+          "id": "rkubn76lK",
+          "position": {
+            "x": -28,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "SJnV37axt": {
+          "id": "SJnV37axt",
+          "position": {
+            "x": -21,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/end"
+        },
+        "BJ5I2Q6eK": {
+          "id": "BJ5I2Q6eK",
+          "position": {
+            "x": -7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/begin"
+        },
+        "rJ5v3Q6gY": {
+          "label": "name",
+          "id": "rJ5v3Q6gY",
+          "position": {
+            "x": -26,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "BJrFh7peY": {
+          "label": "name",
+          "id": "BJrFh7peY",
+          "position": {
+            "x": -6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "Sk8chXTxF": {
+          "label": "Prefs",
+          "id": "Sk8chXTxF",
+          "position": {
+            "x": -10,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJ_337pgY": {
+          "id": "HJ_337pgY",
+          "position": {
+            "x": -10,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/put-byte"
+        },
+        "r1XSTmaet": {
+          "label": "byte-key",
+          "id": "r1XSTmaet",
+          "position": {
+            "x": -28,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "Bk2Op76gK": {
+          "label": "byte-key",
+          "id": "Bk2Op76gK",
+          "position": {
+            "x": -9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJSs67TeK": {
+          "label": "Prefs",
+          "id": "SJSs67TeK",
+          "position": {
+            "x": -17,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "H1griT7TeF": {
+          "id": "H1griT7TeF",
+          "position": {
+            "x": -17,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/end"
+        },
+        "BJphTXaxK": {
+          "id": "BJphTXaxK",
+          "position": {
+            "x": -4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        },
+        "S1MrCXagK": {
+          "boundLiterals": {
+            "SykJ8wjXN": "5d"
+          },
+          "id": "S1MrCXagK",
+          "position": {
+            "x": -8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-byte"
+        },
+        "H1d8A76eY": {
+          "label": "Prefs",
+          "id": "H1d8A76eY",
+          "position": {
+            "x": -7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rJPXmDplF": {
+          "id": "rJPXmDplF",
+          "position": {
+            "x": -25,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/get-number"
+        },
+        "HJDHQvTlt": {
+          "label": "Prefs",
+          "id": "HJDHQvTlt",
+          "position": {
+            "x": -26,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "B13dQw6gF": {
+          "id": "B13dQw6gF",
+          "position": {
+            "x": -25,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "ByFKQPpgt": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "\"my number\""
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "id": "ByFKQPpgt",
+          "position": {
+            "x": -22,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-string"
+        },
+        "HkBjXwTgt": {
+          "label": "num-key",
+          "id": "HkBjXwTgt",
+          "position": {
+            "x": -22,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "SkA1EPaxY": {
+          "id": "SkA1EPaxY",
+          "position": {
+            "x": -13,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/put-number"
+        },
+        "BkZbVDpeK": {
+          "label": "Prefs",
+          "id": "BkZbVDpeK",
+          "position": {
+            "x": -13,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S16VVPpgY": {
+          "label": "num-key",
+          "id": "S16VVPpgY",
+          "position": {
+            "x": -12,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rkKnNDTxt": {
+          "boundLiterals": {
+            "ByfGSDjQE": "3.14"
+          },
+          "id": "rkKnNDTxt",
+          "position": {
+            "x": -11,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "rkycdv6gF": {
+          "id": "rkycdv6gF",
+          "position": {
+            "x": -16,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/put-string"
+        },
+        "ryffFwTgt": {
+          "id": "ryffFwTgt",
+          "position": {
+            "x": -23,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/get-string"
+        },
+        "r1ZQtP6gt": {
+          "size": {
+            "height": 1,
+            "width": 5,
+            "units": "slots"
+          },
+          "id": "r1ZQtP6gt",
+          "position": {
+            "x": -28,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "ByLPFDagF": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "\"my string\""
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "id": "ByLPFDagF",
+          "position": {
+            "x": -21,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-string"
+        },
+        "S1BtFDpgF": {
+          "label": "str-key",
+          "id": "S1BtFDpgF",
+          "position": {
+            "x": -19,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "S19qKPplK": {
+          "label": "str-key",
+          "id": "S19qKPplK",
+          "position": {
+            "x": -15,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1n2tvaeK": {
+          "label": "Prefs",
+          "id": "S1n2tvaeK",
+          "position": {
+            "x": -16,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1Bg5w6gY": {
+          "label": "Prefs",
+          "id": "S1Bg5w6gY",
+          "position": {
+            "x": -24,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SkLMqvTlY": {
+          "boundLiterals": {
+            "H1wh06BEW": "\"Hello, world!\""
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          },
+          "id": "SkLMqvTlY",
+          "position": {
+            "x": -16,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-string-32"
+        },
+        "rkGNm9ReY": {
+          "id": "rkGNm9ReY",
+          "position": {
+            "x": -1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/clear"
+        },
+        "BJUFQ5ClK": {
+          "id": "BJUFQ5ClK",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/begin"
+        },
+        "rkxLKXcCxY": {
+          "label": "name",
+          "id": "rkxLKXcCxY",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "Sk-IKXcRlt": {
+          "id": "Sk-IKXcRlt",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        },
+        "BJG8Y7q0gY": {
+          "label": "Prefs",
+          "id": "BJG8Y7q0gY",
+          "position": {
+            "x": -2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HkZeE5Agt": {
+          "id": "HkZeE5Agt",
+          "position": {
+            "x": -2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/end"
+        },
+        "SJIbs1kWF": {
+          "label": "Prefs",
+          "id": "SJIbs1kWF",
+          "position": {
+            "x": -27,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "BJCBs1kZK": {
+          "label": "Prefs",
+          "id": "BJCBs1kZK",
+          "position": {
+            "x": -25,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S15qDKAPq": {
+          "id": "S15qDKAPq",
+          "type": "xod/core/constant-number",
+          "position": {
+            "x": -19,
+            "y": 3,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B1x2RV3eZ": "33"
+          }
+        }
+      },
+      "links": {
+        "BynVq7alY": {
+          "id": "BynVq7alY",
+          "input": {
+            "nodeId": "SkO497TxK",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJZV57aeY",
+            "pinKey": "rJCZcsKgt"
+          }
+        },
+        "S1hpc7plK": {
+          "id": "S1hpc7plK",
+          "input": {
+            "nodeId": "r1uD57axY",
+            "pinKey": "r1wiWzngt"
+          },
+          "output": {
+            "nodeId": "H1aYcXplt",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "BJGwjmpgF": {
+          "id": "BJGwjmpgF",
+          "input": {
+            "nodeId": "r1uD57axY",
+            "pinKey": "r1vT-G3xK"
+          },
+          "output": {
+            "nodeId": "rJpLsXaeY",
+            "pinKey": "Bkf4BDsmV"
+          }
+        },
+        "BJt9om6xK": {
+          "id": "BJt9om6xK",
+          "input": {
+            "nodeId": "Bkmcsm6et",
+            "pinKey": "rJJoxfhet"
+          },
+          "output": {
+            "nodeId": "r1uD57axY",
+            "pinKey": "HkSC-Gngt"
+          }
+        },
+        "Sky3s7TlK": {
+          "id": "Sky3s7TlK",
+          "input": {
+            "nodeId": "Bkmcsm6et",
+            "pinKey": "H1ynez2eY"
+          },
+          "output": {
+            "nodeId": "rJSgompeF",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "S1Rx2Qplt": {
+          "id": "S1Rx2Qplt",
+          "input": {
+            "nodeId": "r1uD57axY",
+            "pinKey": "H1xmMG3gY"
+          },
+          "output": {
+            "nodeId": "BJEe3maxt",
+            "pinKey": "VAL"
+          }
+        },
+        "HklfnX6xY": {
+          "id": "HklfnX6xY",
+          "input": {
+            "nodeId": "rkubn76lK",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "Bkmcsm6et",
+            "pinKey": "B1yAez2xK"
+          }
+        },
+        "BJWr2Qaet": {
+          "id": "BJWr2Qaet",
+          "input": {
+            "nodeId": "SJnV37axt",
+            "pinKey": "Hyo8MG2lt"
+          },
+          "output": {
+            "nodeId": "BJ7IcmplY",
+            "pinKey": "__out__"
+          }
+        },
+        "rkDO2maeK": {
+          "id": "rkDO2maeK",
+          "input": {
+            "nodeId": "rJ5v3Q6gY",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "H1aYcXplt",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "B1bch76et": {
+          "id": "B1bch76et",
+          "input": {
+            "nodeId": "BJ5I2Q6eK",
+            "pinKey": "r1wiWzngt"
+          },
+          "output": {
+            "nodeId": "BJrFh7peY",
+            "pinKey": "__out__"
+          }
+        },
+        "Syh3hmalF": {
+          "id": "Syh3hmalF",
+          "input": {
+            "nodeId": "HJ_337pgY",
+            "pinKey": "Hy6xeM2lF"
+          },
+          "output": {
+            "nodeId": "Sk8chXTxF",
+            "pinKey": "__out__"
+          }
+        },
+        "rkzL6XaxF": {
+          "id": "rkzL6XaxF",
+          "input": {
+            "nodeId": "r1XSTmaet",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJSgompeF",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "SkNtp76xt": {
+          "id": "SkNtp76xt",
+          "input": {
+            "nodeId": "HJ_337pgY",
+            "pinKey": "SyZIxJM3gF"
+          },
+          "output": {
+            "nodeId": "Bk2Op76gK",
+            "pinKey": "__out__"
+          }
+        },
+        "Hybrsp76gt": {
+          "id": "Hybrsp76gt",
+          "input": {
+            "nodeId": "H1griT7TeF",
+            "pinKey": "Hyo8MG2lt"
+          },
+          "output": {
+            "nodeId": "SJSs67TeK",
+            "pinKey": "__out__"
+          }
+        },
+        "B1c3a7plK": {
+          "id": "B1c3a7plK",
+          "input": {
+            "nodeId": "HJ_337pgY",
+            "pinKey": "r1QLx1G3eF"
+          },
+          "output": {
+            "nodeId": "BJ5I2Q6eK",
+            "pinKey": "HkSC-Gngt"
+          }
+        },
+        "HJ-apXpeK": {
+          "id": "HJ-apXpeK",
+          "input": {
+            "nodeId": "BJ5I2Q6eK",
+            "pinKey": "r1vT-G3xK"
+          },
+          "output": {
+            "nodeId": "BJphTXaxK",
+            "pinKey": "Bkf4BDsmV"
+          }
+        },
+        "rJPrCm6lK": {
+          "id": "rJPrCm6lK",
+          "input": {
+            "nodeId": "HJ_337pgY",
+            "pinKey": "rklbkM2xK"
+          },
+          "output": {
+            "nodeId": "S1MrCXagK",
+            "pinKey": "SykJ8wjXN"
+          }
+        },
+        "HynI0mTeF": {
+          "id": "HynI0mTeF",
+          "input": {
+            "nodeId": "BJ5I2Q6eK",
+            "pinKey": "SkcO-f3xt"
+          },
+          "output": {
+            "nodeId": "H1d8A76eY",
+            "pinKey": "__out__"
+          }
+        },
+        "B13BXvpgt": {
+          "id": "B13BXvpgt",
+          "input": {
+            "nodeId": "rJPXmDplF",
+            "pinKey": "HksQ-znlY"
+          },
+          "output": {
+            "nodeId": "HJDHQvTlt",
+            "pinKey": "__out__"
+          }
+        },
+        "SJe87PTxt": {
+          "id": "SJe87PTxt",
+          "input": {
+            "nodeId": "rJPXmDplF",
+            "pinKey": "rJbsm-fnlY"
+          },
+          "output": {
+            "nodeId": "Bkmcsm6et",
+            "pinKey": "B1D1Wf2gY"
+          }
+        },
+        "HJlFmvTet": {
+          "id": "HJlFmvTet",
+          "input": {
+            "nodeId": "B13dQw6gF",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rJPXmDplF",
+            "pinKey": "rkBE-GheY"
+          }
+        },
+        "rJxsmD6eF": {
+          "id": "rJxsmD6eF",
+          "input": {
+            "nodeId": "rJPXmDplF",
+            "pinKey": "S1Gj7-znxY"
+          },
+          "output": {
+            "nodeId": "ByFKQPpgt",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "ryssQwpxK": {
+          "id": "ryssQwpxK",
+          "input": {
+            "nodeId": "HkBjXwTgt",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ByFKQPpgt",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "ByP-VwagY": {
+          "id": "ByP-VwagY",
+          "input": {
+            "nodeId": "SkA1EPaxY",
+            "pinKey": "S1Z8xG2xF"
+          },
+          "output": {
+            "nodeId": "BkZbVDpeK",
+            "pinKey": "__out__"
+          }
+        },
+        "BJhbVwagK": {
+          "id": "BJhbVwagK",
+          "input": {
+            "nodeId": "SkA1EPaxY",
+            "pinKey": "HyvpRbhgY"
+          },
+          "output": {
+            "nodeId": "HJ_337pgY",
+            "pinKey": "HkfIe1zneY"
+          }
+        },
+        "BJQrEPpxt": {
+          "id": "BJQrEPpxt",
+          "input": {
+            "nodeId": "SkA1EPaxY",
+            "pinKey": "rJKXCWhgF"
+          },
+          "output": {
+            "nodeId": "S16VVPpgY",
+            "pinKey": "__out__"
+          }
+        },
+        "BJLTVPTlK": {
+          "id": "BJLTVPTlK",
+          "input": {
+            "nodeId": "SkA1EPaxY",
+            "pinKey": "BJRe0bnlK"
+          },
+          "output": {
+            "nodeId": "rkKnNDTxt",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "Sy1puD6eY": {
+          "id": "Sy1puD6eY",
+          "input": {
+            "nodeId": "rkycdv6gF",
+            "pinKey": "HJXVzJfhlK"
+          },
+          "output": {
+            "nodeId": "SkA1EPaxY",
+            "pinKey": "Hk4rAW2gK"
+          }
+        },
+        "S1baOv6xY": {
+          "id": "S1baOv6xY",
+          "input": {
+            "nodeId": "H1griT7TeF",
+            "pinKey": "SJzo8MMnlt"
+          },
+          "output": {
+            "nodeId": "rkycdv6gF",
+            "pinKey": "HJMVGkMneK"
+          }
+        },
+        "rJ4EtPTgF": {
+          "id": "rJ4EtPTgF",
+          "input": {
+            "nodeId": "ryffFwTgt",
+            "pinKey": "r1ZVbbM2xK"
+          },
+          "output": {
+            "nodeId": "rJPXmDplF",
+            "pinKey": "Sy4sX-GnxY"
+          }
+        },
+        "rkINKvpet": {
+          "id": "rkINKvpet",
+          "input": {
+            "nodeId": "SJnV37axt",
+            "pinKey": "SJzo8MMnlt"
+          },
+          "output": {
+            "nodeId": "ryffFwTgt",
+            "pinKey": "SyVEZ-f2eF"
+          }
+        },
+        "ByzUtPTlY": {
+          "id": "ByzUtPTlY",
+          "input": {
+            "nodeId": "r1ZQtP6gt",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "ryffFwTgt",
+            "pinKey": "Hy7GZM2gt"
+          }
+        },
+        "rJcOtw6lF": {
+          "id": "rJcOtw6lF",
+          "input": {
+            "nodeId": "ryffFwTgt",
+            "pinKey": "B1G4--M3xK"
+          },
+          "output": {
+            "nodeId": "ByLPFDagF",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "ryFKYv6xF": {
+          "id": "ryFKYv6xF",
+          "input": {
+            "nodeId": "S1BtFDpgF",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ByLPFDagF",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "HkbnYD6eF": {
+          "id": "HkbnYD6eF",
+          "input": {
+            "nodeId": "rkycdv6gF",
+            "pinKey": "Bk-VG1G2lK"
+          },
+          "output": {
+            "nodeId": "S19qKPplK",
+            "pinKey": "__out__"
+          }
+        },
+        "rJyTKPTeY": {
+          "id": "rJyTKPTeY",
+          "input": {
+            "nodeId": "rkycdv6gF",
+            "pinKey": "rJ04xfnxK"
+          },
+          "output": {
+            "nodeId": "S1n2tvaeK",
+            "pinKey": "__out__"
+          }
+        },
+        "H1Ye9waeY": {
+          "id": "H1Ye9waeY",
+          "input": {
+            "nodeId": "ryffFwTgt",
+            "pinKey": "r14ZbzhlY"
+          },
+          "output": {
+            "nodeId": "S1Bg5w6gY",
+            "pinKey": "__out__"
+          }
+        },
+        "ryzNcwTlY": {
+          "id": "ryzNcwTlY",
+          "input": {
+            "nodeId": "rkycdv6gF",
+            "pinKey": "H1YN1GhxK"
+          },
+          "output": {
+            "nodeId": "SkLMqvTlY",
+            "pinKey": "H1wh06BEW"
+          }
+        },
+        "S1Q8YXq0lt": {
+          "id": "S1Q8YXq0lt",
+          "input": {
+            "nodeId": "BJUFQ5ClK",
+            "pinKey": "r1wiWzngt"
+          },
+          "output": {
+            "nodeId": "rkxLKXcCxY",
+            "pinKey": "__out__"
+          }
+        },
+        "BJN8KQ5AlF": {
+          "id": "BJN8KQ5AlF",
+          "input": {
+            "nodeId": "BJUFQ5ClK",
+            "pinKey": "r1vT-G3xK"
+          },
+          "output": {
+            "nodeId": "Sk-IKXcRlt",
+            "pinKey": "Bkf4BDsmV"
+          }
+        },
+        "HJrLF7qCeK": {
+          "id": "HJrLF7qCeK",
+          "input": {
+            "nodeId": "BJUFQ5ClK",
+            "pinKey": "SkcO-f3xt"
+          },
+          "output": {
+            "nodeId": "BJG8Y7q0gY",
+            "pinKey": "__out__"
+          }
+        },
+        "SJlj7qCxF": {
+          "id": "SJlj7qCxF",
+          "input": {
+            "nodeId": "rkGNm9ReY",
+            "pinKey": "SJnPez2lF"
+          },
+          "output": {
+            "nodeId": "BJUFQ5ClK",
+            "pinKey": "HkSC-Gngt"
+          }
+        },
+        "S1ve4cCxY": {
+          "id": "S1ve4cCxY",
+          "input": {
+            "nodeId": "HkZeE5Agt",
+            "pinKey": "SJzo8MMnlt"
+          },
+          "output": {
+            "nodeId": "rkGNm9ReY",
+            "pinKey": "Syc_xMnlY"
+          }
+        },
+        "rJcgNcCgK": {
+          "id": "rJcgNcCgK",
+          "input": {
+            "nodeId": "HkZeE5Agt",
+            "pinKey": "Hyo8MG2lt"
+          },
+          "output": {
+            "nodeId": "BJG8Y7q0gY",
+            "pinKey": "__out__"
+          }
+        },
+        "B1IbEcRlF": {
+          "id": "B1IbEcRlF",
+          "input": {
+            "nodeId": "rkGNm9ReY",
+            "pinKey": "S1o8lzheY"
+          },
+          "output": {
+            "nodeId": "BJG8Y7q0gY",
+            "pinKey": "__out__"
+          }
+        },
+        "BkoWjkJbK": {
+          "id": "BkoWjkJbK",
+          "input": {
+            "nodeId": "Bkmcsm6et",
+            "pinKey": "BkFVeG2lK"
+          },
+          "output": {
+            "nodeId": "SJIbs1kWF",
+            "pinKey": "__out__"
+          }
+        },
+        "ByN8jkkZY": {
+          "id": "ByN8jkkZY",
+          "input": {
+            "nodeId": "r1uD57axY",
+            "pinKey": "SkcO-f3xt"
+          },
+          "output": {
+            "nodeId": "BJCBs1kZK",
+            "pinKey": "__out__"
+          }
+        },
+        "rJcoPYCP5": {
+          "id": "rJcoPYCP5",
+          "output": {
+            "nodeId": "S15qDKAPq",
+            "pinKey": "B1x2RV3eZ"
+          },
+          "input": {
+            "nodeId": "ryffFwTgt",
+            "pinKey": "rkw2XKCw5"
+          }
+        }
+      },
+      "comments": {
+        "B1FYLqAxK": {
+          "content": "# Write\n\n---------------------",
+          "id": "B1FYLqAxK",
+          "position": {
+            "x": -17,
+            "y": -1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 14,
+            "units": "slots"
+          }
+        },
+        "B1OJv9Alt": {
+          "content": "# Read\n\n______",
+          "id": "B1OJv9Alt",
+          "position": {
+            "x": -28,
+            "y": -1,
+            "units": "slots"
+          },
+          "size": {
+            "width": 10,
+            "height": 1,
+            "units": "slots"
+          }
+        },
+        "SJ5Xw9CeF": {
+          "content": "# Clear\n\n------",
+          "id": "SJ5Xw9CeF",
+          "position": {
+            "x": -2,
+            "y": -1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 6,
+            "units": "slots"
+          }
+        },
+        "rkcb92VVt": {
+          "content": "# A tutorial on using the esp32-preferences can be found here: https://www.hackster.io/wayland2/access-esp32-non-volatile-storage-using-xod-252ec9",
+          "id": "rkcb92VVt",
+          "position": {
+            "x": -14,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 19,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example-store-retrieve",
+      "description": "Patch to demonstrate how to store and retrieve common datatypes (byte, number and string) from  NVS. Run in debug mode."
+    },
+    "@/get-byte": {
+      "nodes": {
+        "BkFVeG2lK": {
+          "description": "A preferences object.",
+          "label": "Prefs",
+          "id": "BkFVeG2lK",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-preferences"
+        },
+        "H1w5lGnlt": {
+          "id": "H1w5lGnlt",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJJoxfhet": {
+          "description": "Update",
+          "label": "UPD",
+          "id": "rJJoxfhet",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1ynez2eY": {
+          "description": "Key name. Limited to 15 chars.",
+          "label": "Key",
+          "id": "H1ynez2eY",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "B1yAez2xK": {
+          "description": "Byte retrieved from storage or 0 if key not found.",
+          "label": "Byte",
+          "id": "B1yAez2xK",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-byte"
+        },
+        "B1D1Wf2gY": {
+          "description": "Pulse on read.",
+          "label": "Done",
+          "id": "B1D1Wf2gY",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/get-byte",
+      "description": "Retrieve specified byte from currently open namespace. If record does not exist, the Byte pin will output 0.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto prefs = getValue<input_Prefs>(ctx);\n        auto xStringKey = getValue<input_Key>(ctx);\n        \n        int N=length(xStringKey);\n        if (N>15 || N<1) {\n            raiseError(ctx);\n            return;\n        }\n        N +=1;\n        char cStringKey[N];\n        for(int i=0;i<N;i++)\n            cStringKey[i]=0;\n        dump(xStringKey, cStringKey);\n\n        uint8_t byte = prefs -> getUChar(cStringKey, 0);\n\n        emitValue<output_Byte>(ctx, byte);\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-number": {
+      "nodes": {
+        "HksQ-znlY": {
+          "description": "A preferences object.",
+          "label": "Prefs",
+          "id": "HksQ-znlY",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-preferences"
+        },
+        "ryeo7WMnxK": {
+          "id": "ryeo7WMnxK",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJbsm-fnlY": {
+          "description": "Update",
+          "label": "UPD",
+          "id": "rJbsm-fnlY",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S1Gj7-znxY": {
+          "description": "Key name. Limited to 15 chars.",
+          "label": "Key",
+          "id": "S1Gj7-znxY",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Sy4sX-GnxY": {
+          "description": "Pulse on read.",
+          "label": "Done",
+          "id": "Sy4sX-GnxY",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rkBE-GheY": {
+          "description": "Number retrieved from storage or NAN if key not found.",
+          "label": "Num",
+          "id": "rkBE-GheY",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/get-number",
+      "description": "Retrieve specified number from currently open namespace. If record does not exist, the Num pin will output NaN.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto prefs = getValue<input_Prefs>(ctx);\n        auto xStringKey = getValue<input_Key>(ctx);\n\n        int N=length(xStringKey);\n        if (N>15 || N<1) {\n            raiseError(ctx);\n            return;\n        }\n        N +=1;\n        char cStringKey[N];\n        for(int i=0;i<N;i++)\n            cStringKey[i]=0;\n        dump(xStringKey, cStringKey);\n\n        float number = prefs -> getFloat(cStringKey, NAN);\n\n        emitValue<output_Num>(ctx, number);\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-string": {
+      "nodes": {
+        "r14ZbzhlY": {
+          "description": "A preferences object.",
+          "label": "Prefs",
+          "id": "r14ZbzhlY",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-preferences"
+        },
+        "Hkx4bbG3xY": {
+          "id": "Hkx4bbG3xY",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1ZVbbM2xK": {
+          "description": "Update",
+          "label": "UPD",
+          "id": "r1ZVbbM2xK",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "B1G4--M3xK": {
+          "description": "Key name. Limited to 15 chars.",
+          "label": "Key",
+          "id": "B1G4--M3xK",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SyVEZ-f2eF": {
+          "description": "Pulse on read.",
+          "label": "Done",
+          "id": "SyVEZ-f2eF",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hy7GZM2gt": {
+          "description": "String retrieved from storage (or \"NA\" if key doesn't exist).",
+          "label": "String",
+          "id": "Hy7GZM2gt",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "rkw2XKCw5": {
+          "id": "rkw2XKCw5",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Size",
+          "description": "Maximum size of string (number of bytes). Must be a constant value. Any changes during program execution will be ignored."
+        }
+      },
+      "path": "@/get-string",
+      "description": "Retrieve specified string from currently  open namespace. If record doesn't exist, the String pin will output \"NA\".",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    CStringView view;\n    char* cString;\n    size_t cap;\n\n    void evaluate(Context ctx) {\n        if (isSettingUp()) {\n            cap = getValue<input_Size>(ctx) + 1;\n            cString = new char[cap];\n            view = CStringView(cString);\n        }\n\n        if (isInputDirty<input_UPD>(ctx)) {\n            auto prefs = getValue<input_Prefs>(ctx);\n            auto xStringKey = getValue<input_Key>(ctx);\n            int N=length(xStringKey);\n            if (N>15 || N<1) {\n                raiseError(ctx);\n                return;\n            }\n            N +=1;\n            char cStringKey[N];\n            for(int i=0;i<N;i++)\n                cStringKey[i]=0;\n            dump(xStringKey, cStringKey);\n            String str = prefs -> getString(cStringKey, \"NA\");\n            int strLen = str.length() + 1;\n            str.toCharArray(cString, strLen);\n            emitValue<output_String>(ctx, XString(&view));\n            emitValue<output_Done>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/preferences": {
+      "nodes": {
+        "rJeudsKlt": {
+          "description": "Create a preferences object.",
+          "id": "rJeudsKlt",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJCZcsKgt": {
+          "description": "A preferences object.",
+          "label": "Prefs",
+          "id": "rJCZcsKgt",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/preferences",
+      "description": "Create a preferences object.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#include <Preferences.h>\n\nnode {\n    meta {\n        using Type = Preferences*;\n    }\n\n    Preferences prefs = Preferences();\n\n    void evaluate(Context ctx) {\n        // It should be evaluated only once on the first (setup) transaction\n        if (!isSettingUp())\n            return;\n        emitValue<output_Prefs>(ctx, &prefs);\n    }\n\n}\n"
+        }
+      ]
+    },
+    "@/put-byte": {
+      "nodes": {
+        "S18l1z3xt": {
+          "id": "S18l1z3xt",
+          "position": {
+            "x": -1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SyZIxJM3gF": {
+          "description": "Key name. Limited to 15 chars.",
+          "label": "Key",
+          "id": "SyZIxJM3gF",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "HkfIe1zneY": {
+          "description": "Pulse on write.",
+          "label": "Done",
+          "id": "HkfIe1zneY",
+          "position": {
+            "x": -1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r1QLx1G3eF": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "r1QLx1G3eF",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rklbkM2xK": {
+          "description": "Byte to be stored.",
+          "label": "Byte",
+          "id": "rklbkM2xK",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "Hy6xeM2lF": {
+          "description": "A preferences object.",
+          "label": "Prefs",
+          "id": "Hy6xeM2lF",
+          "position": {
+            "x": -1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-preferences"
+        }
+      },
+      "path": "@/put-byte",
+      "description": "Store a byte identifiable by Key in currently open namespace.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto prefs = getValue<input_Prefs>(ctx);\n        auto xStringKey = getValue<input_Key>(ctx);\n        uint8_t byte = getValue<input_Byte>(ctx);\n\n        int N=length(xStringKey);\n        if (N>15 || N<1) {\n            raiseError(ctx);\n            return;\n        }\n        N +=1;\n        char cStringKey[N];\n        for(int i=0;i<N;i++)\n            cStringKey[i]=0;\n        dump(xStringKey, cStringKey);\n\n        prefs -> putUChar(cStringKey, byte);\n\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/put-number": {
+      "nodes": {
+        "r1meRZngF": {
+          "id": "r1meRZngF",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BJRe0bnlK": {
+          "description": "Number to be stored.",
+          "label": "Num",
+          "id": "BJRe0bnlK",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJKXCWhgF": {
+          "description": "Key name. Limited to 15 chars.",
+          "label": "Key",
+          "id": "rJKXCWhgF",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Hk4rAW2gK": {
+          "description": "Pulse on write.",
+          "label": "Done",
+          "id": "Hk4rAW2gK",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HyvpRbhgY": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "HyvpRbhgY",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S1Z8xG2xF": {
+          "description": "A preferences object.",
+          "label": "Prefs",
+          "id": "S1Z8xG2xF",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-preferences"
+        }
+      },
+      "path": "@/put-number",
+      "description": "Store a number identifiable by Key in currently open namespace.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto prefs = getValue<input_Prefs>(ctx);\n        auto xStringKey = getValue<input_Key>(ctx);\n        float number = getValue<input_Num>(ctx);\n\n        int N=length(xStringKey);\n        if (N>15 || N<1) {\n            raiseError(ctx);\n            return;\n        }\n        N +=1;\n        char cStringKey[N];\n        for(int i=0;i<N;i++)\n            cStringKey[i]=0;\n        dump(xStringKey, cStringKey);\n\n        prefs -> putFloat(cStringKey, number);\n\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/remove": {
+      "nodes": {
+        "S1TiGz2lK": {
+          "description": "A preferences object.",
+          "label": "Prefs",
+          "id": "S1TiGz2lK",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-preferences"
+        },
+        "H1xajGzhet": {
+          "id": "H1xajGzhet",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJ-6sMMheY": {
+          "description": "Update",
+          "label": "UPD",
+          "id": "rJ-6sMMheY",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HyfpjMzhgK": {
+          "description": "Key name. Limited to 15 chars.",
+          "label": "Key",
+          "id": "HyfpjMzhgK",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "By4Tjzzhet": {
+          "description": "Pulse on removal.",
+          "label": "Done",
+          "id": "By4Tjzzhet",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/remove",
+      "description": "Remove the specified key-value pair from the open namespace.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto prefs = getValue<input_Prefs>(ctx);\n        auto xStringKey = getValue<input_Key>(ctx);\n        \n        int N=length(xStringKey);\n        if (N>15 || N<1) {\n            raiseError(ctx);\n            return;\n        }\n        N +=1;\n        char cStringKey[N];\n        for(int i=0;i<N;i++)\n            cStringKey[i]=0;\n        dump(xStringKey, cStringKey);\n\n        if (!prefs -> remove(cStringKey)) {\n            raiseError(ctx);\n            return;\n        }\n\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/put-string": {
+      "nodes": {
+        "SJEGyGnlF": {
+          "id": "SJEGyGnlF",
+          "position": {
+            "x": -1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Bk-VG1G2lK": {
+          "description": "Key name. Limited to 15 chars.",
+          "label": "Key",
+          "id": "Bk-VG1G2lK",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "HJMVGkMneK": {
+          "description": "Pulse on write.",
+          "label": "Done",
+          "id": "HJMVGkMneK",
+          "position": {
+            "x": -1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJXVzJfhlK": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "HJXVzJfhlK",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1YN1GhxK": {
+          "label": "String",
+          "id": "H1YN1GhxK",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "rJ04xfnxK": {
+          "description": "A preferences object.",
+          "label": "Prefs",
+          "id": "rJ04xfnxK",
+          "position": {
+            "x": -1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-preferences"
+        }
+      },
+      "path": "@/put-string",
+      "description": "Store a string identifiable by Key in currently open namespace.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto prefs = getValue<input_Prefs>(ctx);\n        auto xStringKey = getValue<input_Key>(ctx);\n        auto xString = getValue<input_String>(ctx);\n\n        int N=length(xStringKey);\n        if (N>15 || N<1) {\n            raiseError(ctx); \n            return;\n        }\n        N +=1;\n        char cStringKey[N];\n        for(int i=0;i<N;i++)\n            cStringKey[i]=0;\n        dump(xStringKey, cStringKey);\n\n        N=length(xString);\n        N +=1;\n        char cString[N];\n        for(int i=0;i<N;i++)\n            cString[i]=0;\n        dump(xString, cString);\n\n        prefs -> putString(cStringKey, cString);\n\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "license": "Apache-2.0",
+  "version": "0.0.5",
+  "description": "Save data (byte, number and string data types) to the non-volatile storage (NVS) of the ESP32. Wrapper for the ESP32 Preferences library (https://github.com/espressif/arduino-esp32/tree/master/libraries/Preferences). Tutorial on using the library: https://www.hackster.io/wayland2/access-esp32-non-volatile-storage-using-xod-252ec9",
+  "name": "esp32-preferences"
+}

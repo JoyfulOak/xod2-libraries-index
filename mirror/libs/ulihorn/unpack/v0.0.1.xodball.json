@@ -1,0 +1,71 @@
+{
+  "description": "test",
+  "license": "gpl",
+  "name": "unpack",
+  "patches": {
+    "@/main": {
+      "path": "@/main"
+    },
+    "@/unpack": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State { };\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // We use `auto` C++ keyword because the `Type` we defined earlier is in\n    // another namespace. The `auto` type instructs the C++ compiler to infer\n    // the actual type from a right-hand side expression and it will always\n    // match the custom type, be it an alias, struct, or class.\n    auto t = getValue<input_IN>(ctx);\n\n    // Now we can use the fetched value as usual. Perform some truncations\n    // and modulo divisions to convert seconds to hours, minutes, and seconds\n    emitValue<output_SEC>(ctx, fmod(t, 60));\n    emitValue<output_MIN>(ctx, fmod(trunc(t / 60), 60));\n    emitValue<output_HOUR>(ctx, trunc(t / 3600));\n}\n"
+        }
+      ],
+      "nodes": {
+        "Hk-6m9z24": {
+          "id": "Hk-6m9z24",
+          "type": "ulihorn/time/input-time",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SyKyVcfn4": {
+          "id": "SyKyVcfn4",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "HOUR"
+        },
+        "ryElN9G24": {
+          "id": "ryElN9G24",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "MIN"
+        },
+        "rJHeE5fnN": {
+          "id": "rJHeE5fnN",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "SEC"
+        },
+        "SJmXV9zn4": {
+          "id": "SJmXV9zn4",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/unpack"
+    }
+  },
+  "version": "0.0.1"
+}

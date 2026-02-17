@@ -1,0 +1,1535 @@
+{
+  "description": "DS18B20 digital temperature sensor. Enables use of multiple DS18B20 devices on a single one-wire bus. Wraps  https://github.com/milesburton/Arduino-Temperature-Control-Library and  https://github.com/PaulStoffregen/OneWire.",
+  "license": "GNU Lesser General Public License v2.1",
+  "name": "ds18b20",
+  "patches": {
+    "@/ds18b20-bus": {
+      "description": "Create a one-wire bus with one or more DS18B20 devices.",
+      "links": {
+        "S1aRqS84w": {
+          "id": "S1aRqS84w",
+          "input": {
+            "nodeId": "rJCwqHINv",
+            "pinKey": "BkqB_SBEP"
+          },
+          "output": {
+            "nodeId": "SJYOqSIND",
+            "pinKey": "__out__"
+          }
+        },
+        "S1bO9HUVv": {
+          "id": "S1bO9HUVv",
+          "input": {
+            "nodeId": "H1qv9r8NP",
+            "pinKey": "ry9wHtrEv"
+          },
+          "output": {
+            "nodeId": "rJCwqHINv",
+            "pinKey": "BJGPo_SEw"
+          }
+        },
+        "rJuRqrLVP": {
+          "id": "rJuRqrLVP",
+          "input": {
+            "nodeId": "HJLA5rUEv",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "H1qv9r8NP",
+            "pinKey": "HJTMXNrVv"
+          }
+        }
+      },
+      "nodes": {
+        "H1qv9r8NP": {
+          "id": "H1qv9r8NP",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/ds18b20-devices"
+        },
+        "HJLA5rUEv": {
+          "description": "One of more DS18B20 devices on a single one wire bus.",
+          "id": "HJLA5rUEv",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-ds18b20-devices"
+        },
+        "SJYOqSIND": {
+          "boundLiterals": {
+            "__out__": "D2"
+          },
+          "description": "Board port number.",
+          "id": "SJYOqSIND",
+          "label": "PORT",
+          "position": {
+            "x": 1,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rJCwqHINv": {
+          "id": "rJCwqHINv",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/one-wire-bus"
+        }
+      },
+      "path": "@/ds18b20-bus"
+    },
+    "@/ds18b20-devices": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/milesburton/Arduino-Temperature-Control-Library\"\n\n#include <DallasTemperature.h>\n\nnode {\n    meta {\n        using Type = DallasTemperature*;\n    }\n\n    uint8_t mem[sizeof(DallasTemperature)];\n\n    void evaluate(Context ctx) {\n        if (!isSettingUp()) return;\n\n        auto ow = getValue<input_OWB>(ctx);\n\n        Type sensors = new (mem) DallasTemperature(ow);\n\n        sensors->begin();\n\n        emitValue<output_DEV>(ctx, sensors);\n    }\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Create DS18B20 device(s) on a one-wire bus.",
+      "nodes": {
+        "HJTMXNrVv": {
+          "description": "One of more DS18B20 devices on a single one-wire bus.",
+          "id": "HJTMXNrVv",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": -6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "rJF4DQrEw": {
+          "description": "All ds18b20 devices on a single bus.",
+          "id": "rJF4DQrEw",
+          "position": {
+            "x": 0,
+            "y": -7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ry9wHtrEv": {
+          "description": "One-wire bus.",
+          "id": "ry9wHtrEv",
+          "label": "OWB",
+          "position": {
+            "x": 0,
+            "y": -8,
+            "units": "slots"
+          },
+          "type": "@/input-one-wire-bus"
+        }
+      },
+      "path": "@/ds18b20-devices"
+    },
+    "@/example-read-address": {
+      "comments": {
+        "HJRPzXYNP": {
+          "content": "The get-address node has index (IDX) set to 0, so it will read the address of the first device on the bus.",
+          "id": "HJRPzXYNP",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 7,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "This patch will read the address of the first (index 0) DS18B20 device on the bus.",
+      "links": {
+        "ByMXj9IEv": {
+          "id": "ByMXj9IEv",
+          "input": {
+            "nodeId": "rJl7i5U4P",
+            "pinKey": "Bk4WgcUVD"
+          },
+          "output": {
+            "nodeId": "HkBDy9I4v",
+            "pinKey": "HJLA5rUEv"
+          }
+        },
+        "Hy0bW1dEv": {
+          "id": "Hy0bW1dEv",
+          "input": {
+            "nodeId": "ryw2g0PNv",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rJl7i5U4P",
+            "pinKey": "BJYreAvNw"
+          }
+        },
+        "S1VFkcUVP": {
+          "id": "S1VFkcUVP",
+          "input": {
+            "nodeId": "SJJKy5L4w",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H1cPJ5LND",
+            "pinKey": "SkFj94BNv"
+          }
+        },
+        "S1pYJ9LED": {
+          "id": "S1pYJ9LED",
+          "input": {
+            "nodeId": "H1cPJ5LND",
+            "pinKey": "rJQYqEHVP"
+          },
+          "output": {
+            "nodeId": "HkBDy9I4v",
+            "pinKey": "HJLA5rUEv"
+          }
+        },
+        "ryGY19UEP": {
+          "id": "ryGY19UEP",
+          "input": {
+            "nodeId": "HJ-_1cUEw",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H1cPJ5LND",
+            "pinKey": "rybnlrSVw"
+          }
+        }
+      },
+      "nodes": {
+        "H1cPJ5LND": {
+          "boundLiterals": {
+            "H1R-erSNP": "On Boot"
+          },
+          "id": "H1cPJ5LND",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/get-device-count"
+        },
+        "HJ-_1cUEw": {
+          "id": "HJ-_1cUEw",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "HkBDy9I4v": {
+          "id": "HkBDy9I4v",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/ds18b20-bus"
+        },
+        "SJJKy5L4w": {
+          "id": "SJJKy5L4w",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "rJl7i5U4P": {
+          "boundLiterals": {
+            "Syi0b9I4v": "On Boot"
+          },
+          "id": "rJl7i5U4P",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/get-address"
+        },
+        "ryw2g0PNv": {
+          "id": "ryw2g0PNv",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 5,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        }
+      },
+      "path": "@/example-read-address"
+    },
+    "@/example-read-temp-multi-devices": {
+      "comments": {
+        "BkgC4mYED": {
+          "content": "Device A",
+          "id": "BkgC4mYED",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          }
+        },
+        "By50iXtVw": {
+          "content": "Optionally count number of devices on bus.",
+          "id": "By50iXtVw",
+          "position": {
+            "x": 19,
+            "y": -1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "H1lQs7FNv": {
+          "content": "Optionally set global resolution of temperature sensors.",
+          "id": "H1lQs7FNv",
+          "position": {
+            "x": 7,
+            "y": -1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "H1qIiQK4v": {
+          "content": "Use request-temperatures node to make sensors perform temperature conversion before reading temperature using get-temp-c node.",
+          "id": "H1qIiQK4v",
+          "position": {
+            "x": 12,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 8,
+            "units": "slots"
+          }
+        },
+        "Hkg4aLXYND": {
+          "content": "Device B",
+          "id": "Hkg4aLXYND",
+          "position": {
+            "x": 14,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          }
+        },
+        "Skxq68QtNP": {
+          "content": "Device C",
+          "id": "Skxq68QtNP",
+          "position": {
+            "x": 25,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "Patch to demonstrate reading temperature from multiple DS18B20 devices on a single one wire bus.",
+      "links": {
+        "B1xnD7KVw": {
+          "id": "B1xnD7KVw",
+          "input": {
+            "nodeId": "HJ5ov7KVv",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BJxKPQtNw",
+            "pinKey": "SJfL_GYNP"
+          }
+        },
+        "BJntIXKVP": {
+          "id": "BJntIXKVP",
+          "input": {
+            "nodeId": "HyEuq6P4P",
+            "pinKey": "By28PpvVP"
+          },
+          "output": {
+            "nodeId": "SyzILXt4w",
+            "pinKey": "__out__"
+          }
+        },
+        "BJwnPXYNv": {
+          "id": "BJwnPXYNv",
+          "input": {
+            "nodeId": "HJ96UQFNP",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BJiu8QYVw",
+            "pinKey": "SJeFPTw4P"
+          }
+        },
+        "Bk37nQKVw": {
+          "id": "Bk37nQKVw",
+          "input": {
+            "nodeId": "BypmrmFNP",
+            "pinKey": "rJQYqEHVP"
+          },
+          "output": {
+            "nodeId": "BkeUD7tEw",
+            "pinKey": "__out__"
+          }
+        },
+        "BkIo9pD4P": {
+          "id": "BkIo9pD4P",
+          "input": {
+            "nodeId": "ryfo9avVD",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "HyEuq6P4P",
+            "pinKey": "SJeFPTw4P"
+          }
+        },
+        "BkS2vmYVv": {
+          "id": "BkS2vmYVv",
+          "input": {
+            "nodeId": "HJETU7KVw",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "Bk5vU7t4P",
+            "pinKey": "SJeFPTw4P"
+          }
+        },
+        "BkfiU7YEP": {
+          "id": "BkfiU7YEP",
+          "input": {
+            "nodeId": "SJ05UQYED",
+            "pinKey": "r1wghpPNP"
+          },
+          "output": {
+            "nodeId": "HkaB8mtVD",
+            "pinKey": "__out__"
+          }
+        },
+        "Byun8QYEP": {
+          "id": "Byun8QYEP",
+          "input": {
+            "nodeId": "Bk5vU7t4P",
+            "pinKey": "rJ3j86vED"
+          },
+          "output": {
+            "nodeId": "HyEuq6P4P",
+            "pinKey": "HJycP6DVD"
+          }
+        },
+        "H1283QKNP": {
+          "id": "H1283QKNP",
+          "input": {
+            "nodeId": "S1trDQYNv",
+            "pinKey": "HydxLfFEP"
+          },
+          "output": {
+            "nodeId": "rkFtq6PVD",
+            "pinKey": "HJLA5rUEv"
+          }
+        },
+        "HJinUXtEP": {
+          "id": "HJinUXtEP",
+          "input": {
+            "nodeId": "BJiu8QYVw",
+            "pinKey": "rJ3j86vED"
+          },
+          "output": {
+            "nodeId": "Bk5vU7t4P",
+            "pinKey": "HJycP6DVD"
+          }
+        },
+        "HyxShmY4v": {
+          "id": "HyxShmY4v",
+          "input": {
+            "nodeId": "ry8N27KVw",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BypmrmFNP",
+            "pinKey": "rybnlrSVw"
+          }
+        },
+        "SyHnImK4w": {
+          "id": "SyHnImK4w",
+          "input": {
+            "nodeId": "HyEuq6P4P",
+            "pinKey": "rJ3j86vED"
+          },
+          "output": {
+            "nodeId": "SJ05UQYED",
+            "pinKey": "HknNhTDEv"
+          }
+        },
+        "SyWSh7YED": {
+          "id": "SyWSh7YED",
+          "input": {
+            "nodeId": "By9V3mKVv",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BypmrmFNP",
+            "pinKey": "SkFj94BNv"
+          }
+        },
+        "r1dFLXKED": {
+          "id": "r1dFLXKED",
+          "input": {
+            "nodeId": "BJiu8QYVw",
+            "pinKey": "By28PpvVP"
+          },
+          "output": {
+            "nodeId": "BkhHLmYNw",
+            "pinKey": "__out__"
+          }
+        },
+        "rJ5PH7K4D": {
+          "id": "rJ5PH7K4D",
+          "input": {
+            "nodeId": "BJpIH7F4P",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkFtq6PVD",
+            "pinKey": "HJLA5rUEv"
+          }
+        },
+        "rkJwnQYNw": {
+          "id": "rkJwnQYNw",
+          "input": {
+            "nodeId": "BJxKPQtNw",
+            "pinKey": "ryY4HGFNv"
+          },
+          "output": {
+            "nodeId": "rkFtq6PVD",
+            "pinKey": "HJLA5rUEv"
+          }
+        },
+        "rkmK87tED": {
+          "id": "rkmK87tED",
+          "input": {
+            "nodeId": "Bk5vU7t4P",
+            "pinKey": "By28PpvVP"
+          },
+          "output": {
+            "nodeId": "ByQdrQt4w",
+            "pinKey": "__out__"
+          }
+        },
+        "ry6KD7YNv": {
+          "id": "ry6KD7YNv",
+          "input": {
+            "nodeId": "BJxKPQtNw",
+            "pinKey": "B1x_Bft4v"
+          },
+          "output": {
+            "nodeId": "S1trDQYNv",
+            "pinKey": "Syq-uzF4D"
+          }
+        }
+      },
+      "nodes": {
+        "BJiu8QYVw": {
+          "boundLiterals": {
+            "Byxs2I6DVw": "05h",
+            "Hki3I6wVP": "4Fh",
+            "Hy62U6wEv": "19h",
+            "SJ5HvTDVP": "6Eh",
+            "Skn3I6wVw": "B2h",
+            "Sygn3I6PNv": "3Ch",
+            "r1yaITPVw": "01h",
+            "rkIn8pPEw": "28h"
+          },
+          "id": "BJiu8QYVw",
+          "position": {
+            "x": 23,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/get-temp-c"
+        },
+        "BJpIH7F4P": {
+          "id": "BJpIH7F4P",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "BJxKPQtNw": {
+          "id": "BJxKPQtNw",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/get-resolution"
+        },
+        "Bk5vU7t4P": {
+          "boundLiterals": {
+            "Byxs2I6DVw": "65h",
+            "Hki3I6wVP": "44h",
+            "Hy62U6wEv": "19h",
+            "SJ5HvTDVP": "A4h",
+            "Skn3I6wVw": "A8h",
+            "Sygn3I6PNv": "3Ch",
+            "r1yaITPVw": "01h",
+            "rkIn8pPEw": "28h"
+          },
+          "id": "Bk5vU7t4P",
+          "position": {
+            "x": 12,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/get-temp-c"
+        },
+        "BkeUD7tEw": {
+          "id": "BkeUD7tEw",
+          "label": "DEV",
+          "position": {
+            "x": 16,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "BkhHLmYNw": {
+          "id": "BkhHLmYNw",
+          "label": "DEV",
+          "position": {
+            "x": 23,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "By9V3mKVv": {
+          "id": "By9V3mKVv",
+          "position": {
+            "x": 17,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "ByQdrQt4w": {
+          "id": "ByQdrQt4w",
+          "label": "DEV",
+          "position": {
+            "x": 11,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "BypmrmFNP": {
+          "id": "BypmrmFNP",
+          "position": {
+            "x": 16,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "@/get-device-count"
+        },
+        "HJ5ov7KVv": {
+          "id": "HJ5ov7KVv",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "HJ96UQFNP": {
+          "id": "HJ96UQFNP",
+          "position": {
+            "x": 23,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "HJETU7KVw": {
+          "id": "HJETU7KVw",
+          "position": {
+            "x": 12,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "HkaB8mtVD": {
+          "id": "HkaB8mtVD",
+          "label": "DEV",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HyEuq6P4P": {
+          "boundLiterals": {
+            "Byxs2I6DVw": "85h",
+            "Hki3I6wVP": "49h",
+            "Hy62U6wEv": "19h",
+            "SJ5HvTDVP": "B8h",
+            "Skn3I6wVw": "C0h",
+            "Sygn3I6PNv": "3Ch",
+            "r1yaITPVw": "01h",
+            "rkIn8pPEw": "28h"
+          },
+          "id": "HyEuq6P4P",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/get-temp-c"
+        },
+        "S1trDQYNv": {
+          "boundLiterals": {
+            "Hkoz8zYVv": "10d"
+          },
+          "id": "S1trDQYNv",
+          "position": {
+            "x": 4,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "@/set-resolution"
+        },
+        "SJ05UQYED": {
+          "boundLiterals": {
+            "SJ672aDNv": "Continuously"
+          },
+          "id": "SJ05UQYED",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/request-temperatures"
+        },
+        "SyzILXt4w": {
+          "id": "SyzILXt4w",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rkFtq6PVD": {
+          "id": "rkFtq6PVD",
+          "position": {
+            "x": 1,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "@/ds18b20-bus"
+        },
+        "ry8N27KVw": {
+          "id": "ry8N27KVw",
+          "position": {
+            "x": 16,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "ryfo9avVD": {
+          "id": "ryfo9avVD",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        }
+      },
+      "path": "@/example-read-temp-multi-devices"
+    },
+    "@/get-address": {
+      "attachments": [
+        {
+          "content": "\nnode {\n    char str[32];\n    CStringView view = CStringView(str);\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sensors = getValue<input_DEV>(ctx);\n        uint8_t idx = getValue<input_IDX>(ctx);\n        \n        DeviceAddress devAddr;\n        sensors->getAddress(devAddr, idx);\n\n        sprintf(str, \"%02Xh-%02Xh-%02Xh-%02Xh-%02Xh-%02Xh-%02Xh-%02Xh\",\n                devAddr[0], devAddr[1], devAddr[2], devAddr[3],\n                devAddr[4], devAddr[5], devAddr[6], devAddr[7]);\n\n        emitValue<output_ADDR>(ctx, XString(&view));        \n        \n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Get address of DS18B20 device at specified index (IDX).",
+      "nodes": {
+        "B1YgxcUNw": {
+          "id": "B1YgxcUNw",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BJYreAvNw": {
+          "description": "Address of DS18B20 device.",
+          "id": "BJYreAvNw",
+          "label": "ADDR",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "Bk4WgcUVD": {
+          "description": "One or more DS18B20 temperature sensors on a single one-wire bus.",
+          "id": "Bk4WgcUVD",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ds18b20-devices"
+        },
+        "H1Yug98Ev": {
+          "description": "Index of device on bus. Choose 0 for first device on bus.",
+          "id": "H1Yug98Ev",
+          "label": "IDX",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Syi0b9I4v": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Update.",
+          "id": "Syi0b9I4v",
+          "label": "UPD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1SGg7OEP": {
+          "description": "Pulse on read of address.",
+          "id": "r1SGg7OEP",
+          "label": "DONE",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/get-address"
+    },
+    "@/get-device-count": {
+      "attachments": [
+        {
+          "content": "\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sensors = getValue<input_DEV>(ctx);\n        emitValue<output_Ndev>(ctx, sensors->getDeviceCount());\n        emitValue<output_Ntemp>(ctx, sensors->getDS18Count());\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Count number of devices on the bus.",
+      "nodes": {
+        "H1R-erSNP": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Update.",
+          "id": "H1R-erSNP",
+          "label": "UPD",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HyCBxBB4v": {
+          "description": "Pulse when finished counting.",
+          "id": "HyCBxBB4v",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SkFj94BNv": {
+          "description": "Number of DS18B20 temperature sensors on the one-wire bus.",
+          "id": "SkFj94BNv",
+          "label": "Ntemp",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rJLgUtBNv": {
+          "id": "rJLgUtBNv",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJQYqEHVP": {
+          "description": "One or more DS18B20 temperature sensors on a single one-wire bus.",
+          "id": "rJQYqEHVP",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ds18b20-devices"
+        },
+        "rybnlrSVw": {
+          "description": "Number of devices on the one-wire bus. Includes non-DS18B20 devices.",
+          "id": "rybnlrSVw",
+          "label": "Ndev",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/get-device-count"
+    },
+    "@/get-resolution": {
+      "attachments": [
+        {
+          "content": "\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sensors = getValue<input_DEV>(ctx);\n\n        emitValue<output_RES>(ctx, sensors->getResolution());\n\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Read global resolution.",
+      "nodes": {
+        "B1x_Bft4v": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Update.",
+          "id": "B1x_Bft4v",
+          "label": "UPD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkTdrfF4v": {
+          "description": "Pulse on read of global resolution.",
+          "id": "BkTdrfF4v",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HkyNrMFVv": {
+          "id": "HkyNrMFVv",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJfL_GYNP": {
+          "boundLiterals": {
+            "__in__": "00d"
+          },
+          "description": "Resolution (bits): 9d = 9 bits, 10d = 10 bits, 11d = 11 bits, 12d = 12 bits.",
+          "id": "SJfL_GYNP",
+          "label": "RES",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-byte"
+        },
+        "ryY4HGFNv": {
+          "description": "One or more DS18B20 devices on a single one-wire bus.",
+          "id": "ryY4HGFNv",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ds18b20-devices"
+        }
+      },
+      "path": "@/get-resolution"
+    },
+    "@/get-temp-c": {
+      "attachments": [
+        {
+          "content": "\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sensors = getValue<input_DEV>(ctx);\n                \n        DeviceAddress devAddr;\n        devAddr[0] = getValue<input_ADDR0>(ctx);\n        devAddr[1] = getValue<input_ADDR1>(ctx);\n        devAddr[2] = getValue<input_ADDR2>(ctx);\n        devAddr[3] = getValue<input_ADDR3>(ctx);\n        devAddr[4] = getValue<input_ADDR4>(ctx);\n        devAddr[5] = getValue<input_ADDR5>(ctx);\n        devAddr[6] = getValue<input_ADDR6>(ctx);\n        devAddr[7] = getValue<input_ADDR7>(ctx);\n\n        emitValue<output_TempC>(ctx, sensors->getTempC(devAddr));\n        emitValue<output_DONE>(ctx, 1);\n\n    }\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Get temperature of DS18B20 device with specified address.  Ask all DS18B20 devices on the bus to perform a temperature conversion using request-temperatures node.",
+      "nodes": {
+        "By28PpvVP": {
+          "description": "One of more DS18B20 devices on a singe one-wire bus.",
+          "id": "By28PpvVP",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ds18b20-devices"
+        },
+        "Byxs2I6DVw": {
+          "description": "3rd byte of address.",
+          "id": "Byxs2I6DVw",
+          "label": "ADDR2",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HJmiITPVP": {
+          "id": "HJmiITPVP",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJycP6DVD": {
+          "description": "Pulse on read of temperature.",
+          "id": "HJycP6DVD",
+          "label": "DONE",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hki3I6wVP": {
+          "description": "2nd byte of address.",
+          "id": "Hki3I6wVP",
+          "label": "ADDR1",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "Hy62U6wEv": {
+          "description": "6th byte of address.",
+          "id": "Hy62U6wEv",
+          "label": "ADDR5",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SJ5HvTDVP": {
+          "description": "8th byte of address.",
+          "id": "SJ5HvTDVP",
+          "label": "ADDR7",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SJeFPTw4P": {
+          "description": "Temperature in degrees Celsius.",
+          "id": "SJeFPTw4P",
+          "label": "TempC",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "Skn3I6wVw": {
+          "description": "4th byte of address.",
+          "id": "Skn3I6wVw",
+          "label": "ADDR3",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "Sygn3I6PNv": {
+          "description": "5th byte of address.",
+          "id": "Sygn3I6PNv",
+          "label": "ADDR4",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "r1yaITPVw": {
+          "description": "7th byte of address.",
+          "id": "r1yaITPVw",
+          "label": "ADDR6",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "rJ3j86vED": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Update",
+          "id": "rJ3j86vED",
+          "label": "UPD",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkIn8pPEw": {
+          "description": "1st byte of address.",
+          "id": "rkIn8pPEw",
+          "label": "ADDR0",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/get-temp-c"
+    },
+    "@/get-temp-f": {
+      "attachments": [
+        {
+          "content": "\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sensors = getValue<input_DEV>(ctx);\n                \n        DeviceAddress devAddr;\n        devAddr[0] = getValue<input_ADDR0>(ctx);\n        devAddr[1] = getValue<input_ADDR1>(ctx);\n        devAddr[2] = getValue<input_ADDR2>(ctx);\n        devAddr[3] = getValue<input_ADDR3>(ctx);\n        devAddr[4] = getValue<input_ADDR4>(ctx);\n        devAddr[5] = getValue<input_ADDR5>(ctx);\n        devAddr[6] = getValue<input_ADDR6>(ctx);\n        devAddr[7] = getValue<input_ADDR7>(ctx);\n        \n        emitValue<output_TempF>(ctx, sensors->getTempF(devAddr));\n        emitValue<output_DONE>(ctx, 1);\n\n    }\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Get temperature of DS18B20 device with specified address.  ",
+      "nodes": {
+        "By28PpvVP": {
+          "description": "One of more DS18B20 devices on a singe one-wire bus.",
+          "id": "By28PpvVP",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ds18b20-devices"
+        },
+        "Byxs2I6DVw": {
+          "description": "3rd byte of address.",
+          "id": "Byxs2I6DVw",
+          "label": "ADDR2",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HJmiITPVP": {
+          "id": "HJmiITPVP",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJycP6DVD": {
+          "description": "Pulse on read of temperature.",
+          "id": "HJycP6DVD",
+          "label": "DONE",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hki3I6wVP": {
+          "description": "2nd byte of address.",
+          "id": "Hki3I6wVP",
+          "label": "ADDR1",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "Hy62U6wEv": {
+          "description": "6th byte of address.",
+          "id": "Hy62U6wEv",
+          "label": "ADDR5",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SJ5HvTDVP": {
+          "description": "8th byte of address.",
+          "id": "SJ5HvTDVP",
+          "label": "ADDR7",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SJeFPTw4P": {
+          "description": "Temperature in degrees Fahrenheit.",
+          "id": "SJeFPTw4P",
+          "label": "TempF",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "Skn3I6wVw": {
+          "description": "4th byte of address.",
+          "id": "Skn3I6wVw",
+          "label": "ADDR3",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "Sygn3I6PNv": {
+          "description": "5th byte of address.",
+          "id": "Sygn3I6PNv",
+          "label": "ADDR4",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "r1yaITPVw": {
+          "description": "7th byte of address.",
+          "id": "r1yaITPVw",
+          "label": "ADDR6",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "rJ3j86vED": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Update",
+          "id": "rJ3j86vED",
+          "label": "UPD",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkIn8pPEw": {
+          "description": "1st byte of address.",
+          "id": "rkIn8pPEw",
+          "label": "ADDR0",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/get-temp-f"
+    },
+    "@/one-wire-bus": {
+      "attachments": [
+        {
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/PaulStoffregen/OneWire\"\n\n//Include C++ libraries\n#include <OneWire.h>\n\n// Define our custom type as a pointer on the class instance.\nusing Type = OneWire*;\n\nnode {\n\n    meta {\n        using Type = OneWire*;\n    }\n\n    static_assert(isValidDigitalPort(constant_input_PORT), \"must be a valid digital port\");\n\n    OneWire ow = OneWire(constant_input_PORT);\n\n    void evaluate(Context ctx) {\n        if (!isSettingUp()) return;\n\n        emitValue<output_OWB>(ctx, &ow);\n    }\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Create a one-wire bus.",
+      "nodes": {
+        "BJGPo_SEw": {
+          "description": "One-wire bus.",
+          "id": "BJGPo_SEw",
+          "label": "OWB",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "BkqB_SBEP": {
+          "boundLiterals": {
+            "__out__": "D2"
+          },
+          "description": "Board port number.",
+          "id": "BkqB_SBEP",
+          "label": "PORT",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HJyn4BrEP": {
+          "id": "HJyn4BrEP",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/one-wire-bus"
+    },
+    "@/request-temperatures": {
+      "attachments": [
+        {
+          "content": "\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sensors = getValue<input_DEV>(ctx);\n        sensors->requestTemperatures();\n \n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Sends command for all devices on the bus to perform a temperature conversion.",
+      "nodes": {
+        "HknNhTDEv": {
+          "description": "Pulse when request has been made.",
+          "id": "HknNhTDEv",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hyoy3aDNP": {
+          "id": "Hyoy3aDNP",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJ672aDNv": {
+          "description": "Update.",
+          "id": "SJ672aDNv",
+          "label": "UPD",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1wghpPNP": {
+          "description": "One or more DS18B20 devices on a one-wire bus.",
+          "id": "r1wghpPNP",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ds18b20-devices"
+        }
+      },
+      "path": "@/request-temperatures"
+    },
+    "@/set-resolution": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sensors = getValue<input_DEV>(ctx);\n        \n        sensors->setResolution(getValue<input_RES>(ctx));\n\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "description": "Set resolution of all DS18B20 devices on the bus. ",
+      "nodes": {
+        "BJllUMFNw": {
+          "id": "BJllUMFNw",
+          "position": {
+            "x": -15,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Hkoz8zYVv": {
+          "boundLiterals": {
+            "__out__": "12d"
+          },
+          "description": "Resolution (bits). Options: 9d = 9 bits, 10d = 10 bits, 11d = 11 bits, 12d = 12 bits. If new resolution is out of range, 9 bits is used.",
+          "id": "Hkoz8zYVv",
+          "label": "RES",
+          "position": {
+            "x": -14,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HydxLfFEP": {
+          "description": "One or more DS18B20 devices on a single one-wire bus.",
+          "id": "HydxLfFEP",
+          "label": "DEV",
+          "position": {
+            "x": -15,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "@/input-ds18b20-devices"
+        },
+        "Syq-uzF4D": {
+          "description": "Pulse when resolution set.",
+          "id": "Syq-uzF4D",
+          "label": "DONE",
+          "position": {
+            "x": -15,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rymyuGtVw": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Update.",
+          "id": "rymyuGtVw",
+          "label": "UPD",
+          "position": {
+            "x": -13,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/set-resolution"
+    }
+  },
+  "version": "0.0.4"
+}

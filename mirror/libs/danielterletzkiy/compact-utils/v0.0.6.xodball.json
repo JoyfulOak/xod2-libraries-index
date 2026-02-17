@@ -1,0 +1,2034 @@
+{
+  "description": "NEW: Now feature Rotary Encoder with Button!\nI have made some Compact Versions of some things that i frequently used in my projects.\nInfo: Will install marcoaita/malibrary for the Buzzer Node\n",
+  "name": "compact-utils",
+  "patches": {
+    "@/1602-lcd-backlight": {
+      "attachments": [
+        {
+          "content": "\n{{#global}}\n#include <LiquidCrystal.h>\n{{/global}}\n\nstruct State {\n    LiquidCrystal* lcd;\n};\n\n{{ GENERATED_CODE }}\n\nvoid printLine(LiquidCrystal* lcd, uint8_t lineIndex, XString str) {\n    lcd->setCursor(0, lineIndex);\n    uint8_t whitespace = 16;\n    for (auto it = str->iterate(); it; ++it, --whitespace)\n        lcd->write(*it);\n\n    // Clear the rest of the line\n    while (whitespace--)\n        lcd->write(' ');\n}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    State* state = getState(ctx);\n    auto lcd = state->lcd;\n    if (!state->lcd) {\n        state->lcd = lcd = new LiquidCrystal(\n            (int)getValue<input_RS>(ctx),\n            (int)getValue<input_EN>(ctx),\n            (int)getValue<input_D4>(ctx),\n            (int)getValue<input_D5>(ctx),\n            (int)getValue<input_D6>(ctx),\n            (int)getValue<input_D7>(ctx));\n\n        lcd->begin(16, 2);\n    }\n\n    printLine(lcd, 0, getValue<input_L1>(ctx));\n    printLine(lcd, 1, getValue<input_L2>(ctx));\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "links": {
+        "H1peLqscN": {
+          "id": "H1peLqscN",
+          "input": {
+            "nodeId": "rkphrqiq4",
+            "pinKey": "BygApTqym"
+          },
+          "output": {
+            "nodeId": "SJcx89i5E",
+            "pinKey": "__out__"
+          }
+        },
+        "HyQ1L5jc4": {
+          "id": "HyQ1L5jc4",
+          "input": {
+            "nodeId": "rkphrqiq4",
+            "pinKey": "rJjXFA9JQ"
+          },
+          "output": {
+            "nodeId": "SkcpS9s5E",
+            "pinKey": "__out__"
+          }
+        },
+        "HytzL9j9E": {
+          "id": "HytzL9j9E",
+          "input": {
+            "nodeId": "H1mM89i9N",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkphrqiq4",
+            "pinKey": "rJl2TqpqyX"
+          }
+        },
+        "SJogIqicE": {
+          "id": "SJogIqicE",
+          "input": {
+            "nodeId": "rkphrqiq4",
+            "pinKey": "HJ6HsEngZ"
+          },
+          "output": {
+            "nodeId": "BkSxI5ocN",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "B1Q8DHqi5E": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers new write",
+          "id": "B1Q8DHqi5E",
+          "label": "UPD",
+          "position": {
+            "x": 16,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkSxI5ocN": {
+          "description": "Turn BK off and on",
+          "id": "BkSxI5ocN",
+          "label": "BK stat",
+          "position": {
+            "x": 20,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "ByBUPScjcE": {
+          "description": "Fires when write is done",
+          "id": "ByBUPScjcE",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "H1mM89i9N": {
+          "description": "BK ERROR",
+          "id": "H1mM89i9N",
+          "label": "ERR",
+          "position": {
+            "x": 22,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJF8vBcs54": {
+          "description": "Board GPIO port with LCD D7 pin",
+          "id": "HJF8vBcs54",
+          "label": "D7",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Hk4Ivrqo94": {
+          "description": "Board GPIO port with LCD D5 pin",
+          "id": "Hk4Ivrqo94",
+          "label": "D5",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SJLvBcoqV": {
+          "description": "Text for the first line",
+          "id": "SJLvBcoqV",
+          "label": "L1",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SJcx89i5E": {
+          "description": "Pulses to change value",
+          "id": "SJcx89i5E",
+          "label": "BK PULS",
+          "position": {
+            "x": 22,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkcpS9s5E": {
+          "boundLiterals": {
+            "__out__": "D10"
+          },
+          "description": "Backlight PIN",
+          "id": "SkcpS9s5E",
+          "label": "BK",
+          "position": {
+            "x": 18,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SyOUvrqjqE": {
+          "description": "Board GPIO port with LCD RS pin",
+          "id": "SyOUvrqjqE",
+          "label": "RS",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "r1G8vrqi5N": {
+          "description": "Board GPIO port with LCD D6 pin",
+          "id": "r1G8vrqi5N",
+          "label": "D6",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "r1UUDH5s54": {
+          "description": "Board GPIO port with LCD EN pin",
+          "id": "r1UUDH5s54",
+          "label": "EN",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rkW8wScoc4": {
+          "description": "Text for the second line",
+          "id": "rkW8wScoc4",
+          "label": "L2",
+          "position": {
+            "x": 14,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "rkeIDrqjqV": {
+          "description": "Board GPIO port with LCD D4 pin",
+          "id": "rkeIDrqjqV",
+          "label": "D4",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rkphrqiq4": {
+          "id": "rkphrqiq4",
+          "position": {
+            "x": 18,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/gpio/digital-write"
+        },
+        "ryw8DH9sqV": {
+          "id": "ryw8DH9sqV",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/1602-lcd-backlight"
+    },
+    "@/compact-number-check": {
+      "description": "Checks if Number is equal to the other and outputs in pulses of true and false",
+      "links": {
+        "BJd3m-EqcV": {
+          "id": "BJd3m-EqcV",
+          "input": {
+            "nodeId": "rJMnQZEcqV",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkQhm-E59V",
+            "pinKey": "H1E8AuSPkZ"
+          }
+        },
+        "Hyi37bV9qV": {
+          "id": "Hyi37bV9qV",
+          "input": {
+            "nodeId": "rkQhm-E59V",
+            "pinKey": "HJG8C_SPkb"
+          },
+          "output": {
+            "nodeId": "B1hQbNqcN",
+            "pinKey": "__out__"
+          }
+        },
+        "SkI3mZVc94": {
+          "id": "SkI3mZVc94",
+          "input": {
+            "nodeId": "HJlhQ-V55V",
+            "pinKey": "H1v3lCu8-"
+          },
+          "output": {
+            "nodeId": "rkQhm-E59V",
+            "pinKey": "H1E8AuSPkZ"
+          }
+        },
+        "SkY2QW4cqN": {
+          "id": "SkY2QW4cqN",
+          "input": {
+            "nodeId": "BJH2mb49qV",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HJlhQ-V55V",
+            "pinKey": "BJxRgAO8-"
+          }
+        },
+        "Skc2Q-Nq9V": {
+          "id": "Skc2Q-Nq9V",
+          "input": {
+            "nodeId": "rkQhm-E59V",
+            "pinKey": "rJXICuSwyW"
+          },
+          "output": {
+            "nodeId": "rJbn7Z4554",
+            "pinKey": "__out__"
+          }
+        },
+        "rkPnXW49c4": {
+          "id": "rkPnXW49c4",
+          "input": {
+            "nodeId": "HkVhQWE95E",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJMnQZEcqV",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "B1hQbNqcN": {
+          "description": "Number that will be equal",
+          "id": "B1hQbNqcN",
+          "label": "EQ",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJH2mb49qV": {
+          "description": "Outputs False",
+          "id": "BJH2mb49qV",
+          "label": "FA",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJlhQ-V55V": {
+          "id": "HJlhQ-V55V",
+          "label": "False",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-false"
+        },
+        "HkVhQWE95E": {
+          "description": "Outputs True",
+          "id": "HkVhQWE95E",
+          "label": "TR",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJMnQZEcqV": {
+          "id": "rJMnQZEcqV",
+          "label": "True",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-true"
+        },
+        "rJbn7Z4554": {
+          "description": "Number to be checked\n",
+          "id": "rJbn7Z4554",
+          "label": "NO",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkQhm-E59V": {
+          "boundLiterals": {
+            "HJG8C_SPkb": "1"
+          },
+          "id": "rkQhm-E59V",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/equal"
+        }
+      },
+      "path": "@/compact-number-check"
+    },
+    "@/compact-rtc-all-inclusive": {
+      "description": "Reads from RTC device.\nOUTPUTS: Hour:Minute:Seconds\nYou can change the spcers between the Numbers with the SYM PIN.",
+      "links": {
+        "BJNBq459N": {
+          "id": "BJNBq459N",
+          "input": {
+            "nodeId": "HkB9YE9qV",
+            "pinKey": "SJye9EcqE"
+          },
+          "output": {
+            "nodeId": "S18Q5Vq5N",
+            "pinKey": "__out__"
+          }
+        },
+        "H1Xr5Eq9N": {
+          "id": "H1Xr5Eq9N",
+          "input": {
+            "nodeId": "ByVHqtN55V",
+            "pinKey": "rytlTcNErP7"
+          },
+          "output": {
+            "nodeId": "rJF7cEc5V",
+            "pinKey": "__out__"
+          }
+        },
+        "H1zo5N95N": {
+          "id": "H1zo5N95N",
+          "input": {
+            "nodeId": "H1dF5E594",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HkB9YE9qV",
+            "pinKey": "BJ8R7gVq9E"
+          }
+        },
+        "HJvsKE5qV": {
+          "id": "HJvsKE5qV",
+          "input": {
+            "nodeId": "HkB9YE9qV",
+            "pinKey": "S1Q0mgN5cN"
+          },
+          "output": {
+            "nodeId": "BylS5FN95V",
+            "pinKey": "BJZls0g7DQ"
+          }
+        },
+        "HkPBcKVq5V": {
+          "id": "HkPBcKVq5V",
+          "input": {
+            "nodeId": "BylS5FN95V",
+            "pinKey": "rkCYRgQDm"
+          },
+          "output": {
+            "nodeId": "ByVHqtN55V",
+            "pinKey": "B1ZM_yx_7"
+          }
+        },
+        "r16hcV994": {
+          "id": "r16hcV994",
+          "input": {
+            "nodeId": "HkC45E594",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ByVHqtN55V",
+            "pinKey": "By4a5VEBDX"
+          }
+        },
+        "r1uiKEqcE": {
+          "id": "r1uiKEqcE",
+          "input": {
+            "nodeId": "HkB9YE9qV",
+            "pinKey": "HkGCXlNccN"
+          },
+          "output": {
+            "nodeId": "BylS5FN95V",
+            "pinKey": "r1MljClXPm"
+          }
+        },
+        "rJC3cN5cE": {
+          "id": "rJC3cN5cE",
+          "input": {
+            "nodeId": "r1TVcNc54",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ByVHqtN55V",
+            "pinKey": "Bk1-TcV4HDX"
+          }
+        },
+        "rJtitN554": {
+          "id": "rJtitN554",
+          "input": {
+            "nodeId": "HkB9YE9qV",
+            "pinKey": "r1NCQlN9c4"
+          },
+          "output": {
+            "nodeId": "BylS5FN95V",
+            "pinKey": "BkbiCl7v7"
+          }
+        }
+      },
+      "nodes": {
+        "ByVHqtN55V": {
+          "boundLiterals": {
+            "rytlTcNErP7": "Continuously"
+          },
+          "id": "ByVHqtN55V",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod-dev/ds-rtc/read"
+        },
+        "BylS5FN95V": {
+          "id": "BylS5FN95V",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/datetime/unpack-datetime"
+        },
+        "H1dF5E594": {
+          "boundLiterals": {
+            "__in__": "\"\""
+          },
+          "description": "The Time output",
+          "id": "H1dF5E594",
+          "label": "TIME",
+          "position": {
+            "x": 8,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "HkB9YE9qV": {
+          "id": "HkB9YE9qV",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/time-rtc-device"
+        },
+        "HkC45E594": {
+          "description": "Error on Read",
+          "id": "HkC45E594",
+          "label": "ERR",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "S18Q5Vq5N": {
+          "boundLiterals": {
+            "__out__": "\":\""
+          },
+          "description": "Delimiter character or string",
+          "id": "S18Q5Vq5N",
+          "label": "SYM",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "r1TVcNc54": {
+          "description": "Pulses when succesfull",
+          "id": "r1TVcNc54",
+          "label": "DONE",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJF7cEc5V": {
+          "description": "When to read from the rtc device",
+          "id": "rJF7cEc5V",
+          "label": "READ",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/compact-rtc-all-inclusive"
+    },
+    "@/constant-pulser": {
+      "description": "Gives constant Ticks when set\n(RST ON BOOT)",
+      "links": {
+        "B19t3x4q9E": {
+          "id": "B19t3x4q9E",
+          "input": {
+            "nodeId": "ryfKhgN5q4",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "rybt3eEqqV",
+            "pinKey": "__out__"
+          }
+        },
+        "B1PF3lVc5N": {
+          "id": "B1PF3lVc5N",
+          "input": {
+            "nodeId": "S1t2gVq5E",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJIF3eV59E",
+            "pinKey": "BklspuwpW"
+          }
+        },
+        "ByFt2e4c5E": {
+          "id": "ByFt2e4c5E",
+          "input": {
+            "nodeId": "Sk4Fne49q4",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "ByrYhlVcc4",
+            "pinKey": "__out__"
+          }
+        },
+        "HknYngE994": {
+          "id": "HknYngE994",
+          "input": {
+            "nodeId": "rJIF3eV59E",
+            "pinKey": "SkJ46dw6-"
+          },
+          "output": {
+            "nodeId": "Sk4Fne49q4",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "S1_tng495E": {
+          "id": "S1_tng495E",
+          "input": {
+            "nodeId": "ryfKhgN5q4",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "rkmFngNq5E",
+            "pinKey": "ryVmUAOrvkb"
+          }
+        },
+        "SJsYneNc9V": {
+          "id": "SJsYneNc9V",
+          "input": {
+            "nodeId": "Sk4Fne49q4",
+            "pinKey": "B1RU0OrDkb"
+          },
+          "output": {
+            "nodeId": "ryfKhgN5q4",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "r1Tt3eE95V": {
+          "id": "r1Tt3eE95V",
+          "input": {
+            "nodeId": "SylKnxNc5V",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Sk4Fne49q4",
+            "pinKey": "HkyxURuSPyW"
+          }
+        }
+      },
+      "nodes": {
+        "ByrYhlVcc4": {
+          "description": "Setting the FlipFlop thus emitting consatnt signal",
+          "id": "ByrYhlVcc4",
+          "label": "SET",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S1t2gVq5E": {
+          "description": "Output of Puls(TICK) signal",
+          "id": "S1t2gVq5E",
+          "label": "Page",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Sk4Fne49q4": {
+          "id": "Sk4Fne49q4",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "SylKnxNc5V": {
+          "description": "FlipFlop status\n",
+          "id": "SylKnxNc5V",
+          "label": "FLIP",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "rJIF3eV59E": {
+          "id": "rJIF3eV59E",
+          "label": "Page",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/continuously-pausable"
+        },
+        "rkmFngNq5E": {
+          "id": "rkmFngNq5E",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/boot"
+        },
+        "rybt3eEqqV": {
+          "description": "Resets the FlipFlop thus not putting a signal out",
+          "id": "rybt3eEqqV",
+          "label": "RES",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryfKhgN5q4": {
+          "id": "ryfKhgN5q4",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        }
+      },
+      "path": "@/constant-pulser"
+    },
+    "@/cycled-buzzer": {
+      "description": "When activated it will set a puls to the buzzer for the amount of time you set.\nNEEDS: marcoaita/malibrary",
+      "links": {
+        "B16hgAJGjN": {
+          "id": "B16hgAJGjN",
+          "input": {
+            "nodeId": "Bke2x0kzsE",
+            "pinKey": "H1v3lCu8-"
+          },
+          "output": {
+            "nodeId": "rJchl0yGsN",
+            "pinKey": "__out__"
+          }
+        },
+        "BJwe3eR1GiE": {
+          "id": "BJwe3eR1GiE",
+          "input": {
+            "nodeId": "r1i3xAJGj4",
+            "pinKey": "SkJ46dw6-"
+          },
+          "output": {
+            "nodeId": "ryw2lAyGoN",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "Bkrx3xAJfsN": {
+          "id": "Bkrx3xAJfsN",
+          "input": {
+            "nodeId": "ryw2lAyGoN",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "ry-2gRJfsN",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "Bytg3x0yGoE": {
+          "id": "Bytg3x0yGoE",
+          "input": {
+            "nodeId": "ryw2lAyGoN",
+            "pinKey": "B1RU0OrDkb"
+          },
+          "output": {
+            "nodeId": "Hyh2g01fjE",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "H11eheCyGjV": {
+          "id": "H11eheCyGjV",
+          "input": {
+            "nodeId": "Hyfng0yzsE",
+            "pinKey": "HkWfKd6DbX"
+          },
+          "output": {
+            "nodeId": "BJu3e0JMjE",
+            "pinKey": "__out__"
+          }
+        },
+        "H1dlneAkGoN": {
+          "id": "H1dlneAkGoN",
+          "input": {
+            "nodeId": "Hyh2g01fjE",
+            "pinKey": "Skre8ROSv1-"
+          },
+          "output": {
+            "nodeId": "r1HhgRkGs4",
+            "pinKey": "__out__"
+          }
+        },
+        "HJQx3lRJMsE": {
+          "id": "HJQx3lRJMsE",
+          "input": {
+            "nodeId": "HJ7he0JziN",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HyLnlRyzoN",
+            "pinKey": "__out__"
+          }
+        },
+        "Hy4e3e01MsV": {
+          "id": "Hy4e3e01MsV",
+          "input": {
+            "nodeId": "Hyfng0yzsE",
+            "pinKey": "r1cItavZX"
+          },
+          "output": {
+            "nodeId": "SkE3eCJzoV",
+            "pinKey": "__out__"
+          }
+        },
+        "SJIghgRyMjE": {
+          "id": "SJIghgRyMjE",
+          "input": {
+            "nodeId": "Hyfng0yzsE",
+            "pinKey": "ry1rKTP-7"
+          },
+          "output": {
+            "nodeId": "r1i3xAJGj4",
+            "pinKey": "BklspuwpW"
+          }
+        },
+        "Skex3lCyGs4": {
+          "id": "Skex3lCyGs4",
+          "input": {
+            "nodeId": "Hyfng0yzsE",
+            "pinKey": "B1gMF_aD-X"
+          },
+          "output": {
+            "nodeId": "By2xAJGiN",
+            "pinKey": "__out__"
+          }
+        },
+        "SkzxhxRyGjV": {
+          "id": "SkzxhxRyGjV",
+          "input": {
+            "nodeId": "ry-2gRJfsN",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "HJ7he0JziN",
+            "pinKey": "__out__"
+          }
+        },
+        "rJZxnlCkfoV": {
+          "id": "rJZxnlCkfoV",
+          "input": {
+            "nodeId": "SJF3xCJGsN",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ryw2lAyGoN",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "rJqx3l01fsV": {
+          "id": "rJqx3l01fsV",
+          "input": {
+            "nodeId": "Hyh2g01fjE",
+            "pinKey": "H1mlUC_HDJZ"
+          },
+          "output": {
+            "nodeId": "ry-2gRJfsN",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "ryAhxRkGsE": {
+          "id": "ryAhxRkGsE",
+          "input": {
+            "nodeId": "ry-2gRJfsN",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "Bke2x0kzsE",
+            "pinKey": "BJxRgAO8-"
+          }
+        }
+      },
+      "nodes": {
+        "BJu3e0JMjE": {
+          "description": "Buzzer Frequenz",
+          "id": "BJu3e0JMjE",
+          "label": "Freq.",
+          "position": {
+            "x": 11,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Bke2x0kzsE": {
+          "id": "Bke2x0kzsE",
+          "label": "F",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-false"
+        },
+        "By2xAJGiN": {
+          "description": "Buzzer Port",
+          "id": "By2xAJGiN",
+          "label": "Port",
+          "position": {
+            "x": 10,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HJ7he0JziN": {
+          "id": "HJ7he0JziN",
+          "label": "T",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-true"
+        },
+        "HyLnlRyzoN": {
+          "description": "If need to be activated on True\n(SET PIN FALSE TO TRUE WHEN USING TRUE PIN!!)",
+          "id": "HyLnlRyzoN",
+          "label": "True",
+          "position": {
+            "x": 6,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "Hyfng0yzsE": {
+          "boundLiterals": {
+            "B1gMF_aD-X": "D26",
+            "HkWfKd6DbX": "500",
+            "r1cItavZX": "1"
+          },
+          "id": "Hyfng0yzsE",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "marcoaita/malibrary/buzzer-pulse"
+        },
+        "Hyh2g01fjE": {
+          "id": "Hyh2g01fjE",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "SJF3xCJGsN": {
+          "description": "Outputs True if active",
+          "id": "SJF3xCJGsN",
+          "label": "Act",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "SkE3eCJzoV": {
+          "description": "Time of the Buzz\n",
+          "id": "SkE3eCJzoV",
+          "label": "Time",
+          "position": {
+            "x": 12,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1HhgRkGs4": {
+          "description": "Will set the amount of Times it will cicle",
+          "id": "r1HhgRkGs4",
+          "label": "Rep",
+          "position": {
+            "x": 13,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1i3xAJGj4": {
+          "id": "r1i3xAJGj4",
+          "position": {
+            "x": 13,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/continuously-pausable"
+        },
+        "rJchl0yGsN": {
+          "boundLiterals": {
+            "__out__": "False"
+          },
+          "description": "If need activated on a False puls.\n(IF USING TRUE PIN  SET THIS PIN TO TRUE!!)",
+          "id": "rJchl0yGsN",
+          "label": "False",
+          "position": {
+            "x": 7,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "ry-2gRJfsN": {
+          "id": "ry-2gRJfsN",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "ryw2lAyGoN": {
+          "id": "ryw2lAyGoN",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        }
+      },
+      "path": "@/cycled-buzzer"
+    },
+    "@/rtc-debug": {
+      "description": "(Intended to be used in DEBUG MODE) \nUsed for setting up the rtc device and getting a check that everything worked.\nConnect a watch Node and a TWEAK PULS node to puls and out PIN",
+      "links": {
+        "BJgltEccV": {
+          "id": "BJgltEccV",
+          "input": {
+            "nodeId": "r1_1YE994",
+            "pinKey": "B1RU0OrDkb"
+          },
+          "output": {
+            "nodeId": "HJS3nvEqcE",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "Hk7JuEq9V": {
+          "id": "Hk7JuEq9V",
+          "input": {
+            "nodeId": "ByVn3w459N",
+            "pinKey": "HygQhYlQw7"
+          },
+          "output": {
+            "nodeId": "rkzRv4qqE",
+            "pinKey": "__out__"
+          }
+        },
+        "Hkeyu455V": {
+          "id": "Hkeyu455V",
+          "input": {
+            "nodeId": "ByVn3w459N",
+            "pinKey": "HJgzhKxmvm"
+          },
+          "output": {
+            "nodeId": "H1l96DV59V",
+            "pinKey": "__out__"
+          }
+        },
+        "HyWkuN95V": {
+          "id": "HyWkuN95V",
+          "input": {
+            "nodeId": "ByVn3w459N",
+            "pinKey": "S1-M2YemPQ"
+          },
+          "output": {
+            "nodeId": "HJaTvV55N",
+            "pinKey": "__out__"
+          }
+        },
+        "S1An2vVcqE": {
+          "id": "S1An2vVcqE",
+          "input": {
+            "nodeId": "HJS3nvEqcE",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "SJzn2wE9qE",
+            "pinKey": "S1M_QaXHvm"
+          }
+        },
+        "Sk1ydVcqV": {
+          "id": "Sk1ydVcqV",
+          "input": {
+            "nodeId": "ByVn3w459N",
+            "pinKey": "r1f2FeXP7"
+          },
+          "output": {
+            "nodeId": "rJc6DEqcV",
+            "pinKey": "__out__"
+          }
+        },
+        "SkARwEqcE": {
+          "id": "SkARwEqcE",
+          "input": {
+            "nodeId": "ByVn3w459N",
+            "pinKey": "ryjoteXwm"
+          },
+          "output": {
+            "nodeId": "Bk_TvE9qV",
+            "pinKey": "__out__"
+          }
+        },
+        "Sk_hnv4qqE": {
+          "id": "Sk_hnv4qqE",
+          "input": {
+            "nodeId": "SJzn2wE9qE",
+            "pinKey": "ByDPwJxu7"
+          },
+          "output": {
+            "nodeId": "ByVn3w459N",
+            "pinKey": "r1ZqKlXPX"
+          }
+        },
+        "r1cnOV59V": {
+          "id": "r1cnOV59V",
+          "input": {
+            "nodeId": "SJzn2wE9qE",
+            "pinKey": "SJzITmrPQ"
+          },
+          "output": {
+            "nodeId": "ByqOuEq5N",
+            "pinKey": "__out__"
+          }
+        },
+        "r1zeFN59E": {
+          "id": "r1zeFN59E",
+          "input": {
+            "nodeId": "r1_1YE994",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "SJzn2wE9qE",
+            "pinKey": "Bk1eOQ6mHvm"
+          }
+        },
+        "rJBgYN994": {
+          "id": "rJBgYN994",
+          "input": {
+            "nodeId": "SyHkFNqc4",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1_1YE994",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "rkf1OVcqN": {
+          "id": "rkf1OVcqN",
+          "input": {
+            "nodeId": "ByVn3w459N",
+            "pinKey": "SkQnYg7wQ"
+          },
+          "output": {
+            "nodeId": "Sk0TPEqqN",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "Bk_TvE9qV": {
+          "id": "Bk_TvE9qV",
+          "label": "YEAR",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ByVn3w459N": {
+          "boundLiterals": {
+            "HygQhYlQw7": "0",
+            "S1-M2YemPQ": "20",
+            "SkQnYg7wQ": "51"
+          },
+          "id": "ByVn3w459N",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/datetime/datetime"
+        },
+        "ByqOuEq5N": {
+          "description": "This PIN is used to activate the write.\nCheck that everything is correct :-)",
+          "id": "ByqOuEq5N",
+          "label": "PULS",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1l96DV59V": {
+          "id": "H1l96DV59V",
+          "label": "DAY",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJS3nvEqcE": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "HJS3nvEqcE",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "HJaTvV55N": {
+          "id": "HJaTvV55N",
+          "label": "HOUR",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJzn2wE9qE": {
+          "id": "SJzn2wE9qE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod-dev/ds-rtc/write"
+        },
+        "Sk0TPEqqN": {
+          "id": "Sk0TPEqqN",
+          "label": "MINUTE",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SyHkFNqc4": {
+          "description": "Outputs true if Succeded",
+          "id": "SyHkFNqc4",
+          "position": {
+            "x": 2,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "r1_1YE994": {
+          "id": "r1_1YE994",
+          "position": {
+            "x": 2,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "rJc6DEqcV": {
+          "id": "rJc6DEqcV",
+          "label": "MONTH",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkzRv4qqE": {
+          "id": "rkzRv4qqE",
+          "label": "SECOND",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/rtc-debug"
+    },
+    "@/t-f-pulser": {
+      "description": "Compact T/F Pulser\n",
+      "links": {
+        "B1L7OZNc5V": {
+          "id": "B1L7OZNc5V",
+          "input": {
+            "nodeId": "BkX7OW4q5N",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HJX_WE9q4",
+            "pinKey": "__out__"
+          }
+        },
+        "H14mOZ49qE": {
+          "id": "H14mOZ49qE",
+          "input": {
+            "nodeId": "ByemuZNqcN",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJbm_ZN954",
+            "pinKey": "BJxRgAO8-"
+          }
+        },
+        "SkwXdbEc94": {
+          "id": "SkwXdbEc94",
+          "input": {
+            "nodeId": "rJbm_ZN954",
+            "pinKey": "H1v3lCu8-"
+          },
+          "output": {
+            "nodeId": "HJX_WE9q4",
+            "pinKey": "__out__"
+          }
+        },
+        "rJrm_WEc5N": {
+          "id": "rJrm_WEc5N",
+          "input": {
+            "nodeId": "B1fmd-Nq94",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BkX7OW4q5N",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "B1fmd-Nq94": {
+          "description": "Outputs puls if Bolean True",
+          "id": "B1fmd-Nq94",
+          "label": "True",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BkX7OW4q5N": {
+          "id": "BkX7OW4q5N",
+          "label": "T",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-true"
+        },
+        "ByemuZNqcN": {
+          "description": "Outputs puls if Bolean False",
+          "id": "ByemuZNqcN",
+          "label": "False",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJX_WE9q4": {
+          "description": "Gets Bolean Input",
+          "id": "HJX_WE9q4",
+          "label": "T/F",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rJbm_ZN954": {
+          "id": "rJbm_ZN954",
+          "label": "F",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-false"
+        }
+      },
+      "path": "@/t-f-pulser"
+    },
+    "@/time-rtc-device": {
+      "description": "Gets Time from Rtc Device and JOINS them with a : or what you like",
+      "links": {
+        "B1cCmxE5qE": {
+          "id": "B1cCmxE5qE",
+          "input": {
+            "nodeId": "S1lRQl4c9E",
+            "pinKey": "rJJHNrVuM-$1"
+          },
+          "output": {
+            "nodeId": "ry-RQe499V",
+            "pinKey": "Hk2bcGVDm"
+          }
+        },
+        "B1oA7g4ccN": {
+          "id": "B1oA7g4ccN",
+          "input": {
+            "nodeId": "BJ8R7gVq9E",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "S1lRQl4c9E",
+            "pinKey": "HJrBNr4dG"
+          }
+        },
+        "HJO0XxEc5N": {
+          "id": "HJO0XxEc5N",
+          "input": {
+            "nodeId": "ry-RQe499V",
+            "pinKey": "H1DWqMVw7"
+          },
+          "output": {
+            "nodeId": "r1NCQlN9c4",
+            "pinKey": "__out__"
+          }
+        },
+        "HJnCmxNqcV": {
+          "id": "HJnCmxNqcV",
+          "input": {
+            "nodeId": "rkHAmeEq54",
+            "pinKey": "H1DWqMVw7"
+          },
+          "output": {
+            "nodeId": "S1Q0mgN5cN",
+            "pinKey": "__out__"
+          }
+        },
+        "S1FCXe4qq4": {
+          "id": "S1FCXe4qq4",
+          "input": {
+            "nodeId": "S1lRQl4c9E",
+            "pinKey": "rJJHNrVuM"
+          },
+          "output": {
+            "nodeId": "Hy0QgNcqN",
+            "pinKey": "Hk2bcGVDm"
+          }
+        },
+        "r1TRmlNc9E": {
+          "id": "r1TRmlNc9E",
+          "input": {
+            "nodeId": "Hy0QgNcqN",
+            "pinKey": "H1DWqMVw7"
+          },
+          "output": {
+            "nodeId": "HkGCXlNccN",
+            "pinKey": "__out__"
+          }
+        },
+        "rkNG9V9qE": {
+          "id": "rkNG9V9qE",
+          "input": {
+            "nodeId": "S1lRQl4c9E",
+            "pinKey": "rJGQNB4df"
+          },
+          "output": {
+            "nodeId": "SJye9EcqE",
+            "pinKey": "__out__"
+          }
+        },
+        "rkwAXxVccE": {
+          "id": "rkwAXxVccE",
+          "input": {
+            "nodeId": "S1lRQl4c9E",
+            "pinKey": "HynENHNOz"
+          },
+          "output": {
+            "nodeId": "rkHAmeEq54",
+            "pinKey": "Hk2bcGVDm"
+          }
+        }
+      },
+      "nodes": {
+        "BJ8R7gVq9E": {
+          "id": "BJ8R7gVq9E",
+          "label": "Time",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "HkGCXlNccN": {
+          "id": "HkGCXlNccN",
+          "label": "Min",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Hy0QgNcqN": {
+          "boundLiterals": {
+            "BkKz5GVwX": "2"
+          },
+          "id": "Hy0QgNcqN",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/pad-with-zeroes"
+        },
+        "S1Q0mgN5cN": {
+          "id": "S1Q0mgN5cN",
+          "label": "Hour",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1lRQl4c9E": {
+          "arityLevel": 2,
+          "boundLiterals": {
+            "rJGQNB4df": "\":\""
+          },
+          "id": "S1lRQl4c9E",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/join"
+        },
+        "SJye9EcqE": {
+          "boundLiterals": {
+            "__out__": "\":\""
+          },
+          "description": "Delimiter character or string",
+          "id": "SJye9EcqE",
+          "label": "SYM",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "r1NCQlN9c4": {
+          "id": "r1NCQlN9c4",
+          "label": "Sec",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkHAmeEq54": {
+          "boundLiterals": {
+            "BkKz5GVwX": "2"
+          },
+          "id": "rkHAmeEq54",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/pad-with-zeroes"
+        },
+        "ry-RQe499V": {
+          "boundLiterals": {
+            "BkKz5GVwX": "2"
+          },
+          "id": "ry-RQe499V",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/pad-with-zeroes"
+        }
+      },
+      "path": "@/time-rtc-device"
+    },
+    "@/rotary-encoder-button": {
+      "nodes": {
+        "r1V7seMj4": {
+          "description": "Output Number of the encoder",
+          "label": "NUM",
+          "id": "r1V7seMj4",
+          "position": {
+            "x": 5,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rkgEmoxMj4": {
+          "id": "rkgEmoxMj4",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "BJW4mjgGiN": {
+          "id": "BJW4mjgGiN",
+          "position": {
+            "x": 4,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "B1MVmjxziN": {
+          "id": "B1MVmjxziN",
+          "position": {
+            "x": 5,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/subtract"
+        },
+        "Skm4XjeMjN": {
+          "boundLiterals": {
+            "ByNiWkt8Z": "6"
+          },
+          "id": "Skm4XjeMjN",
+          "position": {
+            "x": 14,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/button"
+        },
+        "HJEN7jgfi4": {
+          "description": "Equals to `true` while the SW button is pressed (hold down) and `false` while it is released.",
+          "label": "SW OP",
+          "id": "HJEN7jgfi4",
+          "position": {
+            "x": 14,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "Hyr4QoeGo4": {
+          "id": "Hyr4QoeGo4",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/xor"
+        },
+        "ryIN7jgMjE": {
+          "id": "ryIN7jgMjE",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 14,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "SW",
+          "description": "The SW Pin\n(If it has a switch)"
+        },
+        "rkwVQogMiN": {
+          "id": "rkwVQogMiN",
+          "type": "xod/gpio/digital-read",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HkuNQixGsE": {
+          "id": "HkuNQixGsE",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "CLK",
+          "description": "The CLK Pin"
+        },
+        "B1KN7ilzoV": {
+          "id": "B1KN7ilzoV",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DT",
+          "description": "The DT Pin"
+        },
+        "B1qNXilMiE": {
+          "id": "B1qNXilMiE",
+          "type": "xod/gpio/digital-read",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rys4mseGiE": {
+          "id": "rys4mseGiE",
+          "type": "xod/core/gate",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SynVQjgMo4": {
+          "id": "SynVQjgMo4",
+          "type": "xod/core/gate",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "rJpVQoeGoN": {
+          "id": "rJpVQoeGoN",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 9,
+            "y": 6,
+            "units": "slots"
+          },
+          "label": "Inc",
+          "description": "Puls if Increase"
+        },
+        "BJAVQjgfoV": {
+          "id": "BJAVQjgfoV",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 4,
+            "y": 6,
+            "units": "slots"
+          },
+          "label": "Dec",
+          "description": "Puls if Decrease"
+        },
+        "S1ygVXsgzoV": {
+          "id": "S1ygVXsgzoV",
+          "type": "xod/core/pulse-on-true",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "SyegV7ilzsV": {
+          "id": "SyegV7ilzsV",
+          "type": "xod/core/pulse-on-true",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "SyZgVXolMoE": {
+          "id": "SyZgVXolMoE",
+          "input": {
+            "nodeId": "B1MVmjxziN",
+            "pinKey": "rkJ4URuHDJ-"
+          },
+          "output": {
+            "nodeId": "rkgEmoxMj4",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "ryGgE7ogfsN": {
+          "id": "ryGgE7ogfsN",
+          "input": {
+            "nodeId": "B1MVmjxziN",
+            "pinKey": "BypX80uSD1Z"
+          },
+          "output": {
+            "nodeId": "BJW4mjgGiN",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "HyXl4QigMiN": {
+          "id": "HyXl4QigMiN",
+          "input": {
+            "nodeId": "HJEN7jgfi4",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Skm4XjeMjN",
+            "pinKey": "BJ--G1tI-"
+          }
+        },
+        "SyExEmoeGiN": {
+          "id": "SyExEmoeGiN",
+          "input": {
+            "nodeId": "r1V7seMj4",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "B1MVmjxziN",
+            "pinKey": "HyRmUCdBDkZ"
+          }
+        },
+        "BJHe4XogGoN": {
+          "id": "BJHe4XogGoN",
+          "output": {
+            "nodeId": "ryIN7jgMjE",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "Skm4XjeMjN",
+            "pinKey": "ByNiWkt8Z"
+          }
+        },
+        "HJIeVQslzsV": {
+          "id": "HJIeVQslzsV",
+          "output": {
+            "nodeId": "rkwVQogMiN",
+            "pinKey": "B1gI0urv1W"
+          },
+          "input": {
+            "nodeId": "Hyr4QoeGo4",
+            "pinKey": "SkKNUR_SwyW"
+          }
+        },
+        "H1PgV7slGiN": {
+          "id": "H1PgV7slGiN",
+          "output": {
+            "nodeId": "B1qNXilMiE",
+            "pinKey": "B1gI0urv1W"
+          },
+          "input": {
+            "nodeId": "Hyr4QoeGo4",
+            "pinKey": "HkOV8CdSvyW"
+          }
+        },
+        "SkuxE7sgfo4": {
+          "id": "SkuxE7sgfo4",
+          "output": {
+            "nodeId": "Hyr4QoeGo4",
+            "pinKey": "Hkw48AdSPyb"
+          },
+          "input": {
+            "nodeId": "rys4mseGiE",
+            "pinKey": "B1P1nFwaM"
+          }
+        },
+        "HyKl47ogzi4": {
+          "id": "HyKl47ogzi4",
+          "output": {
+            "nodeId": "rys4mseGiE",
+            "pinKey": "OkPg7GDaW"
+          },
+          "input": {
+            "nodeId": "rkgEmoxMj4",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "HJcx4mjxfoV": {
+          "id": "HJcx4mjxfoV",
+          "output": {
+            "nodeId": "Hyr4QoeGo4",
+            "pinKey": "Hkw48AdSPyb"
+          },
+          "input": {
+            "nodeId": "SynVQjgMo4",
+            "pinKey": "B1P1nFwaM"
+          }
+        },
+        "HkjgE7oezjN": {
+          "id": "HkjgE7oezjN",
+          "output": {
+            "nodeId": "SynVQjgMo4",
+            "pinKey": "OkPg7GDaW"
+          },
+          "input": {
+            "nodeId": "BJW4mjgGiN",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "H1hxEmoxGjE": {
+          "id": "H1hxEmoxGjE",
+          "output": {
+            "nodeId": "rys4mseGiE",
+            "pinKey": "OkPg7GDaW"
+          },
+          "input": {
+            "nodeId": "rJpVQoeGoN",
+            "pinKey": "__in__"
+          }
+        },
+        "ry6xNmoeMo4": {
+          "id": "ry6xNmoeMo4",
+          "output": {
+            "nodeId": "SynVQjgMo4",
+            "pinKey": "OkPg7GDaW"
+          },
+          "input": {
+            "nodeId": "BJAVQjgfoV",
+            "pinKey": "__in__"
+          }
+        },
+        "SyRxE7ixzoV": {
+          "id": "SyRxE7ixzoV",
+          "output": {
+            "nodeId": "B1qNXilMiE",
+            "pinKey": "B1gI0urv1W"
+          },
+          "input": {
+            "nodeId": "S1ygVXsgzoV",
+            "pinKey": "__in__"
+          }
+        },
+        "SJy-V7jeGi4": {
+          "id": "SJy-V7jeGi4",
+          "output": {
+            "nodeId": "S1ygVXsgzoV",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "SynVQjgMo4",
+            "pinKey": "SJ-1mZPTz"
+          }
+        },
+        "BJebEXogzsN": {
+          "id": "BJebEXogzsN",
+          "output": {
+            "nodeId": "rkwVQogMiN",
+            "pinKey": "B1gI0urv1W"
+          },
+          "input": {
+            "nodeId": "SyegV7ilzsV",
+            "pinKey": "__in__"
+          }
+        },
+        "S1Zb4molfo4": {
+          "id": "S1Zb4molfo4",
+          "output": {
+            "nodeId": "SyegV7ilzsV",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rys4mseGiE",
+            "pinKey": "SJ-1mZPTz"
+          }
+        },
+        "r1zb47ilzjV": {
+          "id": "r1zb47ilzjV",
+          "output": {
+            "nodeId": "HkuNQixGsE",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rkwVQogMiN",
+            "pinKey": "B143qAq1Q"
+          }
+        },
+        "BkX-EQjeMoE": {
+          "id": "BkX-EQjeMoE",
+          "output": {
+            "nodeId": "B1KN7ilzoV",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "B1qNXilMiE",
+            "pinKey": "B143qAq1Q"
+          }
+        }
+      },
+      "path": "@/rotary-encoder-button",
+      "description": "This is used for when you have an rotary encoder with DT, CLK (and SW) Pins\n"
+    }
+  },
+  "version": "0.0.6"
+}

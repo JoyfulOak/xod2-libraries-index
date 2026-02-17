@@ -1,0 +1,55 @@
+{
+  "patches": {
+    "@/sram-free": {
+      "nodes": {
+        "HJyJoTtpK": {
+          "id": "HJyJoTtpK",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "B1JtaTtpt": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Update. Trigger measurement of free SRAM.",
+          "label": "UPD",
+          "id": "B1JtaTtpt",
+          "position": {
+            "x": 1,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BJssTaFTt": {
+          "description": "Available SRAM in bytes.",
+          "label": "SRAM",
+          "id": "BJssTaFTt",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/sram-free",
+      "description": "Measure free Static Random Access Memory (SRAM).",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "// Source: https://github.com/mpflaga/Arduino-MemoryFree\n#ifdef __arm__\n// should use uinstd.h to define sbrk but Due causes a conflict\nextern \"C\" char* sbrk(int incr);\n#else  // __ARM__\nextern char *__brkval;\n#endif  // __arm__\n\nint freeMemory() {\n  char top;\n#ifdef __arm__\n  return &top - reinterpret_cast<char*>(sbrk(0));\n#elif defined(CORE_TEENSY) || (ARDUINO > 103 && ARDUINO != 151)\n  return &top - __brkval;\n#else  // __arm__\n  return __brkval ? &top - __brkval : &top - __malloc_heap_start;\n#endif  // __arm__\n}\n\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (isInputDirty<input_UPD>(ctx)) {\n            emitValue<output_SRAM>(ctx, freeMemory());\n        }\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "license": "MIT",
+  "version": "0.0.2",
+  "description": "Node for measuring the amount of free Static Random Access Memory (SRAM). Based on https://github.com/mpflaga/Arduino-MemoryFree. For more information on getting the most from your Arduino memory, see: https://learn.adafruit.com/memories-of-an-arduino.",
+  "name": "memory-free"
+}

@@ -1,0 +1,265 @@
+{
+  "description": "Read IR remote",
+  "name": "ir-remote",
+  "patches": {
+    "@/ir-decode-keyestudio": {
+      "attachments": [
+        {
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    long int out = 0xFF;\n    long int key = getValue<input_IN>(ctx);\n                switch (key & 0xFFFFu) {\n                case 0xFFFF: // repeat\n                    out = getValue<output_OUT>(ctx);\n                    break;\n                case 0x629D: // up\n                case 0x1DBB:\n                    out = 11;\n                    break;\n                case 0xD41F: // left\n                case 0x22DD:\n                    out = 12;\n                    break;\n                case 0x4B1B: // OK\n                case 0x02FD:\n                    out = 13;\n                    break;\n                case 0x4DBB: // right\n                case 0xC23D:\n                    out = 14;\n                    break;\n                case 0xA857: // down\n                case 0xEDDB:\n                    out = 15;\n                    break;\n                case 0xE57B: // 1\n                case 0x6897:\n                    out = 1;\n                    break;\n                case 0x3BFB: // 2\n                case 0x9867:\n                    out = 2;\n                    break;\n                case 0xB04F: // 3\n                case 0x1643:\n                    out = 3;\n                    break;\n                case 0x30CF:\n                case 0xBE3F:\n                    out = 4;\n                    break;\n                case 0x18E7:\n                case 0xE3F7:\n                    out = 5;\n                    break;\n                case 0x7A85:\n                case 0x021B:\n                    out = 6;\n                    break;\n                case 0x657B:\n                case 0x10EF:\n                    out = 7;\n                    break;\n                case 0x38C7:\n                case 0x3CBB:\n                    out = 8;\n                    break;\n                case 0xE79F:\n                case 0x5AA5:\n                    out = 9;\n                    break;\n                case 0x4AB5: // 0\n                case 0x157B:\n                    out = 0;\n                    break;\n                case 0x42BD: // *\n                case 0xFDF7:\n                    out = 16;\n                    break;\n                case 0xFC1B: // #\n                case 0x52AD:\n                    out = 17;\n                    break;\n            }\n    emitValue<output_OUT>(ctx, out);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "ByzczR_Dz": {
+          "id": "ByzczR_Dz",
+          "position": {
+            "x": -0.05,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H18sfCuwG": {
+          "id": "H18sfCuwG",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ryo5fAdDG": {
+          "id": "ryo5fAdDG",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/ir-decode-keyestudio"
+    },
+    "@/ir-read": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/z3t0/Arduino-IRremote\"\n\n{{#global}}\n#include <IRremote.h>\n{{/global}}\n\nstruct State {\n    int configuredPort = -1;\n    IRrecv* irrecv;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    auto port = getValue<input_PORT>(ctx);\n    auto irrecv = state->irrecv;\n    if (state->configuredPort != port) {\n        state->irrecv = irrecv = new IRrecv(port);\n        irrecv->enableIRIn(); // Start the receiver\n        state->configuredPort = port;\n    }\n    if (isInputDirty<input_UPD>(ctx)) {\n        long int out = 0;\n        decode_results results;         //cache of decode of IR remoter control\n        if (irrecv->decode(&results)) {\n            out = results.value;\n            irrecv->resume();\n        }\n        emitValue<output_OUT>(ctx, out);\n    }\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Read IR remote. Return -1 if no data found, else return data.",
+      "nodes": {
+        "BJwZdOdwf": {
+          "id": "BJwZdOdwf",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJBY__dvG": {
+          "id": "HJBY__dvG",
+          "label": "UPD",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HJzseiOvz": {
+          "id": "HJzseiOvz",
+          "position": {
+            "x": 4,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "r1D3-9M_L": {
+          "id": "r1D3-9M_L",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "PORT"
+        }
+      },
+      "path": "@/ir-read"
+    },
+    "@/ir-remote-example": {
+      "links": {
+        "BJ0KeeYDG": {
+          "id": "BJ0KeeYDG",
+          "input": {
+            "nodeId": "HkttexYvz",
+            "pinKey": "HJBY__dvG"
+          },
+          "output": {
+            "nodeId": "BkI78iuvM",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "BJ8cleFPz": {
+          "id": "BJ8cleFPz",
+          "input": {
+            "nodeId": "B1JFURuwf",
+            "pinKey": "ByzczR_Dz"
+          },
+          "output": {
+            "nodeId": "HkttexYvz",
+            "pinKey": "HJzseiOvz"
+          }
+        },
+        "BkvGdecAM": {
+          "id": "BkvGdecAM",
+          "input": {
+            "nodeId": "HyyGdl5AM",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "B1JFURuwf",
+            "pinKey": "H18sfCuwG"
+          }
+        },
+        "Hy4fde5Rz": {
+          "id": "Hy4fde5Rz",
+          "input": {
+            "nodeId": "HyxyM_l9Rz",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "B18n7_nPG",
+            "pinKey": "SJlnXud5vG"
+          }
+        },
+        "S1G67d2DM": {
+          "id": "S1G67d2DM",
+          "input": {
+            "nodeId": "B18n7_nPG",
+            "pinKey": "HJWnQ__5wz"
+          },
+          "output": {
+            "nodeId": "B1JFURuwf",
+            "pinKey": "H18sfCuwG"
+          }
+        },
+        "r1o6Qdnvf": {
+          "id": "r1o6Qdnvf",
+          "input": {
+            "nodeId": "S1727_2PG",
+            "pinKey": "HJWnQ__5wz"
+          },
+          "output": {
+            "nodeId": "HkttexYvz",
+            "pinKey": "HJzseiOvz"
+          }
+        },
+        "rkff_x5AM": {
+          "id": "rkff_x5AM",
+          "input": {
+            "nodeId": "B16-dg9CM",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "S1727_2PG",
+            "pinKey": "SJlnXud5vG"
+          }
+        }
+      },
+      "nodes": {
+        "B16-dg9CM": {
+          "id": "B16-dg9CM",
+          "position": {
+            "x": 4,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/watch"
+        },
+        "B18n7_nPG": {
+          "boundLiterals": {
+            "r1MnQ_u9wf": "2"
+          },
+          "id": "B18n7_nPG",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "gweimer/utils/cast-number-to-hex-string"
+        },
+        "B1JFURuwf": {
+          "id": "B1JFURuwf",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/ir-decode-keyestudio"
+        },
+        "BkI78iuvM": {
+          "boundLiterals": {
+            "B13SCNhl-": "1"
+          },
+          "id": "BkI78iuvM",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "HkttexYvz": {
+          "boundLiterals": {
+            "B1mdOuOwz": "12"
+          },
+          "id": "HkttexYvz",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/ir-read"
+        },
+        "HyxyM_l9Rz": {
+          "id": "HyxyM_l9Rz",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/watch"
+        },
+        "HyyGdl5AM": {
+          "id": "HyyGdl5AM",
+          "position": {
+            "x": 8,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/watch"
+        },
+        "S1727_2PG": {
+          "boundLiterals": {
+            "r1MnQ_u9wf": "4"
+          },
+          "id": "S1727_2PG",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "gweimer/utils/cast-number-to-hex-string"
+        }
+      },
+      "path": "@/ir-remote-example"
+    }
+  },
+  "version": "0.0.7"
+}

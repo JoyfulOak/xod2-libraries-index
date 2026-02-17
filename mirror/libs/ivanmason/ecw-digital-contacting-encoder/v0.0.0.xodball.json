@@ -1,0 +1,144 @@
+{
+  "description": "Incremental encoder",
+  "patches": {
+    "@/main": {
+      "nodes": {
+        "HknwgUyXL": {
+          "id": "HknwgUyXL",
+          "type": "@/encoder",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "SyPil8JmI": {
+          "id": "SyPil8JmI",
+          "type": "nkrkv/encoder/count",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SJlo-LkQU": {
+          "id": "SJlo-LkQU",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 3,
+            "y": 4,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "B1EdZLJQU": {
+          "id": "B1EdZLJQU",
+          "output": {
+            "nodeId": "HknwgUyXL",
+            "pinKey": "SJ-pb1IyQL"
+          },
+          "input": {
+            "nodeId": "SyPil8JmI",
+            "pinKey": "HkPueeK9m"
+          }
+        },
+        "rku_ZI1XU": {
+          "id": "rku_ZI1XU",
+          "output": {
+            "nodeId": "HknwgUyXL",
+            "pinKey": "B1gTWJ8J78"
+          },
+          "input": {
+            "nodeId": "SyPil8JmI",
+            "pinKey": "BkljwelY9m"
+          }
+        },
+        "r18oZ8kmL": {
+          "id": "r18oZ8kmL",
+          "output": {
+            "nodeId": "SyPil8JmI",
+            "pinKey": "ry7swlgY9Q"
+          },
+          "input": {
+            "nodeId": "SJlo-LkQU",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/main"
+    },
+    "@/encoder": {
+      "nodes": {
+        "BJTW1LyXI": {
+          "id": "BJTW1LyXI",
+          "label": "UPD",
+          "position": {
+            "x": 4,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "B1gTWJ8J78": {
+          "id": "B1gTWJ8J78",
+          "label": "CW",
+          "position": {
+            "x": 0,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SJ-pb1IyQL": {
+          "id": "SJ-pb1IyQL",
+          "label": "CCW",
+          "position": {
+            "x": 2,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "S1f6byI17U": {
+          "id": "S1f6byI17U",
+          "label": "PA",
+          "position": {
+            "x": 0,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Hy76-JUk78": {
+          "id": "Hy76-JUk78",
+          "label": "PB",
+          "position": {
+            "x": 2,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "S14TZJ8ymI": {
+          "id": "S14TZJ8ymI",
+          "position": {
+            "x": 0,
+            "y": 0.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/encoder",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n    bool dir;\n    bool olda;\n    bool oldb;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    \n    auto state = getState(ctx);\n    auto portA = getValue<input_PA>(ctx);\n    auto portB = getValue<input_PB>(ctx);\n    auto ina = digitalRead(portA);\n    auto inb = digitalRead(portB);\n\n\n   if (isSettingUp()) {\n        // Remember the initial (on boot) encoder state\n       state->dir = true;\n       state->olda = ina;\n       state->oldb = inb;\n       return;\n   }\n\n    if(state->olda != ina || state->oldb != inb){\n\n       if(state->olda != inb ){\n           state->dir = false;\n           emitValue<output_CCW>(ctx, 1);\n          }\n        else{\n           state->dir = true;\n           emitValue<output_CW>(ctx, 1);\n        }\n    }\n\n   state->olda = ina;\n   state->oldb = inb;\n}\n"
+        }
+      ]
+    }
+  },
+  "name": "ecw-digital-contacting-encoder"
+}

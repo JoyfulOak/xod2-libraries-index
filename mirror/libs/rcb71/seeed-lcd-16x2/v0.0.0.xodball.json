@@ -1,0 +1,544 @@
+{
+  "patches": {
+    "@/text-lcd-rgb-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD error_raise enable\n\n#pragma XOD require \"https://github.com/Seeed-Studio/Grove_LCD_RGB_Backlight/\"\n\n#include <Wire.h>\n#include <rgb_lcd.h>\n#include <string.h>\n\nnode {\n    meta {\n        struct Type {\n            rgb_lcd* lcd;\n            uint8_t rows;\n            uint8_t cols;\n        };\n    }\n\n    uint8_t mem[sizeof(rgb_lcd)];\n\n    void evaluate(Context ctx) {\n        auto wire = getValue<input_I2C>(ctx);\n        uint8_t rows = (uint8_t) getValue<input_ROWS>(ctx);\n        uint8_t cols = (uint8_t) getValue<input_COLS>(ctx);\n\n        Type t;\n        t.rows = rows;\n        t.cols = cols;\n        \n        t.lcd = new (mem) rgb_lcd();\n        t.lcd->begin(t.cols, t.rows, LCD_5x8DOTS, *wire);\n        \n        //t.lcd->begin();\n\n        emitValue<output_DEV>(ctx, t);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "description": "Creates an lcd-rgb device.",
+      "nodes": {
+        "ByHpPsAn9": {
+          "description": "Creates an LCD-RGB device.",
+          "id": "ByHpPsAn9",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rkGRh30nq": {
+          "label": "I2C",
+          "id": "rkGRh30nq",
+          "type": "xod/i2c/input-i2c",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SJLRn2A39": {
+          "boundLiterals": {
+            "__out__": "16"
+          },
+          "label": "COLS",
+          "id": "SJLRn2A39",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "Hku02hRnq": {
+          "boundLiterals": {
+            "__out__": "2"
+          },
+          "label": "ROWS",
+          "id": "Hku02hRnq",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "Hyxk63C3c": {
+          "label": "DEV",
+          "id": "Hyxk63C3c",
+          "type": "xod/patch-nodes/output-self",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "Byiv8pR35": {
+          "label": "DONE",
+          "id": "Byiv8pR35",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/text-lcd-rgb-device"
+    },
+    "@/init": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        auto t = getValue<input_DEV>(ctx);\n        auto wire = getValue<input_I2C>(ctx);\n        if (isInputDirty<input_UPD>(ctx))\n            return;\n        \n        t.lcd->begin(t.cols, t.rows, LCD_5x8DOTS, *wire);\n        emitValue<output_DONE>(ctx, 1);\n\n        emitValue<output_DEV_>(ctx, t);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "rJHkA20hq": {
+          "description": "Initialises an lcd-rgb device",
+          "id": "rJHkA20hq",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rkL6ChAn5": {
+          "label": "DEV",
+          "id": "rkL6ChAn5",
+          "type": "@/input-text-lcd-rgb-device",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "Bko6C3R25": {
+          "label": "I2C",
+          "id": "Bko6C3R25",
+          "type": "xod/i2c/input-i2c",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "ryWC0n035": {
+          "label": "UPD",
+          "id": "ryWC0n035",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "HywRC2A39": {
+          "label": "DEV_",
+          "id": "HywRC2A39",
+          "type": "@/output-text-lcd-rgb-device",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rkaAChRnq": {
+          "label": "DONE",
+          "id": "rkaAChRnq",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/init"
+    },
+    "@/text-lcd-rgb-16x2": {
+      "description": "Combines low level nodes to write text on a Seeed LCD 16x2 device.",
+      "links": {
+        "H16UlpA25": {
+          "id": "H16UlpA25",
+          "output": {
+            "nodeId": "SJn8gp03q",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJErxaA3c",
+            "pinKey": "rkGRh30nq"
+          }
+        },
+        "r1iEmaA35": {
+          "id": "r1iEmaA35",
+          "output": {
+            "nodeId": "HkMmmTRnc",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "H1AQ760hq",
+            "pinKey": "SJ-1mZPTz"
+          }
+        },
+        "ByY_LT0hq": {
+          "id": "ByY_LT0hq",
+          "output": {
+            "nodeId": "HJErxaA3c",
+            "pinKey": "Byiv8pR35"
+          },
+          "input": {
+            "nodeId": "HyFgXpA25",
+            "pinKey": "Bkh8A_Sv1-"
+          }
+        },
+        "SypoLTR2q": {
+          "id": "SypoLTR2q",
+          "output": {
+            "nodeId": "HyFgXpA25",
+            "pinKey": "HkyxURuSPyW"
+          },
+          "input": {
+            "nodeId": "H1AQ760hq",
+            "pinKey": "B1P1nFwaM"
+          }
+        },
+        "HyvYKelT5": {
+          "id": "HyvYKelT5",
+          "output": {
+            "nodeId": "HJErxaA3c",
+            "pinKey": "Hyxk63C3c"
+          },
+          "input": {
+            "nodeId": "SJALtlxT9",
+            "pinKey": "S1daVAAn9"
+          }
+        },
+        "r1uKYeeaq": {
+          "id": "r1uKYeeaq",
+          "output": {
+            "nodeId": "H1AQ760hq",
+            "pinKey": "OkPg7GDaW"
+          },
+          "input": {
+            "nodeId": "SJALtlxT9",
+            "pinKey": "BJomBAAnc"
+          }
+        },
+        "r1uqFee69": {
+          "id": "r1uqFee69",
+          "output": {
+            "nodeId": "rJkcFxgac",
+            "pinKey": "S1iyrARnc"
+          },
+          "input": {
+            "nodeId": "Sy9_SCC39",
+            "pinKey": "__in__"
+          }
+        },
+        "SycqYgep5": {
+          "id": "SycqYgep5",
+          "output": {
+            "nodeId": "SJALtlxT9",
+            "pinKey": "HkcutxgT5"
+          },
+          "input": {
+            "nodeId": "rJkcFxgac",
+            "pinKey": "S1daVAAn9"
+          }
+        },
+        "rJoqtgxpq": {
+          "id": "rJoqtgxpq",
+          "output": {
+            "nodeId": "SJALtlxT9",
+            "pinKey": "S1iyrARnc"
+          },
+          "input": {
+            "nodeId": "rJkcFxgac",
+            "pinKey": "BJomBAAnc"
+          }
+        },
+        "Byo0itxgp9": {
+          "id": "Byo0itxgp9",
+          "output": {
+            "nodeId": "SyXjYex6q",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "SJALtlxT9",
+            "pinKey": "BkLbJex6q"
+          }
+        },
+        "HJentxg6q": {
+          "id": "HJentxg6q",
+          "output": {
+            "nodeId": "r1Ustlg6q",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJkcFxgac",
+            "pinKey": "BkLbJex6q"
+          }
+        }
+      },
+      "nodes": {
+        "HJErxaA3c": {
+          "boundLiterals": {
+            "SJLRn2A39": "16",
+            "Hku02hRnq": "2"
+          },
+          "id": "HJErxaA3c",
+          "type": "@/text-lcd-rgb-device",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SJn8gp03q": {
+          "label": "I2C",
+          "id": "SJn8gp03q",
+          "type": "xod/i2c/input-i2c",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "HyFgXpA25": {
+          "id": "HyFgXpA25",
+          "type": "xod/core/flip-flop",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "HkMmmTRnc": {
+          "label": "UPD",
+          "id": "HkMmmTRnc",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "H1AQ760hq": {
+          "id": "H1AQ760hq",
+          "type": "xod/core/gate",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "Sy9_SCC39": {
+          "label": "DONE",
+          "id": "Sy9_SCC39",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 2,
+            "y": 7,
+            "units": "slots"
+          }
+        },
+        "SJALtlxT9": {
+          "id": "SJALtlxT9",
+          "type": "@/draw-text",
+          "position": {
+            "x": 1,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "rJkcFxgac": {
+          "boundLiterals": {
+            "Byj0_Oexp9": "1"
+          },
+          "id": "rJkcFxgac",
+          "type": "@/draw-text",
+          "position": {
+            "x": 1,
+            "y": 6,
+            "units": "slots"
+          }
+        },
+        "SyXjYex6q": {
+          "label": "Line 1",
+          "id": "SyXjYex6q",
+          "type": "xod/patch-nodes/input-string",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "r1Ustlg6q": {
+          "label": "Line 2",
+          "id": "r1Ustlg6q",
+          "type": "xod/patch-nodes/input-string",
+          "position": {
+            "x": 5,
+            "y": 5,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/text-lcd-rgb-16x2"
+    },
+    "@/clear-display": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        auto t = getValue<input_DEV>(ctx);\n        if (isInputDirty<input_UPD>(ctx)) {\n            t.lcd->clear();\n            emitValue<output_DONE>(ctx, 1);\n        }\n\n        emitValue<output_DEV_>(ctx, t);\n    }\n}\n"
+        }
+      ],
+      "description": "Clears the display on an LCD-RGB device.",
+      "nodes": {
+        "B1UhWTA29": {
+          "id": "B1UhWTA29",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "By1zzTC25": {
+          "label": "DEV",
+          "id": "By1zzTC25",
+          "type": "@/input-text-lcd-rgb-device",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "HkWJffTAhq": {
+          "label": "UPD",
+          "id": "HkWJffTAhq",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "Byqff60n9": {
+          "label": "DEV_",
+          "id": "Byqff60n9",
+          "type": "@/output-text-lcd-rgb-device",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "r1e9fM6Cn9": {
+          "label": "DONE",
+          "id": "r1e9fM6Cn9",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/clear-display"
+    },
+    "@/draw-text": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    static void printAt(rgb_lcd* lcd, uint8_t rowIndex, uint8_t posIndex, XString str) {\n        lcd->setCursor(posIndex, rowIndex);\n        uint8_t whitespace = 16;\n        for (auto it = str.iterate(); it && whitespace > 0; ++it, --whitespace)\n            lcd->print(*it);\n    }\n    \n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto t = getValue<input_DEV>(ctx);\n\n        auto str = getValue<input_TXT>(ctx);\n        uint8_t row = (uint8_t) getValue<input_ROW>(ctx);\n        uint8_t pos = (uint8_t) getValue<input_COL>(ctx);\n\n        if (row < 0 || row >= t.rows || pos < 0 || pos >= t.cols) {\n            raiseError<output_DONE>(ctx);\n            return;\n        }\n        \n        printAt(t.lcd, row, pos, str);\n\n        emitValue<output_DONE>(ctx, 1);\n        emitValue<output_DEV_>(ctx, t);\n    }\n}\n"
+        }
+      ],
+      "description": "Writes text to the screen of an LCD-RGB device. ROW can be 0 or 1. COL can be an integer 0 to 15 inclusive.",
+      "nodes": {
+        "ryxAqaCnq": {
+          "description": "Writes text to the LCD. X can be from 0 to 15, Y from 0 to 1.",
+          "id": "ryxAqaCnq",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "S1daVAAn9": {
+          "label": "DEV",
+          "id": "S1daVAAn9",
+          "type": "@/input-text-lcd-rgb-device",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "S1iyrARnc": {
+          "label": "DONE",
+          "id": "S1iyrARnc",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "BJomBAAnc": {
+          "label": "UPD",
+          "id": "BJomBAAnc",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "BkLbJex6q": {
+          "label": "TXT",
+          "id": "BkLbJex6q",
+          "type": "xod/patch-nodes/input-string",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "rJa_uxea5": {
+          "label": "COL",
+          "id": "rJa_uxea5",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "Byj0_Oexp9": {
+          "label": "ROW",
+          "id": "Byj0_Oexp9",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "HkcutxgT5": {
+          "label": "DEV_",
+          "id": "HkcutxgT5",
+          "type": "@/output-text-lcd-rgb-device",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/draw-text"
+    }
+  },
+  "description": "A basic library to use the Seeed I2C LCD 16x2 device",
+  "apiKey": "63ee7621-6734-43f1-88d9-7511187fe944",
+  "name": "seeed-lcd-16x2"
+}

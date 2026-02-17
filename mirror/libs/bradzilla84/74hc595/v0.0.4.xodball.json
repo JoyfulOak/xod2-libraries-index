@@ -1,0 +1,1227 @@
+{
+  "description": "The 74HC595 is a “8-bit serial-in, serial or parallel-out shift register with output latches; 3-state.” In other words, you can use it to control 8 outputs at a time while only taking up a few pins on your microcontroller. Normal use 3 pins, or 5 pin with Enable and Clear. (With the assistance of Cesars)",
+  "license": "GPL",
+  "name": "74hc595",
+  "patches": {
+    "@/example": {
+      "links": {
+        "Hyy2IW3AX": {
+          "id": "Hyy2IW3AX",
+          "output": {
+            "nodeId": "rJcaDxhRm",
+            "pinKey": "ryQxTgnRQ"
+          },
+          "input": {
+            "nodeId": "ryMoUbhC7",
+            "pinKey": "S1C5S-3CQ"
+          }
+        },
+        "SytaU-hAQ": {
+          "id": "SytaU-hAQ",
+          "output": {
+            "nodeId": "S1HGjUvAm",
+            "pinKey": "HJbJn7_RX"
+          },
+          "input": {
+            "nodeId": "BkqTuID07",
+            "pinKey": "HyyQ27uCm"
+          }
+        },
+        "B1UrOb3C7": {
+          "id": "B1UrOb3C7",
+          "output": {
+            "nodeId": "rJcaDxhRm",
+            "pinKey": "ryQxTgnRQ"
+          },
+          "input": {
+            "nodeId": "S1zB_Z3CX",
+            "pinKey": "HyNJeOWhRX"
+          }
+        },
+        "BJ2id-nAQ": {
+          "id": "BJ2id-nAQ",
+          "output": {
+            "nodeId": "rJcaDxhRm",
+            "pinKey": "rkNpswe307"
+          },
+          "input": {
+            "nodeId": "ryMoUbhC7",
+            "pinKey": "r1u_8bh0m"
+          }
+        },
+        "HJCs_W20X": {
+          "id": "HJCs_W20X",
+          "output": {
+            "nodeId": "rJcaDxhRm",
+            "pinKey": "rkNpswe307"
+          },
+          "input": {
+            "nodeId": "S1zB_Z3CX",
+            "pinKey": "rySJeubhCm"
+          }
+        }
+      },
+      "nodes": {
+        "BJDQ_Iv0X": {
+          "id": "BJDQ_Iv0X",
+          "position": {
+            "x": 340,
+            "y": 0
+          },
+          "type": "@/hc595-device"
+        },
+        "BkqTuID07": {
+          "id": "BkqTuID07",
+          "position": {
+            "x": 510,
+            "y": 204
+          },
+          "type": "@/hc595-set"
+        },
+        "S1HGjUvAm": {
+          "id": "S1HGjUvAm",
+          "position": {
+            "x": 544,
+            "y": 102
+          },
+          "type": "@/hc595-pack"
+        },
+        "SJuzhEFRm": {
+          "id": "SJuzhEFRm",
+          "position": {
+            "x": 340,
+            "y": 102
+          },
+          "type": "@/hc595-ctrl"
+        },
+        "Sy4JmvvAX": {
+          "id": "Sy4JmvvAX",
+          "position": {
+            "x": 340,
+            "y": 306
+          },
+          "type": "@/hc595-clear"
+        },
+        "rysqLenC7": {
+          "id": "rysqLenC7",
+          "type": "@/hc595-getpin",
+          "position": {
+            "x": 510,
+            "y": 408
+          }
+        },
+        "rJcaDxhRm": {
+          "id": "rJcaDxhRm",
+          "type": "@/hc595-getall",
+          "position": {
+            "x": 748,
+            "y": 306
+          }
+        },
+        "HkmB1-2Cm": {
+          "id": "HkmB1-2Cm",
+          "type": "@/hc595-setpin-noupd",
+          "position": {
+            "x": 340,
+            "y": 204
+          }
+        },
+        "S1ilgb2Cm": {
+          "id": "S1ilgb2Cm",
+          "type": "@/hc595-update-all",
+          "position": {
+            "x": 646,
+            "y": 306
+          }
+        },
+        "SJNkmWn07": {
+          "id": "SJNkmWn07",
+          "type": "@/hc595-setpin",
+          "position": {
+            "x": 340,
+            "y": 408
+          }
+        },
+        "rJdo4-nCm": {
+          "id": "rJdo4-nCm",
+          "type": "@/hc595-set-all-hi",
+          "position": {
+            "x": 442,
+            "y": 306
+          }
+        },
+        "BJ9i4b207": {
+          "id": "BJ9i4b207",
+          "type": "@/hc595-set-all-low",
+          "position": {
+            "x": 544,
+            "y": 306
+          }
+        },
+        "ryMoUbhC7": {
+          "id": "ryMoUbhC7",
+          "type": "@/hc595-nibble-lower",
+          "position": {
+            "x": 680,
+            "y": 408
+          }
+        },
+        "S1zB_Z3CX": {
+          "id": "S1zB_Z3CX",
+          "type": "@/hc595-nibble-upper",
+          "position": {
+            "x": 850,
+            "y": 408
+          }
+        }
+      },
+      "path": "@/example"
+    },
+    "@/hc595-clear": {
+      "attachments": [
+        {
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_CLR>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the class instance\n    auto sr = getValue<input_DEV>(ctx);\n    sr->setAllLow(); // set all pins LOW\n    emitValue<output_DONE>(ctx, 1);\n    emitValue<output_OUT>(ctx, sr);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Clear all, Pins set to False",
+      "nodes": {
+        "B1-7nMwvAm": {
+          "description": "Pulse to clear",
+          "id": "B1-7nMwvAm",
+          "label": "CLR",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1mX2fwvRX": {
+          "id": "H1mX2fwvRX",
+          "label": "OUT",
+          "position": {
+            "x": 0,
+            "y": 203
+          },
+          "type": "@/output-hc595-device"
+        },
+        "HJg7hfPDA7": {
+          "description": "Pulse on complete",
+          "id": "HJg7hfPDA7",
+          "label": "DONE",
+          "position": {
+            "x": 34,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HkXhMwD0m": {
+          "id": "HkXhMwD0m",
+          "position": {
+            "x": 0,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJf72zwwRQ": {
+          "description": "Input from Device",
+          "id": "SJf72zwwRQ",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": -1
+          },
+          "type": "@/input-hc595-device"
+        }
+      },
+      "path": "@/hc595-clear"
+    },
+    "@/hc595-ctrl": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n\n    if (!isInputDirty<input_INIT>(ctx))\n        return;\n\n    const uint8_t portRST = getValue<input_RST>(ctx);\n    const uint8_t portEN = getValue<input_EN>(ctx);\n\n    ::pinMode(portRST, OUTPUT);\n    const bool rst = getValue<input_RSTin>(ctx);\n    ::digitalWrite(portRST, !rst);\n    ::pinMode(portEN, OUTPUT);\n    const bool en = getValue<input_ENin>(ctx);\n    ::digitalWrite(portEN, !en);\n    emitValue<output_OK>(ctx, 1);\n}\n"
+        }
+      ],
+      "nodes": {
+        "BJ6wj4KCm": {
+          "description": "ENABLE (Pin 13 on the chip)",
+          "id": "BJ6wj4KCm",
+          "label": "EN",
+          "position": {
+            "x": 33,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "BJvooVtR7": {
+          "description": "Pulse to Update",
+          "id": "BJvooVtR7",
+          "label": "INIT",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkItoVtRQ": {
+          "description": "Enable the ENABLE Pin",
+          "id": "BkItoVtRQ",
+          "label": "ENin",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "HkxpwiEF0X": {
+          "description": "CLEAR (Pin 10 on the chip)",
+          "id": "HkxpwiEF0X",
+          "label": "RST",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "S1J9oNYR7": {
+          "description": "Enable the CLEAR Pin",
+          "id": "S1J9oNYR7",
+          "label": "RSTin",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "Syx31rtAX": {
+          "id": "Syx31rtAX",
+          "label": "OK",
+          "position": {
+            "x": 0,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJ9Zrgh0m": {
+          "id": "HJ9Zrgh0m",
+          "position": {
+            "x": 0,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/hc595-ctrl"
+    },
+    "@/hc595-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/Simsso/ShiftRegister74HC595\"\n\n\n{{#global}}\n#include <ShiftRegister74HC595.h>\n{{/global}}\n\nstruct State {\n    uint8_t mem[sizeof(ShiftRegister74HC595)];\n};\n\n// Define our custom type as a pointer on the class instance.\nusing Type = ShiftRegister74HC595*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isSettingUp())\n        return;\n\n    auto state = getState(ctx);\n\n    // Create a new object in the memory area reserved previously.\n    Type sr = new (state->mem) ShiftRegister74HC595(getValue<input_SRn>(ctx),getValue<input_DS>(ctx), getValue<input_CLK>(ctx), getValue<input_LT>(ctx));\n    emitValue<output_DEV>(ctx, sr);\n}\n"
+        }
+      ],
+      "description": "Hardware Setup Block",
+      "nodes": {
+        "B1uevLvAm": {
+          "description": "DATA SERIAL  (Pin 14 on the chip)",
+          "id": "B1uevLvAm",
+          "label": "DS",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Sysxw8vCX": {
+          "description": "LATCH (Pin 12 on the chip)",
+          "id": "Sysxw8vCX",
+          "label": "LT",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "r1ngwUwRm": {
+          "description": "CLOCK(Pin 11 on the chip)",
+          "id": "r1ngwUwRm",
+          "label": "CLK",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rJoYdLPCX": {
+          "description": "Output from setup.",
+          "id": "rJoYdLPCX",
+          "label": "DEV",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "BylyBNgnR7": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Number of Chained IC's",
+          "id": "BylyBNgnR7",
+          "label": "SRn",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJkONgnCX": {
+          "id": "SJkONgnCX",
+          "position": {
+            "x": 68,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/hc595-device"
+    },
+    "@/hc595-pack": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\nstruct Type {\n    uint8_t* items;\n};\n\n\n{{ GENERATED_CODE }}\n\n\nvoid evaluate(Context ctx) {\n    Type data;\n    data.items[0] = getValue<input_QA>(ctx);\n    data.items[1] = getValue<input_QB>(ctx);\n    data.items[2] = getValue<input_QC>(ctx);\n    data.items[3] = getValue<input_QD>(ctx);\n    data.items[4] = getValue<input_QE>(ctx);\n    data.items[5] = getValue<input_QF>(ctx);\n    data.items[6] = getValue<input_QG>(ctx);\n    data.items[7] = getValue<input_QH>(ctx);\n\n    emitValue<output_OUT>(ctx, data);\n}\n"
+        }
+      ],
+      "description": "Pack ALL Pin Values to be sent to DATA Block",
+      "nodes": {
+        "BkKSSwv0Q": {
+          "description": "Data pin",
+          "id": "BkKSSwv0Q",
+          "label": "QH",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "BkhrSwDAm": {
+          "description": "Data pin",
+          "id": "BkhrSwDAm",
+          "label": "QA",
+          "position": {
+            "x": 340,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "H1ljHBPD07": {
+          "description": "Data pin",
+          "id": "H1ljHBPD07",
+          "label": "QB",
+          "position": {
+            "x": 306,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "HJbJn7_RX": {
+          "description": "Out to Data Block.",
+          "id": "HJbJn7_RX",
+          "label": "OUT",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "HJirSwwCm": {
+          "description": "Data pin",
+          "id": "HJirSwwCm",
+          "label": "QC",
+          "position": {
+            "x": 272,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "Sy7s58DAm": {
+          "id": "Sy7s58DAm",
+          "position": {
+            "x": 102,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Sye5BHwvAm": {
+          "description": "Data pin",
+          "id": "Sye5BHwvAm",
+          "label": "QE",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "SyeKHHwwRm": {
+          "description": "Data pin",
+          "id": "SyeKHHwwRm",
+          "label": "QG",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rJb5SSDw0m": {
+          "description": "Data pin",
+          "id": "rJb5SSDw0m",
+          "label": "QD",
+          "position": {
+            "x": 238,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rk9SSwPRQ": {
+          "description": "Data pin",
+          "id": "rk9SSwPRQ",
+          "label": "QF",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        }
+      },
+      "path": "@/hc595-pack"
+    },
+    "@/hc595-string": {
+      "path": "@/hc595-string"
+    },
+    "@/input-hc595": {
+      "path": "@/input-hc595"
+    },
+    "@/output-hc595": {
+      "path": "@/output-hc595"
+    },
+    "@/hc595-getpin": {
+      "nodes": {
+        "H17mUenA7": {
+          "id": "H17mUenA7",
+          "label": "DONE",
+          "position": {
+            "x": 68,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJlQmUl3RX": {
+          "id": "rJlQmUl3RX",
+          "position": {
+            "x": 0,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HyWXm8l207": {
+          "description": "Pin Number (Pin Numbers start at 0... pin one is 0)",
+          "id": "HyWXm8l207",
+          "label": "Qx",
+          "position": {
+            "x": 34,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ByzmmLl2A7": {
+          "id": "ByzmmLl2A7",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": -1
+          },
+          "type": "@/input-hc595-device"
+        },
+        "HJmXQLg3CX": {
+          "id": "HJmXQLg3CX",
+          "label": "INIT",
+          "position": {
+            "x": 68,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HyEQmUlhCm": {
+          "id": "HyEQmUlhCm",
+          "label": "Qval",
+          "position": {
+            "x": 34,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "SJHmXUgnCX": {
+          "id": "SJHmXUgnCX",
+          "label": "OUT",
+          "position": {
+            "x": 0,
+            "y": 203
+          },
+          "type": "@/output-hc595-device"
+        }
+      },
+      "path": "@/hc595-getpin",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n// clang-format off\n{{ GENERATED_CODE }}\n// clang-format on\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n    auto pin = getValue<input_Qx>(ctx);\n    auto sr = getValue<input_DEV>(ctx); // Get a pointer to the class instance\n\n    emitValue<output_Qval>(ctx, (uint8_t)sr->get(pin));\n    emitValue<output_DONE>(ctx, 1);\n\n}\n"
+        }
+      ]
+    },
+    "@/hc595-getall": {
+      "nodes": {
+        "r1asPlhCQ": {
+          "id": "r1asPlhCQ",
+          "label": "INIT",
+          "position": {
+            "x": 34,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "B1xTjPx2Rm": {
+          "id": "B1xTjPx2Rm",
+          "position": {
+            "x": -1,
+            "y": 100
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HkMTiwg20m": {
+          "id": "HkMTiwg20m",
+          "label": "OUT",
+          "position": {
+            "x": 0,
+            "y": 203
+          },
+          "type": "@/output-hc595-device"
+        },
+        "BkXTove2Am": {
+          "id": "BkXTove2Am",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": -1
+          },
+          "type": "@/input-hc595-device"
+        },
+        "rkNpswe307": {
+          "id": "rkNpswe307",
+          "label": "DONE",
+          "position": {
+            "x": 68,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ryQxTgnRQ": {
+          "id": "ryQxTgnRQ",
+          "type": "xod/patch-nodes/output-self",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "label": "Data"
+        }
+      },
+      "path": "@/hc595-getall",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\nstruct Type {\n    uint8_t* items;\n};\n\n// clang-format off\n{{ GENERATED_CODE }}\n// clang-format on\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    Type data;\n\n    auto sr = getValue<input_DEV>(ctx); // Get a pointer to the class instance\n    data.items = sr->getAll();\n\n    emitValue<output_Data>(ctx, data);\n    emitValue<output_DONE>(ctx, 1);\n\n}\n"
+        }
+      ]
+    },
+    "@/hc595-setpin-noupd": {
+      "nodes": {
+        "Hk8DRe2RQ": {
+          "description": "pin Value",
+          "id": "Hk8DRe2RQ",
+          "label": "IN",
+          "position": {
+            "x": 35,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "r1gUD0gn0m": {
+          "id": "r1gUD0gn0m",
+          "label": "OUT",
+          "position": {
+            "x": 0,
+            "y": 203
+          },
+          "type": "@/output-hc595-device"
+        },
+        "BJbUvAl3CX": {
+          "description": "Pin Number (Pin Numbers start at 0... pin one is 0)",
+          "id": "BJbUvAl3CX",
+          "label": "Qx",
+          "position": {
+            "x": 69,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJGLDAxn0X": {
+          "description": "Done",
+          "id": "HJGLDAxn0X",
+          "label": "DONE",
+          "position": {
+            "x": 33,
+            "y": 202
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "By7Iv0enRX": {
+          "id": "By7Iv0enRX",
+          "position": {
+            "x": -1,
+            "y": 100
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Sk4Uv0x2R7": {
+          "description": "Update",
+          "id": "Sk4Uv0x2R7",
+          "label": "INIT",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkL8vRgnCm": {
+          "id": "HkL8vRgnCm",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": -1
+          },
+          "type": "@/input-hc595-device"
+        }
+      },
+      "path": "@/hc595-setpin-noupd",
+      "description": "Set a pin value Without updateing the chip (Use sr-Update block once all are set)",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    if (getValue<input_Qx>(ctx) >= 8)\n        return;\n\n    auto sr = getValue<input_DEV>(ctx); // Get a pointer to the class instance\n    sr->setNoUpdate(getValue<input_Qx>(ctx), getValue<input_IN>(ctx));     //Set pin X\n    emitValue<output_DONE>(ctx, 1);\n    emitValue<output_OUT>(ctx, sr);\n}\n"
+        }
+      ]
+    },
+    "@/hc595-setpin": {
+      "nodes": {
+        "BkmkzWhRX": {
+          "description": "Input Value",
+          "id": "BkmkzWhRX",
+          "label": "IN",
+          "position": {
+            "x": 35,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "HklQ1fZ2Cm": {
+          "id": "HklQ1fZ2Cm",
+          "position": {
+            "x": -1,
+            "y": 99
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SkW7JMWnCQ": {
+          "id": "SkW7JMWnCQ",
+          "label": "INIT",
+          "position": {
+            "x": 103,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S1z7kGZn0Q": {
+          "id": "S1z7kGZn0Q",
+          "label": "DONE",
+          "position": {
+            "x": 35,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Bk7Xyf-2Am": {
+          "description": "Pin Number (Pin Numbers start at 0... pin one is 0)",
+          "id": "Bk7Xyf-2Am",
+          "label": "Qx",
+          "position": {
+            "x": 69,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Bk4Q1z-20X": {
+          "id": "Bk4Q1z-20X",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": -1
+          },
+          "type": "@/input-hc595-device"
+        },
+        "HkBmJM-n0X": {
+          "id": "HkBmJM-n0X",
+          "label": "OUT",
+          "position": {
+            "x": 1,
+            "y": 203
+          },
+          "type": "@/output-hc595-device"
+        }
+      },
+      "path": "@/hc595-setpin",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    if (getValue<input_Qx>(ctx) >= 8)\n        return;\n\n    auto sr = getValue<input_DEV>(ctx); // Get a pointer to the class instance\n    sr->set(getValue<input_Qx>(ctx), getValue<input_IN>(ctx));     //Set pin X\n    emitValue<output_DONE>(ctx, 1);\n    emitValue<output_OUT>(ctx, sr);\n}\n"
+        }
+      ]
+    },
+    "@/hc595-set": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    auto sr = getValue<input_DEV>(ctx); // Get a pointer to the class instance\n\n    auto Data = getValue<input_IN>(ctx);\n    sr->setAll(Data.items);     //Send all pins at once\n    emitValue<output_DONE>(ctx, 1);\n    emitValue<output_OUT>(ctx, sr);\n\n}\n"
+        }
+      ],
+      "description": "Update Data on all pins (if Pulsed and Enabled)",
+      "nodes": {
+        "B1QUOUD0Q": {
+          "id": "B1QUOUD0Q",
+          "position": {
+            "x": 0,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HyyQ27uCm": {
+          "description": "Input from Pack",
+          "id": "HyyQ27uCm",
+          "label": "IN",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "@/input-hc595-pack"
+        },
+        "Sk39O8DAX": {
+          "description": "Input from Device",
+          "id": "Sk39O8DAX",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-hc595-device"
+        },
+        "r10j_IDAX": {
+          "id": "r10j_IDAX",
+          "label": "OUT",
+          "position": {
+            "x": 0,
+            "y": 204
+          },
+          "type": "@/output-hc595-device"
+        },
+        "r1ye78_8DA7": {
+          "description": "Pulse to Update",
+          "id": "r1ye78_8DA7",
+          "label": "INIT",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkCXIOLPR7": {
+          "description": "Pulse on complete",
+          "id": "rkCXIOLPR7",
+          "label": "DONE",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/hc595-set"
+    },
+    "@/hc595-update-all": {
+      "nodes": {
+        "BkXgeb3R7": {
+          "id": "BkXgeb3R7",
+          "position": {
+            "x": -1,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJg7le-h0m": {
+          "description": "Update",
+          "id": "rJg7le-h0m",
+          "label": "UPD",
+          "position": {
+            "x": 33,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryWmlg-3Rm": {
+          "id": "ryWmlg-3Rm",
+          "label": "OUT",
+          "position": {
+            "x": 0,
+            "y": 203
+          },
+          "type": "@/output-hc595-device"
+        },
+        "ryzmll-hAm": {
+          "id": "ryzmll-hAm",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": -1
+          },
+          "type": "@/input-hc595-device"
+        },
+        "HJmXglbn0Q": {
+          "description": "Done",
+          "id": "HJmXglbn0Q",
+          "label": "DONE",
+          "position": {
+            "x": 33,
+            "y": 202
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/hc595-update-all",
+      "description": "Update ALL pin Values (if they have been stored with Setpin-Noupd)",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the class instance\n    auto sr = getValue<input_DEV>(ctx);\n    sr->updateRegisters(); // update all pins\n    emitValue<output_DONE>(ctx, 1);\n    emitValue<output_OUT>(ctx, sr);\n}\n"
+        }
+      ]
+    },
+    "@/hc595-set-all-hi": {
+      "nodes": {
+        "rypHVbh0m": {
+          "id": "rypHVbh0m",
+          "position": {
+            "x": -1,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1e6rE-n0X": {
+          "description": "Update",
+          "id": "S1e6rE-n0X",
+          "label": "UPD",
+          "position": {
+            "x": 33,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SyWaBVbhCQ": {
+          "id": "SyWaBVbhCQ",
+          "label": "OUT",
+          "position": {
+            "x": 0,
+            "y": 203
+          },
+          "type": "@/output-hc595-device"
+        },
+        "BJf6BVZn0m": {
+          "id": "BJf6BVZn0m",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": -1
+          },
+          "type": "@/input-hc595-device"
+        },
+        "r1QaHNb3Rm": {
+          "description": "Done",
+          "id": "r1QaHNb3Rm",
+          "label": "DONE",
+          "position": {
+            "x": 33,
+            "y": 202
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/hc595-set-all-hi",
+      "description": "Set ALL pins High",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the class instance\n    auto sr = getValue<input_DEV>(ctx);\n    sr->setAllHigh(); // set all pins LOW\n    emitValue<output_DONE>(ctx, 1);\n    emitValue<output_OUT>(ctx, sr);\n}\n"
+        }
+      ]
+    },
+    "@/hc595-set-all-low": {
+      "nodes": {
+        "SkCHN-2Cm": {
+          "id": "SkCHN-2Cm",
+          "position": {
+            "x": -1,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1lRB4Wn0X": {
+          "description": "Update",
+          "id": "H1lRB4Wn0X",
+          "label": "UPD",
+          "position": {
+            "x": 33,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJWRrEWnAX": {
+          "id": "rJWRrEWnAX",
+          "label": "OUT",
+          "position": {
+            "x": 0,
+            "y": 203
+          },
+          "type": "@/output-hc595-device"
+        },
+        "ryM0SVWhR7": {
+          "id": "ryM0SVWhR7",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": -1
+          },
+          "type": "@/input-hc595-device"
+        },
+        "Bk7ABEb20Q": {
+          "description": "Done",
+          "id": "Bk7ABEb20Q",
+          "label": "DONE",
+          "position": {
+            "x": 33,
+            "y": 202
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/hc595-set-all-low",
+      "description": "Set ALL pins Low",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the class instance\n    auto sr = getValue<input_DEV>(ctx);\n    sr->setAllLow(); // set all pins LOW\n    emitValue<output_DONE>(ctx, 1);\n    emitValue<output_OUT>(ctx, sr);\n}\n"
+        }
+      ]
+    },
+    "@/hc595-nibble-lower": {
+      "nodes": {
+        "BJ6Yr-207": {
+          "id": "BJ6Yr-207",
+          "position": {
+            "x": 0,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1xaFr-n0Q": {
+          "description": "Pin 4",
+          "id": "S1xaFr-n0Q",
+          "label": "OUT4",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "By-aYH-hR7": {
+          "boundLiterals": {
+            "__in__": "False"
+          },
+          "description": "Pin 1",
+          "id": "By-aYH-hR7",
+          "label": "OUT1",
+          "position": {
+            "x": 0,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "HJM6trZhCm": {
+          "description": "Pin 3",
+          "id": "HJM6trZhCm",
+          "label": "OUT3",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "S1XTFrZnR7": {
+          "description": "Pin 2",
+          "id": "S1XTFrZnR7",
+          "label": "OUT2",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "S1C5S-3CQ": {
+          "id": "S1C5S-3CQ",
+          "type": "@/input-hc595-getall",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "label": "IN",
+          "description": "Input from GetAll"
+        },
+        "r1u_8bh0m": {
+          "id": "r1u_8bh0m",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "label": "INIT",
+          "boundLiterals": {
+            "__out__": "Never"
+          }
+        }
+      },
+      "path": "@/hc595-nibble-lower",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n// clang-format off\n{{ GENERATED_CODE }}\n// clang-format on\n\nvoid evaluate(Context ctx) {\n\n        if (!isInputDirty<input_INIT>(ctx)){\n        return;}\n\n    auto data = getValue<input_IN>(ctx);\n\n    emitValue<output_OUT1>(ctx, data.items[0]);\n    emitValue<output_OUT2>(ctx, data.items[1]);\n    emitValue<output_OUT3>(ctx, data.items[2]);\n    emitValue<output_OUT4>(ctx, data.items[3]);\n}\n"
+        }
+      ]
+    },
+    "@/hc595-nibble-upper": {
+      "nodes": {
+        "ByJgdbhCX": {
+          "id": "ByJgdbhCX",
+          "position": {
+            "x": -1,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "B1x1xd-nAm": {
+          "description": "Pin 8",
+          "id": "B1x1xd-nAm",
+          "label": "OUT8",
+          "position": {
+            "x": 101,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "rkZJlOZnR7": {
+          "boundLiterals": {
+            "__in__": "False"
+          },
+          "description": "Pin 5",
+          "id": "rkZJlOZnR7",
+          "label": "OUT5",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "rkzkgdWnCX": {
+          "description": "Pin 7",
+          "id": "rkzkgdWnCX",
+          "label": "OUT7",
+          "position": {
+            "x": 67,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "rymyldb3C7": {
+          "description": "Pin 6",
+          "id": "rymyldb3C7",
+          "label": "OUT6",
+          "position": {
+            "x": 33,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "HyNJeOWhRX": {
+          "id": "HyNJeOWhRX",
+          "type": "@/input-hc595-getall",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "label": "IN",
+          "description": "Input from GetAll"
+        },
+        "rySJeubhCm": {
+          "id": "rySJeubhCm",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 33,
+            "y": -1
+          },
+          "label": "INIT",
+          "boundLiterals": {
+            "__out__": "Never"
+          }
+        }
+      },
+      "path": "@/hc595-nibble-upper",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n// clang-format off\n{{ GENERATED_CODE }}\n// clang-format on\n\nvoid evaluate(Context ctx) {\n\n        if (!isInputDirty<input_INIT>(ctx)){\n        return;}\n\n    auto data = getValue<input_IN>(ctx);\n\n    emitValue<output_OUT5>(ctx, data.items[4]);\n    emitValue<output_OUT6>(ctx, data.items[5]);\n    emitValue<output_OUT7>(ctx, data.items[6]);\n    emitValue<output_OUT8>(ctx, data.items[7]);\n}\n"
+        }
+      ]
+    }
+  },
+  "version": "0.0.4"
+}

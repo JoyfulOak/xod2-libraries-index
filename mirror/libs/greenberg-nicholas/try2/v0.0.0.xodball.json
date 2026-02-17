@@ -1,0 +1,199 @@
+{
+  "patches": {
+    "@/main": {
+      "nodes": {
+        "ryrN5Zt3O": {
+          "id": "ryrN5Zt3O",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/main",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n\n        auto inValue = getValue<input_IN>(ctx);\n        emitValue<output_OUT>(ctx, inValue);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/relay-flip-n-times": {
+      "nodes": {
+        "SJCgJzS2_": {
+          "boundLiterals": {
+            "Bk95-J9yM": "True",
+            "BkE-fCKJG": "True",
+            "SJ1e-CKkf": ".3",
+            "r1v0xCYJf": ".3",
+            "rknsx0tyf": "10"
+          },
+          "id": "SJCgJzS2_",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-n-times"
+        },
+        "Byx0xkMHnd": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D2",
+            "rJIdYs1LB": "True"
+          },
+          "id": "Byx0xkMHnd",
+          "position": {
+            "x": -1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "HJZ0e1zH3u": {
+          "id": "HJZ0e1zH3u",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        },
+        "SkM0eJGHnu": {
+          "boundLiterals": {
+            "SJdzbYEzH": "D23"
+          },
+          "id": "SkM0eJGHnu",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/relay"
+        },
+        "H1X0xJGSnO": {
+          "id": "H1X0xJGSnO",
+          "position": {
+            "x": 6,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "r14AxJzrn_": {
+          "id": "r14AxJzrn_",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        }
+      },
+      "links": {
+        "rJBAlyMSnd": {
+          "id": "rJBAlyMSnd",
+          "input": {
+            "nodeId": "SJCgJzS2_",
+            "pinKey": "S1vneCK1z"
+          },
+          "output": {
+            "nodeId": "HJZ0e1zH3u",
+            "pinKey": "Bkf4BDsmV"
+          }
+        },
+        "B1DCgyGShO": {
+          "id": "B1DCgyGShO",
+          "input": {
+            "nodeId": "SkM0eJGHnu",
+            "pinKey": "SkgXWK4MB"
+          },
+          "output": {
+            "nodeId": "SJCgJzS2_",
+            "pinKey": "BkE-fCKJG"
+          }
+        },
+        "SydClJMr3O": {
+          "id": "SydClJMr3O",
+          "input": {
+            "nodeId": "SJCgJzS2_",
+            "pinKey": "ByUpxAtJG"
+          },
+          "output": {
+            "nodeId": "r14AxJzrn_",
+            "pinKey": "Bkf4BDsmV"
+          }
+        },
+        "ByYCg1GS3_": {
+          "id": "ByYCg1GS3_",
+          "input": {
+            "nodeId": "H1X0xJGSnO",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "SJCgJzS2_",
+            "pinKey": "BkE-fCKJG"
+          }
+        },
+        "HkRRgfBn_": {
+          "id": "HkRRgfBn_",
+          "input": {
+            "nodeId": "Byx0xkMHnd",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "SJCgJzS2_",
+            "pinKey": "BkE-fCKJG"
+          }
+        }
+      },
+      "path": "@/relay-flip-n-times"
+    },
+    "@/blynk-connect": {
+      "nodes": {
+        "HkL8AyFnd": {
+          "id": "HkL8AyFnd",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/blynk-connect",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n\n        auto inValue = getValue<input_IN>(ctx);\n        emitValue<output_OUT>(ctx, inValue);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/rename-node-test": {
+      "nodes": {
+        "r1O7rlYnd": {
+          "id": "r1O7rlYnd",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/rename-node-test",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "/*************************************************************\n  Download latest Blynk library here:\n    https://github.com/blynkkk/blynk-library/releases/latest\n\n  Blynk is a platform with iOS and Android apps to control\n  Arduino, Raspberry Pi and the likes over the Internet.\n  You can easily build graphic interfaces for all your\n  projects by simply dragging and dropping widgets.\n\n    Downloads, docs, tutorials: http://www.blynk.cc\n    Sketch generator:           http://examples.blynk.cc\n    Blynk community:            http://community.blynk.cc\n    Follow us:                  http://www.fb.com/blynkapp\n                                http://twitter.com/blynk_app\n\n  Blynk library is licensed under MIT license\n  This example code is in public domain.\n\n *************************************************************\n\n  You’ll need:\n   - Blynk App (download from AppStore or Google Play)\n   - ESP32 board\n   - Decide how to connect to Blynk\n     (USB, Ethernet, Wi-Fi, Bluetooth, ...)\n\n  There is a bunch of great example sketches included to show you how to get\n  started. Think of them as LEGO bricks  and combine them as you wish.\n  For example, take the Ethernet Shield sketch and combine it with the\n  Servo example, or choose a USB sketch and add a code from SendData\n  example.\n *************************************************************/\n\n/* Comment this out to disable prints and save space */\n#define BLYNK_PRINT Serial\n\n\n#include <WiFi.h>\n#include <WiFiClient.h>\n#include <BlynkSimpleEsp32.h>\n\n// You should get Auth Token in the Blynk App.\n// Go to the Project Settings (nut icon).\nchar auth[] = \"nr6nMSOdOdkoc0p353f1wp8noqr4qsm9\";\n\n// Your WiFi credentials.\n// Set password to \"\" for open networks.\nchar ssid[] = \"Greenbergs\";\nchar pass[] = \"petey1234\";\n\nvoid setup()\n{\n  // Debug console\n  Serial.begin(115200);\n\n  Blynk.begin(auth, ssid, pass);\n  // You can also specify server:\n  //Blynk.begin(auth, ssid, pass, \"blynk-cloud.com\", 80);\n  //Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,100), 8080);\n}\n\nvoid loop()\n{\n  Blynk.run();\n  // You can inject your own code or combine it with other sketches.\n  // Check other examples on how to communicate with Blynk. Remember\n  // to avoid delay() function!\n}\n"
+        }
+      ]
+    }
+  },
+  "apiKey": "88239e7c-f8a0-4cb8-a227-25e2e538cc90",
+  "name": "try2"
+}

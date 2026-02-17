@@ -1,0 +1,609 @@
+{
+  "apiKey": "cfbe6e08-08c4-4d6a-814d-79fbae495021",
+  "description": "Node for driving AD9833 DDS chip",
+  "license": "1.0",
+  "name": "ad9833-dds",
+  "patches": {
+    "@/ad9833": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/Billwilliams1952/AD9833-Library-Arduino\"\n\n{{#global}}\n#include <AD9833.h>\n{{/global}}\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPDATE>(ctx))\n        return;\n\n    Number CS_PIN = getValue<input_CS>(ctx);\n    AD9833 chip(CS_PIN);\n    chip.Begin();\n    chip.EnableOutput(false);\n    Number FREQ = getValue<input_FREQ>(ctx);\n    Number WAVE = getValue<input_WAVE>(ctx);\n    if(WAVE==0){chip.SetWaveform(REG0,SINE_WAVE);}\n    if(WAVE==1){chip.SetWaveform(REG0,TRIANGLE_WAVE);}\n    if(WAVE==2){chip.SetWaveform(REG0,SQUARE_WAVE);}\n    chip.SetFrequency(REG0,FREQ);\n    digitalWrite(CS_PIN,LOW);\n    chip.EnableOutput(true);\n    digitalWrite(CS_PIN,HIGH);\n    emitValue<output_DONE>(ctx, 1);\n};\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJXQOMlxdL": {
+          "description": "AD9833 - single chip",
+          "id": "BJXQOMlxdL",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1HQdzge_L": {
+          "description": "Spits a pulse when done.",
+          "id": "r1HQdzge_L",
+          "label": "DONE",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rkQdzeluL": {
+          "boundLiterals": {
+            "__out__": "D6"
+          },
+          "description": "Chip select pin",
+          "id": "rkQdzeluL",
+          "label": "CS",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "ryIQ_zexu8": {
+          "boundLiterals": {
+            "__out__": "0"
+          },
+          "description": "Waveform:\n0 - SINEWAVE\n1 - TRIANGLE WAVE\n2 - SQUARE WAVE",
+          "id": "ryIQ_zexu8",
+          "label": "WAVE",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryNX_feedI": {
+          "description": "Feed a pulse signal to update the output based on input parameters",
+          "id": "ryNX_feedI",
+          "label": "UPDATE",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryd7_flguU": {
+          "boundLiterals": {
+            "__out__": "1000"
+          },
+          "description": "Frenquency in Hz",
+          "id": "ryd7_flguU",
+          "label": "FREQ",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/ad9833"
+    },
+    "@/ad9833-2channels": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/Billwilliams1952/AD9833-Library-Arduino\"\n\n{{#global}}\n#include <AD9833.h>\n{{/global}}\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPDATE>(ctx))\n        return;\n\n    Number CS1_PIN = getValue<input_CS1>(ctx);\n    Number CS2_PIN = getValue<input_CS2>(ctx);\n    AD9833 chip1(CS1_PIN);\n    AD9833 chip2(CS2_PIN);\n    chip1.Begin();\n    chip2.Begin();\n    chip1.EnableOutput(false);\n    chip2.EnableOutput(false);\n    Number FREQ1 = getValue<input_FREQ1>(ctx);\n    Number FREQ2 = getValue<input_FREQ2>(ctx);\n    Number PH1 = getValue<input_PH1>(ctx);\n    Number PH2 = getValue<input_PH2>(ctx);\n    Number WAVE1 = getValue<input_WAVE1>(ctx);\n    Number WAVE2 = getValue<input_WAVE2>(ctx);\n    if(WAVE1==0){chip1.SetWaveform(REG0,SINE_WAVE);}\n    if(WAVE1==1){chip1.SetWaveform(REG0,TRIANGLE_WAVE);}\n    if(WAVE1==2){chip1.SetWaveform(REG0,SQUARE_WAVE);}\n    if(WAVE2==0){chip2.SetWaveform(REG0,SINE_WAVE);}\n    if(WAVE2==1){chip2.SetWaveform(REG0,TRIANGLE_WAVE);}\n    if(WAVE2==2){chip2.SetWaveform(REG0,SQUARE_WAVE);}\n    chip1.SetFrequency(REG0,FREQ1);\n    chip2.SetFrequency(REG0,FREQ2);\n    chip1.SetPhase(REG0,PH1);\n    chip2.SetPhase(REG0,PH2);\n    digitalWrite(CS1_PIN,LOW);\n    digitalWrite(CS2_PIN,LOW);\n    chip1.EnableOutput(true);\n    chip2.EnableOutput(true);\n    digitalWrite(CS1_PIN,HIGH);\n    digitalWrite(CS2_PIN,HIGH);\n    emitValue<output_DONE>(ctx, 1);\n};\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJ7gq23vvL": {
+          "boundLiterals": {
+            "__out__": "D6"
+          },
+          "description": "Chip1 select pin (channel-1)",
+          "id": "BJ7gq23vvL",
+          "label": "CS1",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "BJEl9h3Dv8": {
+          "boundLiterals": {
+            "__out__": "0"
+          },
+          "description": "Phase angle (0 - 360 degrees) for channel-1",
+          "id": "BJEl9h3Dv8",
+          "label": "PH1",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJIL8APwI": {
+          "boundLiterals": {
+            "__out__": "D7"
+          },
+          "description": "Chip2 select pin (channel-2)",
+          "id": "BJIL8APwI",
+          "label": "CS2",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "S1AZuRPwU": {
+          "boundLiterals": {
+            "__out__": "0"
+          },
+          "description": "Phase angle (0 - 360 degrees) for channel-2",
+          "id": "S1AZuRPwU",
+          "label": "PH2",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1bl52nwwU": {
+          "description": "AD9833 - 2 chips sharing the same clock source for synchronization.",
+          "id": "S1bl52nwwU",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1fg9nnPDU": {
+          "description": "Feed a pulse signal to update the output based on input parameters",
+          "id": "S1fg9nnPDU",
+          "label": "UPDATE",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S1xqhnvPL": {
+          "description": "Spits a pulse when done.",
+          "id": "S1xqhnvPL",
+          "label": "DONE",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SJ3TL1OvI": {
+          "boundLiterals": {
+            "__out__": "0"
+          },
+          "description": "Channel-1 waveform:\n0 - SINEWAVE\n1 - TRIANGLE WAVE\n2 - SQUARE WAVE",
+          "id": "SJ3TL1OvI",
+          "label": "WAVE1",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJKdglguI": {
+          "boundLiterals": {
+            "__out__": "0"
+          },
+          "description": "Channel-2 waveform:\n0 - SINEWAVE\n1 - TRIANGLE WAVE\n2 - SQUARE WAVE",
+          "id": "rJKdglguI",
+          "label": "WAVE2",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJbaNk_D8": {
+          "boundLiterals": {
+            "__out__": "1000"
+          },
+          "description": "Frenquency in Hz for channel-2",
+          "id": "rJbaNk_D8",
+          "label": "FREQ2",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryllchhwwI": {
+          "boundLiterals": {
+            "__out__": "1000"
+          },
+          "description": "Frenquency in Hz for channel-1",
+          "id": "ryllchhwwI",
+          "label": "FREQ1",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/ad9833-2channels"
+    },
+    "@/ad9833-3channels": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/Billwilliams1952/AD9833-Library-Arduino\"\n\n{{#global}}\n#include <AD9833.h>\n{{/global}}\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPDATE>(ctx))\n        return;\n\n    Number CS1_PIN = getValue<input_CS1>(ctx);\n    Number CS2_PIN = getValue<input_CS2>(ctx);\n    Number CS3_PIN = getValue<input_CS3>(ctx);\n    AD9833 chip1(CS1_PIN);\n    AD9833 chip2(CS2_PIN);\n    AD9833 chip3(CS3_PIN);\n    chip1.Begin();\n    chip2.Begin();\n    chip3.Begin();\n    chip1.EnableOutput(false);\n    chip2.EnableOutput(false);\n    chip3.EnableOutput(false);\n    Number FREQ1 = getValue<input_FREQ1>(ctx);\n    Number FREQ2 = getValue<input_FREQ2>(ctx);\n    Number FREQ3 = getValue<input_FREQ3>(ctx);\n    Number PH1 = getValue<input_PH1>(ctx);\n    Number PH2 = getValue<input_PH2>(ctx);\n    Number PH3 = getValue<input_PH3>(ctx);\n    Number WAVE1 = getValue<input_WAVE1>(ctx);\n    Number WAVE2 = getValue<input_WAVE2>(ctx);\n    Number WAVE3 = getValue<input_WAVE3>(ctx);\n    if(WAVE1==0){chip1.SetWaveform(REG0,SINE_WAVE);}\n    if(WAVE1==1){chip1.SetWaveform(REG0,TRIANGLE_WAVE);}\n    if(WAVE1==2){chip1.SetWaveform(REG0,SQUARE_WAVE);}\n    if(WAVE2==0){chip2.SetWaveform(REG0,SINE_WAVE);}\n    if(WAVE2==1){chip2.SetWaveform(REG0,TRIANGLE_WAVE);}\n    if(WAVE2==2){chip2.SetWaveform(REG0,SQUARE_WAVE);}\n    if(WAVE3==0){chip3.SetWaveform(REG0,SINE_WAVE);}\n    if(WAVE3==1){chip3.SetWaveform(REG0,TRIANGLE_WAVE);}\n    if(WAVE3==2){chip3.SetWaveform(REG0,SQUARE_WAVE);}\n    chip1.SetFrequency(REG0,FREQ1);\n    chip2.SetFrequency(REG0,FREQ2);\n    chip3.SetFrequency(REG0,FREQ3);\n    chip1.SetPhase(REG0,PH1);\n    chip2.SetPhase(REG0,PH2);\n    chip3.SetPhase(REG0,PH3);\n    digitalWrite(CS1_PIN,LOW);\n    digitalWrite(CS2_PIN,LOW);\n    digitalWrite(CS3_PIN,LOW);\n    chip1.EnableOutput(true);\n    chip2.EnableOutput(true);\n    chip3.EnableOutput(true);\n    digitalWrite(CS1_PIN,HIGH);\n    digitalWrite(CS2_PIN,HIGH);\n    digitalWrite(CS3_PIN,HIGH);\n    emitValue<output_DONE>(ctx, 1);\n};\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1HT54llOL": {
+          "description": "Spits a pulse when done.",
+          "id": "B1HT54llOL",
+          "label": "DONE",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BkPTqEgeuU": {
+          "boundLiterals": {
+            "__out__": "1000"
+          },
+          "description": "Frenquency in Hz for channel-2",
+          "id": "BkPTqEgeuU",
+          "label": "FREQ2",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Byp5VxxuL": {
+          "boundLiterals": {
+            "__out__": "D6"
+          },
+          "description": "Chip1 select pin (channel-1)",
+          "id": "Byp5VxxuL",
+          "label": "CS1",
+          "position": {
+            "x": -1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "H1Ma5EegdL": {
+          "boundLiterals": {
+            "__out__": "0"
+          },
+          "description": "Phase angle (0 - 360 degrees) for channel-2",
+          "id": "H1Ma5EegdL",
+          "label": "PH2",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJEp9VgeOU": {
+          "description": "Feed a pulse signal to update the output based on input parameters",
+          "id": "HJEp9VgeOU",
+          "label": "UPDATE",
+          "position": {
+            "x": 15,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Hy8a9Eelu8": {
+          "boundLiterals": {
+            "__out__": "0"
+          },
+          "description": "Channel-1 waveform:\n0 - SINEWAVE\n1 - TRIANGLE WAVE\n2 - SQUARE WAVE",
+          "id": "Hy8a9Eelu8",
+          "label": "WAVE1",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HyxT94lg_I": {
+          "boundLiterals": {
+            "__out__": "0"
+          },
+          "description": "Phase angle (0 - 360 degrees) for channel-1",
+          "id": "HyxT94lg_I",
+          "label": "PH1",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1CySxlu8": {
+          "boundLiterals": {
+            "__out__": "0"
+          },
+          "description": "Phase angle (0 - 360 degrees) for channel-3",
+          "id": "S1CySxlu8",
+          "label": "PH3",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1Xa94gx_8": {
+          "description": "AD9833 - 3chips sharing the same clock source for synchronization.",
+          "id": "S1Xa94gx_8",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1eWHgedL": {
+          "boundLiterals": {
+            "__out__": "0"
+          },
+          "description": "Channel-3 waveform:\n0 - SINEWAVE\n1 - TRIANGLE WAVE\n2 - SQUARE WAVE",
+          "id": "S1eWHgedL",
+          "label": "WAVE3",
+          "position": {
+            "x": 13,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1-p9NlguI": {
+          "boundLiterals": {
+            "__out__": "D7"
+          },
+          "description": "Chip2 select pin (channel-2)",
+          "id": "r1-p9NlguI",
+          "label": "CS2",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rJnCEllOU": {
+          "boundLiterals": {
+            "__out__": "1000"
+          },
+          "description": "Frenquency in Hz for channel-3",
+          "id": "rJnCEllOU",
+          "label": "FREQ3",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJxT4gg_8": {
+          "boundLiterals": {
+            "__out__": "D8"
+          },
+          "description": "Chip3 select pin (channel-3)",
+          "id": "rJxT4gg_8",
+          "label": "CS3",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rk_aqExgdI": {
+          "boundLiterals": {
+            "__out__": "1000"
+          },
+          "description": "Frenquency in Hz for channel-1",
+          "id": "rk_aqExgdI",
+          "label": "FREQ1",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rytT54xlOU": {
+          "boundLiterals": {
+            "__out__": "0"
+          },
+          "description": "Channel-2 waveform:\n0 - SINEWAVE\n1 - TRIANGLE WAVE\n2 - SQUARE WAVE",
+          "id": "rytT54xlOU",
+          "label": "WAVE2",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/ad9833-3channels"
+    },
+    "@/example": {
+      "links": {
+        "BJ0cmaPPL": {
+          "id": "BJ0cmaPPL",
+          "input": {
+            "nodeId": "S1IuQawPU",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "rkb9QpvPI",
+            "pinKey": "ByAIWR_UZ"
+          }
+        },
+        "HJRHrJdvL": {
+          "id": "HJRHrJdvL",
+          "input": {
+            "nodeId": "By1rB1OvL",
+            "pinKey": "BkjI-COLb"
+          },
+          "output": {
+            "nodeId": "SkjHSkOPL",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "HJZfwlxd8": {
+          "id": "HJZfwlxd8",
+          "input": {
+            "nodeId": "BJEWPlgOU",
+            "pinKey": "ryd7_flguU"
+          },
+          "output": {
+            "nodeId": "Hkdy63wDI",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "Hyhbvxg_U": {
+          "id": "Hyhbvxg_U",
+          "input": {
+            "nodeId": "BJEWPlgOU",
+            "pinKey": "ryNX_feedI"
+          },
+          "output": {
+            "nodeId": "S1IuQawPU",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "HykGvleuI": {
+          "id": "HykGvleuI",
+          "input": {
+            "nodeId": "BJEWPlgOU",
+            "pinKey": "ryIQ_zexu8"
+          },
+          "output": {
+            "nodeId": "SkjHSkOPL",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "r1-qZeld8": {
+          "id": "r1-qZeld8",
+          "input": {
+            "nodeId": "rkb9QpvPI",
+            "pinKey": "BkjI-COLb"
+          },
+          "output": {
+            "nodeId": "Hkdy63wDI",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "r1QBSkdDI": {
+          "id": "r1QBSkdDI",
+          "input": {
+            "nodeId": "S1IuQawPU",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "By1rB1OvL",
+            "pinKey": "ByAIWR_UZ"
+          }
+        }
+      },
+      "nodes": {
+        "BJEWPlgOU": {
+          "boundLiterals": {
+            "rkQdzeluL": "D2"
+          },
+          "id": "BJEWPlgOU",
+          "position": {
+            "x": 12,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/ad9833"
+        },
+        "By1rB1OvL": {
+          "id": "By1rB1OvL",
+          "position": {
+            "x": 16,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-change"
+        },
+        "Hkdy63wDI": {
+          "boundLiterals": {
+            "ByfGSDjQE": "1000"
+          },
+          "id": "Hkdy63wDI",
+          "position": {
+            "x": 13,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "S1IuQawPU": {
+          "id": "S1IuQawPU",
+          "position": {
+            "x": 15,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "SkjHSkOPL": {
+          "boundLiterals": {
+            "ByfGSDjQE": "0"
+          },
+          "id": "SkjHSkOPL",
+          "position": {
+            "x": 14,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "rkb9QpvPI": {
+          "id": "rkb9QpvPI",
+          "position": {
+            "x": 15,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-change"
+        }
+      },
+      "path": "@/example"
+    }
+  }
+}

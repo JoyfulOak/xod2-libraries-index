@@ -1,0 +1,542 @@
+{
+  "description": "Capacitive touch screen using GT9271 ",
+  "name": "gt9271",
+  "patches": {
+    "@/gettouchxy": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n    if(getValue<input_TOUCH>(ctx)){\n        auto pLoc = getValue<input_TLOC>(ctx);\n        uint8_t num = getValue<input_TNUM>(ctx);\n        emitValue<output_X>(ctx, (uint16_t)pLoc.x[num]);\n        emitValue<output_Y>(ctx, (uint16_t)pLoc.y[num]);\n    }\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Output touch location",
+      "nodes": {
+        "B1Im6o4LU": {
+          "id": "B1Im6o4LU",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Bk9GpjE8L": {
+          "id": "Bk9GpjE8L",
+          "label": "X",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HJCzaoNU8": {
+          "id": "HJCzaoNU8",
+          "label": "Y",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HyzQTsVLI": {
+          "id": "HyzQTsVLI",
+          "label": "DONE",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "S1v46iV8L": {
+          "id": "S1v46iV8L",
+          "label": "TOUCH",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "SJsWpjN88": {
+          "id": "SJsWpjN88",
+          "label": "TNUM",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkhCaiN8I": {
+          "id": "rkhCaiN8I",
+          "label": "TLOC",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-touchlocation"
+        },
+        "ry3QpsEUI": {
+          "id": "ry3QpsEUI",
+          "label": "UPD",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/gettouchxy"
+    },
+    "@/gt9271-device": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nunsigned char  GTP_CFG_DATA[] =\n{\n    0x63,0x00,0x04,0x58,0x02,0x0A,0x3D,0x00,\n    0x01,0x08,0x28,0x0F,0x50,0x32,0x03,0x05,\n    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x17,\n    0x19,0x1D,0x14,0x90,0x2F,0x89,0x23,0x25,\n    0xD3,0x07,0x00,0x00,0x00,0x02,0x03,0x1D,\n    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,\n    0x00,0x00,0x00,0x19,0x32,0x94,0xD5,0x02,\n    0x07,0x00,0x00,0x04,0xA2,0x1A,0x00,0x90,\n    0x1E,0x00,0x80,0x23,0x00,0x73,0x28,0x00,\n    0x68,0x2E,0x00,0x68,0x00,0x00,0x00,0x00,\n    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,\n    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,\n    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,\n    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,\n    0x16,0x15,0x14,0x11,0x10,0x0F,0x0E,0x0D,\n    0x0C,0x09,0x08,0x07,0x06,0x05,0x04,0x01,\n    0x00,0xFF,0xFF,0xFF,0x00,0x00,0x00,0x00,\n    0x00,0x00,0x00,0x00,0x00,0x00,0x29,0x28,\n    0x27,0x26,0x25,0x24,0x23,0x22,0x21,0x20,\n    0x1F,0x1E,0x1C,0x1B,0x19,0x14,0x13,0x12,\n    0x11,0x10,0x0F,0x0E,0x0D,0x0C,0x0A,0x08,\n    0x07,0x06,0x04,0x02,0x00,0xFF,0x00,0x00,\n    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,\n    0x71,0x01\n};\n\nvoid evaluate(Context ctx) {\n    if (!isSettingUp())\n        return;\n\n    auto wire = getValue<input_I2C>(ctx);\n\n    ::pinMode(7,OUTPUT);\n    ::digitalWrite(10,LOW);\n    ::digitalWrite(7,LOW);\n    delay(2);\n    ::digitalWrite(10,HIGH);\n    delay(20);\n    ::pinMode(7,INPUT);\n    delay(50);\n\n    uint8_t retry=0;\n    uint16_t i=0;\n\tfor(retry=0;retry<5;retry++)\n\t{\n\t\twire->beginTransmission(0x14);\n        wire->write( 0x8047>>8 );  // register 0\n        wire->write( 0x8047);  // register 0 \n\t    for(i=0;i<sizeof(GTP_CFG_DATA);i++)//data\n\t    {\n          wire->write(GTP_CFG_DATA[i] );  // value\n\t    }\n        uint8_t retVal = wire->endTransmission(); \n\t\tdelay(10);\n\t}\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BkZREK4LU": {
+          "id": "BkZREK4LU",
+          "label": "DONE",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HyT7Q4NLL": {
+          "id": "HyT7Q4NLL",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJlm4V4U8": {
+          "id": "rJlm4V4U8",
+          "label": "I2C",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/i2c/input-i2c"
+        }
+      },
+      "path": "@/gt9271-device"
+    },
+    "@/main": {
+      "links": {
+        "B1YdxhVUU": {
+          "id": "B1YdxhVUU",
+          "input": {
+            "nodeId": "r1Uvg2VUL",
+            "pinKey": "S1v46iV8L"
+          },
+          "output": {
+            "nodeId": "B11IEjEI8",
+            "pinKey": "HkUeiqE8I"
+          }
+        },
+        "ByHTW3VLI": {
+          "id": "ByHTW3VLI",
+          "input": {
+            "nodeId": "B11IEjEI8",
+            "pinKey": "ryaJZjELL"
+          },
+          "output": {
+            "nodeId": "rkNhb348L",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "H1TdZhVLL": {
+          "id": "H1TdZhVLL",
+          "input": {
+            "nodeId": "SJYdbnVLI",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "r1Uvg2VUL",
+            "pinKey": "HyzQTsVLI"
+          }
+        },
+        "Hk4qH2VIL": {
+          "id": "Hk4qH2VIL",
+          "input": {
+            "nodeId": "Bke9S2V8L",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "B11IEjEI8",
+            "pinKey": "HkUeiqE8I"
+          }
+        },
+        "S1ZTb24U8": {
+          "id": "S1ZTb24U8",
+          "input": {
+            "nodeId": "rkNhb348L",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "SJYdbnVLI",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "SJEUVsNII": {
+          "id": "SJEUVsNII",
+          "input": {
+            "nodeId": "B11IEjEI8",
+            "pinKey": "BktV9qEII"
+          },
+          "output": {
+            "nodeId": "H1PSVjE8U",
+            "pinKey": "SJKdgKN8I"
+          }
+        },
+        "Sy3_l3NIL": {
+          "id": "Sy3_l3NIL",
+          "input": {
+            "nodeId": "r1Uvg2VUL",
+            "pinKey": "ry3QpsEUI"
+          },
+          "output": {
+            "nodeId": "B11IEjEI8",
+            "pinKey": "B1rcTs4UI"
+          }
+        },
+        "Sy8tl3NL8": {
+          "id": "Sy8tl3NL8",
+          "input": {
+            "nodeId": "H1mFe2VLI",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "r1Uvg2VUL",
+            "pinKey": "HJCzaoNU8"
+          }
+        },
+        "SyJFx3EIL": {
+          "id": "SyJFx3EIL",
+          "input": {
+            "nodeId": "SyzCso4UL",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "r1Uvg2VUL",
+            "pinKey": "Bk9GpjE8L"
+          }
+        },
+        "r1iwl2VUL": {
+          "id": "r1iwl2VUL",
+          "input": {
+            "nodeId": "r1Uvg2VUL",
+            "pinKey": "rkhCaiN8I"
+          },
+          "output": {
+            "nodeId": "H1PSVjE8U",
+            "pinKey": "SJKdgKN8I"
+          }
+        },
+        "r1u84jNUL": {
+          "id": "r1u84jNUL",
+          "input": {
+            "nodeId": "B11IEjEI8",
+            "pinKey": "Bk1XcqN8L"
+          },
+          "output": {
+            "nodeId": "HJddidNUL",
+            "pinKey": "HyvnPf3kQ"
+          }
+        },
+        "rknh-n4IL": {
+          "id": "rknh-n4IL",
+          "input": {
+            "nodeId": "rkNhb348L",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "B1kKs_488",
+            "pinKey": "BkZREK4LU"
+          }
+        },
+        "ryZKodEUU": {
+          "id": "ryZKodEUU",
+          "input": {
+            "nodeId": "B1kKs_488",
+            "pinKey": "rJlm4V4U8"
+          },
+          "output": {
+            "nodeId": "HJddidNUL",
+            "pinKey": "HyvnPf3kQ"
+          }
+        },
+        "Byw5iOcIU": {
+          "id": "Byw5iOcIU",
+          "output": {
+            "nodeId": "B11IEjEI8",
+            "pinKey": "Byqgo9V8U"
+          },
+          "input": {
+            "nodeId": "SkMqiuq8U",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "nodes": {
+        "B11IEjEI8": {
+          "boundLiterals": {
+            "ryaJZjELL": "Continuously",
+            "ryyv95VIL": "1"
+          },
+          "id": "B11IEjEI8",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/readtouchloc"
+        },
+        "B1kKs_488": {
+          "id": "B1kKs_488",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/gt9271-device"
+        },
+        "Bke9S2V8L": {
+          "id": "Bke9S2V8L",
+          "position": {
+            "x": 9,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "H1PSVjE8U": {
+          "id": "H1PSVjE8U",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/touchlocation"
+        },
+        "H1mFe2VLI": {
+          "id": "H1mFe2VLI",
+          "position": {
+            "x": 4,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "HJddidNUL": {
+          "id": "HJddidNUL",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/i2c/i2c"
+        },
+        "SJYdbnVLI": {
+          "id": "SJYdbnVLI",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "SyzCso4UL": {
+          "id": "SyzCso4UL",
+          "position": {
+            "x": 2,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "r1Uvg2VUL": {
+          "boundLiterals": {
+            "SJsWpjN88": "0"
+          },
+          "id": "r1Uvg2VUL",
+          "position": {
+            "x": 3,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/gettouchxy"
+        },
+        "rkNhb348L": {
+          "id": "rkNhb348L",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "SkMqiuq8U": {
+          "id": "SkMqiuq8U",
+          "position": {
+            "x": 8,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        }
+      },
+      "path": "@/main"
+    },
+    "@/readtouchloc": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid writeGT9271TouchRegister(Context ctx, uint16_t regAddr,uint8_t *val, uint16_t cnt)\n{\n    uint16_t i=0;\n    auto wire = getValue<input_I2C>(ctx);\n    wire->beginTransmission((uint8_t)0x14);\n    wire->write( regAddr>>8 );  // register 0\n    wire->write( regAddr);  // register 0 \n\tfor(i=0;i<cnt;i++,val++)//data\n\t{\n          wire->write( *val );  // value\n\t}\n  uint8_t retVal = Wire.endTransmission(); \n}\n\n\n\nuint8_t readGT9271TouchAddr(Context ctx, uint16_t regAddr, uint8_t * pBuf, uint8_t len )\n{\n\n    auto wire = getValue<input_I2C>(ctx);\n    wire->beginTransmission((uint8_t)0x14);\n    wire->write( regAddr>>8 );  // register 0\n    wire->write( regAddr);  // register 0  \n    uint8_t retVal = wire->endTransmission();\n\n    uint8_t returned = wire->requestFrom((uint8_t)0x14, len);    // request 1 bytes from slave device #2\n\n    uint8_t i;\n    for (i = 0; (i < len) && wire->available(); i++)\n    {\n        pBuf[i] = wire->read();\n    }\n\n    return i;\n}\n\n\nvoid evaluate(Context ctx) {\n\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto pLoc = getValue<input_TLOC>(ctx);\n    uint8_t num = getValue<input_NLOC>(ctx);\n    uint8_t retVal;\n    uint8_t i;\n    uint8_t k;\n    uint8_t  ss[1];\n    do\n    {\n\n        //if (!pLoc) break; // must have a buffer\n        if (!num)  break; // must be able to take at least one\n         ss[0]=0;\n         readGT9271TouchAddr(ctx, 0x814e, ss, 1);\n        uint8_t status=ss[0];\n\n        if ((status & 0x0f) == 0){\n            retVal = 0;\n            break;\n        } // no points detected\n        uint8_t hitPoints = status & 0x0f;\n\n        //Serial.print(\"number of hit points = \");\n        //Serial.println( hitPoints );\n\n        uint8_t tbuf[32]; uint8_t tbuf1[32];uint8_t tbuf2[16];  \n        readGT9271TouchAddr(ctx, 0x8150, tbuf, 32);\n        readGT9271TouchAddr(ctx, 0x8150+32, tbuf1, 32);\n        readGT9271TouchAddr(ctx, 0x8150+64, tbuf2,16);\n\n        if(hitPoints<=4)\n            {\n              for (k=0,i = 0; (i <  4*8)&&(k < num); k++, i += 8)\n              {\n                pLoc.x[k] = tbuf[i+1] << 8 | tbuf[i+0];\n                pLoc.y[k] = tbuf[i+3] << 8 | tbuf[i+2];\n              }\n            }\n        if(hitPoints>4)\n            {\n               for (k=0,i = 0; (i <  4*8)&&(k < num); k++, i += 8)\n              {\n                pLoc.x[k] = tbuf[i+1] << 8 | tbuf[i+0];\n                pLoc.y[k] = tbuf[i+3] << 8 | tbuf[i+2];\n              }\n\n              for (k=4,i = 0; (i <  4*8)&&(k < num); k++, i += 8)\n              {\n                pLoc.x[k] = tbuf1[i+1] << 8 | tbuf1[i+0];\n                pLoc.y[k] = tbuf1[i+3] << 8 | tbuf1[i+2];\n              }\n            }\n\n          if(hitPoints>8)\n            {\n                for (k=0,i = 0; (i <  4*8)&&(k < num); k++, i += 8)\n              {\n                pLoc.x[k] = tbuf[i+1] << 8 | tbuf[i+0];\n                pLoc.y[k] = tbuf[i+3] << 8 | tbuf[i+2];\n              }\n\n              for (k=4,i = 0; (i <  4*8)&&(k < num); k++, i += 8)\n              {\n                pLoc.x[k] = tbuf1[i+1] << 8 | tbuf1[i+0];\n                pLoc.y[k] = tbuf1[i+3] << 8 | tbuf1[i+2];\n              }\n\n              for (k=8,i = 0; (i <  2*8)&&(k < num); k++, i += 8)\n              {\n                pLoc.x[k] = tbuf2[i+1] << 8 | tbuf2[i+0];\n                pLoc.y[k] = tbuf2[i+3] << 8 | tbuf2[i+2];\n              }\n            }\n\n\n    retVal = hitPoints;\n\n  } while (0);\n\n    ss[0]=0;\n    writeGT9271TouchRegister(ctx, 0x814e,ss,1);\n\n    if(retVal == 0){\n        emitValue<output_TOUCH>(ctx,0);\n        emitValue<output_NTOUCH>(ctx,0);\n    }\n    else{\n        emitValue<output_TOUCH>(ctx,1);\n        emitValue<output_NTOUCH>(ctx,retVal);\n    }\n   emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1rcTs4UI": {
+          "id": "B1rcTs4UI",
+          "label": "DONE",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Bk1XcqN8L": {
+          "id": "Bk1XcqN8L",
+          "label": "I2C",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/i2c/input-i2c"
+        },
+        "BktV9qEII": {
+          "id": "BktV9qEII",
+          "label": "TLOC",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-touchlocation"
+        },
+        "Byqgo9V8U": {
+          "id": "Byqgo9V8U",
+          "label": "NTOUCH",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HkUeiqE8I": {
+          "id": "HkUeiqE8I",
+          "label": "TOUCH",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "SJXL59VI8": {
+          "id": "SJXL59VI8",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ryaJZjELL": {
+          "id": "ryaJZjELL",
+          "label": "UPD",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryyv95VIL": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "id": "ryyv95VIL",
+          "label": "NLOC",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/readtouchloc"
+    },
+    "@/touchlocation": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n    uint16_t* x;\n    uint16_t* y;\n};\n\nstruct TouchLocation\n{\n    uint16_t* x;\n    uint16_t* y;\n};\n\nusing Type = TouchLocation;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n     auto state = getState(ctx);\n\n    if (isSettingUp()) {\n        state->x = new uint16_t[10];\n        state->y = new uint16_t[10];\n    }\n\n    TouchLocation Touch;\n\n    Touch.x = state->x;\n    Touch.y = state->y;\n\n    emitValue<output_TLOC>(ctx, Touch);\n}\n"
+        }
+      ],
+      "nodes": {
+        "BJ7_eKE88": {
+          "id": "BJ7_eKE88",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJKdgKN8I": {
+          "id": "SJKdgKN8I",
+          "label": "TLOC",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/touchlocation"
+    }
+  },
+  "version": "1.0.0"
+}

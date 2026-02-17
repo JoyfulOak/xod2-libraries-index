@@ -1,0 +1,1515 @@
+{
+  "patches": {
+    "@/hx711-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/bogde/HX711\"\n\n#include <HX711.h>\n\nnode {\n    meta {\n        using Type = HX711*;\n    }\n\n    static_assert(isValidDigitalPort(constant_input_DOUT), \"must be a valid digital port\");\n    static_assert(isValidDigitalPort(constant_input_SCK), \"must be a valid digital port\");\n\n    HX711 scale;\n\n    void evaluate(Context ctx) {\n        if (!isSettingUp())\n            return;\n\n        // Initialize the device\n        scale.begin(constant_input_DOUT, constant_input_SCK);\n\n        emitValue<output_DEV>(ctx, &scale);\n    }\n}\n\n"
+        }
+      ],
+      "description": "The main device node for the HX711 modules.\n",
+      "nodes": {
+        "S1-lJ8sy7u": {
+          "description": "The HX711 device.",
+          "label": "DEV",
+          "id": "S1-lJ8sy7u",
+          "position": {
+            "x": 0,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "Hkzg1IsJXO": {
+          "id": "Hkzg1IsJXO",
+          "position": {
+            "x": 0,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "B17gJ8oyXO": {
+          "description": "The \"DOUT\" board port the HX711 module is connected to.",
+          "label": "DOUT",
+          "id": "B17gJ8oyXO",
+          "position": {
+            "x": 0,
+            "y": -4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "BJ8fLoJ7O": {
+          "description": "The \"SCK\" board port the HX711 module is connected to.",
+          "label": "SCK",
+          "id": "BJ8fLoJ7O",
+          "position": {
+            "x": 2,
+            "y": -4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        }
+      },
+      "path": "@/hx711-device"
+    },
+    "@/tare": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    void evaluate(Context ctx) {\n        auto dev = getValue<input_DEV>(ctx);\n\n        if (isSettingUp())\n            emitValue<output_DEVU0027>(ctx, dev);\n\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        byte times = getValue<input_N>(ctx);\n        dev->tare(times);\n\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "description": "Sets the OFFSET value for tare weight;",
+      "nodes": {
+        "Hyv1KsJ7O": {
+          "description": "The HX711 device.",
+          "label": "DEV",
+          "id": "Hyv1KsJ7O",
+          "type": "@/input-hx711-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SytkFoy7d": {
+          "description": "The HX711 device.",
+          "label": "DEV'",
+          "id": "SytkFoy7d",
+          "type": "@/output-hx711-device",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rkT1YokQu": {
+          "description": "Triggers a new setting.",
+          "label": "DO",
+          "id": "rkT1YokQu",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SyIlYiJXd": {
+          "id": "SyIlYiJXd",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "ry5Mtskmd": {
+          "description": "Pulses when the setting is done.",
+          "label": "DONE",
+          "id": "ry5Mtskmd",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ryeh9oyXO": {
+          "boundLiterals": {
+            "__out__": "10"
+          },
+          "description": "How many times to read the tare value. 10 by default.",
+          "label": "N",
+          "id": "ryeh9oyXO",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/tare"
+    },
+    "@/set-scale": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    void evaluate(Context ctx) {\n        auto dev = getValue<input_DEV>(ctx);\n\n        if (isSettingUp())\n            emitValue<output_DEVU0027>(ctx, dev);\n\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        float scale = getValue<input_SCL>(ctx);\n        dev->set_scale(scale);\n\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "description": "Sets the SCALE value.\nThis value is used to convert the raw data to \"human readable\" measure units.\n1.0 by default.",
+      "nodes": {
+        "HyggEssJQd": {
+          "description": "The HX711 device.",
+          "label": "DEV",
+          "id": "HyggEssJQd",
+          "type": "@/input-hx711-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "HJbgNsokm_": {
+          "description": "The HX711 device.",
+          "label": "DEV'",
+          "id": "HJbgNsokm_",
+          "type": "@/output-hx711-device",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rJMx4sskX_": {
+          "description": "Triggers a new setting.",
+          "label": "DO",
+          "id": "rJMx4sskX_",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "H1Qx4soJXO": {
+          "id": "H1Qx4soJXO",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "ry4x4iikm_": {
+          "description": "Pulses when the setting is done.",
+          "label": "DONE",
+          "id": "ry4x4iikm_",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rkreNosJQd": {
+          "boundLiterals": {
+            "__out__": "1.0"
+          },
+          "description": "The Scale value. \n\nA floating point value. Can be negative.",
+          "label": "SCL",
+          "id": "rkreNosJQd",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/set-scale"
+    },
+    "@/amperka-weight-sensor": {
+      "description": "Drives the Weight sensor based on the HX711 24-Bit Analog-to-Digital Converter (ADC) by Amperka. ",
+      "links": {
+        "ByPb3skmu": {
+          "id": "ByPb3skmu",
+          "output": {
+            "nodeId": "BJTxhikQ_",
+            "pinKey": "S1-lJ8sy7u"
+          },
+          "input": {
+            "nodeId": "rkVZnsk7_",
+            "pinKey": "__in__"
+          }
+        },
+        "H15U2jkX_": {
+          "id": "H15U2jkX_",
+          "output": {
+            "nodeId": "rJPU2o1mu",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BJTxhikQ_",
+            "pinKey": "B17gJ8oyXO"
+          }
+        },
+        "SyjL3o17d": {
+          "id": "SyjL3o17d",
+          "output": {
+            "nodeId": "BkewU2oJXd",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BJTxhikQ_",
+            "pinKey": "BJ8fLoJ7O"
+          }
+        },
+        "rkMwnoyQ_": {
+          "id": "rkMwnoyQ_",
+          "output": {
+            "nodeId": "BkT83jy7u",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "H1Tb2s1Qd",
+            "pinKey": "rJjXFA9JQ"
+          }
+        },
+        "HyB5nj1XO": {
+          "id": "HyB5nj1XO",
+          "output": {
+            "nodeId": "Hkm_hj1md",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "r11MnskmO",
+            "pinKey": "rJjXFA9JQ"
+          }
+        },
+        "BJluIai17O": {
+          "id": "BJluIai17O",
+          "output": {
+            "nodeId": "B1u86jJ7d",
+            "pinKey": "VAL"
+          },
+          "input": {
+            "nodeId": "H1Tb2s1Qd",
+            "pinKey": "HJ6HsEngZ"
+          }
+        },
+        "B1gWv6sJXd": {
+          "id": "B1gWv6sJXd",
+          "output": {
+            "nodeId": "HkWDpi1m_",
+            "pinKey": "VAL"
+          },
+          "input": {
+            "nodeId": "r11MnskmO",
+            "pinKey": "HJ6HsEngZ"
+          }
+        }
+      },
+      "nodes": {
+        "BJTxhikQ_": {
+          "id": "BJTxhikQ_",
+          "type": "@/hx711-device",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rkVZnsk7_": {
+          "label": "DEV",
+          "id": "rkVZnsk7_",
+          "type": "@/output-hx711-device",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "H1Tb2s1Qd": {
+          "id": "H1Tb2s1Qd",
+          "type": "xod/gpio/digital-write",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "r11MnskmO": {
+          "id": "r11MnskmO",
+          "type": "xod/gpio/digital-write",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rJPU2o1mu": {
+          "description": "The \"DO\" board port the Weight Sensor is connected to.",
+          "label": "DO",
+          "id": "rJPU2o1mu",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "BkewU2oJXd": {
+          "description": "The \"SCK\" board port the Weight Sensor is connected to.",
+          "label": "SCK",
+          "id": "BkewU2oJXd",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "BkT83jy7u": {
+          "description": "The \"CS\" board port the Weight Sensor is connected to.",
+          "label": "CS",
+          "id": "BkT83jy7u",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Hkm_hj1md": {
+          "description": "The \"DI\" board port the Weight Sensor is connected to.",
+          "label": "DI",
+          "id": "Hkm_hj1md",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "B1u86jJ7d": {
+          "boundLiterals": {
+            "VAL": "False"
+          },
+          "id": "B1u86jJ7d",
+          "type": "xod/core/constant-boolean",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HkWDpi1m_": {
+          "boundLiterals": {
+            "VAL": "True"
+          },
+          "id": "HkWDpi1m_",
+          "type": "xod/core/constant-boolean",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/amperka-weight-sensor"
+    },
+    "@/example-calibrate-scale": {
+      "description": "The example patch to obtain the SCL (scale) value.\n\n1. Prepare the weight of the known mass. And bind its weight in grams to the constant weight node.\n2. Flash the patch in the Debug mode. \n3. After loading the patch you have about 20 seconds to put the prepaired weight on scales.\n4. Wait for the Scale value.",
+      "links": {
+        "Sk5dy2JXO": {
+          "id": "Sk5dy2JXO",
+          "output": {
+            "nodeId": "SyptTo17O",
+            "pinKey": "rkVZnsk7_"
+          },
+          "input": {
+            "nodeId": "ryKdy3kXO",
+            "pinKey": "HyggEssJQd"
+          }
+        },
+        "Hk_KynkmO": {
+          "id": "Hk_KynkmO",
+          "output": {
+            "nodeId": "ryKdy3kXO",
+            "pinKey": "HJbgNsokm_"
+          },
+          "input": {
+            "nodeId": "SJPtJ2km_",
+            "pinKey": "Hyv1KsJ7O"
+          }
+        },
+        "Bkssy217O": {
+          "id": "Bkssy217O",
+          "output": {
+            "nodeId": "ryKdy3kXO",
+            "pinKey": "ry4x4iikm_"
+          },
+          "input": {
+            "nodeId": "SJPtJ2km_",
+            "pinKey": "rkT1YokQu"
+          }
+        },
+        "rk8GrhyQd": {
+          "id": "rk8GrhyQd",
+          "output": {
+            "nodeId": "SJPtJ2km_",
+            "pinKey": "SytkFoy7d"
+          },
+          "input": {
+            "nodeId": "S1ZzrnyXO",
+            "pinKey": "rJxMm31Qd"
+          }
+        },
+        "SymUrhyXu": {
+          "id": "SymUrhyXu",
+          "output": {
+            "nodeId": "SJf8BhkX_",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "S1ZzrnyXO",
+            "pinKey": "rkZef7hJXu"
+          }
+        },
+        "B1F182ym_": {
+          "id": "B1F182ym_",
+          "output": {
+            "nodeId": "SJa2131Xd",
+            "pinKey": "B1x2RV3eZ"
+          },
+          "input": {
+            "nodeId": "H1fy831QO",
+            "pinKey": "BytUCdHD1-"
+          }
+        },
+        "S151UnJQ_": {
+          "id": "S151UnJQ_",
+          "output": {
+            "nodeId": "S1ZzrnyXO",
+            "pinKey": "SyBgG7n17_"
+          },
+          "input": {
+            "nodeId": "H1fy831QO",
+            "pinKey": "SkdIRuBD1b"
+          }
+        },
+        "HyT1v3J7u": {
+          "id": "HyT1v3J7u",
+          "output": {
+            "nodeId": "rkUywh1Qu",
+            "pinKey": "r1H_oipZb"
+          },
+          "input": {
+            "nodeId": "r1KZL217d",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "Sy0kP3Jmd": {
+          "id": "Sy0kP3Jmd",
+          "output": {
+            "nodeId": "H1fy831QO",
+            "pinKey": "BkqLCOSw1W"
+          },
+          "input": {
+            "nodeId": "rkUywh1Qu",
+            "pinKey": "BJlHojaWZ"
+          }
+        }
+      },
+      "nodes": {
+        "SyptTo17O": {
+          "boundLiterals": {
+            "BkT83jy7u": "D18",
+            "BkewU2oJXd": "D8",
+            "rJPU2o1mu": "D19",
+            "Hkm_hj1md": "D3"
+          },
+          "id": "SyptTo17O",
+          "type": "@/amperka-weight-sensor",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "ryKdy3kXO": {
+          "boundLiterals": {
+            "rJMx4sskX_": "On Boot",
+            "rkreNosJQd": "1.0"
+          },
+          "id": "ryKdy3kXO",
+          "type": "@/set-scale",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "SJPtJ2km_": {
+          "id": "SJPtJ2km_",
+          "type": "@/tare",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SJa2131Xd": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "101"
+          },
+          "id": "SJa2131Xd",
+          "type": "xod/core/constant-number",
+          "position": {
+            "x": 3,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "S1ZzrnyXO": {
+          "boundLiterals": {
+            "Hy4xz731QO": "50"
+          },
+          "id": "S1ZzrnyXO",
+          "type": "@/get-weight",
+          "position": {
+            "x": 1,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "SJf8BhkX_": {
+          "id": "SJf8BhkX_",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 5,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "H1fy831QO": {
+          "id": "H1fy831QO",
+          "type": "xod/core/divide",
+          "position": {
+            "x": 2,
+            "y": 6,
+            "units": "slots"
+          }
+        },
+        "r1KZL217d": {
+          "size": {
+            "width": 3,
+            "height": 1,
+            "units": "slots"
+          },
+          "id": "r1KZL217d",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 8,
+            "y": 6,
+            "units": "slots"
+          }
+        },
+        "rkUywh1Qu": {
+          "boundLiterals": {
+            "HJTIija-W": "4"
+          },
+          "id": "rkUywh1Qu",
+          "type": "xod/core/format-number",
+          "position": {
+            "x": 5,
+            "y": 6,
+            "units": "slots"
+          }
+        }
+      },
+      "comments": {
+        "S100y3yXu": {
+          "id": "S100y3yXu",
+          "position": {
+            "x": 5,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "width": 4,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "👈 Known weight in g."
+        },
+        "HJw1H21X_": {
+          "id": "HJw1H21X_",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 5,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "👈 Set the scale OFFSET."
+        },
+        "Bk6UH21md": {
+          "id": "Bk6UH21md",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          },
+          "size": {
+            "width": 4,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "👈 Do a single pulse after you put the known weight on the scale."
+        },
+        "S10nHnJXu": {
+          "id": "S10nHnJXu",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "width": 5,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "👈 Set the default SCALE."
+        },
+        "SJYGLhyQd": {
+          "id": "SJYGLhyQd",
+          "position": {
+            "x": 12,
+            "y": 6,
+            "units": "slots"
+          },
+          "size": {
+            "width": 5,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "👈 The calibrated SCALE value."
+        }
+      },
+      "path": "@/example-calibrate-scale"
+    },
+    "@/read-average": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    void evaluate(Context ctx) {\n        auto dev = getValue<input_DEV>(ctx);\n\n        if (isSettingUp())\n            emitValue<output_DEVU0027>(ctx, dev);\n\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        uint8_t n = getValue<input_N>(ctx);\n        long val = dev->read_average(n);\n\n        emitValue<output_VAL>(ctx, val);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "description": "Reads an average raw value from the HX711 device.",
+      "nodes": {
+        "BJcHeh1X_": {
+          "description": "The HX711 device.",
+          "label": "DEV",
+          "id": "BJcHeh1X_",
+          "type": "@/input-hx711-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "Syeqrl3Jmu": {
+          "description": "The HX711 device.",
+          "label": "DEV'",
+          "id": "Syeqrl3Jmu",
+          "type": "@/output-hx711-device",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "Sy-9Sl3Jm_": {
+          "description": "Triggers a new reading.",
+          "label": "DO",
+          "id": "Sy-9Sl3Jm_",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SyM9Sg3JQd": {
+          "id": "SyM9Sg3JQd",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "B1XcBl3yQd": {
+          "description": "Pulses when the reading is done.",
+          "label": "DONE",
+          "id": "B1XcBl3yQd",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rkV9He21XO": {
+          "boundLiterals": {
+            "__out__": "10"
+          },
+          "description": "How many times to read.\n10 by default.\n",
+          "label": "N",
+          "id": "rkV9He21XO",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "ByHQb3Jm_": {
+          "description": "Raw average value.",
+          "label": "VAL",
+          "id": "ByHQb3Jm_",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/read-average"
+    },
+    "@/get-value": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    void evaluate(Context ctx) {\n        auto dev = getValue<input_DEV>(ctx);\n\n        if (isSettingUp())\n            emitValue<output_DEVU0027>(ctx, dev);\n\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        uint8_t n = getValue<input_N>(ctx);\n        double val = dev->get_value(n);\n\n        emitValue<output_VAL>(ctx, val);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "description": "Reads the (average raw value from the sensor - OFFSET). That is the current value without the tare weight.",
+      "nodes": {
+        "r17mMn1X_": {
+          "description": "The HX711 device.",
+          "label": "DEV",
+          "id": "r17mMn1X_",
+          "type": "@/input-hx711-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "Hyl7mMhkXu": {
+          "description": "The HX711 device.",
+          "label": "DEV'",
+          "id": "Hyl7mMhkXu",
+          "type": "@/output-hx711-device",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "SkZX7G2J7O": {
+          "description": "Triggers a new reading.",
+          "label": "DO",
+          "id": "SkZX7G2J7O",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "Byz7mfhym_": {
+          "id": "Byz7mfhym_",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HyQX7fh1m_": {
+          "description": "Pulses when the reading is done.",
+          "label": "DONE",
+          "id": "HyQX7fh1m_",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJNXQG2kmO": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "How many times to read.\n1 by default.\n",
+          "label": "N",
+          "id": "HJNXQG2kmO",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "BJrmQGn17d": {
+          "description": "Raw average value.",
+          "label": "VAL",
+          "id": "BJrmQGn17d",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/get-value"
+    },
+    "@/get-weight": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n\n    float weight = 0;\n\n    void evaluate(Context ctx) {\n        auto dev = getValue<input_DEV>(ctx);\n\n        if (isSettingUp())\n            emitValue<output_DEVU0027>(ctx, dev);\n\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        if (dev->is_ready()) {\n            uint8_t n = getValue<input_N>(ctx);\n            weight = dev->get_units(n);\n        }\n\n        emitValue<output_W>(ctx, weight);\n        emitValue<output_DONE>(ctx, 1);\n\n    }\n}\n"
+        }
+      ],
+      "description": "Reads the current weight in \"human readable\" measure units. The uints depend on the SCALE value.\n\nThis is the average raw value without the tare weight and divided by the SCALE value obtained via calibration.\n",
+      "nodes": {
+        "rJxMm31Qd": {
+          "description": "The HX711 device.",
+          "label": "DEV",
+          "id": "rJxMm31Qd",
+          "type": "@/input-hx711-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "ByegzQhymO": {
+          "description": "The HX711 device.",
+          "label": "DEV'",
+          "id": "ByegzQhymO",
+          "type": "@/output-hx711-device",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rkZef7hJXu": {
+          "description": "Triggers a new reading.",
+          "label": "DO",
+          "id": "rkZef7hJXu",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "r1flM73kQu": {
+          "id": "r1flM73kQu",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "B1mgzm2yQO": {
+          "description": "Pulses when the reading is done.",
+          "label": "DONE",
+          "id": "B1mgzm2yQO",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hy4xz731QO": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "How many times to read.\n1 by default.\n",
+          "label": "N",
+          "id": "Hy4xz731QO",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SyBgG7n17_": {
+          "description": "Weight.",
+          "label": "W",
+          "id": "SyBgG7n17_",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/get-weight"
+    },
+    "@/example-scale": {
+      "links": {
+        "rkdSvw3JX_": {
+          "id": "rkdSvw3JX_",
+          "output": {
+            "nodeId": "BkSvDhy7u",
+            "pinKey": "rkVZnsk7_"
+          },
+          "input": {
+            "nodeId": "rkxSwP3y7_",
+            "pinKey": "HyggEssJQd"
+          }
+        },
+        "SktrwP2y7_": {
+          "id": "SktrwP2y7_",
+          "output": {
+            "nodeId": "rkxSwP3y7_",
+            "pinKey": "HJbgNsokm_"
+          },
+          "input": {
+            "nodeId": "S1WrPwn1Xd",
+            "pinKey": "Hyv1KsJ7O"
+          }
+        },
+        "HyqHDwhyQO": {
+          "id": "HyqHDwhyQO",
+          "output": {
+            "nodeId": "rkxSwP3y7_",
+            "pinKey": "ry4x4iikm_"
+          },
+          "input": {
+            "nodeId": "S1WrPwn1Xd",
+            "pinKey": "rkT1YokQu"
+          }
+        },
+        "HysHvv3kX_": {
+          "id": "HysHvv3kX_",
+          "output": {
+            "nodeId": "S1WrPwn1Xd",
+            "pinKey": "SytkFoy7d"
+          },
+          "input": {
+            "nodeId": "SymBPDhyXO",
+            "pinKey": "rJxMm31Qd"
+          }
+        },
+        "r1kgHPP2y7d": {
+          "id": "r1kgHPP2y7d",
+          "output": {
+            "nodeId": "rkPSww2kmd",
+            "pinKey": "r1H_oipZb"
+          },
+          "input": {
+            "nodeId": "Sy8HPD21Q_",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "S1aOD3Jmd": {
+          "id": "S1aOD3Jmd",
+          "output": {
+            "nodeId": "B1F_PnkQu",
+            "pinKey": "B1x2RV3eZ"
+          },
+          "input": {
+            "nodeId": "rkxSwP3y7_",
+            "pinKey": "rkreNosJQd"
+          }
+        },
+        "rJZUOhk7O": {
+          "id": "rJZUOhk7O",
+          "output": {
+            "nodeId": "SymBPDhyXO",
+            "pinKey": "SyBgG7n17_"
+          },
+          "input": {
+            "nodeId": "rkPSww2kmd",
+            "pinKey": "BJlHojaWZ"
+          }
+        }
+      },
+      "nodes": {
+        "BkSvDhy7u": {
+          "boundLiterals": {
+            "BkT83jy7u": "D18",
+            "BkewU2oJXd": "D8",
+            "rJPU2o1mu": "D19",
+            "Hkm_hj1md": "D3"
+          },
+          "id": "BkSvDhy7u",
+          "type": "@/amperka-weight-sensor",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "rkxSwP3y7_": {
+          "boundLiterals": {
+            "rJMx4sskX_": "On Boot"
+          },
+          "id": "rkxSwP3y7_",
+          "type": "@/set-scale",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "S1WrPwn1Xd": {
+          "id": "S1WrPwn1Xd",
+          "type": "@/tare",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "SymBPDhyXO": {
+          "boundLiterals": {
+            "Hy4xz731QO": "1",
+            "rkZef7hJXu": "Continuously"
+          },
+          "id": "SymBPDhyXO",
+          "type": "@/get-weight",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "Sy8HPD21Q_": {
+          "size": {
+            "width": 3,
+            "height": 1,
+            "units": "slots"
+          },
+          "id": "Sy8HPD21Q_",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 8,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "rkPSww2kmd": {
+          "boundLiterals": {
+            "HJTIija-W": "4"
+          },
+          "id": "rkPSww2kmd",
+          "type": "xod/core/format-number",
+          "position": {
+            "x": 5,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "B1F_PnkQu": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "-2172.5436"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          },
+          "id": "B1F_PnkQu",
+          "type": "xod/core/constant-number",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "comments": {
+        "rybeSwwh17d": {
+          "id": "rybeSwwh17d",
+          "position": {
+            "x": 12,
+            "y": 4,
+            "units": "slots"
+          },
+          "size": {
+            "width": 4,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "👈 Weight."
+        },
+        "B1zerDvhk7d": {
+          "id": "B1zerDvhk7d",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "width": 5,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "👈 Set the scale OFFSET."
+        },
+        "rJVxBDvh1mO": {
+          "id": "rJVxBDvh1mO",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "width": 7,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "👈 Set the SCALE value obtained via calibration. For example this SCALE value is for the 101g weight."
+        }
+      },
+      "path": "@/example-scale"
+    },
+    "@/amperka-scale": {
+      "description": "Quickstart node for the scale based on Weight Sensor by Amperka.",
+      "links": {
+        "rJAzNYAE7u": {
+          "id": "rJAzNYAE7u",
+          "output": {
+            "nodeId": "BkGVK0Vmd",
+            "pinKey": "rkVZnsk7_"
+          },
+          "input": {
+            "nodeId": "Bklz4YA47O",
+            "pinKey": "HyggEssJQd"
+          }
+        },
+        "H11xM4F04mu": {
+          "id": "H11xM4F04mu",
+          "output": {
+            "nodeId": "Bklz4YA47O",
+            "pinKey": "HJbgNsokm_"
+          },
+          "input": {
+            "nodeId": "SJGzEYRN7O",
+            "pinKey": "Hyv1KsJ7O"
+          }
+        },
+        "SyegGNK0Nmu": {
+          "id": "SyegGNK0Nmu",
+          "output": {
+            "nodeId": "BJmGNKR4Qu",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "input": {
+            "nodeId": "SJGzEYRN7O",
+            "pinKey": "rkT1YokQu"
+          }
+        },
+        "Bk-xz4FANQd": {
+          "id": "Bk-xz4FANQd",
+          "output": {
+            "nodeId": "BJEzEtCNXO",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BkGVK0Vmd",
+            "pinKey": "rJPU2o1mu"
+          }
+        },
+        "HkMgfNK0NQu": {
+          "id": "HkMgfNK0NQu",
+          "output": {
+            "nodeId": "ryHG4tANXd",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BkGVK0Vmd",
+            "pinKey": "BkewU2oJXd"
+          }
+        },
+        "rJXgMNKAE7_": {
+          "id": "rJXgMNKAE7_",
+          "output": {
+            "nodeId": "ryLGVKCNmO",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BkGVK0Vmd",
+            "pinKey": "BkT83jy7u"
+          }
+        },
+        "H1VgzVFREXu": {
+          "id": "H1VgzVFREXu",
+          "output": {
+            "nodeId": "ByDGEtANmd",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BkGVK0Vmd",
+            "pinKey": "Hkm_hj1md"
+          }
+        },
+        "r1SgM4tRNmu": {
+          "id": "r1SgM4tRNmu",
+          "output": {
+            "nodeId": "SyOMVKCVQd",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BJmGNKR4Qu",
+            "pinKey": "ByU7LRuSPkW"
+          }
+        },
+        "SkIlfNKRNmd": {
+          "id": "SkIlfNKRNmd",
+          "output": {
+            "nodeId": "SJGzEYRN7O",
+            "pinKey": "SytkFoy7d"
+          },
+          "input": {
+            "nodeId": "HJKGVK0Emu",
+            "pinKey": "rJxMm31Qd"
+          }
+        },
+        "BywxzNK0Vm_": {
+          "id": "BywxzNK0Vm_",
+          "output": {
+            "nodeId": "rJcfNY0E7_",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJKGVK0Emu",
+            "pinKey": "rkZef7hJXu"
+          }
+        },
+        "SydlMEKREXd": {
+          "id": "SydlMEKREXd",
+          "output": {
+            "nodeId": "HJKGVK0Emu",
+            "pinKey": "SyBgG7n17_"
+          },
+          "input": {
+            "nodeId": "ByhG4tCNX_",
+            "pinKey": "__in__"
+          }
+        },
+        "rkFxGEt04mu": {
+          "id": "rkFxGEt04mu",
+          "output": {
+            "nodeId": "HJKGVK0Emu",
+            "pinKey": "B1mgzm2yQO"
+          },
+          "input": {
+            "nodeId": "SkiGVtAV7d",
+            "pinKey": "__in__"
+          }
+        },
+        "ryBSFA4md": {
+          "id": "ryBSFA4md",
+          "output": {
+            "nodeId": "S1JrYCVQ_",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "Bklz4YA47O",
+            "pinKey": "rkreNosJQd"
+          }
+        },
+        "rkM4IkBXd": {
+          "id": "rkM4IkBXd",
+          "output": {
+            "nodeId": "BJTXU1H7O",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJKGVK0Emu",
+            "pinKey": "Hy4xz731QO"
+          }
+        }
+      },
+      "nodes": {
+        "BkGVK0Vmd": {
+          "boundLiterals": {
+            "BkT83jy7u": "D18",
+            "BkewU2oJXd": "D8",
+            "Hkm_hj1md": "D3",
+            "rJPU2o1mu": "D19"
+          },
+          "id": "BkGVK0Vmd",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "gabbapeople/hx711/amperka-weight-sensor"
+        },
+        "Bklz4YA47O": {
+          "boundLiterals": {
+            "rJMx4sskX_": "On Boot"
+          },
+          "id": "Bklz4YA47O",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "gabbapeople/hx711/set-scale"
+        },
+        "SJGzEYRN7O": {
+          "id": "SJGzEYRN7O",
+          "type": "gabbapeople/hx711/tare",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "BJmGNKR4Qu": {
+          "boundLiterals": {
+            "ryv7IRdSP1b": "On Boot"
+          },
+          "id": "BJmGNKR4Qu",
+          "type": "xod/core/any",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BJEzEtCNXO": {
+          "description": "The \"DO\" board port the Weight Sensor is connected to.",
+          "label": "DO",
+          "id": "BJEzEtCNXO",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "ryHG4tANXd": {
+          "description": "The \"SCK\" board port the Weight Sensor is connected to.",
+          "label": "SCK",
+          "id": "ryHG4tANXd",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "ryLGVKCNmO": {
+          "description": "The \"CS\" board port the Weight Sensor is connected to.",
+          "label": "CS",
+          "id": "ryLGVKCNmO",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "ByDGEtANmd": {
+          "description": "The \"DI\" board port the Weight Sensor is connected to.",
+          "label": "DI",
+          "id": "ByDGEtANmd",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SyOMVKCVQd": {
+          "label": "TARE",
+          "id": "SyOMVKCVQd",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "HJKGVK0Emu": {
+          "id": "HJKGVK0Emu",
+          "type": "gabbapeople/hx711/get-weight",
+          "position": {
+            "x": 11,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "rJcfNY0E7_": {
+          "label": "UPD",
+          "id": "rJcfNY0E7_",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 13,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SkiGVtAV7d": {
+          "description": "Pulses when the reading is done.",
+          "label": "DONE",
+          "id": "SkiGVtAV7d",
+          "position": {
+            "x": 13,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ByhG4tCNX_": {
+          "description": "Weight.",
+          "label": "W",
+          "id": "ByhG4tCNX_",
+          "position": {
+            "x": 12,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "S1JrYCVQ_": {
+          "label": "SCL",
+          "id": "S1JrYCVQ_",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "BJTXU1H7O": {
+          "description": "Number of samples.",
+          "label": "N",
+          "id": "BJTXU1H7O",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/amperka-scale"
+    }
+  },
+  "version": "0.0.3",
+  "description": "A library to interface HX711 24-Bit Analog-to-Digital Converter (ADC) for reading load cells / weight scales.",
+  "name": "hx711"
+}

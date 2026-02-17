@@ -1,0 +1,120 @@
+{
+  "license": "MIT",
+  "name": "nokia-5510-text-output",
+  "patches": {
+    "@/nokia-5510-text-output": {
+      "nodes": {
+        "rkhrrgOyV": {
+          "id": "rkhrrgOyV",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 68,
+            "y": 102
+          },
+          "label": "CLK",
+          "boundLiterals": {
+            "__out__": "D7"
+          }
+        },
+        "rJSurxOyV": {
+          "id": "rJSurxOyV",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 102,
+            "y": 102
+          },
+          "label": "DIN",
+          "boundLiterals": {
+            "__out__": "D6"
+          }
+        },
+        "B1eYBxOk4": {
+          "id": "B1eYBxOk4",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "label": "DC",
+          "boundLiterals": {
+            "__out__": "D5"
+          }
+        },
+        "By3tSeO1V": {
+          "id": "By3tSeO1V",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 170,
+            "y": 102
+          },
+          "label": "CS",
+          "boundLiterals": {
+            "__out__": "D4"
+          }
+        },
+        "Hy79Sx_1V": {
+          "id": "Hy79Sx_1V",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 204,
+            "y": 102
+          },
+          "label": "RST",
+          "boundLiterals": {
+            "__out__": "D3"
+          }
+        },
+        "r15iSgu1E": {
+          "id": "r15iSgu1E",
+          "type": "xod/patch-nodes/input-string",
+          "position": {
+            "x": 272,
+            "y": 102
+          },
+          "label": "TEXT"
+        },
+        "Sk22HeO1N": {
+          "id": "Sk22HeO1N",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 306,
+            "y": 102
+          },
+          "label": "TEXT_SIZE",
+          "boundLiterals": {
+            "__out__": "1"
+          }
+        },
+        "ryJAHgOyN": {
+          "id": "ryJAHgOyN",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 68,
+            "y": 204
+          }
+        },
+        "rk9GLgu14": {
+          "id": "rk9GLgu14",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 340,
+            "y": 102
+          },
+          "label": "CONTRAST",
+          "boundLiterals": {
+            "__out__": "60"
+          }
+        }
+      },
+      "path": "@/nokia-5510-text-output",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library\"\n#pragma XOD require \"https://github.com/adafruit/Adafruit-GFX-Library\"\n\n{{#global}}\n#include <SPI.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_PCD8544.h>\n{{/global}}\n\nstruct State {\n    Adafruit_PCD8544* display;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    if (isSettingUp()){\n        auto clk = getValue<input_CLK>(ctx);\n        auto din = getValue<input_DIN>(ctx);\n        auto dc = getValue<input_DC>(ctx);\n        auto cs = getValue<input_CS>(ctx);\n        auto rst = getValue<input_RST>(ctx);\n        state->display = new Adafruit_PCD8544(clk,din,dc,cs,rst);\n        state->display->begin();\n    }\n    state->display->clearDisplay();\n    state->display->setContrast(getValue<input_CONTRAST>(ctx));\n    state->display->setTextSize(getValue<input_TEXT_SIZE>(ctx));\n    auto text=getValue<input_TEXT>(ctx);\n    char txt[length(text) + 1] = { 0 };\n    dump(text, txt);\n    state->display->print(txt);\n    state->display->display();\n}\n"
+        }
+      ]
+    }
+  },
+  "version": "1.0.0"
+}

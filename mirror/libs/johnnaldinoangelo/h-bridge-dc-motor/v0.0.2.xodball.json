@@ -1,0 +1,365 @@
+{
+  "description": "Bidirectional speed control of a motor using H-bridge L298n",
+  "version": "0.0.2",
+  "patches": {
+    "@/main": {
+      "nodes": {
+        "rkFtWAAMS": {
+          "id": "rkFtWAAMS",
+          "type": "xod/common-hardware/h-bridge-dc-motor",
+          "position": {
+            "x": 1,
+            "y": -1,
+            "units": "slots"
+          },
+          "label": "Motor(A) Driver",
+          "boundLiterals": {
+            "B17mw3pzH": "D5",
+            "S18NCzAIb": "D4",
+            "HknX0fRU-": "D9",
+            "SJpVAGRUW": "0"
+          }
+        },
+        "rJ-NNH-k7S": {
+          "boundLiterals": {
+            "H1sM2A12-": "0"
+          },
+          "id": "rJ-NNH-k7S",
+          "label": "Speed",
+          "position": {
+            "x": 4,
+            "y": -67,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/pot"
+        },
+        "HyFDrbkmH": {
+          "id": "HyFDrbkmH",
+          "type": "xod/common-hardware/h-bridge-dc-motor",
+          "position": {
+            "x": 2,
+            "y": -64,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B17mw3pzH": "D5",
+            "S18NCzAIb": "D4",
+            "HknX0fRU-": "D9",
+            "SJpVAGRUW": "1"
+          }
+        },
+        "B16JPZyXB": {
+          "id": "B16JPZyXB",
+          "type": "xod/core/defer",
+          "position": {
+            "x": 1,
+            "y": -66,
+            "units": "slots"
+          }
+        },
+        "BJuZRzJXS": {
+          "id": "BJuZRzJXS",
+          "type": "xod/core/square-wave",
+          "position": {
+            "x": 3,
+            "y": -65,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "BJ5HJ6t1f": "0.1"
+          }
+        },
+        "SJl6YblmS": {
+          "boundLiterals": {
+            "HJCWLAdSwyW": "1.0",
+            "ry1z8CuBDy-": "0.0",
+            "rJbGU0_Hv1Z": "0",
+            "rkpbU0OrwyZ": "1.0"
+          },
+          "id": "SJl6YblmS",
+          "position": {
+            "x": 4,
+            "y": -66,
+            "units": "slots"
+          },
+          "type": "xod/math/map"
+        },
+        "H10MT4eQr": {
+          "id": "H10MT4eQr",
+          "type": "xod/common-hardware/text-lcd-16x2",
+          "position": {
+            "x": 1,
+            "y": -63,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "rJlYT7EfW": "D12",
+            "SkBK6Q4fb": "D11",
+            "BJJqaX4Gb": "D6",
+            "S1nqa7NMZ": "D7",
+            "HJysTXVMb": "D3",
+            "rkbjp7Ezb": "D2"
+          }
+        },
+        "rkEsywg7B": {
+          "id": "rkEsywg7B",
+          "type": "bradzilla84/bradzilla84-utilities/string-to-float",
+          "position": {
+            "x": 8,
+            "y": -65,
+            "units": "slots"
+          }
+        },
+        "r1kqJuZXB": {
+          "id": "r1kqJuZXB",
+          "type": "johnnaldinoangelo/motorspeedcontrol/main",
+          "position": {
+            "x": 15,
+            "y": -67,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "rJllvZJXH": {
+          "id": "rJllvZJXH",
+          "output": {
+            "nodeId": "HyFDrbkmH",
+            "pinKey": "ryezMusBx7"
+          },
+          "input": {
+            "nodeId": "B16JPZyXB",
+            "pinKey": "BJI7P8t9Z"
+          }
+        },
+        "HyLgvW1XH": {
+          "id": "HyLgvW1XH",
+          "output": {
+            "nodeId": "B16JPZyXB",
+            "pinKey": "HJhXDIY9-"
+          },
+          "input": {
+            "nodeId": "rJ-NNH-k7S",
+            "pinKey": "S1TehAk2b"
+          }
+        },
+        "rk4f5WeQB": {
+          "id": "rk4f5WeQB",
+          "output": {
+            "nodeId": "rJ-NNH-k7S",
+            "pinKey": "H1sM2A12-"
+          },
+          "input": {
+            "nodeId": "SJl6YblmS",
+            "pinKey": "BJlzICOSv1-"
+          }
+        },
+        "B15_5-x7S": {
+          "id": "B15_5-x7S",
+          "output": {
+            "nodeId": "SJl6YblmS",
+            "pinKey": "H12bIR_SPyZ"
+          },
+          "input": {
+            "nodeId": "BJuZRzJXS",
+            "pinKey": "rJS8ypK1z"
+          }
+        },
+        "SyY5xze7H": {
+          "id": "SyY5xze7H",
+          "output": {
+            "nodeId": "BJuZRzJXS",
+            "pinKey": "S1aYu6KJf"
+          },
+          "input": {
+            "nodeId": "HyFDrbkmH",
+            "pinKey": "SJpVAGRUW"
+          }
+        },
+        "S1Jn1vgmr": {
+          "id": "S1Jn1vgmr",
+          "output": {
+            "nodeId": "SJl6YblmS",
+            "pinKey": "H12bIR_SPyZ"
+          },
+          "input": {
+            "nodeId": "rkEsywg7B",
+            "pinKey": "S1edBssGVV"
+          }
+        },
+        "B1NhJveXS": {
+          "id": "B1NhJveXS",
+          "output": {
+            "nodeId": "rkEsywg7B",
+            "pinKey": "rJWuBiszEV"
+          },
+          "input": {
+            "nodeId": "H10MT4eQr",
+            "pinKey": "H1bLN9F-b"
+          }
+        }
+      },
+      "path": "@/main"
+    },
+    "@/bidirectional-h-bridge": {
+      "nodes": {
+        "r1oaZubmH": {
+          "id": "r1oaZubmH",
+          "position": {
+            "x": 11,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/math/abs"
+        },
+        "BygsabObQH": {
+          "id": "BygsabObQH",
+          "position": {
+            "x": 5,
+            "y": 0.75,
+            "units": "slots"
+          },
+          "type": "xod/core/less"
+        },
+        "SybipbOZ7S": {
+          "id": "SybipbOZ7S",
+          "position": {
+            "x": 10,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/gpio/pwm-write"
+        },
+        "H1fs6WdWXS": {
+          "id": "H1fs6WdWXS",
+          "position": {
+            "x": 4,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/gpio/digital-write"
+        },
+        "BkQipZ_Wmr": {
+          "id": "BkQipZ_Wmr",
+          "position": {
+            "x": 0,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/gpio/digital-write"
+        },
+        "BJ4jpbOWXS": {
+          "arityLevel": 2,
+          "id": "BJ4jpbOWXS",
+          "position": {
+            "x": 3,
+            "y": 2.75,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "ByBs6ZdWXS": {
+          "description": "Fires when writing is done",
+          "id": "ByBs6ZdWXS",
+          "label": "DONE",
+          "position": {
+            "x": 3,
+            "y": 3.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HkLiTZdbmS": {
+          "id": "HkLiTZdbmS",
+          "type": "xod/core/less",
+          "position": {
+            "x": 1,
+            "y": 0.75,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "rJwj6buWXS": {
+          "id": "rJwj6buWXS",
+          "input": {
+            "nodeId": "H1fs6WdWXS",
+            "pinKey": "HJ6HsEngZ"
+          },
+          "output": {
+            "nodeId": "BygsabObQH",
+            "pinKey": "HktZUCdrPkZ"
+          }
+        },
+        "Sy_i6Zd-7B": {
+          "id": "Sy_i6Zd-7B",
+          "input": {
+            "nodeId": "BJ4jpbOWXS",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "H1fs6WdWXS",
+            "pinKey": "ry3pcpqyX"
+          }
+        },
+        "HJKiTW_bXS": {
+          "id": "HJKiTW_bXS",
+          "input": {
+            "nodeId": "SybipbOZ7S",
+            "pinKey": "ByXnYHPyb"
+          },
+          "output": {
+            "nodeId": "r1oaZubmH",
+            "pinKey": "B1LNICdSDJW"
+          }
+        },
+        "SJ9j6-dbmr": {
+          "id": "SJ9j6-dbmr",
+          "input": {
+            "nodeId": "ByBs6ZdWXS",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJ4jpbOWXS",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "Hyji6bdbXH": {
+          "id": "Hyji6bdbXH",
+          "input": {
+            "nodeId": "BJ4jpbOWXS",
+            "pinKey": "ByU7LRuSPkW-$1"
+          },
+          "output": {
+            "nodeId": "SybipbOZ7S",
+            "pinKey": "SkwRqaq17"
+          }
+        },
+        "r1njTWdZmH": {
+          "id": "r1njTWdZmH",
+          "input": {
+            "nodeId": "BJ4jpbOWXS",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "BkQipZ_Wmr",
+            "pinKey": "ry3pcpqyX"
+          }
+        },
+        "Sy6opZ_bmB": {
+          "id": "Sy6opZ_bmB",
+          "output": {
+            "nodeId": "HkLiTZdbmS",
+            "pinKey": "HktZUCdrPkZ"
+          },
+          "input": {
+            "nodeId": "BkQipZ_Wmr",
+            "pinKey": "HJ6HsEngZ"
+          }
+        }
+      },
+      "path": "@/bidirectional-h-bridge"
+    }
+  },
+  "name": "h-bridge-dc-motor"
+}

@@ -1,0 +1,2321 @@
+{
+  "apiKey": "d08fe5cc-37f8-4cba-bfba-ab271ae6366b",
+  "description": "The TCA9548A is an 8-channel, bidirectional translating I2C switch. The master SCL/SDA signal pair is directed to eight channels of slave devices, SC0/SD0-SC7/SD7. Any individual downstream channel can be selected as well as any combination of the eight channels. This library provides the ability to manage channels on the TCA9548A multiplexer.\n\nv 1.1 - 27 Jan 2020\n    - Removed other library dependencies\n    - Added triggers to all patches\n    - Added open all channels and close all channels patches\n    - Changed ACT pin default to 'True'\n\nV1.0 - Initial release.",
+  "license": "Creative Commons Attribution-ShareAlike 4.0 International License",
+  "name": "tca9548a",
+  "patches": {
+    "@/bit-clear": {
+      "attachments": [
+        {
+          "content": "\n#pragma XOD dirtieness disable\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    uint8_t n = (uint8_t)getValue<input_N>(ctx);\n    n = (n > 0) ? ((n < 7) ? n : 7) : 0;\n    n= 1 << n;\n    emitValue<output_OUT>(ctx, getValue<input_IN>(ctx) & ~n);\n    emitValue<output_DONE>(ctx, true);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BkEMhD5-8": {
+          "id": "BkEMhD5-8",
+          "label": "DONE",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Bkv72D5bI": {
+          "id": "Bkv72D5bI",
+          "label": "IN",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HJJf3wcWL": {
+          "id": "HJJf3wcWL",
+          "label": "OUT",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-byte"
+        },
+        "S1_W2Pc-U": {
+          "id": "S1_W2Pc-U",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/utility"
+        },
+        "S1uTovcb8": {
+          "id": "S1uTovcb8",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJcmhvcW8": {
+          "id": "SJcmhvcW8",
+          "label": "N",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/bit-clear"
+    },
+    "@/bit-read": {
+      "attachments": [
+        {
+          "content": "\n#pragma XOD dirtieness disable\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\n\nvoid evaluate(Context ctx) {\n    auto x = getValue<input_IN>(ctx);\n    auto n = getValue<input_N>(ctx);\n    n = (n > 0) ? ((n < 7) ? n : 7) : 0;\n    emitValue<output_OUT>(ctx, 1 & (x >> n));\n    emitValue<output_DONE>(ctx, true);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1spSu9bL": {
+          "id": "B1spSu9bL",
+          "label": "OUT",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-byte"
+        },
+        "HyNTruqWL": {
+          "id": "HyNTruqWL",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/utility"
+        },
+        "SJkaBu9WI": {
+          "id": "SJkaBu9WI",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJu3rO5bI": {
+          "id": "SJu3rO5bI",
+          "label": "N",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "r1AaS_5ZI": {
+          "id": "r1AaS_5ZI",
+          "label": "DONE",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rkB2r_9ZU": {
+          "id": "rkB2r_9ZU",
+          "label": "IN",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/bit-read"
+    },
+    "@/bit-set": {
+      "attachments": [
+        {
+          "content": "\n#pragma XOD dirtieness disable\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    uint8_t n = (uint8_t)getValue<input_N>(ctx);\n    n = (n > 0) ? ((n < 7) ? n : 7) : 0;\n    n= 1 << n;\n    emitValue<output_OUT>(ctx, getValue<input_IN>(ctx) | n);\n    emitValue<output_DONE>(ctx, true);\n}\n\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "HJHMUP9bI": {
+          "id": "HJHMUP9bI",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/utility"
+        },
+        "SkjpSD5WL": {
+          "id": "SkjpSD5WL",
+          "label": "OUT",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-byte"
+        },
+        "Skn2BDcbU": {
+          "id": "Skn2BDcbU",
+          "label": "IN",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SyogUwcZ8": {
+          "id": "SyogUwcZ8",
+          "label": "DONE",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJxaHPcZL": {
+          "id": "rJxaHPcZL",
+          "label": "N",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "rkyKBPcZI": {
+          "id": "rkyKBPcZI",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/bit-set"
+    },
+    "@/close-all-channels": {
+      "links": {
+        "BkCpGrq-I": {
+          "id": "BkCpGrq-I",
+          "input": {
+            "nodeId": "HJ_azrqWI",
+            "pinKey": "HJeRalrqbU"
+          },
+          "output": {
+            "nodeId": "rJZQsTV5b8",
+            "pinKey": "__out__"
+          }
+        },
+        "By0CfS5-U": {
+          "id": "By0CfS5-U",
+          "input": {
+            "nodeId": "BkfQoaV5WI",
+            "pinKey": "SJtdbgtZI"
+          },
+          "output": {
+            "nodeId": "HJ_azrqWI",
+            "pinKey": "BJTHZSqZU"
+          }
+        },
+        "S1n6zHcWL": {
+          "id": "S1n6zHcWL",
+          "input": {
+            "nodeId": "HJ_azrqWI",
+            "pinKey": "B1bR6gS5-U"
+          },
+          "output": {
+            "nodeId": "rkVmop49WL",
+            "pinKey": "__out__"
+          }
+        },
+        "SJ5Xjp4qZ8": {
+          "id": "SJ5Xjp4qZ8",
+          "input": {
+            "nodeId": "BkfQoaV5WI",
+            "pinKey": "S1EdWeFZL"
+          },
+          "output": {
+            "nodeId": "H17XipVqbL",
+            "pinKey": "__out__"
+          }
+        },
+        "r1oXsaNcWU": {
+          "id": "r1oXsaNcWU",
+          "input": {
+            "nodeId": "SJHmj64cbI",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BkfQoaV5WI",
+            "pinKey": "SJHHGeF-L"
+          }
+        }
+      },
+      "nodes": {
+        "BkfQoaV5WI": {
+          "boundLiterals": {
+            "rJuvWxtWU": "00h"
+          },
+          "id": "BkfQoaV5WI",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/write-channel-status"
+        },
+        "H17XipVqbL": {
+          "boundLiterals": {
+            "__out__": "70h"
+          },
+          "description": "I2C address of the multiplexer. Default: 70h",
+          "id": "H17XipVqbL",
+          "label": "ADDR",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HJ_azrqWI": {
+          "boundLiterals": {
+            "rkTG-BcWL": "0"
+          },
+          "id": "HJ_azrqWI",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/gated-act-upt"
+        },
+        "SJHmj64cbI": {
+          "description": "Pulses when the TCA9548 channel has been opened.",
+          "id": "SJHmj64cbI",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJZQsTV5b8": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "A boolean value which enables update actions when the inputs change. Update this input from False to True to force an update without input data changes.",
+          "id": "rJZQsTV5b8",
+          "label": "ACT",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rkVmop49WL": {
+          "description": "Triggers action to close all channels.",
+          "id": "rkVmop49WL",
+          "label": "UPD",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/close-all-channels"
+    },
+    "@/close-channel": {
+      "description": "Closes the specified channel on the multiplexer.",
+      "links": {
+        "B1H2ZHcWU": {
+          "id": "B1H2ZHcWU",
+          "input": {
+            "nodeId": "rJYubB5WI",
+            "pinKey": "B1bR6gS5-U"
+          },
+          "output": {
+            "nodeId": "SyYt_N5bL",
+            "pinKey": "__out__"
+          }
+        },
+        "B1aDJr5bU": {
+          "id": "B1aDJr5bU",
+          "input": {
+            "nodeId": "BJXPySc-U",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HkNH69I-U",
+            "pinKey": "__out__"
+          }
+        },
+        "BJPDnw5-8": {
+          "id": "BJPDnw5-8",
+          "input": {
+            "nodeId": "B1R82Dc-8",
+            "pinKey": "SJcmhvcW8"
+          },
+          "output": {
+            "nodeId": "HJNZEaq8ZL",
+            "pinKey": "By_EX_bk7"
+          }
+        },
+        "BJmw3D5WL": {
+          "id": "BJmw3D5WL",
+          "input": {
+            "nodeId": "B1R82Dc-8",
+            "pinKey": "Bkv72D5bI"
+          },
+          "output": {
+            "nodeId": "HkZkIgFWI",
+            "pinKey": "rk3_7gtZL"
+          }
+        },
+        "ByUYZH9bU": {
+          "id": "ByUYZH9bU",
+          "input": {
+            "nodeId": "rJYubB5WI",
+            "pinKey": "rkTG-BcWL"
+          },
+          "output": {
+            "nodeId": "ry5ukSqZU",
+            "pinKey": "__out__"
+          }
+        },
+        "By_q3w5bU": {
+          "id": "By_q3w5bU",
+          "input": {
+            "nodeId": "SyB9nP5b8",
+            "pinKey": "HJeRalrqbU"
+          },
+          "output": {
+            "nodeId": "BJmMhIqWU",
+            "pinKey": "__out__"
+          }
+        },
+        "HJ9wVB9bI": {
+          "id": "HJ9wVB9bI",
+          "input": {
+            "nodeId": "BJvDEB9ZL",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJaQ2MFbI",
+            "pinKey": "__out__"
+          }
+        },
+        "HJgD4Sq-I": {
+          "id": "HJgD4Sq-I",
+          "input": {
+            "nodeId": "rJYubB5WI",
+            "pinKey": "HJeRalrqbU"
+          },
+          "output": {
+            "nodeId": "SJdUErq-U",
+            "pinKey": "__out__"
+          }
+        },
+        "HJjPhw5-8": {
+          "id": "HJjPhw5-8",
+          "input": {
+            "nodeId": "SJi4LxKZL",
+            "pinKey": "rJuvWxtWU"
+          },
+          "output": {
+            "nodeId": "B1R82Dc-8",
+            "pinKey": "HJJf3wcWL"
+          }
+        },
+        "HkvxxB5-I": {
+          "id": "HkvxxB5-I",
+          "input": {
+            "nodeId": "HkZkIgFWI",
+            "pinKey": "Hkl74QlK-8"
+          },
+          "output": {
+            "nodeId": "rkp1lHqZL",
+            "pinKey": "__out__"
+          }
+        },
+        "SJEshwqbL": {
+          "id": "SJEshwqbL",
+          "input": {
+            "nodeId": "SJi4LxKZL",
+            "pinKey": "SJtdbgtZI"
+          },
+          "output": {
+            "nodeId": "SyB9nP5b8",
+            "pinKey": "BJTHZSqZU"
+          }
+        },
+        "SJiqhwqbL": {
+          "id": "SJiqhwqbL",
+          "input": {
+            "nodeId": "SyB9nP5b8",
+            "pinKey": "B1bR6gS5-U"
+          },
+          "output": {
+            "nodeId": "B1R82Dc-8",
+            "pinKey": "BkEMhD5-8"
+          }
+        },
+        "Skt-er5-8": {
+          "id": "Skt-er5-8",
+          "input": {
+            "nodeId": "SJi4LxKZL",
+            "pinKey": "S1EdWeFZL"
+          },
+          "output": {
+            "nodeId": "rylbeS5ZL",
+            "pinKey": "__out__"
+          }
+        },
+        "SyC6-B5ZL": {
+          "id": "SyC6-B5ZL",
+          "input": {
+            "nodeId": "HkZkIgFWI",
+            "pinKey": "HybmVQlY-8"
+          },
+          "output": {
+            "nodeId": "rJYubB5WI",
+            "pinKey": "BJTHZSqZU"
+          }
+        },
+        "r1vmeSqZU": {
+          "id": "r1vmeSqZU",
+          "input": {
+            "nodeId": "HJhGxBq-I",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "B1fNSTqL-L",
+            "pinKey": "__out__"
+          }
+        },
+        "rkCLIxtbI": {
+          "id": "rkCLIxtbI",
+          "input": {
+            "nodeId": "r1-oR5UbL",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJi4LxKZL",
+            "pinKey": "SJHHGeF-L"
+          }
+        },
+        "ryzoyrq-I": {
+          "id": "ryzoyrq-I",
+          "input": {
+            "nodeId": "HJNZEaq8ZL",
+            "pinKey": "rktX7OWyX"
+          },
+          "output": {
+            "nodeId": "Hko9kH9-U",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "B1R82Dc-8": {
+          "id": "B1R82Dc-8",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/bit-clear"
+        },
+        "B1fNSTqL-L": {
+          "boundLiterals": {
+            "__out__": "70h"
+          },
+          "description": "I2C address of the multiplexer. Default: 70h",
+          "id": "B1fNSTqL-L",
+          "label": "ADDR",
+          "position": {
+            "x": 4,
+            "y": -4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "BJXPySc-U": {
+          "id": "BJXPySc-U",
+          "label": "CH",
+          "position": {
+            "x": 2,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "BJmMhIqWU": {
+          "id": "BJmMhIqWU",
+          "label": "ACT",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "BJvDEB9ZL": {
+          "id": "BJvDEB9ZL",
+          "label": "ACT",
+          "position": {
+            "x": 5,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "HJNZEaq8ZL": {
+          "id": "HJNZEaq8ZL",
+          "position": {
+            "x": 7,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/bits/number-to-u8"
+        },
+        "HJhGxBq-I": {
+          "id": "HJhGxBq-I",
+          "label": "ADDR",
+          "position": {
+            "x": 4,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "HkNH69I-U": {
+          "boundLiterals": {
+            "__out__": "-1"
+          },
+          "description": "Channel [0-7] to close on the multiplexer.",
+          "id": "HkNH69I-U",
+          "label": "CHAN",
+          "position": {
+            "x": 2,
+            "y": -4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HkZkIgFWI": {
+          "id": "HkZkIgFWI",
+          "position": {
+            "x": 5,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "@/read-channel-status"
+        },
+        "Hko9kH9-U": {
+          "id": "Hko9kH9-U",
+          "label": "CH",
+          "position": {
+            "x": 7,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJdUErq-U": {
+          "id": "SJdUErq-U",
+          "label": "ACT",
+          "position": {
+            "x": 6,
+            "y": -4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJi4LxKZL": {
+          "id": "SJi4LxKZL",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/write-channel-status"
+        },
+        "SyB9nP5b8": {
+          "boundLiterals": {
+            "rkTG-BcWL": "0"
+          },
+          "id": "SyB9nP5b8",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/gated-act-upt"
+        },
+        "SyYt_N5bL": {
+          "description": "Triggers action to close the specified channels.",
+          "id": "SyYt_N5bL",
+          "label": "UPD",
+          "position": {
+            "x": 7,
+            "y": -4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1-oR5UbL": {
+          "description": "Pulses when the channel is closed on the multiplexer.",
+          "id": "r1-oR5UbL",
+          "label": "DONE",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJYubB5WI": {
+          "id": "rJYubB5WI",
+          "position": {
+            "x": 6,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "@/gated-act-upt"
+        },
+        "rJaQ2MFbI": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "A boolean value which enables update actions when the inputs change. Update this input from False to True to force an update without input data changes.",
+          "id": "rJaQ2MFbI",
+          "label": "ACT",
+          "position": {
+            "x": 5,
+            "y": -4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rkp1lHqZL": {
+          "id": "rkp1lHqZL",
+          "label": "ADDR",
+          "position": {
+            "x": 5,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "ry5ukSqZU": {
+          "id": "ry5ukSqZU",
+          "label": "CH",
+          "position": {
+            "x": 8,
+            "y": -4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rylbeS5ZL": {
+          "id": "rylbeS5ZL",
+          "label": "ADDR",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        }
+      },
+      "path": "@/close-channel"
+    },
+    "@/gated-act-upt": {
+      "links": {
+        "ByFR6eBcWI": {
+          "id": "ByFR6eBcWI",
+          "input": {
+            "nodeId": "B14RaeSqZU",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HJeRalrqbU",
+            "pinKey": "__out__"
+          }
+        },
+        "ByqXZH9ZU": {
+          "id": "ByqXZH9ZU",
+          "input": {
+            "nodeId": "SyR6ercWL",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "rkTG-BcWL",
+            "pinKey": "__out__"
+          }
+        },
+        "H1aRTxBc-I": {
+          "id": "H1aRTxBc-I",
+          "input": {
+            "nodeId": "rkM0TgS9WI",
+            "pinKey": "BJf6HXtDaW"
+          },
+          "output": {
+            "nodeId": "Sy80agHcW8",
+            "pinKey": "__out__"
+          }
+        },
+        "Hy2RaxS9-L": {
+          "id": "Hy2RaxS9-L",
+          "input": {
+            "nodeId": "SyR6ercWL",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "SJHRaxr9-8",
+            "pinKey": "__out__"
+          }
+        },
+        "S1uATlBqb8": {
+          "id": "S1uATlBqb8",
+          "input": {
+            "nodeId": "rkM0TgS9WI",
+            "pinKey": "S1VDQYD6W"
+          },
+          "output": {
+            "nodeId": "HJmA6lH5W8",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "SJc0alH9ZU": {
+          "id": "SJc0alH9ZU",
+          "input": {
+            "nodeId": "HJmA6lH5W8",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "B1bR6gS5-U",
+            "pinKey": "__out__"
+          }
+        },
+        "SkeI-Hq-U": {
+          "id": "SkeI-Hq-U",
+          "input": {
+            "nodeId": "BJTHZSqZU",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkM0TgS9WI",
+            "pinKey": "HJ1uXKDpb"
+          }
+        },
+        "rkiCpxScbI": {
+          "id": "rkiCpxScbI",
+          "input": {
+            "nodeId": "HJmA6lH5W8",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "SyR6ercWL",
+            "pinKey": "H1fx68wzB"
+          }
+        }
+      },
+      "nodes": {
+        "B14RaeSqZU": {
+          "id": "B14RaeSqZU",
+          "label": "ACT",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "B1bR6gS5-U": {
+          "id": "B1bR6gS5-U",
+          "label": "UPD",
+          "position": {
+            "x": 2,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BJTHZSqZU": {
+          "id": "BJTHZSqZU",
+          "position": {
+            "x": 2,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJeRalrqbU": {
+          "description": "A boolean value which enables update actions when the inputs change. Update this input from False to True to force an update without input data changes.",
+          "id": "HJeRalrqbU",
+          "label": "ACT",
+          "position": {
+            "x": 1,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "HJmA6lH5W8": {
+          "id": "HJmA6lH5W8",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "SJHRaxr9-8": {
+          "id": "SJHRaxr9-8",
+          "label": "ACT",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJcqgS9-I": {
+          "id": "SJcqgS9-I",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/utility"
+        },
+        "Sy80agHcW8": {
+          "id": "Sy80agHcW8",
+          "label": "ACT",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SyR6ercWL": {
+          "boundLiterals": {
+            "H13R3IvGB": "True"
+          },
+          "id": "SyR6ercWL",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/act"
+        },
+        "rkM0TgS9WI": {
+          "id": "rkM0TgS9WI",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/gate(pulse)"
+        },
+        "rkTG-BcWL": {
+          "id": "rkTG-BcWL",
+          "label": "DATA",
+          "position": {
+            "x": 3,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-t1"
+        }
+      },
+      "path": "@/gated-act-upt"
+    },
+    "@/is-channel-open": {
+      "description": "Returns a boolean value indicating if the specified channel is open on the multiplexer.",
+      "links": {
+        "B1r-NgY-U": {
+          "id": "B1r-NgY-U",
+          "input": {
+            "nodeId": "SJSg4eY-U",
+            "pinKey": "Hkl74QlK-8"
+          },
+          "output": {
+            "nodeId": "HJx0vAwBZI",
+            "pinKey": "__out__"
+          }
+        },
+        "BJrtId5W8": {
+          "id": "BJrtId5W8",
+          "input": {
+            "nodeId": "Hy75qJY-L",
+            "pinKey": "rJXICuSwyW"
+          },
+          "output": {
+            "nodeId": "HyUN8dc-8",
+            "pinKey": "B1spSu9bL"
+          }
+        },
+        "By3c91Y-L": {
+          "id": "By3c91Y-L",
+          "input": {
+            "nodeId": "ryi3RPrZU",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Hy75qJY-L",
+            "pinKey": "H1E8AuSPkZ"
+          }
+        },
+        "By6Svu9-U": {
+          "id": "By6Svu9-U",
+          "input": {
+            "nodeId": "B1csLucZI",
+            "pinKey": "rkTG-BcWL"
+          },
+          "output": {
+            "nodeId": "BkNHD_qb8",
+            "pinKey": "__out__"
+          }
+        },
+        "HJhNv_q-I": {
+          "id": "HJhNv_q-I",
+          "input": {
+            "nodeId": "HJAQDOcZL",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BkCP0vSZ8",
+            "pinKey": "__out__"
+          }
+        },
+        "HkGALu5WL": {
+          "id": "HkGALu5WL",
+          "input": {
+            "nodeId": "B1csLucZI",
+            "pinKey": "B1bR6gS5-U"
+          },
+          "output": {
+            "nodeId": "HytaU_9WU",
+            "pinKey": "__out__"
+          }
+        },
+        "Hyj8Pu5-8": {
+          "id": "Hyj8Pu5-8",
+          "input": {
+            "nodeId": "rkzWxuSZL",
+            "pinKey": "rktX7OWyX"
+          },
+          "output": {
+            "nodeId": "ByEUvOqW8",
+            "pinKey": "__out__"
+          }
+        },
+        "Sk3yDd9WU": {
+          "id": "Sk3yDd9WU",
+          "input": {
+            "nodeId": "SJSg4eY-U",
+            "pinKey": "HybmVQlY-8"
+          },
+          "output": {
+            "nodeId": "B1csLucZI",
+            "pinKey": "BJTHZSqZU"
+          }
+        },
+        "SkBHL_q-8": {
+          "id": "SkBHL_q-8",
+          "input": {
+            "nodeId": "HyUN8dc-8",
+            "pinKey": "SJu3rO5bI"
+          },
+          "output": {
+            "nodeId": "rkzWxuSZL",
+            "pinKey": "By_EX_bk7"
+          }
+        },
+        "rkVnDuqb8": {
+          "id": "rkVnDuqb8",
+          "input": {
+            "nodeId": "HyUN8dc-8",
+            "pinKey": "rkB2r_9ZU"
+          },
+          "output": {
+            "nodeId": "SJSg4eY-U",
+            "pinKey": "rk3_7gtZL"
+          }
+        },
+        "ryKnLu9WL": {
+          "id": "ryKnLu9WL",
+          "input": {
+            "nodeId": "B1csLucZI",
+            "pinKey": "HJeRalrqbU"
+          },
+          "output": {
+            "nodeId": "rybkafFW8",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "B1csLucZI": {
+          "id": "B1csLucZI",
+          "position": {
+            "x": 13,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/gated-act-upt"
+        },
+        "BkCP0vSZ8": {
+          "boundLiterals": {
+            "__out__": "-1"
+          },
+          "description": "Channel [0-7] to check for open state on the multiplexer.",
+          "id": "BkCP0vSZ8",
+          "label": "CHAN",
+          "position": {
+            "x": 11,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BkNHD_qb8": {
+          "id": "BkNHD_qb8",
+          "label": "CH",
+          "position": {
+            "x": 15,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "ByEUvOqW8": {
+          "id": "ByEUvOqW8",
+          "label": "CH",
+          "position": {
+            "x": 16,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJAQDOcZL": {
+          "id": "HJAQDOcZL",
+          "label": "CH",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "HJx0vAwBZI": {
+          "boundLiterals": {
+            "__out__": "70h"
+          },
+          "description": "I2C address of the multiplexer. Default: 70h",
+          "id": "HJx0vAwBZI",
+          "label": "ADDR",
+          "position": {
+            "x": 12,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "Hy75qJY-L": {
+          "boundLiterals": {
+            "HJG8C_SPkb": "01h"
+          },
+          "id": "Hy75qJY-L",
+          "position": {
+            "x": 12,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/equal(byte)"
+        },
+        "HyUN8dc-8": {
+          "id": "HyUN8dc-8",
+          "position": {
+            "x": 12,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/bit-read"
+        },
+        "HytaU_9WU": {
+          "description": "Triggers new channel status read.",
+          "id": "HytaU_9WU",
+          "label": "UPD",
+          "position": {
+            "x": 14,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJSg4eY-U": {
+          "boundLiterals": {
+            "HybmVQlY-8": "Continuously"
+          },
+          "id": "SJSg4eY-U",
+          "position": {
+            "x": 12,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/read-channel-status"
+        },
+        "rkzWxuSZL": {
+          "id": "rkzWxuSZL",
+          "position": {
+            "x": 15,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/bits/number-to-u8"
+        },
+        "rybkafFW8": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "A boolean value which enables update actions when the inputs change. Update this input from False to True to force an update without input data changes.",
+          "id": "rybkafFW8",
+          "label": "ACT",
+          "position": {
+            "x": 13,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "ryi3RPrZU": {
+          "description": "Returns true is the specified channel is open; otherwise false.",
+          "id": "ryi3RPrZU",
+          "position": {
+            "x": 12,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        }
+      },
+      "path": "@/is-channel-open"
+    },
+    "@/open-all-channels": {
+      "links": {
+        "B11gHUbNcWI": {
+          "id": "B11gHUbNcWI",
+          "input": {
+            "nodeId": "SkSLbN9ZU",
+            "pinKey": "S1EdWeFZL"
+          },
+          "output": {
+            "nodeId": "SkYBUZ4cW8",
+            "pinKey": "__out__"
+          }
+        },
+        "HJ7tGB9bI": {
+          "id": "HJ7tGB9bI",
+          "input": {
+            "nodeId": "SkSLbN9ZU",
+            "pinKey": "SJtdbgtZI"
+          },
+          "output": {
+            "nodeId": "H10PMScb8",
+            "pinKey": "BJTHZSqZU"
+          }
+        },
+        "S1-uzB9-L": {
+          "id": "S1-uzB9-L",
+          "input": {
+            "nodeId": "H10PMScb8",
+            "pinKey": "HJeRalrqbU"
+          },
+          "output": {
+            "nodeId": "SJgrLZV5WI",
+            "pinKey": "__out__"
+          }
+        },
+        "S1IgrIWVcb8": {
+          "id": "S1IgrIWVcb8",
+          "input": {
+            "nodeId": "rJDH8WE9-L",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SkSLbN9ZU",
+            "pinKey": "SJHHGeF-L"
+          }
+        },
+        "rJE_frcW8": {
+          "id": "rJE_frcW8",
+          "input": {
+            "nodeId": "H10PMScb8",
+            "pinKey": "B1bR6gS5-U"
+          },
+          "output": {
+            "nodeId": "Sy9S8ZE5-8",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "H10PMScb8": {
+          "boundLiterals": {
+            "rkTG-BcWL": "0"
+          },
+          "id": "H10PMScb8",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/gated-act-upt"
+        },
+        "SJgrLZV5WI": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "A boolean value which enables update actions when the inputs change. Update this input from False to True to force an update without input data changes.",
+          "id": "SJgrLZV5WI",
+          "label": "ACT",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "SkSLbN9ZU": {
+          "boundLiterals": {
+            "rJuvWxtWU": "FFh"
+          },
+          "id": "SkSLbN9ZU",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/write-channel-status"
+        },
+        "SkYBUZ4cW8": {
+          "boundLiterals": {
+            "__out__": "70h"
+          },
+          "description": "I2C address of the multiplexer. Default: 70h",
+          "id": "SkYBUZ4cW8",
+          "label": "ADDR",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "Sy9S8ZE5-8": {
+          "description": "Triggers action to open all channels.",
+          "id": "Sy9S8ZE5-8",
+          "label": "UPD",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJDH8WE9-L": {
+          "description": "Pulses when the TCA9548 channel has been opened.",
+          "id": "rJDH8WE9-L",
+          "label": "DONE",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/open-all-channels"
+    },
+    "@/open-channel": {
+      "description": "Opens the specified channel on the multiplexer and closes any other open channels.",
+      "links": {
+        "B17a_D5WI": {
+          "id": "B17a_D5WI",
+          "input": {
+            "nodeId": "Skv9dD9-I",
+            "pinKey": "rJxaHPcZL"
+          },
+          "output": {
+            "nodeId": "SJ6UjUB-I",
+            "pinKey": "By_EX_bk7"
+          }
+        },
+        "B1zDYPc-8": {
+          "id": "B1zDYPc-8",
+          "input": {
+            "nodeId": "S1dNKwc-U",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "HyS8tw9W8",
+            "pinKey": "__out__"
+          }
+        },
+        "Bky1FvcWL": {
+          "id": "Bky1FvcWL",
+          "input": {
+            "nodeId": "SJsCuD9ZI",
+            "pinKey": "HJeRalrqbU"
+          },
+          "output": {
+            "nodeId": "B1v6iGYWU",
+            "pinKey": "__out__"
+          }
+        },
+        "HkL9rgF-8": {
+          "id": "HkL9rgF-8",
+          "input": {
+            "nodeId": "SkzbsLrbU",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HyqwBeKWL",
+            "pinKey": "SJHHGeF-L"
+          }
+        },
+        "HyzAcowbL": {
+          "id": "HyzAcowbL",
+          "input": {
+            "nodeId": "SJ6UjUB-I",
+            "pinKey": "rktX7OWyX"
+          },
+          "output": {
+            "nodeId": "BJq6qUH-I",
+            "pinKey": "__out__"
+          }
+        },
+        "SJuWKDcZ8": {
+          "id": "SJuWKDcZ8",
+          "input": {
+            "nodeId": "HyqwBeKWL",
+            "pinKey": "SJtdbgtZI"
+          },
+          "output": {
+            "nodeId": "SJsCuD9ZI",
+            "pinKey": "BJTHZSqZU"
+          }
+        },
+        "SykHFv9Z8": {
+          "id": "SykHFv9Z8",
+          "input": {
+            "nodeId": "S1dNKwc-U",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "Skv9dD9-I",
+            "pinKey": "SyogUwcZ8"
+          }
+        },
+        "rJi4tv9b8": {
+          "id": "rJi4tv9b8",
+          "input": {
+            "nodeId": "SJsCuD9ZI",
+            "pinKey": "B1bR6gS5-U"
+          },
+          "output": {
+            "nodeId": "S1dNKwc-U",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "rk0wtv5ZL": {
+          "id": "rk0wtv5ZL",
+          "input": {
+            "nodeId": "HyqwBeKWL",
+            "pinKey": "rJuvWxtWU"
+          },
+          "output": {
+            "nodeId": "Skv9dD9-I",
+            "pinKey": "SkjpSD5WL"
+          }
+        },
+        "rkmtrgYbL": {
+          "id": "rkmtrgYbL",
+          "input": {
+            "nodeId": "HyqwBeKWL",
+            "pinKey": "S1EdWeFZL"
+          },
+          "output": {
+            "nodeId": "rkDkoIH-8",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "B1v6iGYWU": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "A boolean value which enables update actions when the inputs change. Update this input from False to True to force an update without input data changes.",
+          "id": "B1v6iGYWU",
+          "label": "ACT",
+          "position": {
+            "x": 14,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "BJq6qUH-I": {
+          "boundLiterals": {
+            "__out__": "-1"
+          },
+          "description": "Channel [0-7] to open on the multiplexer.",
+          "id": "BJq6qUH-I",
+          "label": "CHAN",
+          "position": {
+            "x": 12,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HyS8tw9W8": {
+          "description": "Triggers action to open the specified  channel.",
+          "id": "HyS8tw9W8",
+          "label": "UPD",
+          "position": {
+            "x": 16,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HyqwBeKWL": {
+          "boundLiterals": {
+            "SJtdbgtZI": "Never"
+          },
+          "id": "HyqwBeKWL",
+          "position": {
+            "x": 12,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/write-channel-status"
+        },
+        "S1dNKwc-U": {
+          "id": "S1dNKwc-U",
+          "position": {
+            "x": 15,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "SJ6UjUB-I": {
+          "id": "SJ6UjUB-I",
+          "position": {
+            "x": 12,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/bits/number-to-u8"
+        },
+        "SJsCuD9ZI": {
+          "boundLiterals": {
+            "rkTG-BcWL": "0"
+          },
+          "id": "SJsCuD9ZI",
+          "position": {
+            "x": 14,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/gated-act-upt"
+        },
+        "Skv9dD9-I": {
+          "id": "Skv9dD9-I",
+          "position": {
+            "x": 11,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "@/bit-set"
+        },
+        "SkzbsLrbU": {
+          "description": "Pulses when the TCA9548 channel has been opened.",
+          "id": "SkzbsLrbU",
+          "label": "DONE",
+          "position": {
+            "x": 12,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rkDkoIH-8": {
+          "boundLiterals": {
+            "__out__": "70h"
+          },
+          "description": "I2C address of the multiplexer. Default: 70h",
+          "id": "rkDkoIH-8",
+          "label": "ADDR",
+          "position": {
+            "x": 13,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/open-channel"
+    },
+    "@/open-multi-channel": {
+      "description": "Opens the specified channel on the multiplexer but does not close any other open channels. Allows multiple channels to be open simultaneously.",
+      "links": {
+        "B1_jGP9ZI": {
+          "id": "B1_jGP9ZI",
+          "input": {
+            "nodeId": "SJhczP5-I",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJkiCGtZL",
+            "pinKey": "__out__"
+          }
+        },
+        "ByZ6zD9bL": {
+          "id": "ByZ6zD9bL",
+          "input": {
+            "nodeId": "HJqEGDq-L",
+            "pinKey": "rkTG-BcWL"
+          },
+          "output": {
+            "nodeId": "H1A3Gwqb8",
+            "pinKey": "__out__"
+          }
+        },
+        "BypXIw5WI": {
+          "id": "BypXIw5WI",
+          "input": {
+            "nodeId": "ry8m8w9W8",
+            "pinKey": "rJxaHPcZL"
+          },
+          "output": {
+            "nodeId": "rk-XTvltZU",
+            "pinKey": "By_EX_bk7"
+          }
+        },
+        "HJQVIw5bL": {
+          "id": "HJQVIw5bL",
+          "input": {
+            "nodeId": "ry8m8w9W8",
+            "pinKey": "Skn2BDcbU"
+          },
+          "output": {
+            "nodeId": "HJKgOxYZL",
+            "pinKey": "rk3_7gtZL"
+          }
+        },
+        "S1PqUD9W8": {
+          "id": "S1PqUD9W8",
+          "input": {
+            "nodeId": "B1w7TwlY-L",
+            "pinKey": "SJtdbgtZI"
+          },
+          "output": {
+            "nodeId": "r1rdIP5bU",
+            "pinKey": "BJTHZSqZU"
+          }
+        },
+        "S1iKIv5-I": {
+          "id": "S1iKIv5-I",
+          "input": {
+            "nodeId": "r1rdIP5bU",
+            "pinKey": "B1bR6gS5-U"
+          },
+          "output": {
+            "nodeId": "ry8m8w9W8",
+            "pinKey": "SyogUwcZ8"
+          }
+        },
+        "SkbhGP9WL": {
+          "id": "SkbhGP9WL",
+          "input": {
+            "nodeId": "HJqEGDq-L",
+            "pinKey": "B1bR6gS5-U"
+          },
+          "output": {
+            "nodeId": "HyGXTQ9-L",
+            "pinKey": "__out__"
+          }
+        },
+        "Skl2mD5WU": {
+          "id": "Skl2mD5WU",
+          "input": {
+            "nodeId": "rk-XTvltZU",
+            "pinKey": "rktX7OWyX"
+          },
+          "output": {
+            "nodeId": "S1PiXD9-U",
+            "pinKey": "__out__"
+          }
+        },
+        "SkuG7PcZ8": {
+          "id": "SkuG7PcZ8",
+          "input": {
+            "nodeId": "HJKgOxYZL",
+            "pinKey": "HybmVQlY-8"
+          },
+          "output": {
+            "nodeId": "HJqEGDq-L",
+            "pinKey": "BJTHZSqZU"
+          }
+        },
+        "Sy9_UwcbU": {
+          "id": "Sy9_UwcbU",
+          "input": {
+            "nodeId": "r1rdIP5bU",
+            "pinKey": "HJeRalrqbU"
+          },
+          "output": {
+            "nodeId": "Hyt1XDqb8",
+            "pinKey": "__out__"
+          }
+        },
+        "SyNymvcWI": {
+          "id": "SyNymvcWI",
+          "input": {
+            "nodeId": "HJqEGDq-L",
+            "pinKey": "HJeRalrqbU"
+          },
+          "output": {
+            "nodeId": "S1IRfPcZ8",
+            "pinKey": "__out__"
+          }
+        },
+        "SyQVmvc-L": {
+          "id": "SyQVmvc-L",
+          "input": {
+            "nodeId": "S1a7QPcWI",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ryQmaveK-I",
+            "pinKey": "__out__"
+          }
+        },
+        "Syb97P9WL": {
+          "id": "Syb97P9WL",
+          "input": {
+            "nodeId": "B1w7TwlY-L",
+            "pinKey": "S1EdWeFZL"
+          },
+          "output": {
+            "nodeId": "HJNKXvq-8",
+            "pinKey": "__out__"
+          }
+        },
+        "r1OVLDcW8": {
+          "id": "r1OVLDcW8",
+          "input": {
+            "nodeId": "B1w7TwlY-L",
+            "pinKey": "rJuvWxtWU"
+          },
+          "output": {
+            "nodeId": "ry8m8w9W8",
+            "pinKey": "SkjpSD5WL"
+          }
+        },
+        "r1kwmP9ZU": {
+          "id": "r1kwmP9ZU",
+          "input": {
+            "nodeId": "HJKgOxYZL",
+            "pinKey": "Hkl74QlK-8"
+          },
+          "output": {
+            "nodeId": "HylU7PcZU",
+            "pinKey": "__out__"
+          }
+        },
+        "rk1eXpPxt-U": {
+          "id": "rk1eXpPxt-U",
+          "input": {
+            "nodeId": "SkzmTvlF-U",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "B1w7TwlY-L",
+            "pinKey": "SJHHGeF-L"
+          }
+        },
+        "rkFtGPqZ8": {
+          "id": "rkFtGPqZ8",
+          "input": {
+            "nodeId": "SJ8FMP5bU",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJXpPgYZI",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "B1w7TwlY-L": {
+          "id": "B1w7TwlY-L",
+          "position": {
+            "x": 3,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/write-channel-status"
+        },
+        "BJkiCGtZL": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "A boolean value which enables update actions when the inputs change. Update this input from False to True to force an update without input data changes.",
+          "id": "BJkiCGtZL",
+          "label": "ACT",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "H1A3Gwqb8": {
+          "id": "H1A3Gwqb8",
+          "label": "CH",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJKgOxYZL": {
+          "id": "HJKgOxYZL",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/read-channel-status"
+        },
+        "HJNKXvq-8": {
+          "id": "HJNKXvq-8",
+          "label": "ADDR",
+          "position": {
+            "x": 4,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJqEGDq-L": {
+          "id": "HJqEGDq-L",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/gated-act-upt"
+        },
+        "HyGXTQ9-L": {
+          "description": "Triggers action to open the specified  channel.",
+          "id": "HyGXTQ9-L",
+          "label": "UPD",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HylU7PcZU": {
+          "id": "HylU7PcZU",
+          "label": "ADDR",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "Hyt1XDqb8": {
+          "id": "Hyt1XDqb8",
+          "label": "ACT",
+          "position": {
+            "x": 5,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1IRfPcZ8": {
+          "id": "S1IRfPcZ8",
+          "label": "ACT",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1PiXD9-U": {
+          "id": "S1PiXD9-U",
+          "label": "CH",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1a7QPcWI": {
+          "id": "S1a7QPcWI",
+          "label": "ADDR",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "SJ8FMP5bU": {
+          "id": "SJ8FMP5bU",
+          "label": "CH",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "SJXpPgYZI": {
+          "boundLiterals": {
+            "__out__": "-1"
+          },
+          "description": "Channel [0-7] to open for on the multiplexer.",
+          "id": "SJXpPgYZI",
+          "label": "CHAN",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJhczP5-I": {
+          "id": "SJhczP5-I",
+          "label": "ACT",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "SkzmTvlF-U": {
+          "description": "Pulses when the TCA9548 channel has been opened.",
+          "id": "SkzmTvlF-U",
+          "label": "DONE",
+          "position": {
+            "x": 3,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r1rdIP5bU": {
+          "boundLiterals": {
+            "rkTG-BcWL": "0"
+          },
+          "id": "r1rdIP5bU",
+          "position": {
+            "x": 5,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/gated-act-upt"
+        },
+        "rk-XTvltZU": {
+          "id": "rk-XTvltZU",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/bits/number-to-u8"
+        },
+        "ry8m8w9W8": {
+          "id": "ry8m8w9W8",
+          "position": {
+            "x": 3,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/bit-set"
+        },
+        "ryQmaveK-I": {
+          "boundLiterals": {
+            "__out__": "70h"
+          },
+          "description": "I2C address of the multiplexer. Default: 70h",
+          "id": "ryQmaveK-I",
+          "label": "ADDR",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/open-multi-channel"
+    },
+    "@/read-channel-status": {
+      "links": {
+        "B1IRngYb8": {
+          "id": "B1IRngYb8",
+          "input": {
+            "nodeId": "rk3_7gtZL",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJ4a3lF-U",
+            "pinKey": "r1lQLAOBwJb"
+          }
+        },
+        "B1MCngYZU": {
+          "id": "B1MCngYZU",
+          "input": {
+            "nodeId": "rJ4a3lF-U",
+            "pinKey": "HkXm80uHPyb"
+          },
+          "output": {
+            "nodeId": "ByeFgXlKZI",
+            "pinKey": "SJeoE43JQ"
+          }
+        },
+        "B1mtgXxYW8": {
+          "id": "B1mtgXxYW8",
+          "input": {
+            "nodeId": "ByeFgXlKZI",
+            "pinKey": "SkylK_Ed-"
+          },
+          "output": {
+            "nodeId": "r1YxQxYWL",
+            "pinKey": "Sk7BudNdZ"
+          }
+        },
+        "Sy9B7etW8": {
+          "id": "Sy9B7etW8",
+          "input": {
+            "nodeId": "r1YxQxYWL",
+            "pinKey": "BkRw4E3kX"
+          },
+          "output": {
+            "nodeId": "Hkl74QlK-8",
+            "pinKey": "__out__"
+          }
+        },
+        "r1kC2gKbU": {
+          "id": "r1kC2gKbU",
+          "input": {
+            "nodeId": "rJ4a3lF-U",
+            "pinKey": "Hy-QUR_BPkZ"
+          },
+          "output": {
+            "nodeId": "ByeFgXlKZI",
+            "pinKey": "rypZF_Nub"
+          }
+        },
+        "rJTHQgFZI": {
+          "id": "rJTHQgFZI",
+          "input": {
+            "nodeId": "r1YxQxYWL",
+            "pinKey": "SJjmdOVOW"
+          },
+          "output": {
+            "nodeId": "HybmVQlY-8",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "ByeFgXlKZI": {
+          "id": "ByeFgXlKZI",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/i2c/read-byte"
+        },
+        "Hkl74QlK-8": {
+          "boundLiterals": {
+            "__out__": "70h"
+          },
+          "description": "I2C address of the TCA9548 multiplexer. Default: 70h",
+          "id": "Hkl74QlK-8",
+          "label": "ADDR",
+          "position": {
+            "x": 3,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HybmVQlY-8": {
+          "description": "Pushes the channel status to the TCA9548 multiplexer.",
+          "id": "HybmVQlY-8",
+          "label": "UPD",
+          "position": {
+            "x": 5,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJlimlFZU": {
+          "id": "SJlimlFZU",
+          "position": {
+            "x": 7,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/utility"
+        },
+        "r1YxQxYWL": {
+          "boundLiterals": {
+            "BkRw4E3kX": "70h",
+            "SJjmdOVOW": "Continuously"
+          },
+          "id": "r1YxQxYWL",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/i2c/request"
+        },
+        "rJ4a3lF-U": {
+          "id": "rJ4a3lF-U",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/buffer"
+        },
+        "rk3_7gtZL": {
+          "description": "Channel status to from  the TCA9548 multiplexer. Used to determine the open or close status of one or more channels on the multiplexer.",
+          "id": "rk3_7gtZL",
+          "label": "STS",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-byte"
+        }
+      },
+      "path": "@/read-channel-status"
+    },
+    "@/write-channel-status": {
+      "links": {
+        "BJLEzgK-L": {
+          "id": "BJLEzgK-L",
+          "input": {
+            "nodeId": "B1QS-xtZU",
+            "pinKey": "SyssEEhJm"
+          },
+          "output": {
+            "nodeId": "S1EdWeFZL",
+            "pinKey": "__out__"
+          }
+        },
+        "Hye4MltZU": {
+          "id": "Hye4MltZU",
+          "input": {
+            "nodeId": "Hk-XSblFZL",
+            "pinKey": "S1FFN4nkm"
+          },
+          "output": {
+            "nodeId": "rJuvWxtWU",
+            "pinKey": "__out__"
+          }
+        },
+        "SymQSWgtbI": {
+          "id": "SymQSWgtbI",
+          "input": {
+            "nodeId": "BygXS-lYZU",
+            "pinKey": "Sk2oU_Vdb"
+          },
+          "output": {
+            "nodeId": "Hk-XSblFZL",
+            "pinKey": "SJB3vO4uZ"
+          }
+        },
+        "rkfmSblF-U": {
+          "id": "rkfmSblF-U",
+          "input": {
+            "nodeId": "Hk-XSblFZL",
+            "pinKey": "S1dKPuVdW"
+          },
+          "output": {
+            "nodeId": "B1QS-xtZU",
+            "pinKey": "HJbjB_Nd-"
+          }
+        },
+        "ry8mflKbI": {
+          "id": "ry8mflKbI",
+          "input": {
+            "nodeId": "B1QS-xtZU",
+            "pinKey": "BJfKruVdb"
+          },
+          "output": {
+            "nodeId": "SJtdbgtZI",
+            "pinKey": "__out__"
+          }
+        },
+        "ryABflKbL": {
+          "id": "ryABflKbL",
+          "input": {
+            "nodeId": "SJHHGeF-L",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BygXS-lYZU",
+            "pinKey": "ryviw_EOb"
+          }
+        }
+      },
+      "nodes": {
+        "B1QS-xtZU": {
+          "boundLiterals": {
+            "BJfKruVdb": "On Boot"
+          },
+          "id": "B1QS-xtZU",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/i2c/begin-transmission"
+        },
+        "BkyfGgY-L": {
+          "id": "BkyfGgY-L",
+          "position": {
+            "x": 7,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/utility"
+        },
+        "BygXS-lYZU": {
+          "id": "BygXS-lYZU",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/i2c/end-transmission"
+        },
+        "Hk-XSblFZL": {
+          "id": "Hk-XSblFZL",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/i2c/write-byte"
+        },
+        "S1EdWeFZL": {
+          "boundLiterals": {
+            "__out__": "70h"
+          },
+          "description": "I2C address of the multiplexer. Default: 70h",
+          "id": "S1EdWeFZL",
+          "label": "ADDR",
+          "position": {
+            "x": 4,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SJHHGeF-L": {
+          "description": "Pulses when the channel status update successfully completes.",
+          "id": "SJHHGeF-L",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SJtdbgtZI": {
+          "description": "Pushes the channel status to the TCA9548 multiplexer.",
+          "id": "SJtdbgtZI",
+          "label": "UPD",
+          "position": {
+            "x": 5,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJuvWxtWU": {
+          "description": "Channel status to wrote to the TCA9548 multiplexer. Used to open or close one or more channels on the multiplexer.",
+          "id": "rJuvWxtWU",
+          "label": "STS",
+          "position": {
+            "x": 2,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/write-channel-status"
+    }
+  },
+  "version": "1.1.0"
+}

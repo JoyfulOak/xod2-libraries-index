@@ -1,0 +1,46 @@
+{
+  "description": "Temperature sensor for the DuinoTech K853518.",
+  "name": "k853518",
+  "patches": {
+    "@/main": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    Number tempIn = getValue<input_IN>(ctx);\n    TempIn = log(((10240000/RawADC) - 10000));\n    TempIn = 1 / (0.001129148 + (0.000234125 + (0.0000000876741 * TempIn * TempIn ))* TempIn );\n    TempIn = Temp - 273.15; // Convert Kelvin to Celcius\n    return TempIn;\n    emitValue<output_OUT>(ctx, TempIn);\n}\n"
+        }
+      ],
+      "nodes": {
+        "SyBNWEEt7": {
+          "id": "SyBNWEEt7",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": -136,
+            "y": -204
+          }
+        },
+        "H19wJ3NFQ": {
+          "id": "H19wJ3NFQ",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": -136,
+            "y": -306
+          },
+          "boundLiterals": {
+            "__out__": "A1"
+          }
+        },
+        "HyQ_13EFm": {
+          "id": "HyQ_13EFm",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": -136,
+            "y": -102
+          }
+        }
+      },
+      "path": "@/main"
+    }
+  },
+  "version": "0.0.2"
+}

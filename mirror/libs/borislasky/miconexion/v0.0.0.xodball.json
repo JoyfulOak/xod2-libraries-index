@@ -1,0 +1,127 @@
+{
+  "patches": {
+    "@/main": {
+      "nodes": {
+        "HJoLPIHzu": {
+          "boundLiterals": {
+            "Syge8PUrzO": "\"MOVISTAR_4F77\"",
+            "HJWlIwUrfu": "\"45CB50D31273BB67E178\""
+          },
+          "id": "HJoLPIHzu",
+          "type": "@/miconexion",
+          "position": {
+            "x": -2,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/main"
+    },
+    "@/miconexion": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD error_raise enable\n\nnode {\n  static const uint8_t RECEHCK_DURATION_MS = 30;\n  uint16_t rechecksLeft;\n\n  void evaluate(Context ctx) {\n      auto device = getValue<input_DEV>(ctx);\n\n      if (isInputDirty<input_CONN>(ctx)) {\n          auto ssid = getValue<input_SSID>(ctx);\n          auto ssidLength = length(ssid);\n          char _ssid[ssidLength + 1];\n          dump(ssid, _ssid);\n          _ssid[ssidLength] = '\\0';\n\n          auto password = getValue<input_PWD>(ctx);\n          auto passwordLength = length(password);\n          char _password[passwordLength + 1];\n          dump(password, _password);\n          _password[passwordLength] = '\\0';\n\n          // Set your Static IP address\n          IPAddress local_IP(192, 168, 43, 199);\n          // Set your Gateway IP address\n          IPAddress gateway(192, 168, 43, 1);\n\n          IPAddress subnet(255, 255, 255, 0);\n          IPAddress primaryDNS(8, 8, 8, 8);   //optional\n          IPAddress secondaryDNS(8, 8, 4, 4); //optional\n\n          /* Explicitly set the ESP8266 to be a WiFi-client, otherwise, it by default,\n             would try to act as both a client and an access-point and could cause\n             network-issues with your other WiFi-devices on your WiFi-network. */\n          device->mode(WIFI_STA);\n          device->config(local_IP, gateway, subnet, primaryDNS, secondaryDNS);\n          device->begin(_ssid, _password);\n\n          auto timeout = getValue<input_TO>(ctx);\n          rechecksLeft = ceil(timeout * 1000.0 / RECEHCK_DURATION_MS);\n          setTimeout(ctx, RECEHCK_DURATION_MS);\n      }\n\n      if (isTimedOut(ctx)) {\n          if (device->status() != WL_CONNECTED) {\n              rechecksLeft -= 1;\n\n              if (rechecksLeft == 0) {\n                  raiseError(ctx); // Connection failed\n              } else {\n                  setTimeout(ctx, RECEHCK_DURATION_MS);\n              }\n          } else {\n              emitValue<output_DONE>(ctx, true);\n              typeof_INET inet;\n              inet.wifi = device;\n              emitValue<output_INET>(ctx, inet);\n          }\n      }\n  }\n}"
+        }
+      ],
+      "nodes": {
+        "HJx8D8HMd": {
+          "description": "An ESP8266-based MCU",
+          "label": "DEV",
+          "id": "HJx8D8HMd",
+          "position": {
+            "x": 0,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod-dev/esp8266-mcu/input-esp8266-mcu-device"
+        },
+        "Syge8PUrzO": {
+          "description": "Name of the Wi-Fi network",
+          "label": "SSID",
+          "id": "Syge8PUrzO",
+          "position": {
+            "x": 1,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "HJWlIwUrfu": {
+          "description": "Wi-Fi network password",
+          "label": "PWD",
+          "id": "HJWlIwUrfu",
+          "position": {
+            "x": 2,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "S1fe8DLSfd": {
+          "boundLiterals": {
+            "__out__": "10"
+          },
+          "description": "Connection timeout (in seconds)",
+          "label": "TO",
+          "id": "S1fe8DLSfd",
+          "position": {
+            "x": 3,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJmeUPLHz_": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Establish the connection",
+          "label": "CONN",
+          "id": "rJmeUPLHz_",
+          "position": {
+            "x": 4,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "B1Vg8PUrMu": {
+          "description": "An internet connection",
+          "label": "INET",
+          "id": "B1Vg8PUrMu",
+          "position": {
+            "x": 0,
+            "y": 1.7499999999999998,
+            "units": "slots"
+          },
+          "type": "xod-dev/esp8266-mcu/output-esp8266-mcu-inet"
+        },
+        "rkHxIv8BGd": {
+          "description": "Pulses on a successful connection\n",
+          "label": "DONE",
+          "id": "rkHxIv8BGd",
+          "position": {
+            "x": 1,
+            "y": 1.7499999999999998,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BkIxUDUrzd": {
+          "id": "BkIxUDUrzd",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/miconexion"
+    }
+  },
+  "name": "miconexion"
+}

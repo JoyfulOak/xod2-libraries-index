@@ -1,0 +1,180 @@
+{
+  "description": "Simple library for matrix keyboard connection",
+  "license": "AGPL-3",
+  "name": "matrix-keyboard",
+  "patches": {
+    "@/matrix-keyboard": {
+      "attachments": [
+        {
+          "content": "struct State { };\n\n{{ GENERATED_CODE }}\n const int value [4][4]{\n        {13, 12, 11, 10},\n        {15, 9, 6, 3},\n        {0, 8, 5, 2},\n        {14, 7, 4, 1}\n    };\n    int pinsOut[4];\n    int pinsIn[4];\nint matrix();\nvoid evaluate(Context ctx) {\n     pinsOut[3] = getValue<input_PIN1>(ctx);\n     pinsOut[2] = getValue<input_PIN2>(ctx);\n     pinsOut[1] = getValue<input_PIN3>(ctx);\n     pinsOut[0] = getValue<input_PIN4>(ctx);\n     pinsIn[3] = getValue<input_PIN5>(ctx);\n     pinsIn[2] = getValue<input_PIN6>(ctx);\n     pinsIn[1] = getValue<input_PIN7>(ctx);\n     pinsIn[0] = getValue<input_PIN8>(ctx);\n    for(int i = 0; i < 4; i++){\n        :: pinMode(pinsIn[i], INPUT);\n        :: digitalWrite(pinsIn[i], HIGH);\n    }\n    for(int i = 0; i < 4; i++){\n        :: pinMode(pinsOut[i], OUTPUT);\n    }\n    emitValue<output_OUT>(ctx, matrix());\n}\nint matrix () // создаем функцию для чтения кнопок\n{\n    int ret = -1;\n  for (int i = 1; i <= 4; i++) // цикл, передающий 0 по всем столбцам\n  {\n    :: digitalWrite(pinsOut[i - 1], LOW); // если i меньше 4 , то отправляем 0 на ножку\n    for (int j = 1; j <= 4; j++) // цикл, принимающих 0 по строкам\n    {\n      if (:: digitalRead(pinsIn[j - 1]) == LOW) // если один из указанных портов входа равен 0, то..\n      {\n        ret = value[i - 1][j - 1]; // то b равно значению из двойного массива\n        delay(175);\n      }\n    }\n    :: digitalWrite(pinsOut[i - 1], HIGH); // подаём обратно высокий уровень\n  }\n    return ret;\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "node for matrix keyboard 4x4 connection.",
+      "nodes": {
+        "B1wW3cSnB": {
+          "id": "B1wW3cSnB",
+          "label": "PIN6",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "B1zZ3cSnr": {
+          "id": "B1zZ3cSnr",
+          "label": "PIN3",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "BkWZn5rhr": {
+          "id": "BkWZn5rhr",
+          "label": "PIN2",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Bkef-2qBhr": {
+          "id": "Bkef-2qBhr",
+          "label": "PIN4",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HJmW29rnH": {
+          "id": "HJmW29rnH",
+          "label": "PIN5",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Hyubh9S3H": {
+          "id": "Hyubh9S3H",
+          "label": "PIN8",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Skxghqr2B": {
+          "id": "Skxghqr2B",
+          "label": "PIN1",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Syv7_lqBnB": {
+          "id": "Syv7_lqBnB",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1D2jcrhS": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "id": "r1D2jcrhS",
+          "label": "UPD",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1xw-n9rnB": {
+          "id": "r1xw-n9rnB",
+          "label": "PIN7",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rkdXul9r3B": {
+          "id": "rkdXul9r3B",
+          "position": {
+            "x": 4,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/matrix-keyboard"
+    },
+    "@/watch-keyboard-example": {
+      "links": {
+        "SJqXcqrhH": {
+          "id": "SJqXcqrhH",
+          "input": {
+            "nodeId": "S1KCrcShH",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BydQ9cShH",
+            "pinKey": "rkdXul9r3B"
+          }
+        }
+      },
+      "nodes": {
+        "BydQ9cShH": {
+          "boundLiterals": {
+            "B1wW3cSnB": "D7",
+            "B1zZ3cSnr": "D4",
+            "BkWZn5rhr": "D3",
+            "Bkef-2qBhr": "D5",
+            "HJHo9crnH": "5",
+            "HJmW29rnH": "D6",
+            "Hyubh9S3H": "D9",
+            "Skxghqr2B": "D2",
+            "r1xw-n9rnB": "D8",
+            "rkdXul9r3B": "0"
+          },
+          "id": "BydQ9cShH",
+          "position": {
+            "x": -5,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "@/matrix-keyboard"
+        },
+        "S1KCrcShH": {
+          "id": "S1KCrcShH",
+          "position": {
+            "x": -4,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        }
+      },
+      "path": "@/watch-keyboard-example"
+    }
+  },
+  "version": "0.3.0"
+}

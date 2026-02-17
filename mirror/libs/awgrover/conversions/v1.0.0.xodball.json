@@ -1,0 +1,92 @@
+{
+  "authors": [
+    "awgrover",
+    "https://forum.xod.io/u/awgrover"
+  ],
+  "description": "utility conversions to bridge different worlds: data-to-pulse, true-to-pulse",
+  "license": "GPLv3",
+  "name": "conversions",
+  "patches": {
+    "@/data-to-pulse": {
+      "attachments": [
+        {
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    \n  // anytime we get triggered, i.e. incoming data\n  emitValue<output_pulse>(ctx, 1);\n}\n\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Convert anything into a pulse",
+      "nodes": {
+        "H17p94tiZ": {
+          "id": "H17p94tiZ",
+          "label": "pulse",
+          "position": {
+            "x": 136,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJBj5VtiZ": {
+          "description": "Actually takes any",
+          "id": "HJBj5VtiZ",
+          "label": "data",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SkR_3VFsW": {
+          "id": "SkR_3VFsW",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/data-to-pulse"
+    },
+    "@/true-to-pulse": {
+      "attachments": [
+        {
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    \n  if (getValue<input_bool>(ctx)) {\n    emitValue<output_pulse>(ctx, 1);\n    }\n}\n\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Convert (each) true into a pulse. Compare with cast-boolean-to-pulse",
+      "nodes": {
+        "H17p94tiZ": {
+          "id": "H17p94tiZ",
+          "label": "pulse",
+          "position": {
+            "x": 136,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJBj5VtiZ": {
+          "description": "boolean, or Number (0=false, everything else is true)",
+          "id": "HJBj5VtiZ",
+          "label": "bool",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "SkR_3VFsW": {
+          "id": "SkR_3VFsW",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/true-to-pulse"
+    }
+  },
+  "version": "1.0.0"
+}

@@ -1,0 +1,2427 @@
+{
+  "patches": {
+    "@/fastaccelstepper-device": {
+      "nodes": {
+        "Hktyu2Sxxl": {
+          "id": "Hktyu2Sxxl",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJIMOnHxxg": {
+          "label": "STEP",
+          "id": "HJIMOnHxxg",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Hy-m_hHxeg": {
+          "label": "DIR",
+          "id": "Hy-m_hHxeg",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rktQO2Blgg": {
+          "label": "EN",
+          "id": "rktQO2Blgg",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HJ1w_hSlgg": {
+          "label": "ACC",
+          "id": "HJ1w_hSlgg",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HkIdd3rlxe": {
+          "label": "DEV",
+          "id": "HkIdd3rlxe",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "r1HzpnBgex": {
+          "label": "SPD",
+          "id": "r1HzpnBgex",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/fastaccelstepper-device",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD error_raise enable\n#pragma XOD require \"https://github.com/gin66/FastAccelStepper\"\n\n// Include the FastAccelStepper library\n#include <FastAccelStepper.h>\n\nnode {\n    meta {\n        // Define the custom type as a pointer to FastAccelStepper\n        using Type = FastAccelStepper*;\n\n        // Static engine shared across all stepper instances\n        static FastAccelStepperEngine& getEngine() {\n            static FastAccelStepperEngine engine;\n            static bool initialized = false;\n            if (!initialized) {\n                engine.init();\n                initialized = true;\n            }\n            return engine;\n        }\n    }\n\n    // Store the FastAccelStepper instance\n    FastAccelStepper* stepper = nullptr;\n\n    void evaluate(Context ctx) {\n        // Only evaluate during setup\n        if (!isSettingUp())\n            return;\n\n        // Validate the step and direction pins\n        static_assert(isValidDigitalPort(constant_input_STEP), \"must be a valid digital port for STEP\");\n        static_assert(isValidDigitalPort(constant_input_DIR), \"must be a valid digital port for DIR\");\n\n        // Get input values\n        auto stepPin = constant_input_STEP;\n        auto dirPin = constant_input_DIR;\n        auto enablePin = constant_input_EN;\n        auto maxSpeed = getValue<input_SPD>(ctx); // Max speed in steps/s\n        auto maxAccel = getValue<input_ACC>(ctx); // Max acceleration in steps/s^2\n\n        // Get the shared engine\n        FastAccelStepperEngine& engine = getEngine();\n\n        // Create and configure the stepper\n        stepper = engine.stepperConnectToPin(stepPin);\n        if (stepper) {\n            stepper->setDirectionPin(dirPin);\n            if (enablePin != NOT_A_PIN) {\n                stepper->setEnablePin(enablePin);\n                stepper->enableOutputs();\n            }\n            stepper->setSpeedInHz(maxSpeed);\n            stepper->setAcceleration(maxAccel);\n        } else {\n            raiseError(ctx); // Failed to initialize stepper\n            return;\n        }\n\n        // Emit the stepper instance\n        emitValue<output_DEV>(ctx, stepper);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/force-stop": {
+      "nodes": {
+        "rkmgh6Slll": {
+          "label": "DEV",
+          "id": "rkmgh6Slll",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-fastaccelstepper-device"
+        },
+        "rkrg36Bxxx": {
+          "label": "DEV'",
+          "id": "rkrg36Bxxx",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-fastaccelstepper-device"
+        },
+        "S1qlh6Hxel": {
+          "id": "S1qlh6Hxel",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HyuG3arelx": {
+          "label": "DO",
+          "id": "HyuG3arelx",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkKX36Blxg": {
+          "label": "ACK",
+          "id": "HkKX36Blxg",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/force-stop",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_DO\n\nnode {\n    void evaluate(Context ctx) {\n        // Only proceed if the DO input is dirty (pulsed)\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n        \n        // Get the stepper instance\n        auto stepper = getValue<input_DEV>(ctx);\n\n        if (isSettingUp()) {\n            // Short-circuit DEV and DEV'\n            emitValue<output_DEVU0027>(ctx, stepper);\n        }\n\n        // Stop the stepper\n        stepper->forceStop();\n\n        // Emit a pulse to indicate the action was successful\n        emitValue<output_ACK>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-acceleration": {
+      "nodes": {
+        "S1Ao9prgxl": {
+          "label": "DEV",
+          "id": "S1Ao9prgxl",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-fastaccelstepper-device"
+        },
+        "SyYnqaHxxg": {
+          "label": "DEV'",
+          "id": "SyYnqaHxxg",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-fastaccelstepper-device"
+        },
+        "H1l0cpHxeg": {
+          "label": "ACC",
+          "id": "H1l0cpHxeg",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rkM1oTSlle": {
+          "label": "DONE",
+          "id": "rkM1oTSlle",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BkZxjpBgxl": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "label": "DO",
+          "id": "BkZxjpBgxl",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1NZjaBllx": {
+          "id": "H1NZjaBllx",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/get-acceleration",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_DO\n\nnode {\n    void evaluate(Context ctx) {\n        // Get the stepper instance\n        auto stepper = getValue<input_DEV>(ctx);\n\n        if (isSettingUp()) {\n            // Short-circuit DEV and DEV'\n            emitValue<output_DEVU0027>(ctx, stepper);\n        }\n\n        // Only proceed if the DO input is dirty (pulsed)\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        // Get the current position\n        int32_t Acceleration = stepper->getCurrentAcceleration();\n\n        // Emit the position\n        emitValue<output_ACC>(ctx, (Number)Acceleration);\n\n        // Emit a pulse to indicate the action was successful\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-position": {
+      "nodes": {
+        "S1Ao9prgxl": {
+          "label": "DEV",
+          "id": "S1Ao9prgxl",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-fastaccelstepper-device"
+        },
+        "SyYnqaHxxg": {
+          "label": "DEV'",
+          "id": "SyYnqaHxxg",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-fastaccelstepper-device"
+        },
+        "H1l0cpHxeg": {
+          "label": "POS",
+          "id": "H1l0cpHxeg",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rkM1oTSlle": {
+          "label": "DONE",
+          "id": "rkM1oTSlle",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BkZxjpBgxl": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "label": "DO",
+          "id": "BkZxjpBgxl",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1NZjaBllx": {
+          "id": "H1NZjaBllx",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/get-position",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_DO\n\nnode {\n    void evaluate(Context ctx) {\n        // Get the stepper instance\n        auto stepper = getValue<input_DEV>(ctx);\n\n        if (isSettingUp()) {\n            // Short-circuit DEV and DEV'\n            emitValue<output_DEVU0027>(ctx, stepper);\n        }\n\n        // Only proceed if the DO input is dirty (pulsed)\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        // Get the current position\n        int32_t position = stepper->getCurrentPosition();\n\n        // Emit the position\n        emitValue<output_POS>(ctx, (Number)position);\n\n        // Emit a pulse to indicate the action was successful\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-speed": {
+      "nodes": {
+        "S1Ao9prgxl": {
+          "label": "DEV",
+          "id": "S1Ao9prgxl",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-fastaccelstepper-device"
+        },
+        "SyYnqaHxxg": {
+          "label": "DEV'",
+          "id": "SyYnqaHxxg",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-fastaccelstepper-device"
+        },
+        "H1l0cpHxeg": {
+          "label": "SPD",
+          "id": "H1l0cpHxeg",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rkM1oTSlle": {
+          "label": "DONE",
+          "id": "rkM1oTSlle",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BkZxjpBgxl": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "label": "DO",
+          "id": "BkZxjpBgxl",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1NZjaBllx": {
+          "id": "H1NZjaBllx",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/get-speed",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_DO\n\nnode {\n    void evaluate(Context ctx) {\n        // Get the stepper instance\n        auto stepper = getValue<input_DEV>(ctx);\n\n        if (isSettingUp()) {\n            // Short-circuit DEV and DEV'\n            emitValue<output_DEVU0027>(ctx, stepper);\n        }\n\n        // Only proceed if the DO input is dirty (pulsed)\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        // Get the current position\n        int32_t speed = stepper->getCurrentSpeedInMilliHz();\n        speed = speed/1000;\n\n        // Emit the position\n        emitValue<output_SPD>(ctx, (Number)speed);\n\n        // Emit a pulse to indicate the action was successful\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/is-running": {
+      "nodes": {
+        "S1Ao9prgxl": {
+          "label": "DEV",
+          "id": "S1Ao9prgxl",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-fastaccelstepper-device"
+        },
+        "SyYnqaHxxg": {
+          "label": "DEV'",
+          "id": "SyYnqaHxxg",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-fastaccelstepper-device"
+        },
+        "rkM1oTSlle": {
+          "label": "DONE",
+          "id": "rkM1oTSlle",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BkZxjpBgxl": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "label": "DO",
+          "id": "BkZxjpBgxl",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1NZjaBllx": {
+          "id": "H1NZjaBllx",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJjTj8deex": {
+          "label": "RUN",
+          "id": "SJjTj8deex",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        }
+      },
+      "path": "@/is-running",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_DO\n\nnode {\n    void evaluate(Context ctx) {\n        // Get the stepper instance\n        auto stepper = getValue<input_DEV>(ctx);\n\n        if (isSettingUp()) {\n            // Short-circuit DEV and DEV'\n            emitValue<output_DEVU0027>(ctx, stepper);\n        }\n\n        // Only proceed if the DO input is dirty (pulsed)\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        // Get the current position\n        bool running = stepper->isRunning();\n\n        // Emit the position\n        emitValue<output_RUN>(ctx, running);\n\n        // Emit a pulse to indicate the action was successful\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/main": {
+      "nodes": {
+        "r131j3Hgex": {
+          "boundLiterals": {
+            "HJ1w_hSlgg": "100",
+            "HJIMOnHxxg": "D9",
+            "Hy-m_hHxeg": "D5",
+            "r1HzpnBgex": "1000",
+            "rktQO2Blgg": "D6"
+          },
+          "id": "r131j3Hgex",
+          "position": {
+            "x": -11,
+            "y": -14,
+            "units": "slots"
+          },
+          "type": "@/fastaccelstepper-device"
+        },
+        "BJmkGgIxxl": {
+          "id": "BJmkGgIxxl",
+          "position": {
+            "x": -11,
+            "y": -10,
+            "units": "slots"
+          },
+          "type": "@/move-continuous-speed"
+        },
+        "HyuxzxLllg": {
+          "id": "HyuxzxLllg",
+          "position": {
+            "x": -11,
+            "y": -11,
+            "units": "slots"
+          },
+          "type": "@/move-to-position"
+        },
+        "HyHfLeIegg": {
+          "id": "HyHfLeIegg",
+          "position": {
+            "x": -11,
+            "y": -9,
+            "units": "slots"
+          },
+          "type": "@/force-stop"
+        },
+        "S1YzUg8gxg": {
+          "id": "S1YzUg8gxg",
+          "position": {
+            "x": -8,
+            "y": -9,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        },
+        "rkNYIxIgge": {
+          "id": "rkNYIxIgge",
+          "position": {
+            "x": -11,
+            "y": -8,
+            "units": "slots"
+          },
+          "type": "@/stop-smooth"
+        },
+        "HJ_t8g8lle": {
+          "id": "HJ_t8g8lle",
+          "position": {
+            "x": -8,
+            "y": -8,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        },
+        "SJnM9xIlex": {
+          "boundLiterals": {
+            "Hkj866rgxe": "2"
+          },
+          "id": "SJnM9xIlex",
+          "position": {
+            "x": -11,
+            "y": -12,
+            "units": "slots"
+          },
+          "type": "@/set-speed"
+        },
+        "Sk3NceIexe": {
+          "id": "Sk3NceIexe",
+          "position": {
+            "x": -11,
+            "y": -13,
+            "units": "slots"
+          },
+          "type": "@/set-acceleration"
+        },
+        "Hk_I9gLgxl": {
+          "boundLiterals": {
+            "ByfGSDjQE": "100"
+          },
+          "id": "Hk_I9gLgxl",
+          "position": {
+            "x": -6,
+            "y": -13,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "rkAKjlUxee": {
+          "boundLiterals": {
+            "BkZxjpBgxl": "Continuously"
+          },
+          "id": "rkAKjlUxee",
+          "position": {
+            "x": -15,
+            "y": -13,
+            "units": "slots"
+          },
+          "type": "@/get-position"
+        },
+        "H1scjgLggg": {
+          "id": "H1scjgLggg",
+          "position": {
+            "x": -14,
+            "y": -12,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "BJhIrWUxxg": {
+          "boundLiterals": {
+            "BkZxjpBgxl": "Continuously"
+          },
+          "id": "BJhIrWUxxg",
+          "position": {
+            "x": -19,
+            "y": -13,
+            "units": "slots"
+          },
+          "type": "@/get-speed"
+        },
+        "HkZwSb8lgx": {
+          "size": {
+            "height": 1,
+            "width": 3,
+            "units": "slots"
+          },
+          "id": "HkZwSb8lgx",
+          "position": {
+            "x": -18,
+            "y": -12,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "rJdN3-Ilee": {
+          "id": "rJdN3-Ilee",
+          "position": {
+            "x": -7,
+            "y": -13,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-change(number)"
+        },
+        "H1i_2-Lxee": {
+          "boundLiterals": {
+            "ByfGSDjQE": "1000"
+          },
+          "id": "H1i_2-Lxee",
+          "position": {
+            "x": -5,
+            "y": -12,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "ryxoOhZ8lge": {
+          "id": "ryxoOhZ8lge",
+          "position": {
+            "x": -6,
+            "y": -12,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-change(number)"
+        },
+        "ByN5hWUlex": {
+          "boundLiterals": {
+            "ByfGSDjQE": "5000"
+          },
+          "id": "ByN5hWUlex",
+          "position": {
+            "x": -6,
+            "y": -11,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "SkeNc2WIgex": {
+          "id": "SkeNc2WIgex",
+          "position": {
+            "x": -7,
+            "y": -11,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-change(number)"
+        },
+        "H1_s3bIegx": {
+          "boundLiterals": {
+            "ByfGSDjQE": "100"
+          },
+          "id": "H1_s3bIegx",
+          "position": {
+            "x": -6,
+            "y": -10,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "rJlOi2bIxex": {
+          "id": "rJlOi2bIxex",
+          "position": {
+            "x": -7,
+            "y": -10,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-change(number)"
+        }
+      },
+      "links": {
+        "SkqMzgUgll": {
+          "id": "SkqMzgUgll",
+          "input": {
+            "nodeId": "BJmkGgIxxl",
+            "pinKey": "rkmgh6Slll"
+          },
+          "output": {
+            "nodeId": "HyuxzxLllg",
+            "pinKey": "rkrg36Bxxx"
+          }
+        },
+        "B1IG8l8gel": {
+          "id": "B1IG8l8gel",
+          "input": {
+            "nodeId": "HyHfLeIegg",
+            "pinKey": "rkmgh6Slll"
+          },
+          "output": {
+            "nodeId": "BJmkGgIxxl",
+            "pinKey": "rkrg36Bxxx"
+          }
+        },
+        "SJpGLxIeel": {
+          "id": "SJpGLxIeel",
+          "input": {
+            "nodeId": "HyHfLeIegg",
+            "pinKey": "HyuG3arelx"
+          },
+          "output": {
+            "nodeId": "S1YzUg8gxg",
+            "pinKey": "Bkf4BDsmV"
+          }
+        },
+        "SyrKUeUexg": {
+          "id": "SyrKUeUexg",
+          "input": {
+            "nodeId": "rkNYIxIgge",
+            "pinKey": "rkmgh6Slll"
+          },
+          "output": {
+            "nodeId": "HyHfLeIegg",
+            "pinKey": "rkrg36Bxxx"
+          }
+        },
+        "BkZqIl8xgx": {
+          "id": "BkZqIl8xgx",
+          "input": {
+            "nodeId": "rkNYIxIgge",
+            "pinKey": "HyuG3arelx"
+          },
+          "output": {
+            "nodeId": "HJ_t8g8lle",
+            "pinKey": "Bkf4BDsmV"
+          }
+        },
+        "SkSX5g8gle": {
+          "id": "SkSX5g8gle",
+          "input": {
+            "nodeId": "HyuxzxLllg",
+            "pinKey": "rkmgh6Slll"
+          },
+          "output": {
+            "nodeId": "SJnM9xIlex",
+            "pinKey": "rkrg36Bxxx"
+          }
+        },
+        "BkZrcl8lll": {
+          "id": "BkZrcl8lll",
+          "input": {
+            "nodeId": "Sk3NceIexe",
+            "pinKey": "rkmgh6Slll"
+          },
+          "output": {
+            "nodeId": "r131j3Hgex",
+            "pinKey": "HkIdd3rlxe"
+          }
+        },
+        "ryGr5gUexx": {
+          "id": "ryGr5gUexx",
+          "input": {
+            "nodeId": "SJnM9xIlex",
+            "pinKey": "rkmgh6Slll"
+          },
+          "output": {
+            "nodeId": "Sk3NceIexe",
+            "pinKey": "rkrg36Bxxx"
+          }
+        },
+        "H1nU9eUglx": {
+          "id": "H1nU9eUglx",
+          "input": {
+            "nodeId": "Sk3NceIexe",
+            "pinKey": "Hkj866rgxe"
+          },
+          "output": {
+            "nodeId": "Hk_I9gLgxl",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "Syl5ieIlel": {
+          "id": "Syl5ieIlel",
+          "input": {
+            "nodeId": "rkAKjlUxee",
+            "pinKey": "S1Ao9prgxl"
+          },
+          "output": {
+            "nodeId": "r131j3Hgex",
+            "pinKey": "HkIdd3rlxe"
+          }
+        },
+        "r1kiieIelx": {
+          "id": "r1kiieIelx",
+          "input": {
+            "nodeId": "H1scjgLggg",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rkAKjlUxee",
+            "pinKey": "H1l0cpHxeg"
+          }
+        },
+        "HyCUr-8xgg": {
+          "id": "HyCUr-8xgg",
+          "input": {
+            "nodeId": "BJhIrWUxxg",
+            "pinKey": "S1Ao9prgxl"
+          },
+          "output": {
+            "nodeId": "r131j3Hgex",
+            "pinKey": "HkIdd3rlxe"
+          }
+        },
+        "SkLwSbUgle": {
+          "id": "SkLwSbUgle",
+          "input": {
+            "nodeId": "HkZwSb8lgx",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BJhIrWUxxg",
+            "pinKey": "H1l0cpHxeg"
+          }
+        },
+        "BJqHh-Lell": {
+          "id": "BJqHh-Lell",
+          "input": {
+            "nodeId": "rJdN3-Ilee",
+            "pinKey": "BkjI-COLb"
+          },
+          "output": {
+            "nodeId": "Hk_I9gLgxl",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "BJow3Z8ell": {
+          "id": "BJow3Z8ell",
+          "input": {
+            "nodeId": "Sk3NceIexe",
+            "pinKey": "HyuG3arelx"
+          },
+          "output": {
+            "nodeId": "rJdN3-Ilee",
+            "pinKey": "ByAIWR_UZ"
+          }
+        },
+        "SJ-od2WIgxg": {
+          "id": "SJ-od2WIgxg",
+          "input": {
+            "nodeId": "ryxoOhZ8lge",
+            "pinKey": "BkjI-COLb"
+          },
+          "output": {
+            "nodeId": "H1i_2-Lxee",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "S1wFhW8lll": {
+          "id": "S1wFhW8lll",
+          "input": {
+            "nodeId": "SJnM9xIlex",
+            "pinKey": "HyuG3arelx"
+          },
+          "output": {
+            "nodeId": "ryxoOhZ8lge",
+            "pinKey": "ByAIWR_UZ"
+          }
+        },
+        "B1FY3ZLlex": {
+          "id": "B1FY3ZLlex",
+          "input": {
+            "nodeId": "SJnM9xIlex",
+            "pinKey": "r1Xy9xLlle"
+          },
+          "output": {
+            "nodeId": "H1i_2-Lxee",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "H1ZVchWUggx": {
+          "id": "H1ZVchWUggx",
+          "input": {
+            "nodeId": "SkeNc2WIgex",
+            "pinKey": "BkjI-COLb"
+          },
+          "output": {
+            "nodeId": "ByN5hWUlex",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "HJys3-8lge": {
+          "id": "HJys3-8lge",
+          "input": {
+            "nodeId": "HyuxzxLllg",
+            "pinKey": "HyuG3arelx"
+          },
+          "output": {
+            "nodeId": "SkeNc2WIgex",
+            "pinKey": "ByAIWR_UZ"
+          }
+        },
+        "HyGihbIxgx": {
+          "id": "HyGihbIxgx",
+          "input": {
+            "nodeId": "HyuxzxLllg",
+            "pinKey": "Hkj866rgxe"
+          },
+          "output": {
+            "nodeId": "ByN5hWUlex",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "BJWdo3W8lgx": {
+          "id": "BJWdo3W8lgx",
+          "input": {
+            "nodeId": "rJlOi2bIxex",
+            "pinKey": "BkjI-COLb"
+          },
+          "output": {
+            "nodeId": "H1_s3bIegx",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "BJ-h2b8ege": {
+          "id": "BJ-h2b8ege",
+          "input": {
+            "nodeId": "BJmkGgIxxl",
+            "pinKey": "HyuG3arelx"
+          },
+          "output": {
+            "nodeId": "rJlOi2bIxex",
+            "pinKey": "ByAIWR_UZ"
+          }
+        },
+        "BkQ3hb8eel": {
+          "id": "BkQ3hb8eel",
+          "input": {
+            "nodeId": "BJmkGgIxxl",
+            "pinKey": "Hkj866rgxe"
+          },
+          "output": {
+            "nodeId": "H1_s3bIegx",
+            "pinKey": "ByfGSDjQE"
+          }
+        }
+      },
+      "path": "@/main"
+    },
+    "@/move": {
+      "nodes": {
+        "HJ_y5nrxge": {
+          "id": "HJ_y5nrxge",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S13J5nBllx": {
+          "label": "DEV",
+          "id": "S13J5nBllx",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-fastaccelstepper-device"
+        },
+        "ryxg52Hxxl": {
+          "label": "DEV'",
+          "id": "ryxg52Hxxl",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-fastaccelstepper-device"
+        },
+        "SyxN9nSxlg": {
+          "label": "DO",
+          "id": "SyxN9nSxlg",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryGLq3Slex": {
+          "description": "0: // Stop\n1: // Move to position\n2: // Continuous speed",
+          "label": "MODE",
+          "id": "ryGLq3Slex",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJHwc2regx": {
+          "label": "POS",
+          "id": "HJHwc2regx",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1UvchSgxl": {
+          "label": "SPD",
+          "id": "r1UvchSgxl",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1Rt52Bxel": {
+          "label": "ACK",
+          "id": "r1Rt52Bxel",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/move",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_DO\n\nnode {\n    void evaluate(Context ctx) {\n        // Get the stepper instance\n        auto stepper = getValue<input_DEV>(ctx);\n\n        if (isSettingUp()) {\n            // Short-circuit DEV and DEV'\n            emitValue<output_DEVU0027>(ctx, stepper);\n        }\n\n        // Only proceed if the DO input is dirty (pulsed)\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        // Get the mode and parameters\n        auto mode = getValue<input_MODE>(ctx); // 0 = stop, 1 = move to position, 2 = continuous speed\n        auto position = getValue<input_POS>(ctx); // Target position in steps\n        auto speed = getValue<input_SPD>(ctx); // Speed for continuous rotation (steps/s)\n\n        // Perform the action based on mode\n        if (!stepper) {\n            raiseError(ctx); // Invalid stepper instance\n            return;\n        }\n\n        switch ((int)mode) {\n            case 0: // Stop\n                stepper->stopMove();\n                break;\n            case 1: // Move to position\n                stepper->moveTo(position);\n                break;\n            case 2: // Continuous speed\n                stepper->setSpeedInHz(abs(speed));\n                if (speed > 0) {\n                    stepper->runForward();\n                } else if (speed < 0) {\n                    stepper->runBackward();\n                }\n                break;\n            default:\n                raiseError(ctx); // Invalid mode\n                return;\n        }\n\n        // Emit a pulse to indicate the action was successful\n        emitValue<output_ACK>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/move-by-acceleration": {
+      "nodes": {
+        "rkmgh6Slll": {
+          "label": "DEV",
+          "id": "rkmgh6Slll",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-fastaccelstepper-device"
+        },
+        "rkrg36Bxxx": {
+          "label": "DEV'",
+          "id": "rkrg36Bxxx",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-fastaccelstepper-device"
+        },
+        "S1qlh6Hxel": {
+          "id": "S1qlh6Hxel",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HyuG3arelx": {
+          "label": "DO",
+          "id": "HyuG3arelx",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Hkj866rgxe": {
+          "label": "SPD",
+          "id": "Hkj866rgxe",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryWUArdgll": {
+          "label": "DONE",
+          "id": "ryWUArdgll",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SkzCRwugxx": {
+          "label": "ACC",
+          "id": "SkzCRwugxx",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/move-by-acceleration",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_DO\n\nnode {\n\n    void evaluate(Context ctx) {\n        // Get the stepper instance\n        auto stepper = getValue<input_DEV>(ctx);\n\n        if (isSettingUp()) {\n            // Short-circuit DEV and DEV'\n            emitValue<output_DEVU0027>(ctx, stepper);\n        }\n\n        // Check for valid stepper instance\n        if (!stepper) {\n            raiseError(ctx); // Invalid stepper instance\n            return;\n        }\n\n        // Handle new move command\n        if (isInputDirty<input_DO>(ctx)) {\n            // Get the position parameter\n            auto speed = getValue<input_SPD>(ctx); // Target Acceleration\n            auto acceleration = getValue<input_ACC>(ctx); // Target Acceleration\n\n            // Start moving to the position\n            stepper->setSpeedInHz(abs(speed));\n            stepper->moveByAcceleration(acceleration);\n\n            emitValue<output_DONE>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/move-continuous-speed": {
+      "nodes": {
+        "rkmgh6Slll": {
+          "label": "DEV",
+          "id": "rkmgh6Slll",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-fastaccelstepper-device"
+        },
+        "rkrg36Bxxx": {
+          "label": "DEV'",
+          "id": "rkrg36Bxxx",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-fastaccelstepper-device"
+        },
+        "S1qlh6Hxel": {
+          "id": "S1qlh6Hxel",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HyuG3arelx": {
+          "label": "DO",
+          "id": "HyuG3arelx",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkKX36Blxg": {
+          "label": "ACK",
+          "id": "HkKX36Blxg",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hkj866rgxe": {
+          "label": "SPD",
+          "id": "Hkj866rgxe",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/move-continuous-speed",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_DO\n\nnode {\n    void evaluate(Context ctx) {\n        // Get the stepper instance\n        auto stepper = getValue<input_DEV>(ctx);\n\n        if (isSettingUp()) {\n            // Short-circuit DEV and DEV'\n            emitValue<output_DEVU0027>(ctx, stepper);\n        }\n\n        // Only proceed if the DO input is dirty (pulsed)\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        // Validate the stepper instance\n        if (!stepper) {\n            raiseError(ctx); // Invalid stepper instance\n            return;\n        }\n\n        // Get the speed parameter\n        auto speed = getValue<input_SPD>(ctx); // Speed in steps/s (positive or negative)\n\n        // Set continuous speed\n        stepper->setSpeedInHz(abs(speed));\n        if (speed > 0) {\n            stepper->runForward();\n        } else if (speed < 0) {\n            stepper->runBackward();\n        } else {\n            stepper->stopMove(); // Stop if speed is 0\n        }\n\n        // Emit a pulse to indicate the action was successful\n        emitValue<output_ACK>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/move-to-position": {
+      "nodes": {
+        "rkmgh6Slll": {
+          "label": "DEV",
+          "id": "rkmgh6Slll",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-fastaccelstepper-device"
+        },
+        "rkrg36Bxxx": {
+          "label": "DEV'",
+          "id": "rkrg36Bxxx",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-fastaccelstepper-device"
+        },
+        "S1qlh6Hxel": {
+          "id": "S1qlh6Hxel",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HyuG3arelx": {
+          "label": "DO",
+          "id": "HyuG3arelx",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Hkj866rgxe": {
+          "label": "POS",
+          "id": "Hkj866rgxe",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryWUArdgll": {
+          "label": "ACK",
+          "id": "ryWUArdgll",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/move-to-position",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_DO\n\nnode {\n\n    void evaluate(Context ctx) {\n        // Get the stepper instance\n        auto stepper = getValue<input_DEV>(ctx);\n\n        if (isSettingUp()) {\n            // Short-circuit DEV and DEV'\n            emitValue<output_DEVU0027>(ctx, stepper);\n        }\n\n        // Check for valid stepper instance\n        if (!stepper) {\n            raiseError(ctx); // Invalid stepper instance\n            return;\n        }\n\n        // Handle new move command\n        if (isInputDirty<input_DO>(ctx)) {\n            // Get the position parameter\n            auto position = getValue<input_POS>(ctx); // Target position in steps\n\n            // Start moving to the position\n            stepper->moveTo(position);\n            emitValue<output_ACK>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/set-acceleration": {
+      "nodes": {
+        "rkmgh6Slll": {
+          "label": "DEV",
+          "id": "rkmgh6Slll",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-fastaccelstepper-device"
+        },
+        "rkrg36Bxxx": {
+          "label": "DEV'",
+          "id": "rkrg36Bxxx",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-fastaccelstepper-device"
+        },
+        "S1qlh6Hxel": {
+          "id": "S1qlh6Hxel",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HyuG3arelx": {
+          "label": "DO",
+          "id": "HyuG3arelx",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkKX36Blxg": {
+          "label": "ACK",
+          "id": "HkKX36Blxg",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hkj866rgxe": {
+          "label": "VAL",
+          "id": "Hkj866rgxe",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/set-acceleration",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_DO\n\nnode {\n    void evaluate(Context ctx) {\n        // Get the stepper instance\n        auto stepper = getValue<input_DEV>(ctx);\n\n        if (isSettingUp()) {\n            // Short-circuit DEV and DEV'\n            emitValue<output_DEVU0027>(ctx, stepper);\n        }\n\n        // Only proceed if the DO input is dirty (pulsed)\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        // Get the acceleration value\n        auto accel = getValue<input_VAL>(ctx); // Acceleration in steps/s^2\n\n        // Set the acceleration\n        int8_t result = -1;\n        result = stepper->setAcceleration((uint32_t)accel);\n        stepper->applySpeedAcceleration();\n\n                // Check if the operation was successful\n        if (result != 0) {\n            raiseError(ctx); // Speed setting failed\n            return;\n        }\n\n        // Emit a pulse to indicate the action was successful\n        emitValue<output_ACK>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/set-position": {
+      "nodes": {
+        "rkmgh6Slll": {
+          "label": "DEV",
+          "id": "rkmgh6Slll",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-fastaccelstepper-device"
+        },
+        "rkrg36Bxxx": {
+          "label": "DEV'",
+          "id": "rkrg36Bxxx",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-fastaccelstepper-device"
+        },
+        "S1qlh6Hxel": {
+          "id": "S1qlh6Hxel",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HyuG3arelx": {
+          "label": "DO",
+          "id": "HyuG3arelx",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkKX36Blxg": {
+          "description": "Set the current position of the stepper - either in standstill or while moving",
+          "label": "ACK",
+          "id": "HkKX36Blxg",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r1Xy9xLlle": {
+          "label": "POS",
+          "id": "r1Xy9xLlle",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/set-position",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_DO\n\nnode {\n    void evaluate(Context ctx) {\n        // Get the stepper instance\n        auto stepper = getValue<input_DEV>(ctx);\n\n        if (isSettingUp()) {\n            // Short-circuit DEV and DEV'\n            emitValue<output_DEVU0027>(ctx, stepper);\n        }\n\n        // Only proceed if the DO input is dirty (pulsed)\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        // Get the mode and speed value\n        //auto mode = getValue<input_MODE>(ctx); // 0 = us, 1 = ticks, 2 = Hz, 3 = milliHz\n        \n        auto new_pos = getValue<input_POS>(ctx); // Speed value in selected unit\n\n        int8_t result = -1;\n\n        result = stepper->setCurrentPosition(int32_t new_pos);\n\n        // Check if the operation was successful\n        if (result != 0) {\n            raiseError(ctx); // Speed setting failed\n            return;\n        }\n\n        // Emit a pulse to indicate the action was successful\n        emitValue<output_ACK>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/set-speed": {
+      "nodes": {
+        "rkmgh6Slll": {
+          "label": "DEV",
+          "id": "rkmgh6Slll",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-fastaccelstepper-device"
+        },
+        "rkrg36Bxxx": {
+          "label": "DEV'",
+          "id": "rkrg36Bxxx",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-fastaccelstepper-device"
+        },
+        "S1qlh6Hxel": {
+          "id": "S1qlh6Hxel",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HyuG3arelx": {
+          "label": "DO",
+          "id": "HyuG3arelx",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkKX36Blxg": {
+          "label": "ACK",
+          "id": "HkKX36Blxg",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r1Xy9xLlle": {
+          "label": "VAL",
+          "id": "r1Xy9xLlle",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/set-speed",
+      "description": "Set's stepper running speed in Hz (rotations/second)",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_DO\n\nnode {\n    void evaluate(Context ctx) {\n        // Get the stepper instance\n        auto stepper = getValue<input_DEV>(ctx);\n\n        if (isSettingUp()) {\n            // Short-circuit DEV and DEV'\n            emitValue<output_DEVU0027>(ctx, stepper);\n        }\n\n        // Only proceed if the DO input is dirty (pulsed)\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        // Get the mode and speed value\n        //auto mode = getValue<input_MODE>(ctx); // 0 = us, 1 = ticks, 2 = Hz, 3 = milliHz\n        \n        auto value = getValue<input_VAL>(ctx); // Speed value in selected unit\n\n        int8_t result = -1;\n\n        // Perform the action based on mode\n        /*\n        switch ((int)mode) {\n            case 0: // Microseconds\n                result = stepper->setSpeedInUs((uint32_t)value);\n                break;\n            case 1: // Ticks\n                result = stepper->setSpeedInTicks((uint32_t)value);\n                break;\n            case 2: // Hz\n                result = stepper->setSpeedInHz((uint32_t)value);\n                break;\n            case 3: // milliHz\n                result = stepper->setSpeedInMilliHz((uint32_t)value);\n                break;\n            default:\n                raiseError(ctx); // Invalid mode\n                return;\n        }\n        */\n\n        result = stepper->setSpeedInHz((uint32_t)value);\n        stepper->applySpeedAcceleration();\n\n        // Check if the operation was successful\n        if (result != 0) {\n            raiseError(ctx); // Speed setting failed\n            return;\n        }\n\n        // Emit a pulse to indicate the action was successful\n        emitValue<output_ACK>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/stop-smooth": {
+      "nodes": {
+        "rkmgh6Slll": {
+          "label": "DEV",
+          "id": "rkmgh6Slll",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-fastaccelstepper-device"
+        },
+        "rkrg36Bxxx": {
+          "label": "DEV'",
+          "id": "rkrg36Bxxx",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-fastaccelstepper-device"
+        },
+        "S1qlh6Hxel": {
+          "id": "S1qlh6Hxel",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HyuG3arelx": {
+          "label": "DO",
+          "id": "HyuG3arelx",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkKX36Blxg": {
+          "label": "ACK",
+          "id": "HkKX36Blxg",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/stop-smooth",
+      "description": "Stop the running stepper with normal deceleration.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_DO\n\nnode {\n    void evaluate(Context ctx) {\n        // Get the stepper instance\n        auto stepper = getValue<input_DEV>(ctx);\n\n        if (isSettingUp()) {\n            // Short-circuit DEV and DEV'\n            emitValue<output_DEVU0027>(ctx, stepper);\n        }\n\n        // Only proceed if the DO input is dirty (pulsed)\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        // Validate the stepper instance\n        if (!stepper) {\n            raiseError(ctx); // Invalid stepper instance\n            return;\n        }\n\n        // Stop the stepper\n        stepper->stopMove();\n\n        // Emit a pulse to indicate the action was successful\n        emitValue<output_ACK>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example-test": {
+      "nodes": {
+        "Sy_aNHdlxl": {
+          "boundLiterals": {
+            "HJ1w_hSlgg": "500",
+            "HJIMOnHxxg": "D9",
+            "Hy-m_hHxeg": "D5",
+            "r1HzpnBgex": "1800",
+            "rktQO2Blgg": "D6"
+          },
+          "id": "Sy_aNHdlxl",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/fastaccelstepper-device"
+        },
+        "SyOQ3Bueee": {
+          "id": "SyOQ3Bueee",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/move"
+        },
+        "HJdH3BOllg": {
+          "boundLiterals": {
+            "ByfGSDjQE": "2"
+          },
+          "id": "HJdH3BOllg",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "H1JI2Bdele": {
+          "id": "H1JI2Bdele",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-change"
+        },
+        "rkP82rdgxl": {
+          "arityLevel": 2,
+          "id": "rkP82rdgxl",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "SJzv3Bdxlg": {
+          "id": "SJzv3Bdxlg",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        },
+        "B1zd3Bdxll": {
+          "boundLiterals": {
+            "ByfGSDjQE": "0"
+          },
+          "id": "B1zd3Bdxll",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "S1hGOnSdlee": {
+          "boundLiterals": {
+            "ByfGSDjQE": "10000"
+          },
+          "id": "S1hGOnSdlee",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "ry-YnBOxgg": {
+          "id": "ry-YnBOxgg",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-change"
+        },
+        "ByvSRBOgeg": {
+          "id": "ByvSRBOgeg",
+          "position": {
+            "x": 2,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/move-to-position"
+        },
+        "SknORHullx": {
+          "boundLiterals": {
+            "ByfGSDjQE": "1"
+          },
+          "id": "SknORHullx",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "S1NFCrugex": {
+          "id": "S1NFCrugex",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-change"
+        },
+        "H1ynSUuxlg": {
+          "id": "H1ynSUuxlg",
+          "position": {
+            "x": 2,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/set-speed"
+        },
+        "rJQ1LLuglx": {
+          "id": "rJQ1LLuglx",
+          "position": {
+            "x": 2,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "@/set-acceleration"
+        },
+        "rJLkLLuell": {
+          "id": "rJLkLLuell",
+          "position": {
+            "x": 2,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "@/stop-smooth"
+        },
+        "HJcJILOlle": {
+          "boundLiterals": {
+            "ByfGSDjQE": "100"
+          },
+          "id": "HJcJILOlle",
+          "position": {
+            "x": 6,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "rye5188ugex": {
+          "id": "rye5188ugex",
+          "position": {
+            "x": 7,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-change"
+        },
+        "rySb88Oege": {
+          "boundLiterals": {
+            "ByfGSDjQE": "500"
+          },
+          "id": "rySb88Oege",
+          "position": {
+            "x": 6,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "Bylr-LI_xlg": {
+          "id": "Bylr-LI_xlg",
+          "position": {
+            "x": 7,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-change"
+        },
+        "BJfGLIOleg": {
+          "id": "BJfGLIOleg",
+          "position": {
+            "x": 5,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        },
+        "Hy6PLIdxxl": {
+          "id": "Hy6PLIdxxl",
+          "position": {
+            "x": 2,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/move-continuous-speed"
+        },
+        "ryEuLLdgel": {
+          "boundLiterals": {
+            "ByfGSDjQE": "2000"
+          },
+          "id": "ryEuLLdgel",
+          "position": {
+            "x": 6,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "HylE_8Luxle": {
+          "id": "HylE_8Luxle",
+          "position": {
+            "x": 7,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-change"
+        },
+        "rkh95Uugxx": {
+          "id": "rkh95Uugxx",
+          "position": {
+            "x": -4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/get-position"
+        },
+        "BJliqI_xgg": {
+          "id": "BJliqI_xgg",
+          "position": {
+            "x": -4,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/get-speed"
+        },
+        "rkYocLOegg": {
+          "id": "rkYocLOegg",
+          "position": {
+            "x": -4,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/get-acceleration"
+        },
+        "BJSncI_xxl": {
+          "id": "BJSncI_xxl",
+          "position": {
+            "x": -3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "r15n98_eel": {
+          "id": "r15n98_eel",
+          "position": {
+            "x": -3,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "rJTnqUdgeg": {
+          "id": "rJTnqUdgeg",
+          "position": {
+            "x": -3,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "SkUjnIuxee": {
+          "id": "SkUjnIuxee",
+          "position": {
+            "x": -4,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "@/is-running"
+        },
+        "ByCohI_eel": {
+          "id": "ByCohI_eel",
+          "position": {
+            "x": -3,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "HkJoCDdxel": {
+          "id": "HkJoCDdxel",
+          "position": {
+            "x": 2,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "@/move-by-acceleration"
+        },
+        "rkUnCwuxgg": {
+          "boundLiterals": {
+            "ByfGSDjQE": "8"
+          },
+          "id": "rkUnCwuxgg",
+          "position": {
+            "x": 7,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "Skx83Cwdgee": {
+          "id": "Skx83Cwdgee",
+          "position": {
+            "x": 7,
+            "y": 10,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-change"
+        },
+        "rkzxJu_lel": {
+          "boundLiterals": {
+            "ByfGSDjQE": "10"
+          },
+          "id": "rkzxJu_lel",
+          "position": {
+            "x": 8,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "S15xJd_ell": {
+          "id": "S15xJd_ell",
+          "position": {
+            "x": 7,
+            "y": 11,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "r1abJdOlgg": {
+          "id": "r1abJdOlgg",
+          "position": {
+            "x": 8,
+            "y": 10,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-change"
+        },
+        "rkMZxuOxle": {
+          "id": "rkMZxuOxle",
+          "position": {
+            "x": 2,
+            "y": 10,
+            "units": "slots"
+          },
+          "type": "@/force-stop"
+        },
+        "rkwWeuuexx": {
+          "id": "rkwWeuuexx",
+          "position": {
+            "x": 5,
+            "y": 10,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        }
+      },
+      "links": {
+        "ryYQhB_ggl": {
+          "id": "ryYQhB_ggl",
+          "input": {
+            "nodeId": "SyOQ3Bueee",
+            "pinKey": "S13J5nBllx"
+          },
+          "output": {
+            "nodeId": "Sy_aNHdlxl",
+            "pinKey": "HkIdd3rlxe"
+          }
+        },
+        "S18v3Buegg": {
+          "id": "S18v3Buegg",
+          "input": {
+            "nodeId": "SyOQ3Bueee",
+            "pinKey": "SyxN9nSxlg"
+          },
+          "output": {
+            "nodeId": "rkP82rdgxl",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "rJEd2rdgxx": {
+          "id": "rJEd2rdgxx",
+          "input": {
+            "nodeId": "H1JI2Bdele",
+            "pinKey": "BkjI-COLb"
+          },
+          "output": {
+            "nodeId": "B1zd3Bdxll",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "BJEYhr_leg": {
+          "id": "BJEYhr_leg",
+          "input": {
+            "nodeId": "ry-YnBOxgg",
+            "pinKey": "BkjI-COLb"
+          },
+          "output": {
+            "nodeId": "S1hGOnSdlee",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "Sy9FhBuege": {
+          "id": "Sy9FhBuege",
+          "input": {
+            "nodeId": "SyOQ3Bueee",
+            "pinKey": "ryGLq3Slex"
+          },
+          "output": {
+            "nodeId": "HJdH3BOllg",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "SJSj2Sulee": {
+          "id": "SJSj2Sulee",
+          "input": {
+            "nodeId": "rkP82rdgxl",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "SJzv3Bdxlg",
+            "pinKey": "Bkf4BDsmV"
+          }
+        },
+        "HkoOjhr_xlx": {
+          "id": "HkoOjhr_xlx",
+          "input": {
+            "nodeId": "rkP82rdgxl",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "H1JI2Bdele",
+            "pinKey": "ByAIWR_UZ"
+          }
+        },
+        "rkYjnrdggl": {
+          "id": "rkYjnrdggl",
+          "input": {
+            "nodeId": "rkP82rdgxl",
+            "pinKey": "ByU7LRuSPkW-$1"
+          },
+          "output": {
+            "nodeId": "ry-YnBOxgg",
+            "pinKey": "ByAIWR_UZ"
+          }
+        },
+        "B1Ohnrdelg": {
+          "id": "B1Ohnrdelg",
+          "input": {
+            "nodeId": "SyOQ3Bueee",
+            "pinKey": "HJHwc2regx"
+          },
+          "output": {
+            "nodeId": "B1zd3Bdxll",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "rk9h2H_ell": {
+          "id": "rk9h2H_ell",
+          "input": {
+            "nodeId": "SyOQ3Bueee",
+            "pinKey": "r1UvchSgxl"
+          },
+          "output": {
+            "nodeId": "S1hGOnSdlee",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "rJDuAr_eeg": {
+          "id": "rJDuAr_eeg",
+          "input": {
+            "nodeId": "ByvSRBOgeg",
+            "pinKey": "rkmgh6Slll"
+          },
+          "output": {
+            "nodeId": "SyOQ3Bueee",
+            "pinKey": "ryxg52Hxxl"
+          }
+        },
+        "SykK0H_egx": {
+          "id": "SykK0H_egx",
+          "input": {
+            "nodeId": "ByvSRBOgeg",
+            "pinKey": "Hkj866rgxe"
+          },
+          "output": {
+            "nodeId": "SknORHullx",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "HyvKCB_xge": {
+          "id": "HyvKCB_xge",
+          "input": {
+            "nodeId": "S1NFCrugex",
+            "pinKey": "BkjI-COLb"
+          },
+          "output": {
+            "nodeId": "SknORHullx",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "By_YABdxlx": {
+          "id": "By_YABdxlx",
+          "input": {
+            "nodeId": "ByvSRBOgeg",
+            "pinKey": "HyuG3arelx"
+          },
+          "output": {
+            "nodeId": "S1NFCrugex",
+            "pinKey": "ByAIWR_UZ"
+          }
+        },
+        "BkZcJ8Idegx": {
+          "id": "BkZcJ8Idegx",
+          "input": {
+            "nodeId": "rye5188ugex",
+            "pinKey": "BkjI-COLb"
+          },
+          "output": {
+            "nodeId": "HJcJILOlle",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "ByBg88Oglg": {
+          "id": "ByBg88Oglg",
+          "input": {
+            "nodeId": "H1ynSUuxlg",
+            "pinKey": "r1Xy9xLlle"
+          },
+          "output": {
+            "nodeId": "HJcJILOlle",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "By8eU8_egl": {
+          "id": "By8eU8_egl",
+          "input": {
+            "nodeId": "H1ynSUuxlg",
+            "pinKey": "HyuG3arelx"
+          },
+          "output": {
+            "nodeId": "rye5188ugex",
+            "pinKey": "ByAIWR_UZ"
+          }
+        },
+        "ryGb8L_ggx": {
+          "id": "ryGb8L_ggx",
+          "input": {
+            "nodeId": "rJQ1LLuglx",
+            "pinKey": "rkmgh6Slll"
+          },
+          "output": {
+            "nodeId": "H1ynSUuxlg",
+            "pinKey": "rkrg36Bxxx"
+          }
+        },
+        "ByZHWUIdgxg": {
+          "id": "ByZHWUIdgxg",
+          "input": {
+            "nodeId": "Bylr-LI_xlg",
+            "pinKey": "BkjI-COLb"
+          },
+          "output": {
+            "nodeId": "rySb88Oege",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "Hku-LIugle": {
+          "id": "Hku-LIugle",
+          "input": {
+            "nodeId": "rJQ1LLuglx",
+            "pinKey": "Hkj866rgxe"
+          },
+          "output": {
+            "nodeId": "rySb88Oege",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "rktbLU_elx": {
+          "id": "rktbLU_elx",
+          "input": {
+            "nodeId": "rJQ1LLuglx",
+            "pinKey": "HyuG3arelx"
+          },
+          "output": {
+            "nodeId": "Bylr-LI_xlg",
+            "pinKey": "ByAIWR_UZ"
+          }
+        },
+        "rJrfULOgxe": {
+          "id": "rJrfULOgxe",
+          "input": {
+            "nodeId": "rJLkLLuell",
+            "pinKey": "HyuG3arelx"
+          },
+          "output": {
+            "nodeId": "BJfGLIOleg",
+            "pinKey": "Bkf4BDsmV"
+          }
+        },
+        "B1vfULdxgl": {
+          "id": "B1vfULdxgl",
+          "input": {
+            "nodeId": "rJLkLLuell",
+            "pinKey": "rkmgh6Slll"
+          },
+          "output": {
+            "nodeId": "rJQ1LLuglx",
+            "pinKey": "rkrg36Bxxx"
+          }
+        },
+        "rkAPLLOxeg": {
+          "id": "rkAPLLOxeg",
+          "input": {
+            "nodeId": "Hy6PLIdxxl",
+            "pinKey": "rkmgh6Slll"
+          },
+          "output": {
+            "nodeId": "ByvSRBOgeg",
+            "pinKey": "rkrg36Bxxx"
+          }
+        },
+        "rJed88Olel": {
+          "id": "rJed88Olel",
+          "input": {
+            "nodeId": "H1ynSUuxlg",
+            "pinKey": "rkmgh6Slll"
+          },
+          "output": {
+            "nodeId": "Hy6PLIdxxl",
+            "pinKey": "rkrg36Bxxx"
+          }
+        },
+        "HybNdUI_xxe": {
+          "id": "HybNdUI_xxe",
+          "input": {
+            "nodeId": "HylE_8Luxle",
+            "pinKey": "BkjI-COLb"
+          },
+          "output": {
+            "nodeId": "ryEuLLdgel",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "HkvO8LOxeg": {
+          "id": "HkvO8LOxeg",
+          "input": {
+            "nodeId": "Hy6PLIdxxl",
+            "pinKey": "Hkj866rgxe"
+          },
+          "output": {
+            "nodeId": "ryEuLLdgel",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "S1YuI8dgex": {
+          "id": "S1YuI8dgex",
+          "input": {
+            "nodeId": "Hy6PLIdxxl",
+            "pinKey": "HyuG3arelx"
+          },
+          "output": {
+            "nodeId": "HylE_8Luxle",
+            "pinKey": "ByAIWR_UZ"
+          }
+        },
+        "SyA95Uulge": {
+          "id": "SyA95Uulge",
+          "input": {
+            "nodeId": "rkh95Uugxx",
+            "pinKey": "S1Ao9prgxl"
+          },
+          "output": {
+            "nodeId": "Sy_aNHdlxl",
+            "pinKey": "HkIdd3rlxe"
+          }
+        },
+        "BJnocLuexx": {
+          "id": "BJnocLuexx",
+          "input": {
+            "nodeId": "rkYocLOegg",
+            "pinKey": "S1Ao9prgxl"
+          },
+          "output": {
+            "nodeId": "BJliqI_xgg",
+            "pinKey": "SyYnqaHxxg"
+          }
+        },
+        "rkCi5LOeeg": {
+          "id": "rkCi5LOeeg",
+          "input": {
+            "nodeId": "BJliqI_xgg",
+            "pinKey": "S1Ao9prgxl"
+          },
+          "output": {
+            "nodeId": "rkh95Uugxx",
+            "pinKey": "SyYnqaHxxg"
+          }
+        },
+        "ryu3q8uelx": {
+          "id": "ryu3q8uelx",
+          "input": {
+            "nodeId": "BJSncI_xxl",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rkh95Uugxx",
+            "pinKey": "H1l0cpHxeg"
+          }
+        },
+        "Bkh2qUOxeg": {
+          "id": "Bkh2qUOxeg",
+          "input": {
+            "nodeId": "r15n98_eel",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BJliqI_xgg",
+            "pinKey": "H1l0cpHxeg"
+          }
+        },
+        "rkb6qU_gel": {
+          "id": "rkb6qU_gel",
+          "input": {
+            "nodeId": "rJTnqUdgeg",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rkYocLOegg",
+            "pinKey": "H1l0cpHxeg"
+          }
+        },
+        "Bknj2LOelg": {
+          "id": "Bknj2LOelg",
+          "input": {
+            "nodeId": "SkUjnIuxee",
+            "pinKey": "S1Ao9prgxl"
+          },
+          "output": {
+            "nodeId": "rkYocLOegg",
+            "pinKey": "SyYnqaHxxg"
+          }
+        },
+        "H1mnnUdglg": {
+          "id": "H1mnnUdglg",
+          "input": {
+            "nodeId": "ByCohI_eel",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "SkUjnIuxee",
+            "pinKey": "SJjTj8deex"
+          }
+        },
+        "H1G2Aw_elg": {
+          "id": "H1G2Aw_elg",
+          "input": {
+            "nodeId": "HkJoCDdxel",
+            "pinKey": "rkmgh6Slll"
+          },
+          "output": {
+            "nodeId": "rJLkLLuell",
+            "pinKey": "rkrg36Bxxx"
+          }
+        },
+        "rJbLh0wdxxe": {
+          "id": "rJbLh0wdxxe",
+          "input": {
+            "nodeId": "Skx83Cwdgee",
+            "pinKey": "BkjI-COLb"
+          },
+          "output": {
+            "nodeId": "rkUnCwuxgg",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "B1q2ADOxgg": {
+          "id": "B1q2ADOxgg",
+          "input": {
+            "nodeId": "HkJoCDdxel",
+            "pinKey": "Hkj866rgxe"
+          },
+          "output": {
+            "nodeId": "rkUnCwuxgg",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "ryBlk_dllg": {
+          "id": "ryBlk_dllg",
+          "input": {
+            "nodeId": "HkJoCDdxel",
+            "pinKey": "SkzCRwugxx"
+          },
+          "output": {
+            "nodeId": "rkzxJu_lel",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "SklzyOOxle": {
+          "id": "SklzyOOxle",
+          "input": {
+            "nodeId": "r1abJdOlgg",
+            "pinKey": "BkjI-COLb"
+          },
+          "output": {
+            "nodeId": "rkzxJu_lel",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "r17Mkd_lxx": {
+          "id": "r17Mkd_lxx",
+          "input": {
+            "nodeId": "S15xJd_ell",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "Skx83Cwdgee",
+            "pinKey": "ByAIWR_UZ"
+          }
+        },
+        "ByVMkO_lee": {
+          "id": "ByVMkO_lee",
+          "input": {
+            "nodeId": "S15xJd_ell",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "r1abJdOlgg",
+            "pinKey": "ByAIWR_UZ"
+          }
+        },
+        "HycfJOdelg": {
+          "id": "HycfJOdelg",
+          "input": {
+            "nodeId": "HkJoCDdxel",
+            "pinKey": "HyuG3arelx"
+          },
+          "output": {
+            "nodeId": "S15xJd_ell",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "HJQ-xuugxg": {
+          "id": "HJQ-xuugxg",
+          "input": {
+            "nodeId": "rkMZxuOxle",
+            "pinKey": "rkmgh6Slll"
+          },
+          "output": {
+            "nodeId": "HkJoCDdxel",
+            "pinKey": "rkrg36Bxxx"
+          }
+        },
+        "Syn-gOulel": {
+          "id": "Syn-gOulel",
+          "input": {
+            "nodeId": "rkMZxuOxle",
+            "pinKey": "HyuG3arelx"
+          },
+          "output": {
+            "nodeId": "rkwWeuuexx",
+            "pinKey": "Bkf4BDsmV"
+          }
+        }
+      },
+      "path": "@/example-test"
+    }
+  },
+  "name": "fastaccelstepper"
+}

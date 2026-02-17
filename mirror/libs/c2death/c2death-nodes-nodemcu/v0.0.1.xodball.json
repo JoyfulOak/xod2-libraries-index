@@ -1,0 +1,52 @@
+{
+  "description": "A crash course tutorial baked as a project",
+  "license": "MIT",
+  "name": "c2death-nodes-nodemcu",
+  "patches": {
+    "@/deepsleep-nodemcu-esp8266": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\nNumber x = getValue<input_SLEEP>(ctx);  // Ввели значение сколько спим. Считываем его.\n\n    \nif (isInputDirty<input_signal>(ctx))    // Если значение на сигнальном пине - поменялось , активируем сон !\nESP.deepSleep(x*1000000); // 20e6 это и есть deep-sleep. Засыпаем на 20 секунд!\n\n    // чтобы проснулся модуль Nodemcu , ножку D0 надо замкнуть на RST \n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "DeepSleep module for NodeMCU and esp8266",
+      "nodes": {
+        "B1IlTF-0r": {
+          "description": "Signal for go to sleep! ",
+          "id": "B1IlTF-0r",
+          "label": "signal",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkcyvYW0r": {
+          "id": "BkcyvYW0r",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJPkvY-0H": {
+          "description": "How long will sleep? (in seconds)",
+          "id": "HJPkvY-0H",
+          "label": "SLEEP",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/deepsleep-nodemcu-esp8266"
+    }
+  },
+  "version": "0.0.1"
+}

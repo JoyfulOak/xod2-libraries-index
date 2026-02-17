@@ -1,0 +1,49 @@
+{
+  "name": "my-nodes",
+  "patches": {
+    "@/main": {
+      "nodes": {
+        "Bku7Fkli8": {
+          "id": "Bku7Fkli8",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/serial-write"
+        }
+      },
+      "path": "@/main"
+    },
+    "@/serial-write": {
+      "attachments": [
+        {
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_IN\n#pragma XOD error_catch enable\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n  if (!isInputDirty<input_IN>(ctx))\n      return;\n\n  auto err = getError<input_IN>(ctx);\n  auto line = getValue<input_IN>(ctx);\n\n  TimeMs tNow = transactionTime();\n // XOD_DEBUG_SERIAL.print(F(\"+XOD:\"));\n // XOD_DEBUG_SERIAL.print(tNow);\n // XOD_DEBUG_SERIAL.print(':');\n // XOD_DEBUG_SERIAL.print(getNodeId(ctx));\n // XOD_DEBUG_SERIAL.print(':');\n  if (err) {\n    XOD_DEBUG_SERIAL.print(F(\"ERR\"));\n  } else {\n    for (auto it = line.iterate(); it; ++it)\n      XOD_DEBUG_SERIAL.print((char)*it);\n  }\n\n  XOD_DEBUG_SERIAL.print('\\r');\n  XOD_DEBUG_SERIAL.print('\\n');\n  XOD_DEBUG_SERIAL.flush();\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "By0l_Jgi8": {
+          "id": "By0l_Jgi8",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "HJRWdkxi8": {
+          "id": "HJRWdkxi8",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/serial-write"
+    }
+  }
+}

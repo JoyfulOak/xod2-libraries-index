@@ -1,0 +1,88 @@
+{
+  "description": "(beta) Libreria hardware dedicata alle espansioni per Arduino come pcf8574",
+  "name": "bmx280",
+  "patches": {
+    "@/bmx280": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/christandlg/BMx280MI\"\n\n\n// Arduino - BMP280 / BME280\n// 3.3V ---- VCC\n// GND ----- GND\n// SDA ----- SDA\n// SCL ----- SCL\n// some BMP280/BME280 modules break out the CSB and SDO pins as well: \n// 5V ------ CSB (enables the I2C interface)\n// GND ----- SDO (I2C Address 0x76)\n// 5V ------ SDO (I2C Address 0x77)\n// other pins can be left unconnected.\n\n\n\n\n{{#global}}\n#include <Arduino.h>\n#include <Wire.h>\n\n#include <BMx280MI.h>\n\n//#define I2C_ADDRESS 0x76\n{{/global}}\n\n\n\n\n\n\n\n\n\n\n\n\n\nstruct State {\n};\n\n        \n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\nauto state = getState(ctx);\n\n\n\n    if (isInputDirty<input_UPD>(ctx)) {\n\n\t    Wire.begin();\n    \n        //create a BMx280I2C object using the I2C interface with I2C Address 0x76\n        auto I2C_ADDRESS = getValue<input_ADDR>(ctx);\n        BMx280I2C bmx280(I2C_ADDRESS);\n        \n        if (!bmx280.begin())\n\t    {\n\t\t    Serial.println(\"begin() failed. check your BMx280 Interface and I2C Address.\");  \n        }\n\n\n\t    if (bmx280.isBME280())\n\t\t    Serial.println(\"sensor is a BME280\");\n\t    else\n\t\t    Serial.println(\"sensor is a BMP280\");\n\n\t    //reset sensor to default parameters.\n\t    bmx280.resetToDefaults();\n\n\t    //by default sensing is disabled and must be enabled by setting a non-zero\n\t    //oversampling setting.\n\t    //set an oversampling setting for pressure and temperature measurements. \n\t    bmx280.writeOversamplingPressure(BMx280MI::OSRS_P_x16);\n\t    bmx280.writeOversamplingTemperature(BMx280MI::OSRS_T_x16);\n\n\t    //if sensor is a BME280, set an oversampling setting for humidity measurements.\n\t    if (bmx280.isBME280())\n\t\t    bmx280.writeOversamplingHumidity(BMx280MI::OSRS_H_x16);\n\n\n        //start a measurement\n\t    if (!bmx280.measure())\n\t    {\n\t\t    //Serial.println(\"could not start measurement, is a measurement already running?\");\n\t\t    return;\n\t    }\n\n\t    //wait for the measurement to finish\n\t    int i = 0;\n        do\n\t    {\n\t\t    delay(100);\n            i=i+1;\n\t    } while (!bmx280.hasValue() or i<10);\n\n\n        auto temperature = bmx280.getTemperature();\n        auto pressure = bmx280.getPressure();\n        auto humidity = bmx280.getHumidity();\n\n        emitValue<output_PRES>(ctx, pressure);\n        emitValue<output_TEMP>(ctx, temperature);\n \n\n\t    if (bmx280.isBME280())\n            emitValue<output_HUM>(ctx, humidity);\n\n    \n    }emitValue<output_DONE>(ctx, 1);\n}\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "Bkt0092HN": {
+          "id": "Bkt0092HN",
+          "label": "ADDR",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "H1mpbaiB4": {
+          "id": "H1mpbaiB4",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1y3r9hHV": {
+          "id": "H1y3r9hHV",
+          "label": "PRES",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SynpO52BN": {
+          "id": "SynpO52BN",
+          "label": "HUM",
+          "position": {
+            "x": 11,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "r1e7g5nBE": {
+          "id": "r1e7g5nBE",
+          "label": "DONE",
+          "position": {
+            "x": 13,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJf6Sc2rE": {
+          "id": "rJf6Sc2rE",
+          "label": "TEMP",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rkeM4psSN": {
+          "id": "rkeM4psSN",
+          "label": "UPD",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/bmx280"
+    }
+  },
+  "version": "0.0.30"
+}

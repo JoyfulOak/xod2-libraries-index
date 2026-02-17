@@ -1,0 +1,475 @@
+{
+  "description": "Some Base Color Blocks to implement in other Library's",
+  "license": "GPL",
+  "name": "color-rgb-hsl",
+  "patches": {
+    "@/hsl-to-rgb": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nfloat H,S,L, Rval,Gval,Bval;\n\nvoid HSL(float H, float S, float L, float& Rval, float& Gval, float& Bval);\nfloat Hue_2_RGB( float v1, float v2, float vH );\n\nvoid HSL(float H, float S, float L, float& Rval, float& Gval, float& Bval)\n{\n  float var_1;\n  float var_2;\n  float Hu=H+.33;\n  float Hd=H-.33;\n  if ( S == 0 )                       //HSL from 0 to 1\n  {\n    Rval = L * 255;                      //RGB results from 0 to 255\n    Gval = L * 255;\n    Bval = L * 255;\n  }\n  else\n  {\n    if ( L < 0.5 ) \n      var_2 = L * ( 1 + S );\n    else           \n      var_2 = ( L + S ) - ( S * L );\n\n    var_1 = 2 * L - var_2;\n\n    Rval = round(255 * Hue_2_RGB( var_1, var_2, Hu ));\n    Gval = round(255 * Hue_2_RGB( var_1, var_2, H ));\n    Bval = round(255 * Hue_2_RGB( var_1, var_2, Hd ));\n  }\n\n}\nfloat Hue_2_RGB( float v1, float v2, float vH )             //Function Hue_2_RGB\n{\n  if ( vH < 0 ) \n    vH += 1;\n  if ( vH > 1 ) \n    vH -= 1;\n  if ( ( 6 * vH ) < 1 ) \n    return ( v1 + ( v2 - v1 ) * 6 * vH );\n  if ( ( 2 * vH ) < 1 ) \n    return ( v2 );\n  if ( ( 3 * vH ) < 2 ) \n    return ( v1 + ( v2 - v1 ) * (.66-vH) * 6 );\n  return ( v1 );\n}\nvoid evaluate(Context ctx) {\n\n    if (!isInputDirty<input_INIT>(ctx)){\n        return;}\n\n    float Red;\n    float Green;\n    float Blue;\n\n    HSL(getValue<input_H>(ctx), getValue<input_S>(ctx), getValue<input_L>(ctx), Red, Green, Blue);\n\n    emitValue<output_Red>(ctx, Red);\n    emitValue<output_Green>(ctx, Green);\n    emitValue<output_Blue>(ctx, Blue);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1E_rVB1E": {
+          "description": " Hue, Starting at the Red primary \nat 0.0, passing through the Green primary at 0.120 and the Blue primary at 0.240 (0 MIN) (1 MAX)",
+          "id": "B1E_rVB1E",
+          "label": "H",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "B1q2rVrJ4": {
+          "id": "B1q2rVrJ4",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJiOBVB1N": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "id": "HJiOBVB1N",
+          "label": "INIT",
+          "position": {
+            "x": 238,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S18uBVry4": {
+          "description": "Saturation 0(Black) T 1(Full Color) ",
+          "id": "S18uBVry4",
+          "label": "S",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1M3cEBJE": {
+          "id": "S1M3cEBJE",
+          "label": "Red",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SkDdSVHyV": {
+          "description": "Lightnes 0(Black) T 1(White) ",
+          "id": "SkDdSVHyV",
+          "label": "L",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryD2qNryV": {
+          "id": "ryD2qNryV",
+          "label": "Blue",
+          "position": {
+            "x": 170,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ryS2c4rkV": {
+          "id": "ryS2c4rkV",
+          "label": "Green",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/hsl-to-rgb"
+    },
+    "@/main": {
+      "links": {
+        "B1G-zVHJN": {
+          "id": "B1G-zVHJN",
+          "input": {
+            "nodeId": "S1eslfEBy4",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H11abES14",
+            "pinKey": "BkaCx4S14"
+          }
+        },
+        "B1q3EHr14": {
+          "id": "B1q3EHr14",
+          "input": {
+            "nodeId": "ry-LIdNSkN",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BkGuI4B1N",
+            "pinKey": "ryS2c4rkV"
+          }
+        },
+        "BkGab4SkV": {
+          "id": "BkGab4SkV",
+          "input": {
+            "nodeId": "H11abES14",
+            "pinKey": "rJApe4HkV"
+          },
+          "output": {
+            "nodeId": "rkIzMwF0X",
+            "pinKey": "S1x3ZgDYR7"
+          }
+        },
+        "Bkdh4SSyN": {
+          "id": "Bkdh4SSyN",
+          "input": {
+            "nodeId": "rkzIIuNSJV",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BkGuI4B1N",
+            "pinKey": "S1M3cEBJE"
+          }
+        },
+        "H1LmKnIyV": {
+          "id": "H1LmKnIyV",
+          "input": {
+            "nodeId": "rkIzMwF0X",
+            "pinKey": "BkbhWlwKCm"
+          },
+          "output": {
+            "nodeId": "BkGuI4B1N",
+            "pinKey": "ryS2c4rkV"
+          }
+        },
+        "Hy7-zES14": {
+          "id": "Hy7-zES14",
+          "input": {
+            "nodeId": "rkjlzEry4",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H11abES14",
+            "pinKey": "S1y1ZVSkV"
+          }
+        },
+        "Hyih4rrkE": {
+          "id": "Hyih4rrkE",
+          "input": {
+            "nodeId": "rylU8_Nr1E",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BkGuI4B1N",
+            "pinKey": "ryD2qNryV"
+          }
+        },
+        "HyugG4rkE": {
+          "id": "HyugG4rkE",
+          "input": {
+            "nodeId": "rk4lMEBkN",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H11abES14",
+            "pinKey": "H1D8-4SkN"
+          }
+        },
+        "SJumK3UJ4": {
+          "id": "SJumK3UJ4",
+          "input": {
+            "nodeId": "rkIzMwF0X",
+            "pinKey": "B13-lPKCQ"
+          },
+          "output": {
+            "nodeId": "BkGuI4B1N",
+            "pinKey": "ryD2qNryV"
+          }
+        },
+        "SyZbf4rJN": {
+          "id": "SyZbf4rJN",
+          "input": {
+            "nodeId": "HJ-iefVHJ4",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H11abES14",
+            "pinKey": "B1nAeErJE"
+          }
+        },
+        "r1SmKnL1E": {
+          "id": "r1SmKnL1E",
+          "input": {
+            "nodeId": "rkIzMwF0X",
+            "pinKey": "ByMhWlPFRm"
+          },
+          "output": {
+            "nodeId": "BkGuI4B1N",
+            "pinKey": "S1M3cEBJE"
+          }
+        }
+      },
+      "nodes": {
+        "BkGuI4B1N": {
+          "boundLiterals": {
+            "B1E_rVB1E": "0.120",
+            "HJiOBVB1N": "Continuously",
+            "S18uBVry4": "1",
+            "SkDdSVHyV": "0.5"
+          },
+          "id": "BkGuI4B1N",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "@/hsl-to-rgb"
+        },
+        "H11abES14": {
+          "boundLiterals": {
+            "H1geTeNHyV": "Continuously"
+          },
+          "id": "H11abES14",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "@/rgb-color-unpack"
+        },
+        "HJ-iefVHJ4": {
+          "id": "HJ-iefVHJ4",
+          "position": {
+            "x": 68,
+            "y": 306
+          },
+          "type": "xod/core/watch"
+        },
+        "S1eslfEBy4": {
+          "id": "S1eslfEBy4",
+          "position": {
+            "x": 102,
+            "y": 306
+          },
+          "type": "xod/core/watch"
+        },
+        "rk4lMEBkN": {
+          "id": "rk4lMEBkN",
+          "position": {
+            "x": 170,
+            "y": 306
+          },
+          "size": {
+            "height": 51,
+            "width": 68
+          },
+          "type": "xod/core/watch"
+        },
+        "rkIzMwF0X": {
+          "boundLiterals": {
+            "B13-lPKCQ": "300",
+            "BkV2-ewKAX": "Continuously",
+            "BkbhWlwKCm": "0.99",
+            "ByMhWlPFRm": "100"
+          },
+          "id": "rkIzMwF0X",
+          "position": {
+            "x": 68,
+            "y": 102
+          },
+          "type": "@/rgb-color-pack"
+        },
+        "rkjlzEry4": {
+          "id": "rkjlzEry4",
+          "position": {
+            "x": 136,
+            "y": 306
+          },
+          "type": "xod/core/watch"
+        },
+        "rkzIIuNSJV": {
+          "id": "rkzIIuNSJV",
+          "position": {
+            "x": 238,
+            "y": 102
+          },
+          "type": "xod/core/watch"
+        },
+        "ry-LIdNSkN": {
+          "id": "ry-LIdNSkN",
+          "position": {
+            "x": 272,
+            "y": 102
+          },
+          "type": "xod/core/watch"
+        },
+        "rylU8_Nr1E": {
+          "id": "rylU8_Nr1E",
+          "position": {
+            "x": 306,
+            "y": 102
+          },
+          "size": {
+            "height": 51,
+            "width": 68
+          },
+          "type": "xod/core/watch"
+        }
+      },
+      "path": "@/main"
+    },
+    "@/rgb-color-pack": {
+      "attachments": [
+        {
+          "content": "struct State {\n    // this is a regular state related to the patch (i.e. constructor in this case)\n};\n\nstruct Type {\n    uint8_t Red;\n    uint8_t Green;\n    uint8_t Blue;\n    uint16_t Hex;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n\n    if (!isInputDirty<input_INIT>(ctx)){\n        return;}\n\n\n    uint8_t Red = getValue<input_Red>(ctx);\n    uint8_t Green = getValue<input_Green>(ctx);\n    uint8_t Blue = getValue<input_Blue>(ctx);\n\n    if(Red <= 1) Red = getValue<input_Red>(ctx) * 255;\n    if(Green <= 1) Green = getValue<input_Green>(ctx) * 255;\n    if(Blue <= 1) Blue = getValue<input_Blue>(ctx) * 255;\n\n    if(Red >= 255) Red = 255;\n    if(Green >= 255) Green = 255;\n    if(Blue >= 255) Blue = 255;\n\n    uint16_t Hex = { ((Red & 0xF8) << 8) | ((Green & 0xFC) << 3) | ((Blue & 0xF8) >> 3) };\n    Type Color = { Red, Green, Blue, Hex };\n    emitValue<output_OUT>(ctx, Color);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B13-lPKCQ": {
+          "description": "Blue Colour 0 min, 255 Max.\nYou can use 0 to 1 to it will be remapped automatically.",
+          "id": "B13-lPKCQ",
+          "label": "Blue",
+          "position": {
+            "x": 135,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BkV2-ewKAX": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "id": "BkV2-ewKAX",
+          "label": "INIT",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkbhWlwKCm": {
+          "description": "Green Colour 0 min, 255 Max.\nYou can use 0 to 1 to it will be remapped automatically.",
+          "id": "BkbhWlwKCm",
+          "label": "Green",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ByMhWlPFRm": {
+          "description": "Red Colour 0 min, 255 Max.\nYou can use 0 to 1 to it will be remapped automatically.",
+          "id": "ByMhWlPFRm",
+          "label": "Red",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1x3ZgDYR7": {
+          "id": "S1x3ZgDYR7",
+          "label": "OUT",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "ryweTmSyV": {
+          "id": "ryweTmSyV",
+          "position": {
+            "x": 0,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/rgb-color-pack"
+    },
+    "@/rgb-color-unpack": {
+      "attachments": [
+        {
+          "content": "struct State {\n    // this is a regular state related to the patch (i.e. constructor in this case)\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n\n    if (!isInputDirty<input_INIT>(ctx)){\n        return;}\n\n\n    auto Color = getValue<input_IN>(ctx);\n    emitValue<output_Red>(ctx, Color.Red);\n    emitValue<output_Green>(ctx, Color.Green);\n    emitValue<output_Blue>(ctx, Color.Blue);\n    emitValue<output_Hex>(ctx, Color.Hex);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1nAeErJE": {
+          "id": "B1nAeErJE",
+          "label": "Red",
+          "position": {
+            "x": 0,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BkaCx4S14": {
+          "id": "BkaCx4S14",
+          "label": "Green",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "H1D8-4SkN": {
+          "id": "H1D8-4SkN",
+          "label": "Hex",
+          "position": {
+            "x": 204,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-byte"
+        },
+        "H1Vl6gVHJE": {
+          "id": "H1Vl6gVHJE",
+          "position": {
+            "x": 0,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1geTeNHyV": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "id": "H1geTeNHyV",
+          "label": "INIT",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S1y1ZVSkV": {
+          "id": "S1y1ZVSkV",
+          "label": "Blue",
+          "position": {
+            "x": 136,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rJApe4HkV": {
+          "id": "rJApe4HkV",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-rgb-color-pack"
+        }
+      },
+      "path": "@/rgb-color-unpack"
+    }
+  },
+  "version": "0.0.3"
+}

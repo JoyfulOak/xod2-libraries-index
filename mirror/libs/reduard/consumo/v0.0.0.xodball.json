@@ -1,0 +1,47 @@
+{
+  "patches": {
+    "@/main": {
+      "path": "@/main"
+    },
+    "@/consumo": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "const int sensorPin = port; // Impulsi del sensore collegati al pin 2\nunsigned int pulseCount; // Numero di impulsi\nunsigned long flowRate; // Flusso in ml/h\nunsigned long totalMilliLitres; // Quantità totale di liquido passata (in ml)\nunsigned long totalLitres; // Quantità totale di liquido passata (in litri)\nunsigned long totalMilliLitresOld;\nunsigned long oldTime;\nvoid setup()\n{\n  Serial.begin(9600);\n  pinMode(sensorPin, INPUT);\n  pulseCount = 0;\n  flowRate = 0.0;\n  totalMilliLitres = 0;\n  totalLitres = 0;\n  oldTime = 0;\n}\nvoid loop()\n{\n  if((millis() - oldTime) > 1000) // Aggiorna ogni secondo\n  {\n    flowRate = ((1000.0 / (millis() - oldTime)) * pulseCount) / 7.5; // Calcola il flusso in ml/h\n    oldTime = millis();\n    totalMilliLitres += pulseCount * 2.25; // Aggiorna la quantità totale di liquido passata (in ml)\n    pulseCount = 0; // Resetta il contatore degli impulsi\n    totalLitres = totalMilliLitres / 1000; // Calcola la quantità totale di liquido passata (in litri)\n    Serial.print(\"Flusso: \");\n    Serial.print(flowRate); // Stampa il flusso in ml/h\n    Serial.print(\" ml/h - Quantità totale: \");\n    Serial.print(totalMilliLitres);\n    Serial.println(\" ml\");\n  }\n  if(digitalRead(sensorPin))\n  {\n    pulseCount++; // Incrementa il contatore degli impulsi\n  }\n}\n"
+        }
+      ],
+      "nodes": {
+        "B1wDuFLS2": {
+          "id": "B1wDuFLS2",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 25,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "Bk3ltt8H2": {
+          "id": "Bk3ltt8H2",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 25,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SJS15kOHn": {
+          "id": "SJS15kOHn",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 29,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/consumo"
+    }
+  },
+  "name": "consumo"
+}

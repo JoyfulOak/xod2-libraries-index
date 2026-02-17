@@ -1,0 +1,1664 @@
+{
+  "description": "Block for the MCUFRIEND_kbv range of TFT-LCD Touch Displays (Tested on the XC-4630 Duinotech clone, should work for all)",
+  "license": "GPL",
+  "name": "color-tft-lcd-driver-mcufriend-kbv",
+  "patches": {
+    "@/tft-lcd-background": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n\n    if (!isInputDirty<input_INIT>(ctx)){\n        emitValue<output_OUT>(ctx, getValue<input_IN>(ctx));\n        return;}\n\n    auto tft = getValue<input_IN>(ctx);\n    auto color = getValue<input_Color>(ctx);\n\n    tft->fillScreen(color.Hex);\n\n    emitValue<output_OUT>(ctx, getValue<input_IN>(ctx));\n    emitValue<output_OK>(ctx, 1);\n}\n\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Set the Background Color",
+      "nodes": {
+        "B1tMN6Lk4": {
+          "description": "Background Color",
+          "id": "B1tMN6Lk4",
+          "label": "Color",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "bradzilla84/color-rgb-hsl/input-rgb-color-pack"
+        },
+        "BJnW-c0RQ": {
+          "description": "Pulse on Complete",
+          "id": "BJnW-c0RQ",
+          "label": "OK",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "H1bbNuaCQ": {
+          "id": "H1bbNuaCQ",
+          "position": {
+            "x": 0,
+            "y": 204
+          },
+          "type": "@/output-tft-lcd-device"
+        },
+        "Hk4Z4_pRX": {
+          "id": "Hk4Z4_pRX",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HkLXiKRCX": {
+          "boundLiterals": {
+            "__out__": "Never"
+          },
+          "description": "Pulse to update",
+          "id": "HkLXiKRCX",
+          "label": "INIT",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkybN_TA7": {
+          "id": "HkybN_TA7",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-tft-lcd-device"
+        }
+      },
+      "path": "@/tft-lcd-background"
+    },
+    "@/tft-lcd-device": {
+      "attachments": [
+        {
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/adafruit/Adafruit-GFX-Library\"\n#pragma XOD require \"https://github.com/prenticedavid/MCUFRIEND_kbv\"\n\n{{#global}}\n#include <Adafruit_GFX.h>\n#include <MCUFRIEND_kbv.h>\n#include <stdio.h>\n{{/global}}\n\n\n\n\nstruct State {\n    uint8_t mem[sizeof(MCUFRIEND_kbv)];\n};\n\nusing Type = MCUFRIEND_kbv*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // It should be evaluated only once on the first (setup) transaction\n    if (!isSettingUp())\n        return;\n\n    auto state = getState(ctx);\n    Type tft = new (state->mem) MCUFRIEND_kbv(getValue<input_CS>(ctx),getValue<input_RS>(ctx),getValue<input_WR>(ctx),getValue<input_RD>(ctx),getValue<input_RST>(ctx));\n\n    tft->reset();\n    tft->begin(tft->readID());\n\n    emitValue<output_DEV>(ctx, tft);\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Setup the LCD",
+      "nodes": {
+        "BJr7rmMnQ": {
+          "id": "BJr7rmMnQ",
+          "position": {
+            "x": 102,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Bk-OatL6R7": {
+          "boundLiterals": {
+            "__out__": "A0"
+          },
+          "description": "RD Pin",
+          "id": "Bk-OatL6R7",
+          "label": "RD",
+          "position": {
+            "x": 204,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HyKaFLaAm": {
+          "boundLiterals": {
+            "__out__": "A4"
+          },
+          "description": "RST Pin",
+          "id": "HyKaFLaAm",
+          "label": "RST",
+          "position": {
+            "x": 238,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SJOTt8pC7": {
+          "boundLiterals": {
+            "__out__": "A2"
+          },
+          "description": "RS Pin",
+          "id": "SJOTt8pC7",
+          "label": "RS",
+          "position": {
+            "x": 136,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rkgOpKLpR7": {
+          "boundLiterals": {
+            "__out__": "A1"
+          },
+          "description": "WR Pin",
+          "id": "rkgOpKLpR7",
+          "label": "WR",
+          "position": {
+            "x": 170,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "ryBatI607": {
+          "boundLiterals": {
+            "__out__": "A3"
+          },
+          "description": "CS Pin",
+          "id": "ryBatI607",
+          "label": "CS",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "ryKQrXfh7": {
+          "id": "ryKQrXfh7",
+          "label": "DEV",
+          "position": {
+            "x": 102,
+            "y": 408
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/tft-lcd-device"
+    },
+    "@/tft-lcd-display-txt": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n\n    if (!isInputDirty<input_INIT>(ctx)){\n        emitValue<output_OUT>(ctx, getValue<input_IN>(ctx));\n        return;}\n\n    auto tft = getValue<input_IN>(ctx);\n    auto color = getValue<input_Color>(ctx);\n    auto bgcolor = getValue<input_BGColor>(ctx);\n    auto TXT = getValue<input_TXT>(ctx);\n    // `length` returns the number of characters and you need an extra one to keep the\n    // terminal NUL-character used in C string representation. Initialize to 0’s to ensure the last char is indeed NUL\n    char TXTC[length(TXT) + 1] = { 0 };\n    // move the data from XString to the plain C string\n    dump(TXT, TXTC);\n\n    tft->setCursor(getValue<input_X>(ctx), getValue<input_Y>(ctx));\n    tft->setTextColor(color.Hex, bgcolor.Hex);\n    tft->setTextSize(getValue<input_TXTSize>(ctx));\n    tft->println(TXTC);\n\n    emitValue<output_OUT>(ctx, getValue<input_IN>(ctx));\n    emitValue<output_OK>(ctx, 1);\n}\n\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Display TXT on Display",
+      "nodes": {
+        "BkXE47pJyN": {
+          "boundLiterals": {
+            "__out__": "Never"
+          },
+          "description": "Pulse to update",
+          "id": "BkXE47pJyN",
+          "label": "INIT",
+          "position": {
+            "x": 510,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BksXETIkV": {
+          "description": "Background Color (From Color block)\n(Used for quick erase of previous TXT)",
+          "id": "BksXETIkV",
+          "label": "BGColor",
+          "position": {
+            "x": 442,
+            "y": 102
+          },
+          "type": "bradzilla84/color-rgb-hsl/input-rgb-color-pack"
+        },
+        "HkRLX6JyE": {
+          "boundLiterals": {
+            "__out__": "\"Hello World\""
+          },
+          "description": "TXT To Display.",
+          "id": "HkRLX6JyE",
+          "label": "TXT",
+          "position": {
+            "x": 340,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "HyKHnTkJV": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "TXT Size",
+          "id": "HyKHnTkJV",
+          "label": "TXTSize",
+          "position": {
+            "x": 272,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HybVV7aJJ4": {
+          "id": "HybVV7aJJ4",
+          "position": {
+            "x": 135,
+            "y": 101
+          },
+          "type": "@/input-tft-lcd-device"
+        },
+        "S1xgIap1JV": {
+          "description": "Y Location",
+          "id": "S1xgIap1JV",
+          "label": "Y",
+          "position": {
+            "x": 238,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJFX468kE": {
+          "description": "Color (From Color block)",
+          "id": "SJFX468kE",
+          "label": "Color",
+          "position": {
+            "x": 408,
+            "y": 102
+          },
+          "type": "bradzilla84/color-rgb-hsl/input-rgb-color-pack"
+        },
+        "SyEVNmT1JE": {
+          "description": "Pulse on Complete",
+          "id": "SyEVNmT1JE",
+          "label": "OK",
+          "position": {
+            "x": 203,
+            "y": 305
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r1eIp6yJV": {
+          "description": "X Location",
+          "id": "r1eIp6yJV",
+          "label": "X",
+          "position": {
+            "x": 204,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rklV4Xpk1V": {
+          "id": "rklV4Xpk1V",
+          "position": {
+            "x": 169,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ry4Nm6yJE": {
+          "id": "ry4Nm6yJE",
+          "position": {
+            "x": 135,
+            "y": 305
+          },
+          "type": "@/output-tft-lcd-device"
+        }
+      },
+      "path": "@/tft-lcd-display-txt"
+    },
+    "@/tft-lcd-draw-box": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_INIT>(ctx)){\n        emitValue<output_OUT>(ctx, getValue<input_IN>(ctx));\n        return;}\n\n    auto tft = getValue<input_IN>(ctx);\n    auto color = getValue<input_Color>(ctx);\n\n\n    if (getValue<input_FILL>(ctx)){\n        tft->fillRect(getValue<input_PosX>(ctx),getValue<input_PosY>(ctx),getValue<input_SizeX>(ctx),getValue<input_SizeY>(ctx),color.Hex);\n    }\n    else\n    {\n        tft->drawRect(getValue<input_PosX>(ctx),getValue<input_PosY>(ctx),getValue<input_SizeX>(ctx),getValue<input_SizeY>(ctx),color.Hex);\n    }\n\n    emitValue<output_OUT>(ctx, getValue<input_IN>(ctx));\n    emitValue<output_OK>(ctx, 1);\n}\n\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Draw a Box (Fill or No Fill)",
+      "nodes": {
+        "B1-19cKZa7": {
+          "description": "Size in pixels Y",
+          "id": "B1-19cKZa7",
+          "label": "SizeY",
+          "position": {
+            "x": 340,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "B1Jc9KbpX": {
+          "description": "Position Y Start",
+          "id": "B1Jc9KbpX",
+          "label": "PosY",
+          "position": {
+            "x": 272,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BkZfcjEhQ": {
+          "description": "Pulse to update",
+          "id": "BkZfcjEhQ",
+          "label": "INIT",
+          "position": {
+            "x": 510,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkoXLoN3m": {
+          "id": "BkoXLoN3m",
+          "position": {
+            "x": 170,
+            "y": 306
+          },
+          "type": "@/output-tft-lcd-device"
+        },
+        "ByPYqYbTX": {
+          "description": "Position X Start",
+          "id": "ByPYqYbTX",
+          "label": "PosX",
+          "position": {
+            "x": 238,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Byly9cKZ6X": {
+          "description": "Size in pixels X",
+          "id": "Byly9cKZ6X",
+          "label": "SizeX",
+          "position": {
+            "x": 306,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H1NDmwmn7": {
+          "id": "H1NDmwmn7",
+          "position": {
+            "x": 170,
+            "y": 102
+          },
+          "type": "@/input-tft-lcd-device"
+        },
+        "HysELoV27": {
+          "id": "HysELoV27",
+          "position": {
+            "x": 204,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Skdrb9RAm": {
+          "description": "Pulse on Complete",
+          "id": "Skdrb9RAm",
+          "label": "OK",
+          "position": {
+            "x": 238,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJvI4aUkV": {
+          "description": "Color to Fill/Outline with",
+          "id": "rJvI4aUkV",
+          "label": "Color",
+          "position": {
+            "x": 408,
+            "y": 102
+          },
+          "type": "bradzilla84/color-rgb-hsl/input-rgb-color-pack"
+        },
+        "ryj0M1JkE": {
+          "description": "Do you want to fill the box?",
+          "id": "ryj0M1JkE",
+          "label": "FILL",
+          "position": {
+            "x": 374,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        }
+      },
+      "path": "@/tft-lcd-draw-box"
+    },
+    "@/tft-lcd-draw-circle": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_INIT>(ctx)){\n        emitValue<output_OUT>(ctx, getValue<input_IN>(ctx));\n        return;}\n\n    auto tft = getValue<input_IN>(ctx);\n    auto color = getValue<input_Color>(ctx);\n\n\n    if (getValue<input_FILL>(ctx)){\n        tft->fillCircle(getValue<input_PosX>(ctx),getValue<input_PosY>(ctx),getValue<input_Rad>(ctx),color.Hex);\n    }\n    else\n    {\n        tft->drawCircle(getValue<input_PosX>(ctx),getValue<input_PosY>(ctx),getValue<input_Rad>(ctx),color.Hex);\n    }\n\n    emitValue<output_OUT>(ctx, getValue<input_IN>(ctx));\n    emitValue<output_OK>(ctx, 1);\n}\n\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Draw a Circle (Fill or No Fill)",
+      "nodes": {
+        "BkLFim0Dk4": {
+          "id": "BkLFim0Dk4",
+          "position": {
+            "x": 33,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJNKsQRDkN": {
+          "description": "Radius Size in pixels",
+          "id": "HJNKsQRDkN",
+          "label": "Rad",
+          "position": {
+            "x": 135,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJmYo7Rw14": {
+          "description": "Position X Start",
+          "id": "HJmYo7Rw14",
+          "label": "PosX",
+          "position": {
+            "x": 67,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HklKoXCD1E": {
+          "description": "Position Y Start",
+          "id": "HklKoXCD1E",
+          "label": "PosY",
+          "position": {
+            "x": 101,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HkrFjm0PJN": {
+          "id": "HkrFjm0PJN",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "@/input-tft-lcd-device"
+        },
+        "SyDKj7RvkV": {
+          "description": "Pulse on Complete",
+          "id": "SyDKj7RvkV",
+          "label": "OK",
+          "position": {
+            "x": 67,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r1OtomADyN": {
+          "description": "Color to Fill/Outline with",
+          "id": "r1OtomADyN",
+          "label": "Color",
+          "position": {
+            "x": 237,
+            "y": -1
+          },
+          "type": "bradzilla84/color-rgb-hsl/input-rgb-color-pack"
+        },
+        "rkKKjQAvkN": {
+          "description": "Do you want to fill the Circle?",
+          "id": "rkKKjQAvkN",
+          "label": "FILL",
+          "position": {
+            "x": 203,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rkzYiQCw1E": {
+          "id": "rkzYiQCw1E",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "@/output-tft-lcd-device"
+        },
+        "ryWFjXRDy4": {
+          "description": "Pulse to update",
+          "id": "ryWFjXRDy4",
+          "label": "INIT",
+          "position": {
+            "x": 339,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/tft-lcd-draw-circle"
+    },
+    "@/tft-lcd-draw-line": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_INIT>(ctx)){\n        emitValue<output_OUT>(ctx, getValue<input_IN>(ctx));\n        return;}\n\n    auto tft = getValue<input_IN>(ctx);\n    auto color = getValue<input_Color>(ctx);\n\n    tft->drawLine(getValue<input_StartX>(ctx),getValue<input_StartY>(ctx),getValue<input_EndX>(ctx),getValue<input_EndY>(ctx),color.Hex);\n\n\n    emitValue<output_OUT>(ctx, getValue<input_IN>(ctx));\n    emitValue<output_OK>(ctx, 1);\n}\n\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BkSZEM0D1V": {
+          "id": "BkSZEM0D1V",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "@/input-tft-lcd-device"
+        },
+        "BkzZNGRDyE": {
+          "id": "BkzZNGRDyE",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "@/output-tft-lcd-device"
+        },
+        "HJ_bEM0D1V": {
+          "description": "Color to Fill with",
+          "id": "HJ_bEM0D1V",
+          "label": "Color",
+          "position": {
+            "x": 237,
+            "y": -1
+          },
+          "type": "bradzilla84/color-rgb-hsl/input-rgb-color-pack"
+        },
+        "Hy-Nz0Py4": {
+          "description": "Position Y End",
+          "id": "Hy-Nz0Py4",
+          "label": "EndY",
+          "position": {
+            "x": 169,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1UWNzCwkV": {
+          "id": "S1UWNzCwkV",
+          "position": {
+            "x": 33,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJ-WEf0D14": {
+          "boundLiterals": {
+            "__out__": "Never"
+          },
+          "description": "Pulse to update",
+          "id": "SJ-WEf0D14",
+          "label": "INIT",
+          "position": {
+            "x": 339,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkE-EGRPkV": {
+          "description": "Position X End",
+          "id": "SkE-EGRPkV",
+          "label": "EndX",
+          "position": {
+            "x": 135,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1Q-4GRDyN": {
+          "description": "Position X Start",
+          "id": "r1Q-4GRDyN",
+          "label": "StartX",
+          "position": {
+            "x": 67,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJl-VzAPkV": {
+          "description": "Position Y Start",
+          "id": "rJl-VzAPkV",
+          "label": "StartY",
+          "position": {
+            "x": 101,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkvZVfCvkV": {
+          "description": "Pulse on Complete",
+          "id": "rkvZVfCvkV",
+          "label": "OK",
+          "position": {
+            "x": 67,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/tft-lcd-draw-line"
+    },
+    "@/tft-lcd-draw-triangle": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_INIT>(ctx)){\n        emitValue<output_OUT>(ctx, getValue<input_IN>(ctx));\n        return;}\n\n    auto tft = getValue<input_IN>(ctx);\n    auto color = getValue<input_Color>(ctx);\n\n\n    if (getValue<input_FILL>(ctx)){\n        tft->fillTriangle(getValue<input_Pos1X>(ctx),getValue<input_Pos1Y>(ctx),getValue<input_Pos2X>(ctx),getValue<input_Pos2Y>(ctx),getValue<input_Pos3X>(ctx),getValue<input_Pos3Y>(ctx),color.Hex);\n    }\n    else\n    {\n        tft->drawTriangle(getValue<input_Pos1X>(ctx),getValue<input_Pos1Y>(ctx),getValue<input_Pos2X>(ctx),getValue<input_Pos2Y>(ctx),getValue<input_Pos3X>(ctx),getValue<input_Pos3Y>(ctx),color.Hex);\n    }\n\n    emitValue<output_OUT>(ctx, getValue<input_IN>(ctx));\n    emitValue<output_OK>(ctx, 1);\n}\n\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Draw a Triangle from 3 Points",
+      "nodes": {
+        "B148YSAv1V": {
+          "id": "B148YSAv1V",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "@/input-tft-lcd-device"
+        },
+        "BJ8LtBADJ4": {
+          "description": "Pulse on Complete",
+          "id": "BJ8LtBADJ4",
+          "label": "OK",
+          "position": {
+            "x": 67,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "H1e_jrRwJV": {
+          "description": "Point3 X",
+          "id": "H1e_jrRwJV",
+          "label": "Pos3X",
+          "position": {
+            "x": 272,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Hk8Fr0D1V": {
+          "description": "Point1 Y",
+          "id": "Hk8Fr0D1V",
+          "label": "Pos1Y",
+          "position": {
+            "x": 101,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HkOUtS0wJV": {
+          "description": "Do you want to fill the Triangle?",
+          "id": "HkOUtS0wJV",
+          "label": "FILL",
+          "position": {
+            "x": 374,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "S1usBRPyE": {
+          "description": "Point3 Y",
+          "id": "S1usBRPyE",
+          "label": "Pos3Y",
+          "position": {
+            "x": 306,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1wUtrCvkV": {
+          "description": "Color to Fill/Outline with",
+          "id": "S1wUtrCvkV",
+          "label": "Color",
+          "position": {
+            "x": 408,
+            "y": 0
+          },
+          "type": "bradzilla84/color-rgb-hsl/input-rgb-color-pack"
+        },
+        "rJHIKBCv1V": {
+          "id": "rJHIKBCv1V",
+          "position": {
+            "x": 33,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJUjHCvyE": {
+          "description": "Point2 Y",
+          "id": "rJUjHCvyE",
+          "label": "Pos2Y",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJWLtB0P1N": {
+          "id": "rJWLtB0P1N",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "@/output-tft-lcd-device"
+        },
+        "rJeIjB0DJ4": {
+          "description": "Point2 X",
+          "id": "rJeIjB0DJ4",
+          "label": "Pos2X",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJeLtHAD1N": {
+          "description": "Pulse to update",
+          "id": "rJeLtHAD1N",
+          "label": "INIT",
+          "position": {
+            "x": 510,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJfUFHAPJV": {
+          "description": "Point1 X",
+          "id": "rJfUFHAPJV",
+          "label": "Pos1X",
+          "position": {
+            "x": 67,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/tft-lcd-draw-triangle"
+    },
+    "@/tft-lcd-rotation": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n        emitValue<output_OUT>(ctx, getValue<input_IN>(ctx));\n        return;}\n\n    auto tft = getValue<input_IN>(ctx);\n\n    tft->setRotation(getValue<input_Rotation>(ctx));\n\n    emitValue<output_OUT>(ctx, getValue<input_IN>(ctx));\n    emitValue<output_OK>(ctx, 1);\n}\n\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "HJtHxqARm": {
+          "id": "HJtHxqARm",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "@/output-tft-lcd-device"
+        },
+        "HJtPecAR7": {
+          "description": "Set the Rotation of the display 0 -3",
+          "id": "HJtPecAR7",
+          "label": "Rotation",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HkbKHxqCR7": {
+          "id": "HkbKHxqCR7",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "@/input-tft-lcd-device"
+        },
+        "Hyq8-9CAX": {
+          "description": "Pulse on Complete",
+          "id": "Hyq8-9CAX",
+          "label": "OK",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJXFBgqR0m": {
+          "boundLiterals": {
+            "__out__": "Never"
+          },
+          "description": "Pulse to update",
+          "id": "rJXFBgqR0m",
+          "label": "INIT",
+          "position": {
+            "x": 135,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/tft-lcd-rotation"
+    },
+    "@/tft-lcd-draw-roundbox": {
+      "nodes": {
+        "HJtKXydyN": {
+          "description": "Size in pixels Y",
+          "id": "HJtKXydyN",
+          "label": "SizeY",
+          "position": {
+            "x": 169,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJlYYm1O1N": {
+          "description": "Position Y Start",
+          "id": "HJlYYm1O1N",
+          "label": "PosY",
+          "position": {
+            "x": 101,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJ-KY7y_yE": {
+          "description": "Pulse to update",
+          "id": "BJ-KY7y_yE",
+          "label": "INIT",
+          "position": {
+            "x": 374,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SyMYFQJdJN": {
+          "id": "SyMYFQJdJN",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "@/output-tft-lcd-device"
+        },
+        "BJXYKmy_J4": {
+          "description": "Position X Start",
+          "id": "BJXYKmy_J4",
+          "label": "PosX",
+          "position": {
+            "x": 67,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "B1EYt7kuJ4": {
+          "description": "Size in pixels X",
+          "id": "B1EYt7kuJ4",
+          "label": "SizeX",
+          "position": {
+            "x": 135,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJStFXkuJN": {
+          "id": "rJStFXkuJN",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "@/input-tft-lcd-device"
+        },
+        "Sk8tYmJO1E": {
+          "id": "Sk8tYmJO1E",
+          "position": {
+            "x": 33,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rkvKKXyOkE": {
+          "description": "Pulse on Complete",
+          "id": "rkvKKXyOkE",
+          "label": "OK",
+          "position": {
+            "x": 67,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJuFtXkO1N": {
+          "description": "Color to Fill/Outline with",
+          "id": "HJuFtXkO1N",
+          "label": "Color",
+          "position": {
+            "x": 306,
+            "y": 0
+          },
+          "type": "bradzilla84/color-rgb-hsl/input-rgb-color-pack"
+        },
+        "rJYtKm1_yE": {
+          "description": "Do you want to fill the box?",
+          "id": "rJYtKm1_yE",
+          "label": "FILL",
+          "position": {
+            "x": 272,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "HyWqm1O1N": {
+          "description": "Radius Size in pixels",
+          "id": "HyWqm1O1N",
+          "label": "Rad",
+          "position": {
+            "x": 203,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/tft-lcd-draw-roundbox",
+      "description": "Draw a Round Corner Box (Fill or No Fill)",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_INIT>(ctx)){\n        emitValue<output_OUT>(ctx, getValue<input_IN>(ctx));\n        return;}\n\n    auto tft = getValue<input_IN>(ctx);\n    auto color = getValue<input_Color>(ctx);\n\n\n    if (getValue<input_FILL>(ctx)){\n        tft->fillRoundRect(getValue<input_PosX>(ctx),getValue<input_PosY>(ctx),getValue<input_SizeX>(ctx),getValue<input_SizeY>(ctx),getValue<input_Rad>(ctx),color.Hex);\n    }\n    else\n    {\n        tft->drawRoundRect(getValue<input_PosX>(ctx),getValue<input_PosY>(ctx),getValue<input_SizeX>(ctx),getValue<input_SizeY>(ctx),getValue<input_Rad>(ctx),color.Hex);\n    }\n\n    emitValue<output_OUT>(ctx, getValue<input_IN>(ctx));\n    emitValue<output_OK>(ctx, 1);\n}\n\n"
+        }
+      ]
+    },
+    "@/example1": {
+      "links": {
+        "B1KU7AL1N": {
+          "id": "B1KU7AL1N",
+          "input": {
+            "nodeId": "BkvJN6L1N",
+            "pinKey": "ByMhWlPFRm"
+          },
+          "output": {
+            "nodeId": "Bk5BXAIyV",
+            "pinKey": "S1M3cEBJE"
+          }
+        },
+        "B1pYl1gk4": {
+          "id": "B1pYl1gk4",
+          "input": {
+            "nodeId": "SksNkRy14",
+            "pinKey": "BkeKcj6ZZ-$2"
+          },
+          "output": {
+            "nodeId": "B1S_lkg1N",
+            "pinKey": "Hk2bcGVDm"
+          }
+        },
+        "BJFulk1JV": {
+          "id": "BJFulk1JV",
+          "input": {
+            "nodeId": "HyvTe9ARQ",
+            "pinKey": "HkbKHxqCR7"
+          },
+          "output": {
+            "nodeId": "HkfSggXnm",
+            "pinKey": "ryKQrXfh7"
+          }
+        },
+        "BJLF4AwkE": {
+          "id": "BJLF4AwkE",
+          "input": {
+            "nodeId": "BkrEVRwJE",
+            "pinKey": "r1OtomADyN"
+          },
+          "output": {
+            "nodeId": "BkvJN6L1N",
+            "pinKey": "S1x3ZgDYR7"
+          }
+        },
+        "BJnI7RLyV": {
+          "id": "BJnI7RLyV",
+          "input": {
+            "nodeId": "BkvJN6L1N",
+            "pinKey": "B13-lPKCQ"
+          },
+          "output": {
+            "nodeId": "Bk5BXAIyV",
+            "pinKey": "ryD2qNryV"
+          }
+        },
+        "BJpjfyyJE": {
+          "id": "BJpjfyyJE",
+          "input": {
+            "nodeId": "rJuoGyJ1N",
+            "pinKey": "H1NDmwmn7"
+          },
+          "output": {
+            "nodeId": "BJN8jF0A7",
+            "pinKey": "H1bbNuaCQ"
+          }
+        },
+        "BkzDe_aAm": {
+          "id": "BkzDe_aAm",
+          "input": {
+            "nodeId": "BJJPlupC7",
+            "pinKey": "B1si52107"
+          },
+          "output": {
+            "nodeId": "rJLiiDpCm",
+            "pinKey": "S1bpIiJAQ"
+          }
+        },
+        "By7QWJJkV": {
+          "id": "By7QWJJkV",
+          "input": {
+            "nodeId": "BJN8jF0A7",
+            "pinKey": "HkLXiKRCX"
+          },
+          "output": {
+            "nodeId": "HyvTe9ARQ",
+            "pinKey": "Hyq8-9CAX"
+          }
+        },
+        "ByQwlupAm": {
+          "id": "ByQwlupAm",
+          "input": {
+            "nodeId": "BJJPlupC7",
+            "pinKey": "Hkpi9hJRX"
+          },
+          "output": {
+            "nodeId": "rJLiiDpCm",
+            "pinKey": "S1W-a8jkAQ"
+          }
+        },
+        "BynKeJxkV": {
+          "id": "BynKeJxkV",
+          "input": {
+            "nodeId": "SksNkRy14",
+            "pinKey": "BkeKcj6ZZ"
+          },
+          "output": {
+            "nodeId": "ryovlyxJN",
+            "pinKey": "Hk2bcGVDm"
+          }
+        },
+        "BywVVRPkE": {
+          "id": "BywVVRPkE",
+          "input": {
+            "nodeId": "BkrEVRwJE",
+            "pinKey": "HkrFjm0PJN"
+          },
+          "output": {
+            "nodeId": "BJh0z0wyV",
+            "pinKey": "BkzZNGRDyE"
+          }
+        },
+        "Hk1aGJyyE": {
+          "id": "Hk1aGJyyE",
+          "input": {
+            "nodeId": "rJuoGyJ1N",
+            "pinKey": "ByPYqYbTX"
+          },
+          "output": {
+            "nodeId": "BJJPlupC7",
+            "pinKey": "H1gFK31RQ"
+          }
+        },
+        "Hk4P1CJ1E": {
+          "id": "Hk4P1CJ1E",
+          "input": {
+            "nodeId": "SyVA6Ty1N",
+            "pinKey": "HkRLX6JyE"
+          },
+          "output": {
+            "nodeId": "SksNkRy14",
+            "pinKey": "rksccsp-W"
+          }
+        },
+        "Hkgpzy1kV": {
+          "id": "Hkgpzy1kV",
+          "input": {
+            "nodeId": "rJuoGyJ1N",
+            "pinKey": "B1Jc9KbpX"
+          },
+          "output": {
+            "nodeId": "BJJPlupC7",
+            "pinKey": "HyftYhkRX"
+          }
+        },
+        "HyS1mAvkN": {
+          "id": "HyS1mAvkN",
+          "input": {
+            "nodeId": "BJh0z0wyV",
+            "pinKey": "HJ_bEM0D1V"
+          },
+          "output": {
+            "nodeId": "BkvJN6L1N",
+            "pinKey": "S1x3ZgDYR7"
+          }
+        },
+        "HyjUmCIJN": {
+          "id": "HyjUmCIJN",
+          "input": {
+            "nodeId": "BkvJN6L1N",
+            "pinKey": "BkbhWlwKCm"
+          },
+          "output": {
+            "nodeId": "Bk5BXAIyV",
+            "pinKey": "ryS2c4rkV"
+          }
+        },
+        "S12KEAP1E": {
+          "id": "S12KEAP1E",
+          "input": {
+            "nodeId": "BkrEVRwJE",
+            "pinKey": "ryWFjXRDy4"
+          },
+          "output": {
+            "nodeId": "BJh0z0wyV",
+            "pinKey": "rkvZVfCvkV"
+          }
+        },
+        "SJFmXJky4": {
+          "id": "SJFmXJky4",
+          "input": {
+            "nodeId": "rJuoGyJ1N",
+            "pinKey": "BkZfcjEhQ"
+          },
+          "output": {
+            "nodeId": "rJLiiDpCm",
+            "pinKey": "B1KNDoJAQ"
+          }
+        },
+        "SJqdxkkkV": {
+          "id": "SJqdxkkkV",
+          "input": {
+            "nodeId": "BJN8jF0A7",
+            "pinKey": "HkybN_TA7"
+          },
+          "output": {
+            "nodeId": "HyvTe9ARQ",
+            "pinKey": "HJtHxqARm"
+          }
+        },
+        "SkYKekeyN": {
+          "id": "SkYKekeyN",
+          "input": {
+            "nodeId": "ryovlyxJN",
+            "pinKey": "H1DWqMVw7"
+          },
+          "output": {
+            "nodeId": "BJJPlupC7",
+            "pinKey": "H1gFK31RQ"
+          }
+        },
+        "Sy51lCJJ4": {
+          "id": "Sy51lCJJ4",
+          "input": {
+            "nodeId": "SyVA6Ty1N",
+            "pinKey": "BkXE47pJyN"
+          },
+          "output": {
+            "nodeId": "rJLiiDpCm",
+            "pinKey": "B1KNDoJAQ"
+          }
+        },
+        "SyRhowpRm": {
+          "id": "SyRhowpRm",
+          "input": {
+            "nodeId": "rJLiiDpCm",
+            "pinKey": "B1N-pUsJAm"
+          },
+          "output": {
+            "nodeId": "r1xjjwTC7",
+            "pinKey": "BJxewIjy0Q"
+          }
+        },
+        "SyRtVRP1V": {
+          "id": "SyRtVRP1V",
+          "input": {
+            "nodeId": "r1sHVCPyN",
+            "pinKey": "ryWFjXRDy4"
+          },
+          "output": {
+            "nodeId": "BkrEVRwJE",
+            "pinKey": "SyDKj7RvkV"
+          }
+        },
+        "SysFgkeJN": {
+          "id": "SysFgkeJN",
+          "input": {
+            "nodeId": "B1S_lkg1N",
+            "pinKey": "H1DWqMVw7"
+          },
+          "output": {
+            "nodeId": "BJJPlupC7",
+            "pinKey": "HyftYhkRX"
+          }
+        },
+        "rJLAp6yyV": {
+          "id": "rJLAp6yyV",
+          "input": {
+            "nodeId": "SyVA6Ty1N",
+            "pinKey": "HybVV7aJJ4"
+          },
+          "output": {
+            "nodeId": "rJuoGyJ1N",
+            "pinKey": "BkoXLoN3m"
+          }
+        },
+        "rkKt4Cw14": {
+          "id": "rkKt4Cw14",
+          "input": {
+            "nodeId": "r1sHVCPyN",
+            "pinKey": "r1OtomADyN"
+          },
+          "output": {
+            "nodeId": "BkvJN6L1N",
+            "pinKey": "S1x3ZgDYR7"
+          }
+        },
+        "ry18ECDJ4": {
+          "id": "ry18ECDJ4",
+          "input": {
+            "nodeId": "r1sHVCPyN",
+            "pinKey": "HkrFjm0PJN"
+          },
+          "output": {
+            "nodeId": "BkrEVRwJE",
+            "pinKey": "rkzYiQCw1E"
+          }
+        },
+        "r12z71_kN": {
+          "id": "r12z71_kN",
+          "output": {
+            "nodeId": "r1sHVCPyN",
+            "pinKey": "rkzYiQCw1E"
+          },
+          "input": {
+            "nodeId": "Byjf7yOJN",
+            "pinKey": "B148YSAv1V"
+          }
+        },
+        "BJAfmy_JE": {
+          "id": "BJAfmy_JE",
+          "output": {
+            "nodeId": "r1sHVCPyN",
+            "pinKey": "SyDKj7RvkV"
+          },
+          "input": {
+            "nodeId": "Byjf7yOJN",
+            "pinKey": "rJeLtHAD1N"
+          }
+        },
+        "rk2Z4yOyN": {
+          "id": "rk2Z4yOyN",
+          "output": {
+            "nodeId": "Byjf7yOJN",
+            "pinKey": "rJWLtB0P1N"
+          },
+          "input": {
+            "nodeId": "HJ5-VJ_kV",
+            "pinKey": "rJStFXkuJN"
+          }
+        },
+        "S1CZ41dkE": {
+          "id": "S1CZ41dkE",
+          "output": {
+            "nodeId": "Byjf7yOJN",
+            "pinKey": "BJ8LtBADJ4"
+          },
+          "input": {
+            "nodeId": "HJ5-VJ_kV",
+            "pinKey": "BJ-KY7y_yE"
+          }
+        },
+        "B14MNk_1V": {
+          "id": "B14MNk_1V",
+          "output": {
+            "nodeId": "BkvJN6L1N",
+            "pinKey": "S1x3ZgDYR7"
+          },
+          "input": {
+            "nodeId": "Byjf7yOJN",
+            "pinKey": "S1wUtrCvkV"
+          }
+        },
+        "r1_z4kdkE": {
+          "id": "r1_z4kdkE",
+          "output": {
+            "nodeId": "BkvJN6L1N",
+            "pinKey": "S1x3ZgDYR7"
+          },
+          "input": {
+            "nodeId": "HJ5-VJ_kV",
+            "pinKey": "HJuFtXkO1N"
+          }
+        },
+        "rkJaVJ_kE": {
+          "id": "rkJaVJ_kE",
+          "output": {
+            "nodeId": "BJN8jF0A7",
+            "pinKey": "BJnW-c0RQ"
+          },
+          "input": {
+            "nodeId": "BJh0z0wyV",
+            "pinKey": "SJ-WEf0D14"
+          }
+        },
+        "Sylw_y_JV": {
+          "id": "Sylw_y_JV",
+          "output": {
+            "nodeId": "BJN8jF0A7",
+            "pinKey": "H1bbNuaCQ"
+          },
+          "input": {
+            "nodeId": "BJh0z0wyV",
+            "pinKey": "BkSZEM0D1V"
+          }
+        },
+        "HJ-kPK1Ok4": {
+          "id": "HJ-kPK1Ok4",
+          "input": {
+            "nodeId": "H1xkPtJO1V",
+            "pinKey": "ByMhWlPFRm"
+          },
+          "output": {
+            "nodeId": "rkkvtkukE",
+            "pinKey": "S1M3cEBJE"
+          }
+        },
+        "rkz1vY1ukV": {
+          "id": "rkz1vY1ukV",
+          "input": {
+            "nodeId": "H1xkPtJO1V",
+            "pinKey": "B13-lPKCQ"
+          },
+          "output": {
+            "nodeId": "rkkvtkukE",
+            "pinKey": "ryD2qNryV"
+          }
+        },
+        "r1Xyvt1_JV": {
+          "id": "r1Xyvt1_JV",
+          "input": {
+            "nodeId": "H1xkPtJO1V",
+            "pinKey": "BkbhWlwKCm"
+          },
+          "output": {
+            "nodeId": "rkkvtkukE",
+            "pinKey": "ryS2c4rkV"
+          }
+        },
+        "SJBDK1_1E": {
+          "id": "SJBDK1_1E",
+          "output": {
+            "nodeId": "H1xkPtJO1V",
+            "pinKey": "S1x3ZgDYR7"
+          },
+          "input": {
+            "nodeId": "rJuoGyJ1N",
+            "pinKey": "rJvI4aUkV"
+          }
+        },
+        "HJvwYyu14": {
+          "id": "HJvwYyu14",
+          "output": {
+            "nodeId": "H1xkPtJO1V",
+            "pinKey": "S1x3ZgDYR7"
+          },
+          "input": {
+            "nodeId": "SyVA6Ty1N",
+            "pinKey": "SJFX468kE"
+          }
+        },
+        "r1Dgqku1V": {
+          "id": "r1Dgqku1V",
+          "output": {
+            "nodeId": "HkCJck_yV",
+            "pinKey": "ryVmUAOrvkb"
+          },
+          "input": {
+            "nodeId": "HyvTe9ARQ",
+            "pinKey": "rJXFBgqR0m"
+          }
+        }
+      },
+      "nodes": {
+        "B1S_lkg1N": {
+          "boundLiterals": {
+            "BkKz5GVwX": "3"
+          },
+          "id": "B1S_lkg1N",
+          "position": {
+            "x": 850,
+            "y": 204
+          },
+          "type": "xod/core/pad-with-zeroes"
+        },
+        "BJJPlupC7": {
+          "id": "BJJPlupC7",
+          "position": {
+            "x": 782,
+            "y": 102
+          },
+          "type": "bradzilla84/touch-adafruit/touch-map-to-display"
+        },
+        "BJN8jF0A7": {
+          "boundLiterals": {
+            "HkLXiKRCX": "Never"
+          },
+          "id": "BJN8jF0A7",
+          "position": {
+            "x": 442,
+            "y": 102
+          },
+          "type": "@/tft-lcd-background"
+        },
+        "BJh0z0wyV": {
+          "boundLiterals": {
+            "Hy-Nz0Py4": "230",
+            "SkE-EGRPkV": "310",
+            "r1Q-4GRDyN": "10",
+            "rJl-VzAPkV": "10"
+          },
+          "id": "BJh0z0wyV",
+          "position": {
+            "x": 442,
+            "y": 306
+          },
+          "type": "@/tft-lcd-draw-line"
+        },
+        "Bk5BXAIyV": {
+          "boundLiterals": {
+            "B1E_rVB1E": ".250",
+            "HJiOBVB1N": "Continuously",
+            "S18uBVry4": "1",
+            "SkDdSVHyV": ".5"
+          },
+          "id": "Bk5BXAIyV",
+          "position": {
+            "x": 578,
+            "y": 0
+          },
+          "type": "bradzilla84/color-rgb-hsl/hsl-to-rgb"
+        },
+        "BkrEVRwJE": {
+          "boundLiterals": {
+            "HJNKsQRDkN": "30",
+            "HJmYo7Rw14": "200",
+            "HklKoXCD1E": "40"
+          },
+          "id": "BkrEVRwJE",
+          "position": {
+            "x": 442,
+            "y": 408
+          },
+          "type": "@/tft-lcd-draw-circle"
+        },
+        "BkvJN6L1N": {
+          "boundLiterals": {
+            "BkV2-ewKAX": "Continuously",
+            "BkbhWlwKCm": "255"
+          },
+          "id": "BkvJN6L1N",
+          "position": {
+            "x": 578,
+            "y": 102
+          },
+          "type": "bradzilla84/color-rgb-hsl/rgb-color-pack"
+        },
+        "HkfSggXnm": {
+          "id": "HkfSggXnm",
+          "position": {
+            "x": 442,
+            "y": -102
+          },
+          "type": "@/tft-lcd-device"
+        },
+        "HyvTe9ARQ": {
+          "boundLiterals": {
+            "HJtPecAR7": "1",
+            "rJXFBgqR0m": "On Boot"
+          },
+          "id": "HyvTe9ARQ",
+          "position": {
+            "x": 442,
+            "y": 0
+          },
+          "type": "@/tft-lcd-rotation"
+        },
+        "SksNkRy14": {
+          "arityLevel": 3,
+          "boundLiterals": {
+            "BkeKcj6ZZ-$1": "\" Y:\"",
+            "Hkqu9oaWb": "\"X:\""
+          },
+          "id": "SksNkRy14",
+          "position": {
+            "x": 748,
+            "y": 306
+          },
+          "type": "xod/core/concat"
+        },
+        "SyVA6Ty1N": {
+          "boundLiterals": {
+            "HkRLX6JyE": "\"Hello World\"",
+            "HyKHnTkJV": "1",
+            "S1xgIap1JV": "50",
+            "r1eIp6yJV": "50"
+          },
+          "id": "SyVA6Ty1N",
+          "position": {
+            "x": 748,
+            "y": 510
+          },
+          "type": "@/tft-lcd-display-txt"
+        },
+        "r1sHVCPyN": {
+          "boundLiterals": {
+            "HJNKsQRDkN": "30",
+            "HJmYo7Rw14": "40",
+            "HklKoXCD1E": "190",
+            "rkKKjQAvkN": "True"
+          },
+          "id": "r1sHVCPyN",
+          "position": {
+            "x": 442,
+            "y": 510
+          },
+          "type": "@/tft-lcd-draw-circle"
+        },
+        "r1xjjwTC7": {
+          "id": "r1xjjwTC7",
+          "position": {
+            "x": 782,
+            "y": -102
+          },
+          "type": "bradzilla84/touch-adafruit/touch-device"
+        },
+        "rJLiiDpCm": {
+          "id": "rJLiiDpCm",
+          "position": {
+            "x": 782,
+            "y": 0
+          },
+          "type": "bradzilla84/touch-adafruit/touch-detect"
+        },
+        "rJuoGyJ1N": {
+          "boundLiterals": {
+            "B1-19cKZa7": "5",
+            "Byly9cKZ6X": "5",
+            "ryj0M1JkE": "True"
+          },
+          "id": "rJuoGyJ1N",
+          "position": {
+            "x": 748,
+            "y": 408
+          },
+          "type": "@/tft-lcd-draw-box"
+        },
+        "ryovlyxJN": {
+          "boundLiterals": {
+            "BkKz5GVwX": "3"
+          },
+          "id": "ryovlyxJN",
+          "position": {
+            "x": 782,
+            "y": 204
+          },
+          "type": "xod/core/pad-with-zeroes"
+        },
+        "Byjf7yOJN": {
+          "id": "Byjf7yOJN",
+          "type": "@/tft-lcd-draw-triangle",
+          "position": {
+            "x": 442,
+            "y": 612
+          },
+          "boundLiterals": {
+            "rJfUFHAPJV": "10",
+            "Hk8Fr0D1V": "10",
+            "rJeIjB0DJ4": "10",
+            "rJUjHCvyE": "40",
+            "H1e_jrRwJV": "40",
+            "S1usBRPyE": "40"
+          }
+        },
+        "HJ5-VJ_kV": {
+          "id": "HJ5-VJ_kV",
+          "type": "@/tft-lcd-draw-roundbox",
+          "position": {
+            "x": 442,
+            "y": 714
+          },
+          "boundLiterals": {
+            "BJXYKmy_J4": "200",
+            "HJlYYm1O1N": "100",
+            "B1EYt7kuJ4": "40",
+            "HJtKXydyN": "40",
+            "HyWqm1O1N": "10"
+          }
+        },
+        "rkkvtkukE": {
+          "boundLiterals": {
+            "B1E_rVB1E": ".100",
+            "HJiOBVB1N": "Continuously",
+            "S18uBVry4": "1",
+            "SkDdSVHyV": ".5"
+          },
+          "id": "rkkvtkukE",
+          "position": {
+            "x": 986,
+            "y": 204
+          },
+          "type": "bradzilla84/color-rgb-hsl/hsl-to-rgb"
+        },
+        "H1xkPtJO1V": {
+          "boundLiterals": {
+            "BkV2-ewKAX": "Continuously",
+            "BkbhWlwKCm": "255"
+          },
+          "id": "H1xkPtJO1V",
+          "position": {
+            "x": 986,
+            "y": 306
+          },
+          "type": "bradzilla84/color-rgb-hsl/rgb-color-pack"
+        },
+        "HkCJck_yV": {
+          "id": "HkCJck_yV",
+          "type": "xod/core/boot",
+          "position": {
+            "x": 646,
+            "y": -102
+          }
+        }
+      },
+      "path": "@/example1"
+    }
+  },
+  "version": "0.0.1"
+}

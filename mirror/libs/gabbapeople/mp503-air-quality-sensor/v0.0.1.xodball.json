@@ -1,0 +1,296 @@
+{
+  "description": "The library to work with Grove - Air quality sensor v1.3 from Seed Studio.",
+  "name": "mp503-air-quality-sensor",
+  "patches": {
+    "@/example": {
+      "links": {
+        "B1GJfYwIU": {
+          "id": "B1GJfYwIU",
+          "input": {
+            "nodeId": "SyJdZFwUL",
+            "pinKey": "SJ-BNy8s2G"
+          },
+          "output": {
+            "nodeId": "B1WvWYPLI",
+            "pinKey": "BJtRWYDLU"
+          }
+        },
+        "HkcJztwII": {
+          "id": "HkcJztwII",
+          "input": {
+            "nodeId": "HJU1ftwI8",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "SyJdZFwUL",
+            "pinKey": "r1ctYrM3G"
+          }
+        }
+      },
+      "nodes": {
+        "B1WvWYPLI": {
+          "boundLiterals": {
+            "BkI0ltvUL": "Continuously"
+          },
+          "id": "B1WvWYPLI",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/mp503-air-quality-sensor"
+        },
+        "HJU1ftwI8": {
+          "id": "HJU1ftwI8",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "SyJdZFwUL": {
+          "arityLevel": 3,
+          "boundLiterals": {
+            "BkrwKrGhG": "\"High pollution! Force signal active.\"",
+            "HypuFHG3z": "\"High pollution!\"",
+            "HypuFHG3z-$1": "\"Low pollution!\"",
+            "HypuFHG3z-$2": "\"Fresh air.\""
+          },
+          "id": "SyJdZFwUL",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/nth-input"
+        }
+      },
+      "path": "@/example"
+    },
+    "@/mp503-air-quality-sensor": {
+      "description": "Quickstart-node",
+      "links": {
+        "SJnAlKDII": {
+          "id": "SJnAlKDII",
+          "input": {
+            "nodeId": "B1DXlKPUL",
+            "pinKey": "BJvd0uwL8"
+          },
+          "output": {
+            "nodeId": "BkI0ltvUL",
+            "pinKey": "__out__"
+          }
+        },
+        "SktQlKwUI": {
+          "id": "SktQlKwUI",
+          "input": {
+            "nodeId": "B1DXlKPUL",
+            "pinKey": "rJnGA_vLI"
+          },
+          "output": {
+            "nodeId": "SkgMxtwIU",
+            "pinKey": "ryWT7TODLI"
+          }
+        },
+        "ry0RZYP8L": {
+          "id": "ry0RZYP8L",
+          "input": {
+            "nodeId": "BJtRWYDLU",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "B1DXlKPUL",
+            "pinKey": "HJfpWYvIL"
+          }
+        },
+        "rykElKv8U": {
+          "id": "rykElKv8U",
+          "input": {
+            "nodeId": "SkgMxtwIU",
+            "pinKey": "rygTQ6dDUI"
+          },
+          "output": {
+            "nodeId": "H1T7etwIU",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "B1DXlKPUL": {
+          "id": "B1DXlKPUL",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/read-air-quality"
+        },
+        "BJtRWYDLU": {
+          "id": "BJtRWYDLU",
+          "label": "AQ",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BkI0ltvUL": {
+          "id": "BkI0ltvUL",
+          "label": "UPD",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1T7etwIU": {
+          "boundLiterals": {
+            "__out__": "A0"
+          },
+          "id": "H1T7etwIU",
+          "label": "PORT",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SkgMxtwIU": {
+          "id": "SkgMxtwIU",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/mp503-device"
+        }
+      },
+      "path": "@/mp503-air-quality-sensor"
+    },
+    "@/mp503-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/Seeed-Studio/Grove_Air_quality_Sensor\"\n\n// clang-format off\n{{#global}}\n#include <Air_Quality_Sensor.h>\n{{/global}}\n// clang-format on\n\nstruct State {\n    uint8_t mem[sizeof(AirQualitySensor)];\n};\n\nusing Type = AirQualitySensor*;\n\n// clang-format off\n{{ GENERATED_CODE }}\n// clang-format on\n\nvoid evaluate(Context ctx) {\n    if (!isSettingUp())\n        return;\n\n    auto state = getState(ctx);\n    auto port = getValue<input_PORT>(ctx);\n\n    Type sensor = new (state->mem) AirQualitySensor(port);\n\n    if (!(sensor->init())) {\n        raiseError(ctx);\n        return;\n    }\n\n    emitValue<output_DEV>(ctx, sensor);\n}\n"
+        }
+      ],
+      "nodes": {
+        "HJ6X6dPLI": {
+          "id": "HJ6X6dPLI",
+          "position": {
+            "x": -9,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ryWT7TODLI": {
+          "id": "ryWT7TODLI",
+          "label": "DEV",
+          "position": {
+            "x": -9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "rygTQ6dDUI": {
+          "boundLiterals": {
+            "__out__": "A0"
+          },
+          "id": "rygTQ6dDUI",
+          "label": "PORT",
+          "position": {
+            "x": -9,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        }
+      },
+      "path": "@/mp503-device"
+    },
+    "@/read-air-quality": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto sensor = getValue<input_DEV>(ctx);\n    emitValue<output_DEVU0027>(ctx, sensor);\n\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    uint8_t quality = sensor->slope();\n    emitValue<output_AQ>(ctx, quality);\n    emitValue<output_DONE>(ctx, 1);\n\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJvd0uwL8": {
+          "id": "BJvd0uwL8",
+          "label": "UPD",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HJfpWYvIL": {
+          "id": "HJfpWYvIL",
+          "label": "AQ",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SkGVAdw8I": {
+          "id": "SkGVAdw8I",
+          "label": "DEV'",
+          "position": {
+            "x": -1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/output-mp503-device"
+        },
+        "rJc70_wLI": {
+          "id": "rJc70_wLI",
+          "position": {
+            "x": -1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJnGA_vLI": {
+          "id": "rJnGA_vLI",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-mp503-device"
+        },
+        "rkM6xKDUU": {
+          "id": "rkM6xKDUU",
+          "label": "DONE",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/read-air-quality"
+    }
+  },
+  "version": "0.0.1"
+}

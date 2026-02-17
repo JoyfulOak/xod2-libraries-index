@@ -1,0 +1,1036 @@
+{
+  "patches": {
+    "@/count-inc-dec": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    Number count = getValue<output_OUT>(ctx);\n\n    if (isInputDirty<input_RST>(ctx))\n        count = 0;\n    else {\n        auto step = getValue<input_STEP>(ctx);\n\n        if (isInputDirty<input_INC>(ctx))\n            count += step;\n\n        if (isInputDirty<input_DEC>(ctx))\n            count -= step;\n    }\n\n    emitValue<output_OUT>(ctx, count);\n}\n"
+        }
+      ],
+      "nodes": {
+        "HJsPxxt5m": {
+          "id": "HJsPxxt5m",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BkljwelY9m": {
+          "description": "Triggers a single increment.",
+          "label": "INC",
+          "id": "BkljwelY9m",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1WsweeFqm": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Value to add on each increment.",
+          "label": "STEP",
+          "id": "H1WsweeFqm",
+          "position": {
+            "x": -0.05,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "B1zoDegtcQ": {
+          "description": "Resets the accumulated value to zero.",
+          "label": "RST",
+          "id": "B1zoDegtcQ",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ry7swlgY9Q": {
+          "description": "The accumulated value.",
+          "id": "ry7swlgY9Q",
+          "position": {
+            "x": -0.05,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HkPueeK9m": {
+          "description": "Triggers a single decrement.",
+          "label": "DEC",
+          "id": "HkPueeK9m",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/count-inc-dec"
+    },
+    "@/count-inc-dec-limit": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "// based on https://xod.io/libs/ivanmason/lcd16x2x5button/updowncount/\n\n#pragma XOD dirtieness disable\n\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number count;\n\n    void evaluate(Context ctx) {\n        if(isInputDirty<input_Reset>(ctx)) {\n            count = getValue<input_Start>(ctx);\n        }\n        \n        if(isInputDirty<input_Add>(ctx)){\n            count += getValue<input_Step>(ctx);\n        }\n\n        if(isInputDirty<input_Subtract>(ctx)){\n            count -= getValue<input_Step>(ctx);\n        }\n\n        if (count > getValue<input_Max>(ctx)) {\n            count = getValue<input_Max>(ctx);\n        }\n\n        if (count < getValue<input_Min>(ctx)) {\n            count = getValue<input_Min>(ctx);\n        }\n\n        emitValue<output_Count>(ctx, count);\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "SJiSaNdR9": {
+          "id": "SJiSaNdR9",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJADaN_Ac": {
+          "description": "On pulse, add step size to current count.",
+          "label": "Add",
+          "id": "SJADaN_Ac",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1bupNOA9": {
+          "description": "On pulse, subtract step size from current count.",
+          "label": "Subtract",
+          "id": "r1bupNOA9",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S1fuaE_Cq": {
+          "description": "On pulse, reset count to Start value.",
+          "label": "Reset",
+          "id": "S1fuaE_Cq",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryU6TVuCc": {
+          "description": "Starting number",
+          "label": "Start",
+          "id": "ryU6TVuCc",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "B1RpaNORc": {
+          "description": "Step size. Add/subtract this number.",
+          "label": "Step",
+          "id": "B1RpaNORc",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJ9C6V_0q": {
+          "description": "Minimum. Lower limit for output.",
+          "label": "Min",
+          "id": "rJ9C6V_0q",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJjAa4_0c": {
+          "description": "Maximum. Upper limit for output.",
+          "label": "Max",
+          "id": "HJjAa4_0c",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BkHlRV_0q": {
+          "description": "Current count.",
+          "label": "Count",
+          "id": "BkHlRV_0q",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SyrWAEu0q": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "SyrWAEu0q",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/count-inc-dec-limit"
+    },
+    "@/a-examples": {
+      "nodes": {
+        "S1u_Yfxvs": {
+          "id": "S1u_Yfxvs",
+          "type": "@/count-inc-dec",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "By3OYfxvs": {
+          "id": "By3OYfxvs",
+          "type": "@/count-inc-dec-limit",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "BkYfHExDo": {
+          "id": "BkYfHExDo",
+          "type": "@/getdate",
+          "position": {
+            "x": 15,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "rkozBNgPi": {
+          "id": "rkozBNgPi",
+          "type": "@/setdate",
+          "position": {
+            "x": 15,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "comments": {
+        "Hyx9FGevo": {
+          "id": "Hyx9FGevo",
+          "position": {
+            "x": 1,
+            "y": -1,
+            "units": "slots"
+          },
+          "size": {
+            "width": 9,
+            "height": 2,
+            "units": "slots"
+          },
+          "content": "--Example Page--\nContains:\n-all custom patches\n-description\n-examples"
+        }
+      },
+      "path": "@/a-examples"
+    },
+    "@/getdate": {
+      "links": {
+        "SkD1O4ExDo": {
+          "id": "SkD1O4ExDo",
+          "input": {
+            "nodeId": "BygydVVgPj",
+            "pinKey": "Bk1C_4rPQ"
+          },
+          "output": {
+            "nodeId": "rkfkON4lDs",
+            "pinKey": "HJbjB_Nd-"
+          }
+        },
+        "SJuy_E4lwj": {
+          "id": "SJuy_E4lwj",
+          "input": {
+            "nodeId": "H1WkuEVxDo",
+            "pinKey": "Hy-QUR_BPkZ"
+          },
+          "output": {
+            "nodeId": "BygydVVgPj",
+            "pinKey": "rkU6dErPQ"
+          }
+        },
+        "Byt1O4EgPo": {
+          "id": "Byt1O4EgPo",
+          "input": {
+            "nodeId": "SJQkuNVlvi",
+            "pinKey": "Sk2oU_Vdb"
+          },
+          "output": {
+            "nodeId": "BygydVVgPj",
+            "pinKey": "rkU6dErPQ"
+          }
+        },
+        "S19k_ENlvo": {
+          "id": "S19k_ENlvo",
+          "input": {
+            "nodeId": "BJ41uENgwi",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "H1WkuEVxDo",
+            "pinKey": "r1lQLAOBwJb"
+          }
+        },
+        "By2JdENgPj": {
+          "id": "By2JdENgPj",
+          "input": {
+            "nodeId": "rk81OEEgDi",
+            "pinKey": "Hy_D4G0JOX"
+          },
+          "output": {
+            "nodeId": "BygydVVgPj",
+            "pinKey": "BklE_1edQ"
+          }
+        },
+        "HJ6Jd4EgDo": {
+          "id": "HJ6Jd4EgDo",
+          "input": {
+            "nodeId": "H1WkuEVxDo",
+            "pinKey": "HkXm80uHPyb"
+          },
+          "output": {
+            "nodeId": "rk81OEEgDi",
+            "pinKey": "BkvDEzR1Om"
+          }
+        },
+        "HJ0JdEEePi": {
+          "id": "HJ0JdEEePi",
+          "output": {
+            "nodeId": "HyJdNEeDo",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rkfkON4lDs",
+            "pinKey": "BJfKruVdb"
+          }
+        },
+        "H17sEVgws": {
+          "id": "H17sEVgws",
+          "output": {
+            "nodeId": "H1WkuEVxDo",
+            "pinKey": "r1lQLAOBwJb"
+          },
+          "input": {
+            "nodeId": "SJgsEEgDi",
+            "pinKey": "BkjI-COLb"
+          }
+        },
+        "r1Vj4EeDj": {
+          "id": "r1Vj4EeDj",
+          "output": {
+            "nodeId": "SJgsEEgDi",
+            "pinKey": "ByAIWR_UZ"
+          },
+          "input": {
+            "nodeId": "H1ryuVVxPi",
+            "pinKey": "__in__"
+          }
+        }
+      },
+      "nodes": {
+        "HyJdNEeDo": {
+          "label": "SEND",
+          "id": "HyJdNEeDo",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BygydVVgPj": {
+          "id": "BygydVVgPj",
+          "position": {
+            "x": 1,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod-dev/ds-rtc/rtc"
+        },
+        "H1WkuEVxDo": {
+          "id": "H1WkuEVxDo",
+          "position": {
+            "x": 1,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/buffer"
+        },
+        "rkfkON4lDs": {
+          "boundLiterals": {
+            "SyssEEhJm": "68h"
+          },
+          "id": "rkfkON4lDs",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/i2c/begin-transmission"
+        },
+        "SJQkuNVlvi": {
+          "id": "SJQkuNVlvi",
+          "position": {
+            "x": 1,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/i2c/end-transmission"
+        },
+        "BJ41uENgwi": {
+          "label": "MEM",
+          "id": "BJ41uENgwi",
+          "position": {
+            "x": 1,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "H1ryuVVxPi": {
+          "label": "DONE",
+          "id": "H1ryuVVxPi",
+          "position": {
+            "x": 4,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rk81OEEgDi": {
+          "id": "rk81OEEgDi",
+          "position": {
+            "x": 1,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "stefanc1991/essentials-a/format-date-time"
+        },
+        "SJgsEEgDi": {
+          "id": "SJgsEEgDi",
+          "type": "xod/core/pulse-on-change",
+          "position": {
+            "x": 4,
+            "y": 6,
+            "units": "slots"
+          }
+        }
+      },
+      "comments": {
+        "B1Je1d4Nxwi": {
+          "content": "get DT when transmission begins",
+          "id": "B1Je1d4Nxwi",
+          "position": {
+            "x": -3,
+            "y": 4,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "HyxgyOEExwj": {
+          "content": "start i2c transmission\n",
+          "id": "HyxgyOEExwj",
+          "position": {
+            "x": -3,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "HJ-xku4Vxwj": {
+          "content": "format the DT into string",
+          "id": "HJ-xku4Vxwj",
+          "position": {
+            "x": -3,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "S1Mg1_VVxDs": {
+          "content": "save DT in buffer for output",
+          "id": "S1Mg1_VVxDs",
+          "position": {
+            "x": -3,
+            "y": 6,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "B1mg1_4Ngwj": {
+          "content": "after DT is saved end transmission with RTC",
+          "id": "B1mg1_4Ngwj",
+          "position": {
+            "x": -3,
+            "y": 7,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/getdate"
+    },
+    "@/format-date-time": {
+      "description": "Transforms a datetime into a string timestamp in the form \"2018-03-25 23:35:04\"",
+      "links": {
+        "B1ZgDEM01d7": {
+          "id": "B1ZgDEM01d7",
+          "input": {
+            "nodeId": "BkvDEzR1Om",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkxPEzCyuX",
+            "pinKey": "rksccsp-W"
+          }
+        },
+        "BJwCSHSOQ": {
+          "id": "BJwCSHSOQ",
+          "input": {
+            "nodeId": "ryBaSBHdX",
+            "pinKey": "H1DWqMVw7"
+          },
+          "output": {
+            "nodeId": "HJ7D4fRkdm",
+            "pinKey": "BJZls0g7DQ"
+          }
+        },
+        "BkLRSrSuX": {
+          "id": "BkLRSrSuX",
+          "input": {
+            "nodeId": "rk7arBH_Q",
+            "pinKey": "H1DWqMVw7"
+          },
+          "output": {
+            "nodeId": "HJ7D4fRkdm",
+            "pinKey": "rJglsCgmvm"
+          }
+        },
+        "ByYCrrrOm": {
+          "id": "ByYCrrrOm",
+          "input": {
+            "nodeId": "B1UpHSrOQ",
+            "pinKey": "H1DWqMVw7"
+          },
+          "output": {
+            "nodeId": "HJ7D4fRkdm",
+            "pinKey": "r1MljClXPm"
+          }
+        },
+        "ByfePNGCJuX": {
+          "id": "ByfePNGCJuX",
+          "input": {
+            "nodeId": "HJ7D4fRkdm",
+            "pinKey": "rkCYRgQDm"
+          },
+          "output": {
+            "nodeId": "Hy_D4G0JOX",
+            "pinKey": "__out__"
+          }
+        },
+        "S1EgvEzRJuX": {
+          "id": "S1EgvEzRJuX",
+          "input": {
+            "nodeId": "rkSPVz0kOQ",
+            "pinKey": "BJlHojaWZ"
+          },
+          "output": {
+            "nodeId": "HJ7D4fRkdm",
+            "pinKey": "HyA5RgXD7"
+          }
+        },
+        "S1cABHrO7": {
+          "id": "S1cABHrO7",
+          "input": {
+            "nodeId": "HkD6rBrOQ",
+            "pinKey": "H1DWqMVw7"
+          },
+          "output": {
+            "nodeId": "HJ7D4fRkdm",
+            "pinKey": "BkbiCl7v7"
+          }
+        },
+        "rJERHrrdm": {
+          "id": "rJERHrrdm",
+          "input": {
+            "nodeId": "r1H2BrruX",
+            "pinKey": "H1DWqMVw7"
+          },
+          "output": {
+            "nodeId": "HJ7D4fRkdm",
+            "pinKey": "SJgsCeQvm"
+          }
+        },
+        "rkH8E7gvi": {
+          "id": "rkH8E7gvi",
+          "output": {
+            "nodeId": "HJ7D4fRkdm",
+            "pinKey": "HJLWQZQPm"
+          },
+          "input": {
+            "nodeId": "ryJINmePj",
+            "pinKey": "H1DWqMVw7"
+          }
+        },
+        "SkmWrQgDj": {
+          "id": "SkmWrQgDj",
+          "output": {
+            "nodeId": "rkSPVz0kOQ",
+            "pinKey": "r1H_oipZb"
+          },
+          "input": {
+            "nodeId": "rkxPEzCyuX",
+            "pinKey": "Hkqu9oaWb"
+          }
+        },
+        "HJPnBmevo": {
+          "id": "HJPnBmevo",
+          "output": {
+            "nodeId": "ryJINmePj",
+            "pinKey": "Hk2bcGVDm"
+          },
+          "input": {
+            "nodeId": "ByUuV7xvo",
+            "pinKey": "__in__"
+          }
+        },
+        "S1YnS7xwi": {
+          "id": "S1YnS7xwi",
+          "output": {
+            "nodeId": "r1H2BrruX",
+            "pinKey": "Hk2bcGVDm"
+          },
+          "input": {
+            "nodeId": "rkxPEzCyuX",
+            "pinKey": "BkeKcj6ZZ-$1"
+          }
+        },
+        "ryo3H7xwo": {
+          "id": "ryo3H7xwo",
+          "output": {
+            "nodeId": "rk7arBH_Q",
+            "pinKey": "Hk2bcGVDm"
+          },
+          "input": {
+            "nodeId": "rkxPEzCyuX",
+            "pinKey": "BkeKcj6ZZ-$3"
+          }
+        },
+        "BJ6hr7xwj": {
+          "id": "BJ6hr7xwj",
+          "output": {
+            "nodeId": "ryBaSBHdX",
+            "pinKey": "Hk2bcGVDm"
+          },
+          "input": {
+            "nodeId": "rkxPEzCyuX",
+            "pinKey": "BkeKcj6ZZ-$5"
+          }
+        },
+        "rkC2rXevj": {
+          "id": "rkC2rXevj",
+          "output": {
+            "nodeId": "B1UpHSrOQ",
+            "pinKey": "Hk2bcGVDm"
+          },
+          "input": {
+            "nodeId": "rkxPEzCyuX",
+            "pinKey": "BkeKcj6ZZ-$7"
+          }
+        },
+        "BkgTrmxvj": {
+          "id": "BkgTrmxvj",
+          "output": {
+            "nodeId": "HkD6rBrOQ",
+            "pinKey": "Hk2bcGVDm"
+          },
+          "input": {
+            "nodeId": "rkxPEzCyuX",
+            "pinKey": "BkeKcj6ZZ-$9"
+          }
+        }
+      },
+      "nodes": {
+        "B1UpHSrOQ": {
+          "boundLiterals": {
+            "BkKz5GVwX": "2"
+          },
+          "id": "B1UpHSrOQ",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/pad-with-zeroes"
+        },
+        "BkvDEzR1Om": {
+          "label": "OUT",
+          "id": "BkvDEzR1Om",
+          "position": {
+            "x": 0,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "HJ7D4fRkdm": {
+          "id": "HJ7D4fRkdm",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/datetime/unpack-datetime"
+        },
+        "HkD6rBrOQ": {
+          "boundLiterals": {
+            "BkKz5GVwX": "2"
+          },
+          "id": "HkD6rBrOQ",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/pad-with-zeroes"
+        },
+        "Hy_D4G0JOX": {
+          "label": "DT",
+          "id": "Hy_D4G0JOX",
+          "position": {
+            "x": 0,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/datetime/input-datetime"
+        },
+        "r1H2BrruX": {
+          "boundLiterals": {
+            "BkKz5GVwX": "2"
+          },
+          "id": "r1H2BrruX",
+          "position": {
+            "x": -2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/pad-with-zeroes"
+        },
+        "rk7arBH_Q": {
+          "boundLiterals": {
+            "BkKz5GVwX": "2"
+          },
+          "id": "rk7arBH_Q",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/pad-with-zeroes"
+        },
+        "rkSPVz0kOQ": {
+          "boundLiterals": {
+            "HJTIija-W": "0"
+          },
+          "id": "rkSPVz0kOQ",
+          "position": {
+            "x": -4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/format-number"
+        },
+        "rkxPEzCyuX": {
+          "boundLiterals": {
+            "BkeKcj6ZZ": "\"-\"",
+            "BkeKcj6ZZ-$1": "\"-\"",
+            "BkeKcj6ZZ-$10": "\"\"",
+            "BkeKcj6ZZ-$2": "\"-\"",
+            "BkeKcj6ZZ-$4": "\" \"",
+            "BkeKcj6ZZ-$6": "\":\"",
+            "BkeKcj6ZZ-$8": "\":\""
+          },
+          "arityLevel": 10,
+          "id": "rkxPEzCyuX",
+          "position": {
+            "x": 0,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/concat"
+        },
+        "ryBaSBHdX": {
+          "boundLiterals": {
+            "BkKz5GVwX": "2"
+          },
+          "id": "ryBaSBHdX",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/pad-with-zeroes"
+        },
+        "ryJINmePj": {
+          "boundLiterals": {
+            "BkKz5GVwX": "2"
+          },
+          "id": "ryJINmePj",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/pad-with-zeroes"
+        },
+        "ByUuV7xvo": {
+          "label": "WK",
+          "id": "ByUuV7xvo",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        }
+      },
+      "path": "@/format-date-time"
+    },
+    "@/setdate": {
+      "links": {
+        "SJOXQ44xDj": {
+          "id": "SJOXQ44xDj",
+          "input": {
+            "nodeId": "B1Z7mVVgDj",
+            "pinKey": "Sk2oU_Vdb"
+          },
+          "output": {
+            "nodeId": "BkzmXVEevo",
+            "pinKey": "Bk1eOQ6mHvm"
+          }
+        },
+        "ByYQ7EExDj": {
+          "id": "ByYQ7EExDj",
+          "input": {
+            "nodeId": "BkzmXVEevo",
+            "pinKey": "ByDPwJxu7"
+          },
+          "output": {
+            "nodeId": "Bk4Q7NVxws",
+            "pinKey": "__out__"
+          }
+        },
+        "rJ5XXV4ePo": {
+          "id": "rJ5XXV4ePo",
+          "input": {
+            "nodeId": "BkzmXVEevo",
+            "pinKey": "SJsba7HDQ"
+          },
+          "output": {
+            "nodeId": "r1mXmEExwi",
+            "pinKey": "S1FPmmHD7"
+          }
+        },
+        "BkjQmENlwo": {
+          "id": "BkjQmENlwo",
+          "output": {
+            "nodeId": "B1QQEVevj",
+            "pinKey": "ryVmUAOrvkb"
+          },
+          "input": {
+            "nodeId": "B1UXmN4gDi",
+            "pinKey": "ByU7LRuSPkW"
+          }
+        },
+        "HJ277NVlwi": {
+          "id": "HJ277NVlwi",
+          "output": {
+            "nodeId": "Sywm7NVlwi",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "B1UXmN4gDi",
+            "pinKey": "ryv7IRdSP1b"
+          }
+        },
+        "ryamXV4ePj": {
+          "id": "ryamXV4ePj",
+          "output": {
+            "nodeId": "B1UXmN4gDi",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "input": {
+            "nodeId": "rJlQm4ElPs",
+            "pinKey": "BJfKruVdb"
+          }
+        },
+        "Sk0mmVEePj": {
+          "id": "Sk0mmVEePj",
+          "output": {
+            "nodeId": "B1UXmN4gDi",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "input": {
+            "nodeId": "BkzmXVEevo",
+            "pinKey": "SJzITmrPQ"
+          }
+        },
+        "Hk1e7744ePj": {
+          "id": "Hk1e7744ePj",
+          "output": {
+            "nodeId": "B1Z7mVVgDj",
+            "pinKey": "ryviw_EOb"
+          },
+          "input": {
+            "nodeId": "S1BQQVElvi",
+            "pinKey": "__in__"
+          }
+        }
+      },
+      "nodes": {
+        "B1QQEVevj": {
+          "id": "B1QQEVevj",
+          "position": {
+            "x": 16,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/boot"
+        },
+        "rJlQm4ElPs": {
+          "boundLiterals": {
+            "SyssEEhJm": "68d"
+          },
+          "id": "rJlQm4ElPs",
+          "position": {
+            "x": 13,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/i2c/begin-transmission"
+        },
+        "B1Z7mVVgDj": {
+          "id": "B1Z7mVVgDj",
+          "position": {
+            "x": 12,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/i2c/end-transmission"
+        },
+        "BkzmXVEevo": {
+          "id": "BkzmXVEevo",
+          "position": {
+            "x": 13,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod-dev/ds-rtc/write"
+        },
+        "r1mXmEExwi": {
+          "id": "r1mXmEExwi",
+          "position": {
+            "x": 13,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod-dev/ds-rtc/rtc-device"
+        },
+        "Bk4Q7NVxws": {
+          "label": "DT",
+          "id": "Bk4Q7NVxws",
+          "position": {
+            "x": 14,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/datetime/input-datetime"
+        },
+        "S1BQQVElvi": {
+          "label": "DONE",
+          "id": "S1BQQVElvi",
+          "position": {
+            "x": 12,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "B1UXmN4gDi": {
+          "id": "B1UXmN4gDi",
+          "type": "xod/core/any",
+          "position": {
+            "x": 15,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "Sywm7NVlwi": {
+          "id": "Sywm7NVlwi",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 15,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD"
+        }
+      },
+      "path": "@/setdate"
+    }
+  },
+  "version": "0.0.4",
+  "description": "Patches I often need Pack A. Contains date-time,counter and more patches",
+  "apiKey": "c47c59b9-1b06-46e2-b3a9-4ffebf141462",
+  "name": "essentials-a"
+}

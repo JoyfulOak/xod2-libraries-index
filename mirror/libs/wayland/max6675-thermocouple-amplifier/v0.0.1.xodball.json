@@ -1,0 +1,233 @@
+{
+  "description": "MAX6675 thermocouple amplifier. Wraps https://github.com/adafruit/MAX6675-library. ",
+  "license": "BSD 3-Clause License",
+  "name": "max6675-thermocouple-amplifier",
+  "patches": {
+    "@/example": {
+      "description": "Example patch to test max6675-thermo-amp. Run in debugger.",
+      "links": {
+        "H12h3qudD": {
+          "id": "H12h3qudD",
+          "input": {
+            "nodeId": "BJd3h5ddD",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "Bkxn2qd_v",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "Hymi39duD": {
+          "id": "Hymi39duD",
+          "input": {
+            "nodeId": "S1RFnquOP",
+            "pinKey": "SJuxD9_uD"
+          },
+          "output": {
+            "nodeId": "ByC9nqdOw",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "Hyr2h9OOD": {
+          "id": "Hyr2h9OOD",
+          "input": {
+            "nodeId": "Bkxn2qd_v",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "S1RFnquOP",
+            "pinKey": "B1L7t9u_D"
+          }
+        },
+        "rJT2nqOuD": {
+          "id": "rJT2nqOuD",
+          "input": {
+            "nodeId": "BJjih5_dP",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "S1RFnquOP",
+            "pinKey": "S1VfKc_uv"
+          }
+        },
+        "rk1pncuuP": {
+          "id": "rk1pncuuP",
+          "input": {
+            "nodeId": "H1UohcdOw",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "S1RFnquOP",
+            "pinKey": "r1zZY5_OP"
+          }
+        }
+      },
+      "nodes": {
+        "BJd3h5ddD": {
+          "id": "BJd3h5ddD",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "BJjih5_dP": {
+          "id": "BJjih5_dP",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "Bkxn2qd_v": {
+          "id": "Bkxn2qd_v",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "ByC9nqdOw": {
+          "id": "ByC9nqdOw",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "H1UohcdOw": {
+          "id": "H1UohcdOw",
+          "position": {
+            "x": -1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "S1RFnquOP": {
+          "id": "S1RFnquOP",
+          "position": {
+            "x": -1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/max6675-thermo-amp"
+        }
+      },
+      "path": "@/example"
+    },
+    "@/max6675-thermo-amp": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/adafruit/MAX6675-library\"\n\n//Include C++ libraries\n#include <max6675.h>\n\nnode {\n    meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = MAX6675*;\n    }\n    \n    static_assert(isValidDigitalPort(constant_input_SCLK), \"must be a valid digital port\");\n    static_assert(isValidDigitalPort(constant_input_CS), \"must be a valid digitial port\");\n    static_assert(isValidDigitalPort(constant_input_MISO), \"must be a valid digital port\");\n\n    MAX6675 thermocouple = MAX6675(constant_input_SCLK, constant_input_CS, constant_input_MISO);\n\n\n    void evaluate(Context ctx) {\n\n        if (isSettingUp()) {\n            // wait for MAX chip to stabilize\n            delay(500);\n        }\n\n        if (isInputDirty<input_UPD>(ctx)) {\n            emitValue<output_TempC>(ctx, thermocouple.readCelsius());\n            emitValue<output_TempF>(ctx, thermocouple.readFahrenheit());\n            emitValue<output_DONE>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ],
+      "description": "MAX6675 thermocouple amplifier",
+      "nodes": {
+        "B19yD5d_P": {
+          "boundLiterals": {
+            "__out__": "D5"
+          },
+          "description": "The Arduino pin connected to Chip Select.",
+          "id": "B19yD5d_P",
+          "label": "CS",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "B1CCIc_uP": {
+          "boundLiterals": {
+            "__out__": "D6"
+          },
+          "description": "The Arduino pin connected to Clock.",
+          "id": "B1CCIc_uP",
+          "label": "SCLK",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "B1L7t9u_D": {
+          "description": "Pulse on read of temperature.",
+          "id": "B1L7t9u_D",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hk5ZP5OuP": {
+          "id": "Hk5ZP5OuP",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Hkkxv5ddw": {
+          "boundLiterals": {
+            "__out__": "D4"
+          },
+          "description": "The Arduino pin connected to Data Out.",
+          "id": "Hkkxv5ddw",
+          "label": "MISO",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "S1VfKc_uv": {
+          "description": "Temperature in degrees Fahrenheit.",
+          "id": "S1VfKc_uv",
+          "label": "TempF",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SJuxD9_uD": {
+          "description": "Update",
+          "id": "SJuxD9_uD",
+          "label": "UPD",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1zZY5_OP": {
+          "description": "Temperature in degrees Celsius.",
+          "id": "r1zZY5_OP",
+          "label": "TempC",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/max6675-thermo-amp"
+    }
+  },
+  "version": "0.0.1"
+}

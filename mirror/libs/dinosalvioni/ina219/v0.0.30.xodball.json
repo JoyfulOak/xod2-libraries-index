@@ -1,0 +1,118 @@
+{
+  "description": "(beta) Libreria hardware dedicata alle espansioni per Arduino come pcf8574",
+  "name": "ina219",
+  "patches": {
+    "@/ina219": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/flav1972/ArduinoINA219\"\n\n\n\n/**********************************************\n* INA219 library example\n* 10 May 2012 by johngineer\n*\n* 9 January 2016 Flavius Bindea: changed default values and begin()\n*\n* this code is public domain.\n**********************************************/\n\n\n\n\n\n{{#global}}\n#include \"INA219.h\"\n#include \"Wire.h\"\n{{/global}}\n\n\n\nstruct State {\n};\n\n        \n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\nauto state = getState(ctx);\n\n\n\n    if (isInputDirty<input_UPD>(ctx)) {\n\nINA219 monitor;\n  monitor.begin();\n  // begin calls:\n  // configure() with default values RANGE_32V, GAIN_8_320MV, ADC_12BIT, ADC_12BIT, CONT_SH_BUS\n  // calibrate() with default values D_SHUNT=0.1, D_V_BUS_MAX=32, D_V_SHUNT_MAX=0.2, D_I_MAX_EXPECTED=2\n  // in order to work directly with ADAFruit's INA219B breakout\n\n        float RSHV = monitor.shuntVoltageRaw();\n        float RBUV = monitor.busVoltageRaw();\n        float SHV = (monitor.shuntVoltage() * 1000);\n         float SHC = (monitor.shuntCurrent() * 1000);\n        float BUV = (monitor.busVoltage());\n        float BUP = (monitor.busPower() * 1000);\n\n        //raw shunt voltage V\n        emitValue<output_RSHV>(ctx, RSHV);\n        //raw bus voltage V\n        emitValue<output_RBUV>(ctx, RBUV);\n        //shunt voltage mV\n        emitValue<output_SHV>(ctx, SHV);\n        //shunt current mA\n        emitValue<output_SHC>(ctx, SHC);\n        //bus voltage V\n        emitValue<output_BUV>(ctx, BUV);\n        //bus power mW\n        emitValue<output_BUP>(ctx, BUP);\n    \n\n        \n\n    \n    }emitValue<output_DONE>(ctx, 1);\n}\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "H1gFnJA3BN": {
+          "id": "H1gFnJA3BN",
+          "position": {
+            "x": -0.05,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HkGt2yR2BE": {
+          "description": "shunt voltage mV",
+          "id": "HkGt2yR2BE",
+          "label": "SHV",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HyYuQCnHV": {
+          "description": "shunt current mA",
+          "id": "HyYuQCnHV",
+          "label": "SHC",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "S1HYh1AnHN": {
+          "id": "S1HYh1AnHN",
+          "label": "UPD",
+          "position": {
+            "x": -0.05,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJNFnyRnBN": {
+          "description": "raw shunt voltage  mV",
+          "id": "SJNFnyRnBN",
+          "label": "RSHV",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SkWF2k03rE": {
+          "description": "raw bus voltage mV",
+          "id": "SkWF2k03rE",
+          "label": "RBUV",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rJ4IEA3rN": {
+          "id": "rJ4IEA3rN",
+          "label": "DONE",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rklYQAnSV": {
+          "description": "bus voltage V",
+          "id": "rklYQAnSV",
+          "label": "BUV",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ryJtmAnHV": {
+          "description": "bus power mW",
+          "id": "ryJtmAnHV",
+          "label": "BUP",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/ina219"
+    },
+    "@/main": {
+      "description": "per sensori BMP280 BME280",
+      "path": "@/main"
+    }
+  },
+  "version": "0.0.30"
+}

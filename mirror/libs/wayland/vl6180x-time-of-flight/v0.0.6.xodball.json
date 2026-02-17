@@ -1,0 +1,1267 @@
+{
+  "patches": {
+    "@/init": {
+      "nodes": {
+        "B1_W7UJyu": {
+          "description": "Pulse if initialization successful.",
+          "label": "OK",
+          "id": "B1_W7UJyu",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJ3TfLkyO": {
+          "id": "HJ3TfLkyO",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1sAf8JyO": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Trigger for initialization. Default is to initialize on boot.",
+          "label": "INIT",
+          "id": "S1sAf8JyO",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r11E781J_": {
+          "description": "A VL61080X device.",
+          "label": "DEV",
+          "id": "r11E781J_",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-vl6180x-device"
+        },
+        "rJuGRZh6Y": {
+          "description": "I²C bus",
+          "label": "I2C",
+          "id": "rJuGRZh6Y",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/i2c/input-i2c"
+        }
+      },
+      "path": "@/init",
+      "description": "Initialize VL6180X device.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_INIT\n\nnode {\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulsei\n        if (!isInputDirty<input_INIT>(ctx))\n            return;\n\n        // Get a pointer to the `Adafruit_VL6180X` class instance\n        auto sensor = getValue<input_DEV>(ctx);\n\n        auto wire = getValue<input_I2C>(ctx);\n\n        // Attempt to initialize VL6180X module; if attempt fails emit error\n        if (!sensor->begin(wire)) {\n            raiseError(ctx);\n            return;\n        }\n\n        // Pulse that module initialized successfully\n        emitValue<output_OK>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example1-test-sensor": {
+      "nodes": {
+        "B1AqMfz1O": {
+          "description": "Proximity and ambient light sensor. ",
+          "id": "B1AqMfz1O",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/proximity-lux-sensor"
+        },
+        "BJo3zGMJ_": {
+          "id": "BJo3zGMJ_",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "Hy2iGzf1_": {
+          "boundLiterals": {
+            "SykJ8wjXN": "02h"
+          },
+          "id": "Hy2iGzf1_",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-byte"
+        },
+        "HyTRzMGyd": {
+          "size": {
+            "height": 1,
+            "width": 5,
+            "units": "slots"
+          },
+          "id": "HyTRzMGyd",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "SkjpMMfkO": {
+          "id": "SkjpMMfkO",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "SyOAfzzyd": {
+          "id": "SyOAfzzyd",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/translate-status-code-to-text"
+        }
+      },
+      "links": {
+        "B1NkmfG1O": {
+          "id": "B1NkmfG1O",
+          "input": {
+            "nodeId": "HyTRzMGyd",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "SyOAfzzyd",
+            "pinKey": "SJZRwCZ1u"
+          }
+        },
+        "BJqRzzz1d": {
+          "id": "BJqRzzz1d",
+          "input": {
+            "nodeId": "SyOAfzzyd",
+            "pinKey": "S1GxuCbyO"
+          },
+          "output": {
+            "nodeId": "B1AqMfz1O",
+            "pinKey": "HJUNUkGJ_"
+          }
+        },
+        "H1ehzMfy_": {
+          "id": "H1ehzMfy_",
+          "input": {
+            "nodeId": "B1AqMfz1O",
+            "pinKey": "rkJyOJMJu"
+          },
+          "output": {
+            "nodeId": "Hy2iGzf1_",
+            "pinKey": "SykJ8wjXN"
+          }
+        },
+        "HkgCGfz1O": {
+          "id": "HkgCGfz1O",
+          "input": {
+            "nodeId": "SkjpMMfkO",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "B1AqMfz1O",
+            "pinKey": "HybvVw1Myd"
+          }
+        },
+        "SJy0fzMJO": {
+          "id": "SJy0fzMJO",
+          "input": {
+            "nodeId": "BJo3zGMJ_",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "B1AqMfz1O",
+            "pinKey": "rkH7Iyf1d"
+          }
+        }
+      },
+      "path": "@/example1-test-sensor",
+      "description": "Patch to demonstrate sensor."
+    },
+    "@/example2-change-address": {
+      "nodes": {
+        "B1XqIQM1_": {
+          "label": "DEV",
+          "id": "B1XqIQM1_",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "Bys-QzMyu": {
+          "id": "Bys-QzMyu",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/init"
+        },
+        "ByvaIQMkd": {
+          "label": "DEV",
+          "id": "ByvaIQMkd",
+          "position": {
+            "x": 1,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "H1C-7zMkd": {
+          "id": "H1C-7zMkd",
+          "position": {
+            "x": 1,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/get-address"
+        },
+        "Hy1nwQzyu": {
+          "boundLiterals": {
+            "HJ6HsEngZ": "True",
+            "rJjXFA9JQ": "D3"
+          },
+          "id": "Hy1nwQzyu",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/gpio/digital-write"
+        },
+        "HyYZ_7M1d": {
+          "id": "HyYZ_7M1d",
+          "position": {
+            "x": 1,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "S14hIQz1O": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "0.05"
+          },
+          "id": "S14hIQz1O",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "SJ_a8Xfy_": {
+          "label": "DEV",
+          "id": "SJ_a8Xfy_",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJvW7Gfku": {
+          "id": "SJvW7Gfku",
+          "position": {
+            "x": 2,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/set-address"
+        },
+        "Skbbmff1u": {
+          "id": "Skbbmff1u",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/vl6180x-device"
+        },
+        "r1eiDmf1u": {
+          "boundLiterals": {
+            "BygApTqym": "On Boot",
+            "HJ6HsEngZ": "False",
+            "rJjXFA9JQ": "D3"
+          },
+          "id": "r1eiDmf1u",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/gpio/digital-write"
+        },
+        "r1esLmGy_": {
+          "label": "DEV",
+          "id": "r1esLmGy_",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rkYxj7GJO": {
+          "boundLiterals": {
+            "B23RV3eJq": "30h"
+          },
+          "id": "rkYxj7GJO",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-byte"
+        }
+      },
+      "links": {
+        "BJ1GdmMk_": {
+          "id": "BJ1GdmMk_",
+          "input": {
+            "nodeId": "HyYZ_7M1d",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H1C-7zMkd",
+            "pinKey": "HJ4pmyfJd"
+          }
+        },
+        "BJnesXMJO": {
+          "id": "BJnesXMJO",
+          "input": {
+            "nodeId": "SJvW7Gfku",
+            "pinKey": "ByyblJzyd"
+          },
+          "output": {
+            "nodeId": "rkYxj7GJO",
+            "pinKey": "B23RV3eJq"
+          }
+        },
+        "Bkt08Qfkd": {
+          "id": "Bkt08Qfkd",
+          "input": {
+            "nodeId": "SJvW7Gfku",
+            "pinKey": "ryIDeyM1d"
+          },
+          "output": {
+            "nodeId": "SJ_a8Xfy_",
+            "pinKey": "__out__"
+          }
+        },
+        "ByTbvmzkd": {
+          "id": "ByTbvmzkd",
+          "input": {
+            "nodeId": "SJvW7Gfku",
+            "pinKey": "HyMMxkfkO"
+          },
+          "output": {
+            "nodeId": "Bys-QzMyu",
+            "pinKey": "B1_W7UJyu"
+          }
+        },
+        "H1PJdXfy_": {
+          "id": "H1PJdXfy_",
+          "input": {
+            "nodeId": "Hy1nwQzyu",
+            "pinKey": "BygApTqym"
+          },
+          "output": {
+            "nodeId": "S14hIQz1O",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "Hk35ImfJ_": {
+          "id": "Hk35ImfJ_",
+          "input": {
+            "nodeId": "B1XqIQM1_",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Skbbmff1u",
+            "pinKey": "B11vWIk1u"
+          }
+        },
+        "S1nTUQMyu": {
+          "id": "S1nTUQMyu",
+          "input": {
+            "nodeId": "H1C-7zMkd",
+            "pinKey": "Byg_7yMy_"
+          },
+          "output": {
+            "nodeId": "ByvaIQMkd",
+            "pinKey": "__out__"
+          }
+        },
+        "SkckOXG1d": {
+          "id": "SkckOXG1d",
+          "input": {
+            "nodeId": "Bys-QzMyu",
+            "pinKey": "S1sAf8JyO"
+          },
+          "output": {
+            "nodeId": "Hy1nwQzyu",
+            "pinKey": "ry3pcpqyX"
+          }
+        },
+        "Sye1OQfJu": {
+          "id": "Sye1OQfJu",
+          "input": {
+            "nodeId": "S14hIQz1O",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "r1eiDmf1u",
+            "pinKey": "ry3pcpqyX"
+          }
+        },
+        "rkRpIXGy_": {
+          "id": "rkRpIXGy_",
+          "input": {
+            "nodeId": "Bys-QzMyu",
+            "pinKey": "r11E781J_"
+          },
+          "output": {
+            "nodeId": "r1esLmGy_",
+            "pinKey": "__out__"
+          }
+        },
+        "ryckP7z1d": {
+          "id": "ryckP7z1d",
+          "input": {
+            "nodeId": "H1C-7zMkd",
+            "pinKey": "S1oKQkz1u"
+          },
+          "output": {
+            "nodeId": "SJvW7Gfku",
+            "pinKey": "rJu8g1MJO"
+          }
+        }
+      },
+      "comments": {
+        "HJ3Yo7fkd": {
+          "content": "We start by resetting the VL6180X device by togelling the shutdown pin on the breakout board. First we set the pin low to shutdown the VL6180X.",
+          "id": "HJ3Yo7fkd",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 2,
+            "width": 8,
+            "units": "slots"
+          }
+        },
+        "S1WY87Gyd": {
+          "content": "The default I²C address of the VL6180X device is 29h. You can change the I²C address of the device using the set-address node. If the device is reset the I²C address will return to the default. \n\n",
+          "id": "S1WY87Gyd",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "size": {
+            "height": 2,
+            "width": 10,
+            "units": "slots"
+          }
+        },
+        "SJz9pXG1_": {
+          "content": "Wake the VL6180X by setting shutdown pin high.",
+          "id": "SJz9pXG1_",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 8,
+            "units": "slots"
+          }
+        },
+        "ryl_CXG1_": {
+          "content": "N.B. If we were to reset the microcontroller board WITHOUT RESETTING the VL6180X we would only be able to run the patch once. On the first run the address of the VL6180X would be set to 30h. If the microcontroller board was then reset, the patch would run again from the beginning. However, if the VL6180X continued to be powered on, it would retain its new address of 30h. Initialization would fail on the 2nd run of the patch, because the init node expects the VL6180X to have the default address of 29h, but it would actually be 30h.\n",
+          "id": "ryl_CXG1_",
+          "position": {
+            "x": 18,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 2,
+            "width": 12,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example2-change-address",
+      "description": "Patch to demonstrate changing I²C address of VL6180X."
+    },
+    "@/proximity-lux-sensor": {
+      "nodes": {
+        "ByOpg4Gy_": {
+          "id": "ByOpg4Gy_",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/gate"
+        },
+        "H181Hkz1d": {
+          "id": "H181Hkz1d",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/vl6180x-device"
+        },
+        "HJGrU1zyd": {
+          "description": "Pulse on read.",
+          "label": "DONE",
+          "id": "HJGrU1zyd",
+          "position": {
+            "x": 9,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJUNUkGJ_": {
+          "description": "Status. Ranging success/error code:\n00h = success; 01h = system error; 05h = system error; 06h = early convergence estimate fail; 07h = no target detected; 08h = ignore threshold check failed; 0Bh = ambient conditions too high; 0Ch = raw range algo underflow; 0Dh = raw range algo overflow;\n0Eh = raw range algo underflow; 0Fh = raw range algo overflow.",
+          "label": "STAT",
+          "id": "HJUNUkGJ_",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-byte"
+        },
+        "HkgXeVfyd": {
+          "id": "HkgXeVfyd",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/init"
+        },
+        "HybvVw1Myd": {
+          "description": "Lux",
+          "label": "LUX",
+          "id": "HybvVw1Myd",
+          "position": {
+            "x": 8,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HyekSJMJu": {
+          "id": "HyekSJMJu",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/read-range"
+        },
+        "S1C9lEfyu": {
+          "label": "DEV",
+          "id": "S1C9lEfyu",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJm--4Gy_": {
+          "label": "INIT",
+          "id": "SJm--4Gy_",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJv4P1G1O": {
+          "id": "SJv4P1G1O",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/read-lux"
+        },
+        "r18gZEMJO": {
+          "label": "INIT",
+          "id": "r18gZEMJO",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "r1OAgEfJd": {
+          "id": "r1OAgEfJd",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "rkH7Iyf1d": {
+          "description": "Distance (millimetres).",
+          "label": "DIST",
+          "id": "rkH7Iyf1d",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rkJyOJMJu": {
+          "description": "Gain. Options: 06h = 1x gain; 05h = 1.25x;  04h = 1.67x; 03h = 2.5x;  02h = 5x; 01h = 10x; 00h = 20x; 07h = 40x.",
+          "label": "GAIN",
+          "id": "rkJyOJMJu",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "ryoFlEfyO": {
+          "label": "DEV",
+          "id": "ryoFlEfyO",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "ryqsg4zJO": {
+          "label": "DEV",
+          "id": "ryqsg4zJO",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "ryuZB1fkO": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Update. Trigger read.",
+          "label": "UPD",
+          "id": "ryuZB1fkO",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkswTATpt": {
+          "id": "HkswTATpt",
+          "type": "xod/i2c/input-i2c",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "I2C",
+          "description": "I²C bus"
+        }
+      },
+      "links": {
+        "B13H8JGkO": {
+          "id": "B13H8JGkO",
+          "input": {
+            "nodeId": "rkH7Iyf1d",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HyekSJMJu",
+            "pinKey": "BJlGK8J1O"
+          }
+        },
+        "BJ6pgEzJO": {
+          "id": "BJ6pgEzJO",
+          "input": {
+            "nodeId": "ByOpg4Gy_",
+            "pinKey": "SJ-1mZPTz"
+          },
+          "output": {
+            "nodeId": "ryuZB1fkO",
+            "pinKey": "__out__"
+          }
+        },
+        "BkC3l4M1u": {
+          "id": "BkC3l4M1u",
+          "input": {
+            "nodeId": "HyekSJMJu",
+            "pinKey": "HydIF81J_"
+          },
+          "output": {
+            "nodeId": "S1C9lEfyu",
+            "pinKey": "__out__"
+          }
+        },
+        "BkRrIyG1u": {
+          "id": "BkRrIyG1u",
+          "input": {
+            "nodeId": "HJUNUkGJ_",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HyekSJMJu",
+            "pinKey": "S1KfKIkJu"
+          }
+        },
+        "Bkdy-4z1O": {
+          "id": "Bkdy-4z1O",
+          "input": {
+            "nodeId": "r1OAgEfJd",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "HkgXeVfyd",
+            "pinKey": "B1_W7UJyu"
+          }
+        },
+        "ByoyuJz1O": {
+          "id": "ByoyuJz1O",
+          "input": {
+            "nodeId": "SJv4P1G1O",
+            "pinKey": "B1MgDIJJ_"
+          },
+          "output": {
+            "nodeId": "rkJyOJMJu",
+            "pinKey": "__out__"
+          }
+        },
+        "HJJbb4GJu": {
+          "id": "HJJbb4GJu",
+          "input": {
+            "nodeId": "r18gZEMJO",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1OAgEfJd",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "HJcng4fku": {
+          "id": "HJcng4fku",
+          "input": {
+            "nodeId": "SJv4P1G1O",
+            "pinKey": "r1nVj0-kO"
+          },
+          "output": {
+            "nodeId": "ryqsg4zJO",
+            "pinKey": "__out__"
+          }
+        },
+        "HyS9xNz1_": {
+          "id": "HyS9xNz1_",
+          "input": {
+            "nodeId": "ryoFlEfyO",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "H181Hkz1d",
+            "pinKey": "B11vWIk1u"
+          }
+        },
+        "S1kI8kGyu": {
+          "id": "S1kI8kGyu",
+          "input": {
+            "nodeId": "HJGrU1zyd",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HyekSJMJu",
+            "pinKey": "S1H6o0bku"
+          }
+        },
+        "r1eFvJMkO": {
+          "id": "r1eFvJMkO",
+          "input": {
+            "nodeId": "HyekSJMJu",
+            "pinKey": "BJ18KIyy_"
+          },
+          "output": {
+            "nodeId": "SJv4P1G1O",
+            "pinKey": "SJeiSkMyu"
+          }
+        },
+        "rJ7JbNG1u": {
+          "id": "rJ7JbNG1u",
+          "input": {
+            "nodeId": "HkgXeVfyd",
+            "pinKey": "r11E781J_"
+          },
+          "output": {
+            "nodeId": "H181Hkz1d",
+            "pinKey": "B11vWIk1u"
+          }
+        },
+        "rkkRlVzJu": {
+          "id": "rkkRlVzJu",
+          "input": {
+            "nodeId": "SJv4P1G1O",
+            "pinKey": "rkxNjRbyd"
+          },
+          "output": {
+            "nodeId": "ByOpg4Gy_",
+            "pinKey": "OkPg7GDaW"
+          }
+        },
+        "ry9WZ4MkO": {
+          "id": "ry9WZ4MkO",
+          "input": {
+            "nodeId": "ByOpg4Gy_",
+            "pinKey": "B1P1nFwaM"
+          },
+          "output": {
+            "nodeId": "SJm--4Gy_",
+            "pinKey": "__out__"
+          }
+        },
+        "ryXw4vkG1O": {
+          "id": "ryXw4vkG1O",
+          "input": {
+            "nodeId": "HybvVw1Myd",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJv4P1G1O",
+            "pinKey": "S1EHiR-yu"
+          }
+        },
+        "S1guTC6aF": {
+          "id": "S1guTC6aF",
+          "output": {
+            "nodeId": "HkswTATpt",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HkgXeVfyd",
+            "pinKey": "rJuGRZh6Y"
+          }
+        }
+      },
+      "path": "@/proximity-lux-sensor",
+      "description": "Proximity and ambient light sensor. "
+    },
+    "@/get-address": {
+      "nodes": {
+        "ByFvQkMyO": {
+          "id": "ByFvQkMyO",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Byg_7yMy_": {
+          "description": "A VL6180X device.",
+          "label": "DEV",
+          "id": "Byg_7yMy_",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-vl6180x-device"
+        },
+        "HJ4pmyfJd": {
+          "description": "I²C address of the VL6180X.",
+          "label": "ADDR",
+          "id": "HJ4pmyfJd",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-byte"
+        },
+        "S1oKQkz1u": {
+          "description": "Update. Triggers read of address.",
+          "label": "UPD",
+          "id": "S1oKQkz1u",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ry91VkMJu": {
+          "description": "Pulses on read of  I²C address.",
+          "label": "DONE",
+          "id": "ry91VkMJu",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/get-address",
+      "description": "Read the I²C address of the VL6180X.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n     void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        // Get a pointer to the `VL6180X` class instance\n        auto sensor = getValue<input_DEV>(ctx);\n        emitValue<output_ADDR>(ctx,sensor->getAddress());\n        emitValue<output_DONE>(ctx,1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/read-lux": {
+      "nodes": {
+        "B1MgDIJJ_": {
+          "description": "Gain. Options: 06h = 1x gain; 05h = 1.25x;  04h = 1.67x; 03h = 2.5x;  02h = 5x; 01h = 10x; 00h = 20x; 07h = 40x.",
+          "label": "GAIN",
+          "id": "B1MgDIJJ_",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "S1EHiR-yu": {
+          "description": "Ambient light intensity (lux).\n",
+          "label": "LUX",
+          "id": "S1EHiR-yu",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SJeiSkMyu": {
+          "description": "Pulse on read.",
+          "label": "DONE",
+          "id": "SJeiSkMyu",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SyYyvIkJu": {
+          "id": "SyYyvIkJu",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1nVj0-kO": {
+          "description": "A VL6180X device.\n",
+          "label": "DEV",
+          "id": "r1nVj0-kO",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-vl6180x-device"
+        },
+        "rkxNjRbyd": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Update. Trigger read of lux.",
+          "label": "UPD",
+          "id": "rkxNjRbyd",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/read-lux",
+      "description": "Measure ambient light intensity.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n     void evaluate(Context ctx) {\n         // The node responds only if there is an input pulse\n         if (!isInputDirty<input_UPD>(ctx))\n             return;\n         // Get a pointer to the `VL6180X` class instance\n         auto sensor = getValue<input_DEV>(ctx);\n         uint8_t gain = getValue<input_GAIN>(ctx);\n         emitValue<output_LUX>(ctx,sensor->readLux(gain));\n         emitValue<output_DONE>(ctx,1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/translate-status-code-to-text": {
+      "nodes": {
+        "HJ52vCZku": {
+          "id": "HJ52vCZku",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1GxuCbyO": {
+          "description": "Status code output from read-range node.",
+          "label": "CODE",
+          "id": "S1GxuCbyO",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SJZRwCZ1u": {
+          "description": "Status as text.",
+          "label": "TXT",
+          "id": "SJZRwCZ1u",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        }
+      },
+      "path": "@/translate-status-code-to-text",
+      "description": "Translate status code to text string.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD dirtieness disable\n\nnode {\n    char str[24];\n    CStringView view = CStringView(str);\n    \n    void evaluate(Context ctx) {\n        uint8_t status = getValue<input_CODE>(ctx);\n        \n        if (status == 0) {\n            view=\"No error\";\n        }\n        else if  ((status >= 1) && (status <= 5)) {\n            view=\"System error\";\n        }\n        else if (status == 6) {\n            view=\"ECE failure\";\n        }\n        else if (status == 7) {\n            view=\"No convergence\";\n        }\n        else if (status == 8) {\n            view=\"Ignoring range\";\n        }\n        else if (status == 11) {\n            view=\"Signal/Noise error\";\n        }\n        else if (status == 12) {\n            view=\"Raw reading underflow\";\n        }\n        else if (status == 13) {\n            view=\"Raw reading overflow\";\n        }\n        else if (status == 14) {\n            view=\"Range reading underflow\";\n        }\n        else if (status == 15) {\n            view=\"Range reading overflow\";\n        }\n        else {\n            view=\"Unknown code\";\n        }\n        emitValue<output_TXT>(ctx, XString(&view));\n    }\n}\n"
+        }
+      ]
+    },
+    "@/read-range": {
+      "nodes": {
+        "BJ18KIyy_": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Update. Trigger read.",
+          "label": "UPD",
+          "id": "BJ18KIyy_",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BJlGK8J1O": {
+          "description": "Distance (millimetres).",
+          "label": "DIST",
+          "id": "BJlGK8J1O",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "H1dZKIyJ_": {
+          "id": "H1dZKIyJ_",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HydIF81J_": {
+          "description": "A VL61080X device.",
+          "label": "DEV",
+          "id": "HydIF81J_",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-vl6180x-device"
+        },
+        "S1H6o0bku": {
+          "description": "Pulse on read.",
+          "label": "DONE",
+          "id": "S1H6o0bku",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "S1KfKIkJu": {
+          "description": "Status. Ranging success/error code:\n00h = success; 01h = system error; 05h = system error; 06h = early convergence estimate fail; 07h = no target detected; 08h = ignore threshold check failed; 0Bh = ambient conditions too high; 0Ch = raw range algo underflow; 0Dh = raw range algo overflow;\n0Eh = raw range algo underflow; 0Fh = raw range algo overflow.",
+          "label": "STAT",
+          "id": "S1KfKIkJu",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-byte"
+        }
+      },
+      "path": "@/read-range",
+      "description": "Read range (mm).",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n     void evaluate(Context ctx) {\n         // The node responds only if there is an input pulse\n         if (!isInputDirty<input_UPD>(ctx))\n             return;\n         // Get a pointer to the `VL6180X` class instance\n         auto sensor = getValue<input_DEV>(ctx);\n         emitValue<output_DIST>(ctx,sensor->readRange());\n         emitValue<output_STAT>(ctx,sensor->readRangeStatus());\n         emitValue<output_DONE>(ctx,1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/vl6180x-device": {
+      "nodes": {
+        "B11vWIk1u": {
+          "description": "A VL6180X device.",
+          "label": "DEV",
+          "id": "B11vWIk1u",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "HJgJPWLJy_": {
+          "id": "HJgJPWLJy_",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/vl6180x-device",
+      "description": "Create VL6180X device.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/adafruit/Adafruit_VL6180X\"\n#pragma XOD require \"https://github.com/adafruit/Adafruit_BusIO\"\n\n//Include C++ libraries\n#include <Adafruit_VL6180X.h>\n#include <Wire.h>\n\n\nnode {\n    meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = Adafruit_VL6180X*;\n    }\n\n    // Create an object of the class VL6180X\n    Adafruit_VL6180X sensor = Adafruit_VL6180X();\n\n    void evaluate(Context ctx) {\n        // It should be evaluated only once on the first (setup) transaction\n        if (!isSettingUp())\n            return;\n\n        emitValue<output_DEV>(ctx, &sensor);\n    }\n}\n\n"
+        }
+      ]
+    },
+    "@/set-address": {
+      "nodes": {
+        "ByyblJzyd": {
+          "boundLiterals": {
+            "__out__": "29h"
+          },
+          "description": "I²C address.",
+          "label": "ADDR",
+          "id": "ByyblJzyd",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HyMMxkfkO": {
+          "description": "Update. Trigger for setting address.\n",
+          "label": "UPD",
+          "id": "HyMMxkfkO",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SyeelJG1u": {
+          "description": "Set I²C address of VL6180X device.",
+          "id": "SyeelJG1u",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJu8g1MJO": {
+          "description": "Pulse when address set.",
+          "label": "DONE",
+          "id": "rJu8g1MJO",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ryIDeyM1d": {
+          "description": "A VL6180X device.",
+          "label": "DEV",
+          "id": "ryIDeyM1d",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-vl6180x-device"
+        }
+      },
+      "path": "@/set-address",
+      "description": "Set I²C address.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        // Get a pointer to the `VL6180X` class instance\n        auto sensor = getValue<input_DEV>(ctx);\n        sensor->setAddress(getValue<input_ADDR>(ctx));\n        emitValue<output_DONE>(ctx,1);\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "license": "BSD 3-Clause \"New\" or \"Revised\" License",
+  "version": "0.0.6",
+  "description": "VL6180X proximity and lux sensor. Wraps https://github.com/adafruit/Adafruit_VL6180X. Data sheet: https://cdn-learn.adafruit.com/assets/assets/000/037/608/original/VL6180X_datasheet.pdf",
+  "name": "vl6180x-time-of-flight"
+}

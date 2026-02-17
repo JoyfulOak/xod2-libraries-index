@@ -1,0 +1,72 @@
+{
+  "license": "MIT",
+  "version": "1.0.0",
+  "patches": {
+    "@/ultrasonic-distance-sensor": {
+      "nodes": {
+        "H1rMjoIkN": {
+          "id": "H1rMjoIkN",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 0,
+            "y": 102
+          },
+          "label": "ECHO",
+          "boundLiterals": {
+            "__out__": "D10"
+          }
+        },
+        "Hye4soI1V": {
+          "id": "Hye4soI1V",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 136,
+            "y": 204
+          },
+          "label": "DIST"
+        },
+        "BkCNojIkV": {
+          "id": "BkCNojIkV",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "label": "UPDATE",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        },
+        "r1UBji8yV": {
+          "id": "r1UBji8yV",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 204,
+            "y": 102
+          }
+        },
+        "HyeXv381V": {
+          "id": "HyeXv381V",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 68,
+            "y": 102
+          },
+          "label": "TRIG",
+          "boundLiterals": {
+            "__out__": "D9"
+          }
+        }
+      },
+      "path": "@/ultrasonic-distance-sensor",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n\n};\n\n\n{{ GENERATED_CODE }}\n\n\nvoid evaluate(Context ctx) {\n    int echo=getValue<input_ECHO>(ctx);\n    int trig=getValue<input_TRIG>(ctx);\n    if(isSettingUp()){\n        pinMode(trig, OUTPUT);\n        pinMode(echo, INPUT);\n    }\n    if(getValue<input_UPDATE>(ctx)){\n        digitalWrite(trig, LOW);\n        delayMicroseconds(2);\n        digitalWrite(trig, HIGH);\n        delayMicroseconds(10);\n        digitalWrite(trig, LOW);\n        unsigned long durationMicroSec = pulseIn(echo, HIGH);\n        double distanceCm = (durationMicroSec*0.034029) / 2 ;\n        emitValue<output_DIST>(ctx,distanceCm);\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "name": "ultrasonic-distance-sensor"
+}

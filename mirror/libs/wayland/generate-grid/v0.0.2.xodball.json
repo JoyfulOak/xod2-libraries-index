@@ -1,0 +1,389 @@
+{
+  "patches": {
+    "@/generate-grid": {
+      "nodes": {
+        "B1Ff0wKvK": {
+          "id": "B1Ff0wKvK",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJeKf0DKvt": {
+          "description": "Update. Begin generation of new grid coordinates.",
+          "label": "UPD",
+          "id": "rJeKf0DKvt",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "B1bYzRwtwF": {
+          "description": "Pulse when all grid coordinates have been output.",
+          "label": "Done",
+          "id": "B1bYzRwtwF",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HyfYf0wFDY": {
+          "description": "Pulse on output of each new pair of coordinates.",
+          "label": "Next",
+          "id": "HyfYf0wFDY",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "H17YzRDFvK": {
+          "description": "X coordinate of grid element.",
+          "label": "X",
+          "id": "H17YzRDFvK",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "H1VFfCPFvK": {
+          "description": "Y coordinate of grid element.",
+          "label": "Y",
+          "id": "H1VFfCPFvK",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HyrYzAPtPt": {
+          "description": "X coordinate of the left hand side of the grid.",
+          "label": "X-start",
+          "id": "HyrYzAPtPt",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rk8tGRwKwK": {
+          "description": "X coordinate of the right hand side of the grid. Should be greater than X-start.",
+          "label": "X-stop",
+          "id": "rk8tGRwKwK",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ByPYGRvFvK": {
+          "description": "Horizontal spacing between elements in grid.",
+          "label": "X-step",
+          "id": "ByPYGRvFvK",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1dFGAvKwF": {
+          "description": "Y coordinate of the top of the grid.",
+          "label": "Y-start",
+          "id": "r1dFGAvKwF",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "B1ttzAwtwt": {
+          "description": "Y coordinate of the bottom of the grid. Should be greater than Y-start.",
+          "label": "Y-stop",
+          "id": "B1ttzAwtwt",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rycFGCwFPt": {
+          "description": "Vertical spacing between elements in grid.",
+          "label": "Y-step",
+          "id": "rycFGCwFPt",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/generate-grid",
+      "description": "Calculate the coordinates of all rectangles in a user specified grid. ",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number xStart;\n    Number xStop;\n    Number xStep;\n    Number yStart;\n    Number yStop;\n    Number yStep;\n    Number x;\n    Number y;\n    bool update;\n    \n    void evaluate(Context ctx) {\n        if(isInputDirty<input_UPD>(ctx)) {\n            xStart = getValue<input_X_start>(ctx);\n            xStop = getValue<input_X_stop>(ctx);\n            xStep = getValue<input_X_step>(ctx);\n            yStart = getValue<input_Y_start>(ctx);\n            yStop = getValue<input_Y_stop>(ctx);\n            yStep = getValue<input_Y_step>(ctx);\n            x = xStart;\n            y = yStart;\n            update = true;\n        }\n\n        if(update) {\n            if (x <= xStop && y <= yStop) {\n                emitValue<output_X>(ctx, x);\n                emitValue<output_Y>(ctx, y);\n                emitValue<output_Next>(ctx, 1);\n                x += xStep;\n                setImmediate();\n            }\n            else if (x > xStop && y <= yStop) {\n                x = xStart;\n                y += yStep;\n                setImmediate();\n            } else {\n                update = false;\n                emitValue<output_Done>(ctx, 1);\n            }\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example": {
+      "nodes": {
+        "HkBJMuYDt": {
+          "id": "HkBJMuYDt",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "wayland/ssd1306-oled-i2c/ssd1306-oled-i2c-device"
+        },
+        "SkqJG_twF": {
+          "label": "DEV",
+          "id": "SkqJG_twF",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "r1AGGdYvK": {
+          "boundLiterals": {
+            "r1nJkD28V": "16",
+            "rkftoCL2UN": "16",
+            "rkvYiAInI4": "1"
+          },
+          "id": "r1AGGdYvK",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "wayland/ssd1306-oled-i2c/draw-rectangle"
+        },
+        "BJzQG_YDF": {
+          "label": "DEV",
+          "id": "BJzQG_YDF",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "BkNNfutwY": {
+          "label": "DEV",
+          "id": "BkNNfutwY",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "BJTEG_tvK": {
+          "boundLiterals": {
+            "r1H7MwK8E": "On Boot"
+          },
+          "id": "BJTEG_tvK",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "wayland/ssd1306-oled-i2c/clear-display"
+        },
+        "ByVrfdFwF": {
+          "label": "DEV",
+          "id": "ByVrfdFwF",
+          "position": {
+            "x": 4,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "r1O8zdYDF": {
+          "boundLiterals": {
+            "B1ttzAwtwt": "63",
+            "ByPYGRvFvK": "16",
+            "HyrYzAPtPt": "8",
+            "rk8tGRwKwK": "119",
+            "rycFGCwFPt": "16"
+          },
+          "id": "r1O8zdYDF",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/generate-grid"
+        },
+        "BydDGOKPK": {
+          "id": "BydDGOKPK",
+          "position": {
+            "x": 5,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "wayland/ssd1306-oled-i2c/send-buffer-to-display"
+        },
+        "HyXFz_Ywt": {
+          "id": "HyXFz_Ywt",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        }
+      },
+      "links": {
+        "S1XgGutvF": {
+          "id": "S1XgGutvF",
+          "input": {
+            "nodeId": "SkqJG_twF",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HkBJMuYDt",
+            "pinKey": "ryH6tSt8N"
+          }
+        },
+        "rk2rMdFwK": {
+          "id": "rk2rMdFwK",
+          "input": {
+            "nodeId": "BJTEG_tvK",
+            "pinKey": "S1mxGvKUN"
+          },
+          "output": {
+            "nodeId": "BJzQG_YDF",
+            "pinKey": "__out__"
+          }
+        },
+        "ryWPMOtDF": {
+          "id": "ryWPMOtDF",
+          "input": {
+            "nodeId": "r1AGGdYvK",
+            "pinKey": "SkWYsRL28N"
+          },
+          "output": {
+            "nodeId": "BkNNfutwY",
+            "pinKey": "__out__"
+          }
+        },
+        "rkpvf_YvF": {
+          "id": "rkpvf_YvF",
+          "input": {
+            "nodeId": "BydDGOKPK",
+            "pinKey": "Sy6LZuYIE"
+          },
+          "output": {
+            "nodeId": "ByVrfdFwF",
+            "pinKey": "__out__"
+          }
+        },
+        "rJzOfdKDY": {
+          "id": "rJzOfdKDY",
+          "input": {
+            "nodeId": "r1AGGdYvK",
+            "pinKey": "HJrYjCL28E"
+          },
+          "output": {
+            "nodeId": "r1O8zdYDF",
+            "pinKey": "H17YzRDFvK"
+          }
+        },
+        "B17ufdYDF": {
+          "id": "B17ufdYDF",
+          "input": {
+            "nodeId": "r1AGGdYvK",
+            "pinKey": "SJxFo082LN"
+          },
+          "output": {
+            "nodeId": "r1O8zdYDF",
+            "pinKey": "H1VFfCPFvK"
+          }
+        },
+        "S12FGOKPY": {
+          "id": "S12FGOKPY",
+          "input": {
+            "nodeId": "r1AGGdYvK",
+            "pinKey": "r1KoAU3LN"
+          },
+          "output": {
+            "nodeId": "HyXFz_Ywt",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "S1g5f_Kwt": {
+          "id": "S1g5f_Kwt",
+          "input": {
+            "nodeId": "HyXFz_Ywt",
+            "pinKey": "ryTIROHwkW"
+          },
+          "output": {
+            "nodeId": "r1O8zdYDF",
+            "pinKey": "HyfYf0wFDY"
+          }
+        },
+        "ryMqMdYPt": {
+          "id": "ryMqMdYPt",
+          "input": {
+            "nodeId": "r1AGGdYvK",
+            "pinKey": "r1IFsRIn8E"
+          },
+          "output": {
+            "nodeId": "r1O8zdYDF",
+            "pinKey": "HyfYf0wFDY"
+          }
+        },
+        "B1fozdYPF": {
+          "id": "B1fozdYPF",
+          "input": {
+            "nodeId": "BydDGOKPK",
+            "pinKey": "SJDbf_YUV"
+          },
+          "output": {
+            "nodeId": "r1O8zdYDF",
+            "pinKey": "B1bYzRwtwF"
+          }
+        },
+        "SJzJQOKwY": {
+          "id": "SJzJQOKwY",
+          "input": {
+            "nodeId": "r1O8zdYDF",
+            "pinKey": "rJeKf0DKvt"
+          },
+          "output": {
+            "nodeId": "BJTEG_tvK",
+            "pinKey": "rylSGPt8E"
+          }
+        }
+      },
+      "path": "@/example",
+      "description": "Draw chequerboard."
+    }
+  },
+  "license": "AGPL-3.0",
+  "version": "0.0.2",
+  "description": "Calculate the coordinates of all rectangles in a user specified grid. Facilitates drawing repeated patterns on a display.",
+  "name": "generate-grid"
+}

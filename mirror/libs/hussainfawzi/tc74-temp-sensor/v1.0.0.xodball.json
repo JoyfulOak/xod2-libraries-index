@@ -1,0 +1,124 @@
+{
+  "apiKey": "01976dff-d0e6-47ba-8545-58a3cc31e99d",
+  "description": "Node for Temp Sensor TC74 utilizing an existing Adriuno library by Mario-H on Github.",
+  "license": "Freeware",
+  "name": "tc74-temp-sensor",
+  "patches": {
+    "@/main": {
+      "comments": {
+        "r1ZvqCdEU": {
+          "content": "Node for TC74 Temperature Sensor From Microchip\nTemp range: -65C to 127C\nCommunication: I2C\n\nDevice Address:\nTC74_A0\t- 0x48 (default)\nTC74_A1\t- 0x49\nTC74_A2\t- 0x4A\nTC74_A3\t- 0x4B\nTC74_A4\t- 0x4C\nTC74_A5\t- 0x4D\nTC74_A6\t- 0x4E\nTC74_A7\t- 0x4F",
+          "id": "r1ZvqCdEU",
+          "position": {
+            "x": 13,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 3,
+            "width": 9,
+            "units": "slots"
+          }
+        }
+      },
+      "nodes": {
+        "ByREPR_NU": {
+          "boundLiterals": {
+            "H1KLIRu4L": "48h"
+          },
+          "id": "ByREPR_NU",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/tc74"
+        }
+      },
+      "path": "@/main"
+    },
+    "@/tc74": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/Mario-H/TC74_I2C\"\n\n#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPDATE\n#pragma XOD error_raise enable\n\n{{#global}}\n#include <Wire.h>\n#include <TC74_I2C.h>\n{{/global}}\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPDATE>(ctx))\n        return;\n    emitValue<output_ERROR>(ctx, 0);\n    Number address = getValue<input_ADDR>(ctx);\n    TC74_I2C TC74(address);\n    TC74.Init();\n    TC74.NoPowersave();\n    int temperature;\n    temperature = TC74.ReadTemp();\n    TC74.Powersave();\n    if(temperature==128){temperature=0; emitValue<output_ERROR>(ctx, 1);}\n    emitValue<output_TEMP>(ctx, temperature);\n    emitValue<output_DONE>(ctx, 1);\n};",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJXpICu48": {
+          "description": "Spits the temperature in degrees C",
+          "id": "BJXpICu48",
+          "label": "TEMP",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "H13iHAOV8": {
+          "id": "H13iHAOV8",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1KLIRu4L": {
+          "boundLiterals": {
+            "__out__": "48h"
+          },
+          "description": "Device address on I2C bus",
+          "id": "H1KLIRu4L",
+          "label": "ADDR",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "Syu0gcK48": {
+          "description": "Spits logic high when failed communicating with the sensor through I2C bus.",
+          "id": "Syu0gcK48",
+          "label": "ERROR",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "rkfv8AdVI": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Feed a pulse signal to get temperature reading.",
+          "id": "rkfv8AdVI",
+          "label": "UPDATE",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryeaL0O4I": {
+          "description": "Spits a pulse when done.",
+          "id": "ryeaL0O4I",
+          "label": "DONE",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/tc74"
+    }
+  },
+  "version": "1.0.0"
+}

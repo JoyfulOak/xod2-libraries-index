@@ -1,0 +1,146 @@
+{
+  "description": "попытался собрать хотя бы как то рабочий инструмент",
+  "version": "0.0.1",
+  "patches": {
+    "@/main": {
+      "nodes": {
+        "BJapAO6SL": {
+          "id": "BJapAO6SL",
+          "type": "@/nrf24-zaebalo",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "r1J2CuTHI": "7",
+            "BygkhAu6B8": "8",
+            "rJiDWtTSI": "15",
+            "SkCa-K6S8": "6"
+          }
+        }
+      },
+      "path": "@/main"
+    },
+    "@/nrf24-zaebalo": {
+      "nodes": {
+        "rkWn2upr8": {
+          "id": "rkWn2upr8",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 12,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "r1J2CuTHI": {
+          "id": "r1J2CuTHI",
+          "label": "_cepin",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BygkhAu6B8": {
+          "id": "BygkhAu6B8",
+          "label": "_cspin",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SykplFTBU": {
+          "description": "режим подтверждения приёма, true вкл false выкл",
+          "id": "SykplFTBU",
+          "label": "AutoAck",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rJiDWtTSI": {
+          "description": "число попыток",
+          "id": "rJiDWtTSI",
+          "label": "count",
+          "position": {
+            "x": 14,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJgsv-KTBU": {
+          "description": "время между попыткой достучаться",
+          "id": "SJgsv-KTBU",
+          "label": "delay",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkCa-K6S8": {
+          "description": "размер пакета, в байтах",
+          "id": "SkCa-K6S8",
+          "label": "size",
+          "position": {
+            "x": 16,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJUZ7tpB8": {
+          "description": "адрес тунелей всего их шесть начиная от 0 до 5",
+          "id": "rJUZ7tpB8",
+          "label": "address_number",
+          "position": {
+            "x": 18,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryI-VYTHI": {
+          "description": "скорость передачи всего их 3\n0-1MBPS\n1-2MBPS\n2-250KBPS",
+          "id": "ryI-VYTHI",
+          "label": "speed_number",
+          "position": {
+            "x": 20,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BypCHYarL": {
+          "description": "мощность сигнала\n0-RF24_PA_MIN\n1-RF24_PA_LOW\n2-RF24_PA_HIGH\n3-RF24_PA_MAX\n4-RF24_PA_ERROR",
+          "id": "BypCHYarL",
+          "label": "signal_strength_number",
+          "position": {
+            "x": 22,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/nrf24-zaebalo",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/nRF24/RF24\"\n\n// Include C++ library:\n{{#global}}\n#include <RF24.h>\n#include <SPI.h>\n\n{{/global}}\n\n// Our namespace should be: rf24_ll__rf24\n// Reserve the space for the object.\nstruct State {\n // uint8_t mem[sizeof(RF24)];\n  };\n//using Type = RF24*; // 'Type' is assumed by xod code-generator\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n  // It should be evaluated only once on the first (setup) transaction\n  if (!isSettingUp()) return; // FIXME: relax this?\n  byte address[][6] = {\"1Node\", \"2Node\", \"3Node\", \"4Node\", \"5Node\", \"6Node\"};\n  byte speed[][3] ={\"RF24_1MBPS\",\"RF24_2MBPS\",\"RF24_250KBPS\"};\n  byte signal_strength[][5] ={\"RF24_PA_MIN\",\"RF24_PA_LOW\",\"RF24_PA_HIGH\",\"RF24_PA_MAX\",\"RF24_PA_ERROR\"};\n  auto state = getState(ctx);\n\n  // var names are valid c++ because we got them from the arglist of the c++ constructor\n  auto _cepin = static_cast<int> (getValue<input__cepin>(ctx)); // int\n  auto _cspin = static_cast<int> (getValue<input__cspin>(ctx)); // int\n  auto AutoAck = static_cast<bool> (getValue<input_AutoAck>(ctx)); // bool\n  auto delay = static_cast<int> (getValue<input_delay>(ctx)); // int\n  auto count = static_cast<int> (getValue<input_count>(ctx)); // int\n  auto size = static_cast<int> (getValue<input_size>(ctx)); // int\n  auto number_address = static_cast<int> (getValue<input_address_number>(ctx)); // int\n  auto signal = static_cast<int> (getValue<input_signal_strength_number>(ctx)); // int\n  auto number_speed = static_cast<int> (getValue<input_speed_number>(ctx)); // int\n\n\n  \n  RF24 radio( _cepin, _cspin );\n  radio.begin(); //активировать модуль\n  radio.setAutoAck(AutoAck);         //режим подтверждения приёма, 1 вкл 0 выкл\n  radio.setRetries(delay, count);    //(время между попыткой достучаться, число попыток)\n  radio.enableAckPayload();    //разрешить отсылку данных в ответ на входящий сигнал\n  radio.setPayloadSize(size);     //размер пакета, в байтах\n\n  radio.openWritingPipe(address[number_address]);   //мы - труба 0, открываем канал для передачи данных\n  radio.setChannel(0x60);  //выбираем канал (в котором нет шумов!)\n\n  radio.setPALevel (signal_strength[signal]); //уровень мощности передатчика. На выбор RF24_PA_MIN, RF24_PA_LOW, RF24_PA_HIGH, RF24_PA_MAX\n  radio.setDataRate (RF24_1MBPS); //скорость обмена. На выбор RF24_2MBPS, RF24_1MBPS, RF24_250KBPS\n  //должна быть одинакова на приёмнике и передатчике!\n  //при самой низкой скорости имеем самую высокую чувствительность и дальность!!\n  radio.powerUp(); //начать работу\n  radio.stopListening();  //не слушаем радиоэфир, мы передатчик\n\n}"
+        }
+      ]
+    }
+  },
+  "name": "nrf24-17032020",
+  "apiKey": "ca72ec15-2ba5-4395-83cb-2f0555ecc68a"
+}

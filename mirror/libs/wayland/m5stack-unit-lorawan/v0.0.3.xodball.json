@@ -1,0 +1,2836 @@
+{
+  "patches": {
+    "@/configure-otaa": {
+      "nodes": {
+        "BymyRtNS5": {
+          "id": "BymyRtNS5",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Hyxm1AFES9": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "description": "Device EUI",
+          "label": "D_EUI",
+          "id": "Hyxm1AFES9",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "S1-XJRt4H5": {
+          "description": "Update",
+          "label": "UPD",
+          "id": "S1-XJRt4H5",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Hyz7k0YNS5": {
+          "description": "A lorawan-device.",
+          "label": "DEV",
+          "id": "Hyz7k0YNS5",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lorawan-device"
+        },
+        "HymXyCFNrc": {
+          "description": "Pulse on configuration completed.",
+          "label": "Done",
+          "id": "HymXyCFNrc",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BytWkc4B9": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "description": "Join EUI (formerly called Application EUI).",
+          "label": "J_EUI",
+          "id": "BytWkc4B9",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "ByqWk9NB9": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "description": "Application Key.",
+          "label": "A_Key",
+          "id": "ByqWk9NB9",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "BJsbkqNSq": {
+          "boundLiterals": {
+            "__out__": "\"2\""
+          },
+          "description": "Upload/download same/different frequency. 1 = same frequency mode; 2 = different frequency mode.",
+          "label": "Mode",
+          "id": "BJsbkqNSq",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        }
+      },
+      "path": "@/configure-otaa",
+      "description": "Configure Over The Air Authentication (OTAA).",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto LoRaWAN = getValue<input_DEV>(ctx);\n        auto xDevEUI = getValue<input_D_EUI>(ctx);\n        auto xAppEUI = getValue<input_J_EUI>(ctx);\n        auto xAppKey = getValue<input_A_Key>(ctx);\n        auto xMode = getValue<input_Mode>(ctx);\n\n        int N=length(xDevEUI)+1;\n        char cDevEUI[N];\n        for(int i=0;i<N;i++)\n            cDevEUI[i]=0;\n        dump(xDevEUI, cDevEUI);\n\n        N=length(xAppEUI)+1;\n        char cAppEUI[N];\n        for(int i=0;i<N;i++)\n            cAppEUI[i]=0;\n        dump(xAppEUI, cAppEUI);\n\n        N=length(xAppKey)+1;\n        char cAppKey[N];\n        for(int i=0;i<N;i++)\n            cAppKey[i]=0;\n        dump(xAppKey, cAppKey);\n\n        N=length(xMode)+1;\n        char cMode[N];\n        for(int i=0;i<N;i++)\n            cMode[i]=0;\n        dump(xMode, cMode);\n\n        LoRaWAN->configOTTA(cDevEUI, cAppEUI, cAppKey, cMode);\n\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/disable-log-information": {
+      "nodes": {
+        "SJHFPrEHc": {
+          "boundLiterals": {
+            "B12mmr4rq": "\"\""
+          },
+          "id": "SJHFPrEHc",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/write-command"
+        },
+        "B1eBYvHNHq": {
+          "description": "A lorawan-device.",
+          "label": "DEV",
+          "id": "B1eBYvHNHq",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-lorawan-device"
+        },
+        "S1brYvSEH5": {
+          "description": "Update",
+          "label": "UPD",
+          "id": "S1brYvSEH5",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJMSKvHEBc": {
+          "description": "Pulse on write.",
+          "label": "Done",
+          "id": "rJMSKvHEBc",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HkQrtvH4Hc": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "\"AT+ILOGLVL=0\\r\\n\""
+          },
+          "size": {
+            "height": 1,
+            "width": 5,
+            "units": "slots"
+          },
+          "id": "HkQrtvH4Hc",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-string"
+        }
+      },
+      "links": {
+        "BJVHFPSNSq": {
+          "id": "BJVHFPSNSq",
+          "input": {
+            "nodeId": "SJHFPrEHc",
+            "pinKey": "B1pBQr4r5"
+          },
+          "output": {
+            "nodeId": "B1eBYvHNHq",
+            "pinKey": "__out__"
+          }
+        },
+        "H1HHKDBNHq": {
+          "id": "H1HHKDBNHq",
+          "input": {
+            "nodeId": "SJHFPrEHc",
+            "pinKey": "SknNQrES5"
+          },
+          "output": {
+            "nodeId": "S1brYvSEH5",
+            "pinKey": "__out__"
+          }
+        },
+        "HyLSFwHEHq": {
+          "id": "HyLSFwHEHq",
+          "input": {
+            "nodeId": "rJMSKvHEBc",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJHFPrEHc",
+            "pinKey": "SkQD7rVSc"
+          }
+        },
+        "BkDHFwS4H5": {
+          "id": "BkDHFwS4H5",
+          "input": {
+            "nodeId": "SJHFPrEHc",
+            "pinKey": "B12mmr4rq"
+          },
+          "output": {
+            "nodeId": "HkQrtvH4Hc",
+            "pinKey": "B1x2RV3eZ"
+          }
+        }
+      },
+      "path": "@/disable-log-information",
+      "description": "Disable logging."
+    },
+    "@/join-network": {
+      "nodes": {
+        "By-8Kmrv9": {
+          "id": "By-8Kmrv9",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1bWLFmSv5": {
+          "description": "Update",
+          "label": "UPD",
+          "id": "S1bWLFmSv5",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryfbIY7Bv9": {
+          "description": "A lorawan-device.",
+          "label": "DEV",
+          "id": "ryfbIY7Bv9",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-lorawan-device"
+        },
+        "HJQZ8YXSvc": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "HJQZ8YXSvc",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/join-network",
+      "description": "Join network. Initiate over the air authentication (OTAA).",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto LoRaWAN = getValue<input_DEV>(ctx);\n\n        LoRaWAN->startJoin();\n\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/02-example-msg": {
+      "nodes": {
+        "Hkj1WjPzu5": {
+          "boundLiterals": {
+            "B1burwfd9": "\"\"",
+            "Syt_BDGOq": "\"0000000000000000\"",
+            "rkDet_HPfu5": "\"\""
+          },
+          "id": "Hkj1WjPzu5",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/lorawan868-setup"
+        },
+        "ryhyZowG_9": {
+          "id": "ryhyZowG_9",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/uart/uart-1"
+        },
+        "B1KOjvMu9": {
+          "boundLiterals": {
+            "ryeQ37WnLc": "\"\""
+          },
+          "id": "B1KOjvMu9",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/send-message"
+        },
+        "S1S7zuG_q": {
+          "boundLiterals": {
+            "B13SCNhl-": "5"
+          },
+          "id": "S1S7zuG_q",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "HydhWKGdq": {
+          "boundLiterals": {
+            "H1wh06BEV": "\"42\""
+          },
+          "id": "HydhWKGdq",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-string-16"
+        }
+      },
+      "links": {
+        "SkakWowfOq": {
+          "id": "SkakWowfOq",
+          "input": {
+            "nodeId": "Hkj1WjPzu5",
+            "pinKey": "rysNHvMdc"
+          },
+          "output": {
+            "nodeId": "ryhyZowG_9",
+            "pinKey": "Sk450OL-X"
+          }
+        },
+        "ryAkWiPz_c": {
+          "id": "ryAkWiPz_c",
+          "input": {
+            "nodeId": "Hkj1WjPzu5",
+            "pinKey": "r1OM8DMu5"
+          },
+          "output": {
+            "nodeId": "ryhyZowG_9",
+            "pinKey": "BkmeFD8OQ"
+          }
+        },
+        "HkUFiPfOq": {
+          "id": "HkUFiPfOq",
+          "input": {
+            "nodeId": "B1KOjvMu9",
+            "pinKey": "HJfXhXW3I9"
+          },
+          "output": {
+            "nodeId": "Hkj1WjPzu5",
+            "pinKey": "HJaivvMOc"
+          }
+        },
+        "H19XMuGu9": {
+          "id": "H19XMuGu9",
+          "input": {
+            "nodeId": "B1KOjvMu9",
+            "pinKey": "rJZQhXb3U9"
+          },
+          "output": {
+            "nodeId": "S1S7zuG_q",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "BJBT-Fzdc": {
+          "id": "BJBT-Fzdc",
+          "input": {
+            "nodeId": "B1KOjvMu9",
+            "pinKey": "ryeQ37WnLc"
+          },
+          "output": {
+            "nodeId": "HydhWKGdq",
+            "pinKey": "H1wh06BEV"
+          }
+        }
+      },
+      "path": "@/02-example-msg",
+      "description": "Demonstration of sending a message. Run in debug mode to change the message at runtime. "
+    },
+    "@/device-connected": {
+      "nodes": {
+        "SkhjyBEBq": {
+          "id": "SkhjyBEBq",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HkUnyB4Bc": {
+          "description": "A lorawan-device.",
+          "label": "DEV",
+          "id": "HkUnyB4Bc",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lorawan-device"
+        },
+        "ByCaJB4r9": {
+          "description": "Output true if device connected.",
+          "label": "Conn",
+          "id": "ByCaJB4r9",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "BJ8RyHVBc": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "BJ8RyHVBc",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BJUexSVB5": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Update.",
+          "label": "UPD",
+          "id": "BJUexSVB5",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/device-connected",
+      "description": "Check if LoRaWAN device connected.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto LoRaWAN = getValue<input_DEV>(ctx);\n\n        emitValue<output_Conn>(ctx, LoRaWAN->checkDeviceConnect());\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/joined-network": {
+      "nodes": {
+        "HyBujr-d5": {
+          "id": "HyBujr-d5",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SkxHOoBZuq": {
+          "description": "A lorawan-device.",
+          "label": "DEV",
+          "id": "SkxHOoBZuq",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lorawan-device"
+        },
+        "HkZrOoSWu9": {
+          "description": "Output true if joined to network.",
+          "label": "Joined",
+          "id": "HkZrOoSWu9",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "r1zSdorWu9": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "r1zSdorWu9",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HymrOsH-dq": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Update.",
+          "label": "UPD",
+          "id": "HymrOsH-dq",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/joined-network",
+      "description": "Check if device has joined network.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto LoRaWAN = getValue<input_DEV>(ctx);\n\n        emitValue<output_Joined>(ctx, LoRaWAN->checkJoinStatus());\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/01-example-lpp": {
+      "nodes": {
+        "HJXBtPMd5": {
+          "boundLiterals": {
+            "B1burwfd9": "\"\"",
+            "S1O2JmtS2": "\"0\"",
+            "Syt_BDGOq": "\"0000000000000000\"",
+            "rkDet_HPfu5": "\"\"",
+            "ryMnJ7YHn": "\"2\""
+          },
+          "id": "HJXBtPMd5",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/lorawan868-setup"
+        },
+        "B138Nuzu5": {
+          "boundLiterals": {
+            "B1NVZ4mdP9": "True"
+          },
+          "id": "B138Nuzu5",
+          "position": {
+            "x": 6,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/send-lpp"
+        },
+        "SyNubhzOq": {
+          "id": "SyNubhzOq",
+          "position": {
+            "x": 12,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "wayland/bmp280-barometer/barometer-thermometer"
+        },
+        "SyZ2W2MO5": {
+          "boundLiterals": {
+            "BkND9cY_Sc": "01h"
+          },
+          "id": "SyZ2W2MO5",
+          "position": {
+            "x": 10,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "wayland/cayenne-lpp/add-barometric-pressure"
+        },
+        "S10hb3Guq": {
+          "boundLiterals": {
+            "SyVWAtCFS5": "00h"
+          },
+          "id": "S10hb3Guq",
+          "position": {
+            "x": 11,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "wayland/cayenne-lpp/add-temperature"
+        },
+        "BJ9R-2fd5": {
+          "boundLiterals": {
+            "rydDt05vc": "8"
+          },
+          "id": "BJ9R-2fd5",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "wayland/cayenne-lpp/lpp"
+        },
+        "ByzQz2fuq": {
+          "label": "LPP",
+          "id": "ByzQz2fuq",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "HJ4Dz3zO9": {
+          "label": "LoRa",
+          "id": "HJ4Dz3zO9",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "HywuGhzu5": {
+          "label": "LoRa",
+          "id": "HywuGhzu5",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "Hyu9GnGd9": {
+          "boundLiterals": {
+            "B13SCNhl-": "30"
+          },
+          "id": "Hyu9GnGd9",
+          "position": {
+            "x": 20,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "BJRzQ2Gdc": {
+          "id": "BJRzQ2Gdc",
+          "position": {
+            "x": 5,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "wayland/cayenne-lpp/reset"
+        },
+        "H1IV7nGu9": {
+          "label": "LPP",
+          "id": "H1IV7nGu9",
+          "position": {
+            "x": 5,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HyvRchG_c": {
+          "boundLiterals": {
+            "BytUCdHD1-": "100"
+          },
+          "id": "HyvRchG_c",
+          "position": {
+            "x": 16,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/divide"
+        },
+        "ByxBIk3rh": {
+          "id": "ByxBIk3rh",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/uart/uart-0"
+        }
+      },
+      "links": {
+        "H1za-3Gu9": {
+          "id": "H1za-3Gu9",
+          "input": {
+            "nodeId": "S10hb3Guq",
+            "pinKey": "rJb-0KAFH5"
+          },
+          "output": {
+            "nodeId": "SyNubhzOq",
+            "pinKey": "S1i8fst98"
+          }
+        },
+        "Bk1RZ2MO9": {
+          "id": "Bk1RZ2MO9",
+          "input": {
+            "nodeId": "S10hb3Guq",
+            "pinKey": "SkG-RY0Frq"
+          },
+          "output": {
+            "nodeId": "SyNubhzOq",
+            "pinKey": "SJusMiKqL"
+          }
+        },
+        "rkbRW3zdq": {
+          "id": "rkbRW3zdq",
+          "input": {
+            "nodeId": "SyZ2W2MO5",
+            "pinKey": "SyGv55K_Bq"
+          },
+          "output": {
+            "nodeId": "S10hb3Guq",
+            "pinKey": "B1XZCKAFBq"
+          }
+        },
+        "S1A0b3zdc": {
+          "id": "S1A0b3zdc",
+          "input": {
+            "nodeId": "S10hb3Guq",
+            "pinKey": "ryxb0FAYrq"
+          },
+          "output": {
+            "nodeId": "BJ9R-2fd5",
+            "pinKey": "Bk6wOfdSq"
+          }
+        },
+        "ByTQG2zdc": {
+          "id": "ByTQG2zdc",
+          "input": {
+            "nodeId": "ByzQz2fuq",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJ9R-2fd5",
+            "pinKey": "Bk6wOfdSq"
+          }
+        },
+        "SkFvf3M_5": {
+          "id": "SkFvf3M_5",
+          "input": {
+            "nodeId": "HJ4Dz3zO9",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HJXBtPMd5",
+            "pinKey": "HJaivvMOc"
+          }
+        },
+        "SJQFMnMu9": {
+          "id": "SJQFMnMu9",
+          "input": {
+            "nodeId": "B138Nuzu5",
+            "pinKey": "SkGN-VQuwc"
+          },
+          "output": {
+            "nodeId": "HywuGhzu5",
+            "pinKey": "__out__"
+          }
+        },
+        "rk09zhGOq": {
+          "id": "rk09zhGOq",
+          "input": {
+            "nodeId": "SyNubhzOq",
+            "pinKey": "BJ5ZVjFq8"
+          },
+          "output": {
+            "nodeId": "Hyu9GnGd9",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "HJjNmnGOq": {
+          "id": "HJjNmnGOq",
+          "input": {
+            "nodeId": "BJRzQ2Gdc",
+            "pinKey": "rJlEnb_KU9"
+          },
+          "output": {
+            "nodeId": "H1IV7nGu9",
+            "pinKey": "__out__"
+          }
+        },
+        "Sk3Rc3Mdq": {
+          "id": "Sk3Rc3Mdq",
+          "input": {
+            "nodeId": "HyvRchG_c",
+            "pinKey": "SkdIRuBD1b"
+          },
+          "output": {
+            "nodeId": "SyNubhzOq",
+            "pinKey": "S1XUziFqU"
+          }
+        },
+        "rkJyshf_5": {
+          "id": "rkJyshf_5",
+          "input": {
+            "nodeId": "SyZ2W2MO5",
+            "pinKey": "H1bP55F_Sq"
+          },
+          "output": {
+            "nodeId": "HyvRchG_c",
+            "pinKey": "BkqLCOSw1W"
+          }
+        },
+        "rkmv1wrR5": {
+          "id": "rkmv1wrR5",
+          "input": {
+            "nodeId": "BJRzQ2Gdc",
+            "pinKey": "H1ZEhWOt8q"
+          },
+          "output": {
+            "nodeId": "B138Nuzu5",
+            "pinKey": "HJXNZVQ_P9"
+          }
+        },
+        "H1n7E13H3": {
+          "id": "H1n7E13H3",
+          "input": {
+            "nodeId": "B138Nuzu5",
+            "pinKey": "SkZV-VXuDc"
+          },
+          "output": {
+            "nodeId": "SyZ2W2MO5",
+            "pinKey": "BkQwccFOr5"
+          }
+        },
+        "HynvEJnHn": {
+          "id": "HynvEJnHn",
+          "input": {
+            "nodeId": "SyZ2W2MO5",
+            "pinKey": "SJeP5cYOHc"
+          },
+          "output": {
+            "nodeId": "BJ9R-2fd5",
+            "pinKey": "Bk6wOfdSq"
+          }
+        },
+        "SJ9tNJhSh": {
+          "id": "SJ9tNJhSh",
+          "input": {
+            "nodeId": "B138Nuzu5",
+            "pinKey": "S1WQNmdvq"
+          },
+          "output": {
+            "nodeId": "BJ9R-2fd5",
+            "pinKey": "Bk6wOfdSq"
+          }
+        },
+        "rkb8UJhS2": {
+          "id": "rkb8UJhS2",
+          "input": {
+            "nodeId": "HJXBtPMd5",
+            "pinKey": "r1OM8DMu5"
+          },
+          "output": {
+            "nodeId": "ByxBIk3rh",
+            "pinKey": "Sk0ktvLO7"
+          }
+        },
+        "HkLUUJhrn": {
+          "id": "HkLUUJhrn",
+          "input": {
+            "nodeId": "HJXBtPMd5",
+            "pinKey": "rysNHvMdc"
+          },
+          "output": {
+            "nodeId": "ByxBIk3rh",
+            "pinKey": "Sk450OL-X"
+          }
+        }
+      },
+      "comments": {
+        "HJ4HxZ3Bh": {
+          "content": "*Set maximum size of payload*. The data for each sensor are prefixed by two bytes:\n* *Data Channel*: Uniquely identifies each sensor in the device across frames\n* *Data Type*: Identifies the data type in the frame, eg. “temperature”.\n\nTwo bytes are required for each of our measurements (temperature and barometric pressure), making a total payload size of eight bytes.\n\nFor information on the size of other datatypes, please see: https://docs.mydevices.com/docs/lorawan/cayenne-lpp",
+          "id": "HJ4HxZ3Bh",
+          "position": {
+            "x": 10,
+            "y": -1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 3,
+            "width": 9,
+            "units": "slots"
+          }
+        },
+        "rJiBlZ3r3": {
+          "content": "Sets interval between measurements. For testing this has been set to just 30 seconds. In normal use the interval would be much larger (many minutes to hours).",
+          "id": "rJiBlZ3r3",
+          "position": {
+            "x": 23,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 10,
+            "units": "slots"
+          }
+        },
+        "SyEIgb3B2": {
+          "content": "Convert measurement from pascals to hectopascals.",
+          "id": "SyEIgb3B2",
+          "position": {
+            "x": 18,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "BJ9Igb3S3": {
+          "content": "*add-temperature* and *add-barometric-pressure* build up the payload. Each measurement must be assigned its own channel.",
+          "id": "BJ9Igb3S3",
+          "position": {
+            "x": 14,
+            "y": 4,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 8,
+            "units": "slots"
+          }
+        },
+        "B1CLgb2Bn": {
+          "content": "*CFM* (confirmation of uplink) set to *True* here for testing. However, in normal use, confirmation of uplinks should be avoided: https://www.thethingsnetwork.org/docs/lorawan/limitations/#sending-responses-from-your-application-to-your-node-downlink",
+          "id": "B1CLgb2Bn",
+          "position": {
+            "x": 11,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 17,
+            "units": "slots"
+          }
+        },
+        "HJzwe-2Hh": {
+          "content": "Empty the payload buffer so that it is ready for new measurements.",
+          "id": "HJzwe-2Hh",
+          "position": {
+            "x": 7,
+            "y": 6,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 5,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/01-example-lpp",
+      "description": "Demonstration of sending data using the Cayenne Low Power Payload (https://docs.mydevices.com/docs/lorawan/cayenne-lpp)."
+    },
+    "@/lorawan868-setup": {
+      "nodes": {
+        "SJczJPMOc": {
+          "id": "SJczJPMOc",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/lorawan-device"
+        },
+        "SkeqG1wzdq": {
+          "boundLiterals": {
+            "BJUexSVB5": "On Boot"
+          },
+          "id": "SkeqG1wzdq",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/device-connected"
+        },
+        "BJfczJPfdq": {
+          "id": "BJfczJPfdq",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/restore-mac-defaults"
+        },
+        "Hk7qMyvGd5": {
+          "id": "Hk7qMyvGd5",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/disable-log-information"
+        },
+        "r1VqMyPMuq": {
+          "id": "r1VqMyPMuq",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/reboot"
+        },
+        "r1SqGJwfOc": {
+          "id": "r1SqGJwfOc",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/save-mac-configuration"
+        },
+        "HyU9GkwMd9": {
+          "label": "LoRa",
+          "id": "HyU9GkwMd9",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "H1PqG1vzu9": {
+          "label": "LoRa",
+          "id": "H1PqG1vzu9",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "B1_cfyvM_q": {
+          "label": "LoRa",
+          "id": "B1_cfyvM_q",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1F9GJDG_c": {
+          "label": "LoRa",
+          "id": "S1F9GJDG_c",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJ59G1wz_q": {
+          "label": "LoRa",
+          "id": "SJ59G1wz_q",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "BJo5Gyvzd9": {
+          "boundLiterals": {
+            "BJUexSVB5": "On Boot"
+          },
+          "id": "BJo5Gyvzd9",
+          "position": {
+            "x": 6,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/device-connected"
+        },
+        "HyhcfkDM_9": {
+          "id": "HyhcfkDM_9",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/branch"
+        },
+        "B1T5GJDfOq": {
+          "id": "B1T5GJDfOq",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "HJAczkPz_5": {
+          "id": "HJAczkPz_5",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "HJkl9fkPfuc": {
+          "label": "LoRa",
+          "id": "HJkl9fkPfuc",
+          "position": {
+            "x": 5,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "ryel5zJwGOc": {
+          "id": "ryel5zJwGOc",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "rkWl5zyvzd5": {
+          "id": "rkWl5zyvzd5",
+          "position": {
+            "x": 6,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/branch"
+        },
+        "ryGecGkDzO9": {
+          "id": "ryGecGkDzO9",
+          "position": {
+            "x": 9,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "HJ3wJDzuq": {
+          "boundLiterals": {
+            "ByqWk9NB9": "\"FE9FEA871DF647F0420995B1CA58C3DA\"",
+            "BytWkc4B9": "\"0000000000000000\"",
+            "Hyxm1AFES9": "\"70B3D57ED0050EFC\""
+          },
+          "id": "HJ3wJDzuq",
+          "position": {
+            "x": 1,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "@/configure-otaa"
+        },
+        "rkx2DJPMO5": {
+          "label": "LoRa",
+          "id": "rkx2DJPMO5",
+          "position": {
+            "x": 1,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJ-nw1wzOc": {
+          "boundLiterals": {
+            "B12mmr4rq": "\"AT+CWORKMODE=2\\r\\n\""
+          },
+          "id": "SJ-nw1wzOc",
+          "position": {
+            "x": 12,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "@/write-command"
+        },
+        "S1M2D1Dfd5": {
+          "label": "LoRa",
+          "id": "S1M2D1Dfd5",
+          "position": {
+            "x": 12,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HyQhvywfu9": {
+          "id": "HyQhvywfu9",
+          "position": {
+            "x": 16,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "@/set-rx-window"
+        },
+        "H1E2vJwM_c": {
+          "label": "LoRa",
+          "id": "H1E2vJwM_c",
+          "position": {
+            "x": 16,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "BkHnwywfd9": {
+          "id": "BkHnwywfd9",
+          "position": {
+            "x": 20,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "@/set-freq-mask"
+        },
+        "SyUhwyvzuc": {
+          "label": "LoRa",
+          "id": "SyUhwyvzuc",
+          "position": {
+            "x": 20,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "B1vnPyPGdc": {
+          "id": "B1vnPyPGdc",
+          "position": {
+            "x": 24,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "@/join-network"
+        },
+        "SkunwkPfuq": {
+          "id": "SkunwkPfuq",
+          "position": {
+            "x": 8,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "@/set-class"
+        },
+        "H1YhPyPMO5": {
+          "label": "LoRa",
+          "id": "H1YhPyPMO5",
+          "position": {
+            "x": 8,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "BJ9nw1wfu9": {
+          "label": "LoRa",
+          "id": "BJ9nw1wfu9",
+          "position": {
+            "x": 23,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rysNHvMdc": {
+          "description": "A universal asynchronous receiver-transmitter (UART).",
+          "label": "UART",
+          "id": "rysNHvMdc",
+          "position": {
+            "x": 2,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/uart/input-uart"
+        },
+        "B1burwfd9": {
+          "description": "Device EUI.",
+          "label": "D_EUI",
+          "id": "B1burwfd9",
+          "position": {
+            "x": 5,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Syt_BDGOq": {
+          "description": "Join EUI (formerly called Application EUI).",
+          "label": "J_EUI",
+          "id": "Syt_BDGOq",
+          "position": {
+            "x": 6,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "rkDet_HPfu5": {
+          "description": "Application Key.",
+          "label": "A_KEY",
+          "id": "rkDet_HPfu5",
+          "position": {
+            "x": 7,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "r1OM8DMu5": {
+          "description": "Initialize",
+          "label": "Init",
+          "id": "r1OM8DMu5",
+          "position": {
+            "x": 10,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ry74LwGOq": {
+          "label": "D_EUI",
+          "id": "ry74LwGOq",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "rkONIPMOc": {
+          "label": "J_EUI",
+          "id": "rkONIPMOc",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "r1YVLvzOq": {
+          "label": "A_KEY",
+          "id": "r1YVLvzOq",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "SJIlvwfu5": {
+          "label": "D_EUI",
+          "id": "SJIlvwfu5",
+          "position": {
+            "x": 2,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SksxwPMd5": {
+          "label": "J_EUI",
+          "id": "SksxwPMd5",
+          "position": {
+            "x": 3,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1Ploxvvfuq": {
+          "label": "A_KEY",
+          "id": "S1Ploxvvfuq",
+          "position": {
+            "x": 4,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJKVDvG_5": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "HJKVDvG_5",
+          "position": {
+            "x": 24,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJaivvMOc": {
+          "description": "A lorawan-device.",
+          "label": "DEV",
+          "id": "HJaivvMOc",
+          "position": {
+            "x": 23,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "@/output-lorawan-device"
+        },
+        "ryMnJ7YHn": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "description": "Upload/download same/different frequency. 1 = same frequency mode; 2 = different frequency mode.",
+          "label": "Mode",
+          "id": "ryMnJ7YHn",
+          "position": {
+            "x": 8,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "S1O2JmtS2": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "description": "Set class. Options: 0 (A), 1 (B) and 2 (C). See: https://www.thethingsnetwork.org/doc ",
+          "label": "Class",
+          "id": "S1O2JmtS2",
+          "position": {
+            "x": 9,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SJaqlQKSh": {
+          "label": "Mode",
+          "id": "SJaqlQKSh",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "SyCjgQFH3": {
+          "label": "Class",
+          "id": "SyCjgQFH3",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        }
+      },
+      "links": {
+        "SJ4eqzkDz_9": {
+          "id": "SJ4eqzkDz_9",
+          "input": {
+            "nodeId": "SkeqG1wzdq",
+            "pinKey": "HkUnyB4Bc"
+          },
+          "output": {
+            "nodeId": "SJczJPMOc",
+            "pinKey": "S1ZPOE4rc"
+          }
+        },
+        "HJLl5fJwGO5": {
+          "id": "HJLl5fJwGO5",
+          "input": {
+            "nodeId": "BJfczJPfdq",
+            "pinKey": "BykiIHES5"
+          },
+          "output": {
+            "nodeId": "H1PqG1vzu9",
+            "pinKey": "__out__"
+          }
+        },
+        "H1Px9f1wG_q": {
+          "id": "H1Px9f1wG_q",
+          "input": {
+            "nodeId": "Hk7qMyvGd5",
+            "pinKey": "B1eBYvHNHq"
+          },
+          "output": {
+            "nodeId": "B1_cfyvM_q",
+            "pinKey": "__out__"
+          }
+        },
+        "Syue9fkDGdq": {
+          "id": "Syue9fkDGdq",
+          "input": {
+            "nodeId": "HyU9GkwMd9",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJczJPMOc",
+            "pinKey": "S1ZPOE4rc"
+          }
+        },
+        "rkYe9zywz_c": {
+          "id": "rkYe9zywz_c",
+          "input": {
+            "nodeId": "r1SqGJwfOc",
+            "pinKey": "SyeEV_HNr9"
+          },
+          "output": {
+            "nodeId": "S1F9GJDG_c",
+            "pinKey": "__out__"
+          }
+        },
+        "r1qxcfJDfOc": {
+          "id": "r1qxcfJDfOc",
+          "input": {
+            "nodeId": "r1VqMyPMuq",
+            "pinKey": "B1gUt_S4S5"
+          },
+          "output": {
+            "nodeId": "SJ59G1wz_q",
+            "pinKey": "__out__"
+          }
+        },
+        "B1jx9M1wfOc": {
+          "id": "B1jx9M1wfOc",
+          "input": {
+            "nodeId": "Hk7qMyvGd5",
+            "pinKey": "S1brYvSEH5"
+          },
+          "output": {
+            "nodeId": "BJfczJPfdq",
+            "pinKey": "HympUrNHc"
+          }
+        },
+        "By3x9fJwMO9": {
+          "id": "By3x9fJwMO9",
+          "input": {
+            "nodeId": "r1SqGJwfOc",
+            "pinKey": "rkbVN_rEB5"
+          },
+          "output": {
+            "nodeId": "Hk7qMyvGd5",
+            "pinKey": "rJMSKvHEBc"
+          }
+        },
+        "SJpecM1Pzdc": {
+          "id": "SJpecM1Pzdc",
+          "input": {
+            "nodeId": "r1VqMyPMuq",
+            "pinKey": "S1bLFuBESc"
+          },
+          "output": {
+            "nodeId": "r1SqGJwfOc",
+            "pinKey": "ryzEVdrVSc"
+          }
+        },
+        "H1AgcfkvMd5": {
+          "id": "H1AgcfkvMd5",
+          "input": {
+            "nodeId": "HyhcfkDM_9",
+            "pinKey": "S1OlUAuBD1-"
+          },
+          "output": {
+            "nodeId": "SkeqG1wzdq",
+            "pinKey": "ByCaJB4r9"
+          }
+        },
+        "H11W9zkDfO9": {
+          "id": "H11W9zkDfO9",
+          "input": {
+            "nodeId": "SkeqG1wzdq",
+            "pinKey": "BJUexSVB5"
+          },
+          "output": {
+            "nodeId": "B1T5GJDfOq",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "BygZ5GyvGOc": {
+          "id": "BygZ5GyvGOc",
+          "input": {
+            "nodeId": "HJAczkPz_5",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "HyhcfkDM_9",
+            "pinKey": "SyM2ATB-b"
+          }
+        },
+        "Bkb-qMkPGu5": {
+          "id": "Bkb-qMkPGu5",
+          "input": {
+            "nodeId": "B1T5GJDfOq",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "HJAczkPz_5",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "H1f-5MJDMu5": {
+          "id": "H1f-5MJDMu5",
+          "input": {
+            "nodeId": "HyhcfkDM_9",
+            "pinKey": "HkDgIRdrv1W"
+          },
+          "output": {
+            "nodeId": "SkeqG1wzdq",
+            "pinKey": "BJ8RyHVBc"
+          }
+        },
+        "Sy7-qfyvfd9": {
+          "id": "Sy7-qfyvfd9",
+          "input": {
+            "nodeId": "BJfczJPfdq",
+            "pinKey": "SJfn8BVrq"
+          },
+          "output": {
+            "nodeId": "HyhcfkDM_9",
+            "pinKey": "SJUl8Aurv1W"
+          }
+        },
+        "r1VWqMkDf_5": {
+          "id": "r1VWqMkDf_5",
+          "input": {
+            "nodeId": "BJo5Gyvzd9",
+            "pinKey": "HkUnyB4Bc"
+          },
+          "output": {
+            "nodeId": "HJkl9fkPfuc",
+            "pinKey": "__out__"
+          }
+        },
+        "SkBb5GJPM_5": {
+          "id": "SkBb5GJPM_5",
+          "input": {
+            "nodeId": "ryel5zJwGOc",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "r1VqMyPMuq",
+            "pinKey": "HyfIF_HVSq"
+          }
+        },
+        "BJIZ5Gyvfu9": {
+          "id": "BJIZ5Gyvfu9",
+          "input": {
+            "nodeId": "BJo5Gyvzd9",
+            "pinKey": "BJUexSVB5"
+          },
+          "output": {
+            "nodeId": "ryel5zJwGOc",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "r1wZqM1wMO5": {
+          "id": "r1wZqM1wMO5",
+          "input": {
+            "nodeId": "rkWl5zyvzd5",
+            "pinKey": "S1OlUAuBD1-"
+          },
+          "output": {
+            "nodeId": "BJo5Gyvzd9",
+            "pinKey": "ByCaJB4r9"
+          }
+        },
+        "rJu-5GyDf_c": {
+          "id": "rJu-5GyDf_c",
+          "input": {
+            "nodeId": "ryGecGkDzO9",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "rkWl5zyvzd5",
+            "pinKey": "SyM2ATB-b"
+          }
+        },
+        "SJYWqG1vMd9": {
+          "id": "SJYWqG1vMd9",
+          "input": {
+            "nodeId": "ryel5zJwGOc",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "ryGecGkDzO9",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "H15WqMywG_c": {
+          "id": "H15WqMywG_c",
+          "input": {
+            "nodeId": "rkWl5zyvzd5",
+            "pinKey": "HkDgIRdrv1W"
+          },
+          "output": {
+            "nodeId": "BJo5Gyvzd9",
+            "pinKey": "BJ8RyHVBc"
+          }
+        },
+        "SJjnv1PGd5": {
+          "id": "SJjnv1PGd5",
+          "input": {
+            "nodeId": "HJ3wJDzuq",
+            "pinKey": "Hyz7k0YNS5"
+          },
+          "output": {
+            "nodeId": "rkx2DJPMO5",
+            "pinKey": "__out__"
+          }
+        },
+        "r132vJDGdc": {
+          "id": "r132vJDGdc",
+          "input": {
+            "nodeId": "SJ-nw1wzOc",
+            "pinKey": "B1pBQr4r5"
+          },
+          "output": {
+            "nodeId": "S1M2D1Dfd5",
+            "pinKey": "__out__"
+          }
+        },
+        "H1ahDJwG_q": {
+          "id": "H1ahDJwG_q",
+          "input": {
+            "nodeId": "HyQhvywfu9",
+            "pinKey": "SkfZd6DEr9"
+          },
+          "output": {
+            "nodeId": "H1E2vJwM_c",
+            "pinKey": "__out__"
+          }
+        },
+        "Hy0nvJPzu9": {
+          "id": "Hy0nvJPzu9",
+          "input": {
+            "nodeId": "HyQhvywfu9",
+            "pinKey": "Bkb-OTDNrq"
+          },
+          "output": {
+            "nodeId": "SJ-nw1wzOc",
+            "pinKey": "SkQD7rVSc"
+          }
+        },
+        "Skke3wyDGu9": {
+          "id": "Skke3wyDGu9",
+          "input": {
+            "nodeId": "BkHnwywfd9",
+            "pinKey": "S1fL0f6Mvc"
+          },
+          "output": {
+            "nodeId": "SyUhwyvzuc",
+            "pinKey": "__out__"
+          }
+        },
+        "Hklx3wkDMO5": {
+          "id": "Hklx3wkDMO5",
+          "input": {
+            "nodeId": "BkHnwywfd9",
+            "pinKey": "Syb8CzpMP9"
+          },
+          "output": {
+            "nodeId": "HyQhvywfu9",
+            "pinKey": "HkXb_TvVS9"
+          }
+        },
+        "B1behwJPz_c": {
+          "id": "B1behwJPz_c",
+          "input": {
+            "nodeId": "SkunwkPfuq",
+            "pinKey": "r1MhLwQSDc"
+          },
+          "output": {
+            "nodeId": "H1YhPyPMO5",
+            "pinKey": "__out__"
+          }
+        },
+        "B1zxhP1vGdq": {
+          "id": "B1zxhP1vGdq",
+          "input": {
+            "nodeId": "SkunwkPfuq",
+            "pinKey": "ry-2UDQSvq"
+          },
+          "output": {
+            "nodeId": "HJ3wJDzuq",
+            "pinKey": "HymXyCFNrc"
+          }
+        },
+        "HJQg2vkPGdq": {
+          "id": "HJQg2vkPGdq",
+          "input": {
+            "nodeId": "SJ-nw1wzOc",
+            "pinKey": "SknNQrES5"
+          },
+          "output": {
+            "nodeId": "SkunwkPfuq",
+            "pinKey": "r1mhIP7BD5"
+          }
+        },
+        "B1Eg3w1vG_q": {
+          "id": "B1Eg3w1vG_q",
+          "input": {
+            "nodeId": "B1vnPyPGdc",
+            "pinKey": "ryfbIY7Bv9"
+          },
+          "output": {
+            "nodeId": "BJ9nw1wfu9",
+            "pinKey": "__out__"
+          }
+        },
+        "Skrx3w1wM_q": {
+          "id": "Skrx3w1wM_q",
+          "input": {
+            "nodeId": "B1vnPyPGdc",
+            "pinKey": "S1bWLFmSv5"
+          },
+          "output": {
+            "nodeId": "BkHnwywfd9",
+            "pinKey": "BJQLCM6MP5"
+          }
+        },
+        "r18OyPMdq": {
+          "id": "r18OyPMdq",
+          "input": {
+            "nodeId": "HJ3wJDzuq",
+            "pinKey": "S1-XJRt4H5"
+          },
+          "output": {
+            "nodeId": "rkWl5zyvzd5",
+            "pinKey": "SJUl8Aurv1W"
+          }
+        },
+        "HyirBDGO5": {
+          "id": "HyirBDGO5",
+          "input": {
+            "nodeId": "SJczJPMOc",
+            "pinKey": "HJb8OVEr5"
+          },
+          "output": {
+            "nodeId": "rysNHvMdc",
+            "pinKey": "__out__"
+          }
+        },
+        "H1nPLPfOc": {
+          "id": "H1nPLPfOc",
+          "input": {
+            "nodeId": "ry74LwGOq",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "B1burwfd9",
+            "pinKey": "__out__"
+          }
+        },
+        "ByRv8vzu5": {
+          "id": "ByRv8vzu5",
+          "input": {
+            "nodeId": "rkONIPMOc",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Syt_BDGOq",
+            "pinKey": "__out__"
+          }
+        },
+        "H1luLvGOc": {
+          "id": "H1luLvGOc",
+          "input": {
+            "nodeId": "r1YVLvzOq",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkDet_HPfu5",
+            "pinKey": "__out__"
+          }
+        },
+        "Bk40UDzO9": {
+          "id": "Bk40UDzO9",
+          "input": {
+            "nodeId": "B1T5GJDfOq",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "r1OM8DMu5",
+            "pinKey": "__out__"
+          }
+        },
+        "H1GfPDGd5": {
+          "id": "H1GfPDGd5",
+          "input": {
+            "nodeId": "HJ3wJDzuq",
+            "pinKey": "ByqWk9NB9"
+          },
+          "output": {
+            "nodeId": "S1Ploxvvfuq",
+            "pinKey": "__out__"
+          }
+        },
+        "r1VzDwfdc": {
+          "id": "r1VzDwfdc",
+          "input": {
+            "nodeId": "HJ3wJDzuq",
+            "pinKey": "BytWkc4B9"
+          },
+          "output": {
+            "nodeId": "SksxwPMd5",
+            "pinKey": "__out__"
+          }
+        },
+        "HJLMDPzu9": {
+          "id": "HJLMDPzu9",
+          "input": {
+            "nodeId": "HJ3wJDzuq",
+            "pinKey": "Hyxm1AFES9"
+          },
+          "output": {
+            "nodeId": "SJIlvwfu5",
+            "pinKey": "__out__"
+          }
+        },
+        "HkyHwvGOq": {
+          "id": "HkyHwvGOq",
+          "input": {
+            "nodeId": "HJKVDvG_5",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "B1vnPyPGdc",
+            "pinKey": "HJQZ8YXSvc"
+          }
+        },
+        "rkhnDPzdc": {
+          "id": "rkhnDPzdc",
+          "input": {
+            "nodeId": "HJaivvMOc",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJ9nw1wfu9",
+            "pinKey": "__out__"
+          }
+        },
+        "SJEogQtBh": {
+          "id": "SJEogQtBh",
+          "input": {
+            "nodeId": "SJaqlQKSh",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ryMnJ7YHn",
+            "pinKey": "__out__"
+          }
+        },
+        "ByEnemtBn": {
+          "id": "ByEnemtBn",
+          "input": {
+            "nodeId": "SyCjgQFH3",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "S1O2JmtS2",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "path": "@/lorawan868-setup",
+      "description": "Setup M5Stack LoRaWAN868 device."
+    },
+    "@/reboot": {
+      "nodes": {
+        "ryIt_BNB5": {
+          "boundLiterals": {
+            "B12mmr4rq": "\"\""
+          },
+          "id": "ryIt_BNB5",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/write-command"
+        },
+        "B1gUt_S4S5": {
+          "description": "A lorawan-device.",
+          "label": "DEV",
+          "id": "B1gUt_S4S5",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-lorawan-device"
+        },
+        "S1bLFuBESc": {
+          "description": "Update",
+          "label": "UPD",
+          "id": "S1bLFuBESc",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HyfIF_HVSq": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "HyfIF_HVSq",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SkQLKOBEHq": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "\"AT+IREBOOT=0\\r\\n\""
+          },
+          "size": {
+            "height": 1,
+            "width": 5,
+            "units": "slots"
+          },
+          "id": "SkQLKOBEHq",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-string"
+        }
+      },
+      "links": {
+        "BJ4UK_SESc": {
+          "id": "BJ4UK_SESc",
+          "input": {
+            "nodeId": "ryIt_BNB5",
+            "pinKey": "B1pBQr4r5"
+          },
+          "output": {
+            "nodeId": "B1gUt_S4S5",
+            "pinKey": "__out__"
+          }
+        },
+        "BJHLtOSNrq": {
+          "id": "BJHLtOSNrq",
+          "input": {
+            "nodeId": "ryIt_BNB5",
+            "pinKey": "SknNQrES5"
+          },
+          "output": {
+            "nodeId": "S1bLFuBESc",
+            "pinKey": "__out__"
+          }
+        },
+        "rJ88KdrNr5": {
+          "id": "rJ88KdrNr5",
+          "input": {
+            "nodeId": "HyfIF_HVSq",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ryIt_BNB5",
+            "pinKey": "SkQD7rVSc"
+          }
+        },
+        "HkD8KuSEB9": {
+          "id": "HkD8KuSEB9",
+          "input": {
+            "nodeId": "ryIt_BNB5",
+            "pinKey": "B12mmr4rq"
+          },
+          "output": {
+            "nodeId": "SkQLKOBEHq",
+            "pinKey": "B1x2RV3eZ"
+          }
+        }
+      },
+      "path": "@/reboot",
+      "description": "Reboot lorawan-device."
+    },
+    "@/save-mac-configuration": {
+      "nodes": {
+        "BJ4EOBNH5": {
+          "boundLiterals": {
+            "B12mmr4rq": "\"\""
+          },
+          "id": "BJ4EOBNH5",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/write-command"
+        },
+        "SyeEV_HNr9": {
+          "description": "A lorawan-device.",
+          "label": "DEV",
+          "id": "SyeEV_HNr9",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-lorawan-device"
+        },
+        "rkbVN_rEB5": {
+          "description": "Update",
+          "label": "UPD",
+          "id": "rkbVN_rEB5",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryzEVdrVSc": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "ryzEVdrVSc",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rymENdHNHq": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "\"AT+CSAVE\\r\\n\""
+          },
+          "size": {
+            "height": 1,
+            "width": 5,
+            "units": "slots"
+          },
+          "id": "rymENdHNHq",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-string"
+        }
+      },
+      "links": {
+        "rk444dSNSq": {
+          "id": "rk444dSNSq",
+          "input": {
+            "nodeId": "BJ4EOBNH5",
+            "pinKey": "B1pBQr4r5"
+          },
+          "output": {
+            "nodeId": "SyeEV_HNr9",
+            "pinKey": "__out__"
+          }
+        },
+        "HyBVNuSNB5": {
+          "id": "HyBVNuSNB5",
+          "input": {
+            "nodeId": "BJ4EOBNH5",
+            "pinKey": "SknNQrES5"
+          },
+          "output": {
+            "nodeId": "rkbVN_rEB5",
+            "pinKey": "__out__"
+          }
+        },
+        "BkLENuHVS5": {
+          "id": "BkLENuHVS5",
+          "input": {
+            "nodeId": "ryzEVdrVSc",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJ4EOBNH5",
+            "pinKey": "SkQD7rVSc"
+          }
+        },
+        "SJvV4_rNH9": {
+          "id": "SJvV4_rNH9",
+          "input": {
+            "nodeId": "BJ4EOBNH5",
+            "pinKey": "B12mmr4rq"
+          },
+          "output": {
+            "nodeId": "rymENdHNHq",
+            "pinKey": "B1x2RV3eZ"
+          }
+        }
+      },
+      "path": "@/save-mac-configuration",
+      "description": "Save MAC configuration parameters into EEPROM/FLASH."
+    },
+    "@/restore-mac-defaults": {
+      "nodes": {
+        "ByVuUrNB9": {
+          "boundLiterals": {
+            "B12mmr4rq": "\"\""
+          },
+          "id": "ByVuUrNB9",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/write-command"
+        },
+        "BykiIHES5": {
+          "description": "A lorawan-device.",
+          "label": "DEV",
+          "id": "BykiIHES5",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-lorawan-device"
+        },
+        "SJfn8BVrq": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "SJfn8BVrq",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HympUrNHc": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "HympUrNHc",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r1VGwB4Bq": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "\"AT+CRESTORE\\r\\n\""
+          },
+          "size": {
+            "height": 1,
+            "width": 5,
+            "units": "slots"
+          },
+          "id": "r1VGwB4Bq",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-string"
+        }
+      },
+      "links": {
+        "ry-j8B4Hq": {
+          "id": "ry-j8B4Hq",
+          "input": {
+            "nodeId": "ByVuUrNB9",
+            "pinKey": "B1pBQr4r5"
+          },
+          "output": {
+            "nodeId": "BykiIHES5",
+            "pinKey": "__out__"
+          }
+        },
+        "rk52LrNB9": {
+          "id": "rk52LrNB9",
+          "input": {
+            "nodeId": "ByVuUrNB9",
+            "pinKey": "SknNQrES5"
+          },
+          "output": {
+            "nodeId": "SJfn8BVrq",
+            "pinKey": "__out__"
+          }
+        },
+        "SJ2aLrNBq": {
+          "id": "SJ2aLrNBq",
+          "input": {
+            "nodeId": "HympUrNHc",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ByVuUrNB9",
+            "pinKey": "SkQD7rVSc"
+          }
+        },
+        "ryF7wSEH5": {
+          "id": "ryF7wSEH5",
+          "input": {
+            "nodeId": "ByVuUrNB9",
+            "pinKey": "B12mmr4rq"
+          },
+          "output": {
+            "nodeId": "r1VGwB4Bq",
+            "pinKey": "B1x2RV3eZ"
+          }
+        }
+      },
+      "path": "@/restore-mac-defaults",
+      "description": "Restore MAC default parameters in EEPROM/FLASH."
+    },
+    "@/lorawan-device": {
+      "nodes": {
+        "HykrdNNHq": {
+          "id": "HykrdNNHq",
+          "position": {
+            "x": 1,
+            "y": -29,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJb8OVEr5": {
+          "description": "A universal asynchronous receiver-transmitter (UART).",
+          "label": "UART",
+          "id": "HJb8OVEr5",
+          "position": {
+            "x": 1,
+            "y": -30,
+            "units": "slots"
+          },
+          "type": "xod/uart/input-uart"
+        },
+        "S1ZPOE4rc": {
+          "description": "A lorawan-device.",
+          "label": "DEV",
+          "id": "S1ZPOE4rc",
+          "position": {
+            "x": 1,
+            "y": -28,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/lorawan-device",
+      "description": "Create an M5Stack LoRaWAN868 device.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD require \"https://github.com/WaylandM/M5Stack_UNIT_LoRaWAN\"\n\n#include <M5Stack_UNIT_LoRaWAN.h>\n\nnode {\n    meta {\n        using Type = M5Stack_UNIT_LoRaWAN*;\n    }\n\n    M5Stack_UNIT_LoRaWAN LoRaWAN = M5Stack_UNIT_LoRaWAN();\n\n    void evaluate(Context ctx) {\n        // It should be evaluated only once on the first (setup) transaction\n        if (!isSettingUp())\n            return;\n\n        auto uart = getValue<input_UART>(ctx);\n\n        LoRaWAN.Init(*(uart->toStream()));\n\n        emitValue<output_DEV>(ctx, &LoRaWAN);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/send-lpp": {
+      "nodes": {
+        "Sy4bNXdD9": {
+          "id": "Sy4bNXdD9",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SkZV-VXuDc": {
+          "description": "Update",
+          "label": "UPD",
+          "id": "SkZV-VXuDc",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkGN-VQuwc": {
+          "description": "A lorawan-device.",
+          "label": "DEV",
+          "id": "SkGN-VQuwc",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lorawan-device"
+        },
+        "HJXNZVQ_P9": {
+          "label": "Done",
+          "id": "HJXNZVQ_P9",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "B1NVZ4mdP9": {
+          "boundLiterals": {
+            "__out__": "False"
+          },
+          "description": "Confirm",
+          "label": "CFM",
+          "id": "B1NVZ4mdP9",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "SJrVZNQuwc": {
+          "boundLiterals": {
+            "__out__": "15"
+          },
+          "description": "Number of trials.",
+          "label": "Trials",
+          "id": "SJrVZNQuwc",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1WQNmdvq": {
+          "description": "A Low Power Payload.",
+          "label": "LPP",
+          "id": "S1WQNmdvq",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "wayland/cayenne-lpp/input-lpp"
+        }
+      },
+      "path": "@/send-lpp",
+      "description": "Send low power payload (LPP). See: https://xod.io/libs/wayland/cayenne-lpp/",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto LoRaWAN = getValue<input_DEV>(ctx);\n        auto lpp = getValue<input_LPP>(ctx);\n        uint8_t cfm = getValue<input_CFM>(ctx);\n        uint8_t trials = getValue<input_Trials>(ctx);\n\n        int N=lpp->getSize();\n        \n        uint8_t* buff = lpp->getBuffer();\n\n        // Convert byte array from lpp to String required for AT command to be sent to LoRa device\n        static String payload;\n        for (int i=0;i<N;i++) {\n            payload += \"0123456789ABCDEF\"[*(buff+i) / 16];\n            payload += \"0123456789ABCDEF\"[*(buff+i) % 16];\n        }        \n\n        LoRaWAN->sendMsg(cfm,\n                        trials,\n                        N,\n                        payload);\n\n        payload = \"\";\n    \n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/send-message": {
+      "nodes": {
+        "rJmnmZhUc": {
+          "id": "rJmnmZhUc",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ryeQ37WnLc": {
+          "boundLiterals": {
+            "__out__": "\"4d35535441434b\""
+          },
+          "description": "Command",
+          "label": "MSG",
+          "id": "ryeQ37WnLc",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "rJZQhXb3U9": {
+          "description": "Update",
+          "label": "UPD",
+          "id": "rJZQhXb3U9",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HJfXhXW3I9": {
+          "description": "A lorawan-device.",
+          "label": "DEV",
+          "id": "HJfXhXW3I9",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lorawan-device"
+        },
+        "S1Q72XZ2I9": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "S1Q72XZ2I9",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJI-db385": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Confirm",
+          "label": "CFM",
+          "id": "HJI-db385",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "H1AC2HnL5": {
+          "boundLiterals": {
+            "__out__": "15"
+          },
+          "description": "Number of trials.",
+          "label": "Trials",
+          "id": "H1AC2HnL5",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/send-message",
+      "description": "Send message. For most applications it will be more convenient to send a formatted using, for example,  low power payload (LPP). See: send-lpp node and https://xod.io/libs/wayland/cayenne-lpp/",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto LoRaWAN = getValue<input_DEV>(ctx);\n        auto xString = getValue<input_MSG>(ctx);\n        uint8_t cfm = getValue<input_CFM>(ctx);\n        uint8_t trials = getValue<input_Trials>(ctx);\n        int N=length(xString)+1;\n        char cString[N];\n        for(int i=0;i<N;i++)\n            cString[i]=0;\n        dump(xString, cString);\n        LoRaWAN->sendMsg(cfm,\n                         trials,\n                         N-1,\n                         cString);\n\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/write-command": {
+      "nodes": {
+        "B1fQ7S4r5": {
+          "id": "B1fQ7S4r5",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "B12mmr4rq": {
+          "description": "Command",
+          "label": "CMD",
+          "id": "B12mmr4rq",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SknNQrES5": {
+          "description": "Update",
+          "label": "UPD",
+          "id": "SknNQrES5",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "B1pBQr4r5": {
+          "description": "A lorawan-device.",
+          "label": "DEV",
+          "id": "B1pBQr4r5",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lorawan-device"
+        },
+        "SkQD7rVSc": {
+          "description": "Pulse on write.",
+          "label": "Done",
+          "id": "SkQD7rVSc",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/write-command",
+      "description": "Send command to LoRaWAN module. Command reference: https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/unit/lorawan/ASR650X%20AT%20Command%20Introduction-20190605.pdf",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto LoRaWAN = getValue<input_DEV>(ctx);\n        auto xString = getValue<input_CMD>(ctx);\n        \n        int N=length(xString)+1;\n        char cString[N];\n        for(int i=0;i<N;i++)\n            cString[i]=0;\n        dump(xString, cString);\n\n        LoRaWAN->writeCMD(cString);\n\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/set-rx-window": {
+      "nodes": {
+        "S1buawVHq": {
+          "id": "S1buawVHq",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1xbdpDES9": {
+          "boundLiterals": {
+            "__out__": "\"869525000\""
+          },
+          "description": "Rx Window (use \"869525000\" for LoRaWAN868).",
+          "label": "RxWin",
+          "id": "H1xbdpDES9",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Bkb-OTDNrq": {
+          "description": "Update",
+          "label": "UPD",
+          "id": "Bkb-OTDNrq",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkfZd6DEr9": {
+          "description": "A lorawan-device.",
+          "label": "DEV",
+          "id": "SkfZd6DEr9",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lorawan-device"
+        },
+        "HkXb_TvVS9": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "HkXb_TvVS9",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/set-rx-window",
+      "description": "Set receive (Rx) window parameter.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto LoRaWAN = getValue<input_DEV>(ctx);\n        auto xString = getValue<input_RxWin>(ctx);\n        \n        int N=length(xString)+1;\n        char cString[N];\n        for(int i=0;i<N;i++)\n            cString[i]=0;\n        dump(xString, cString);\n\n        LoRaWAN->setRxWindow(cString);\n\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/set-freq-mask": {
+      "nodes": {
+        "H1LAzaGwc": {
+          "id": "H1LAzaGwc",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BklIAfazvq": {
+          "boundLiterals": {
+            "__out__": "\"0001\""
+          },
+          "description": "Frequency mask.",
+          "label": "Mask",
+          "id": "BklIAfazvq",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Syb8CzpMP9": {
+          "description": "Update",
+          "label": "UPD",
+          "id": "Syb8CzpMP9",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S1fL0f6Mvc": {
+          "description": "A lorawan-device.",
+          "label": "DEV",
+          "id": "S1fL0f6Mvc",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lorawan-device"
+        },
+        "BJQLCM6MP5": {
+          "label": "Done",
+          "id": "BJQLCM6MP5",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/set-freq-mask",
+      "description": "Set frequency band mask. For example: 0-7 channel has mask of 0001, 8-15 channel has mask of 0002, and so on.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto LoRaWAN = getValue<input_DEV>(ctx);\n        auto xMask = getValue<input_Mask>(ctx);\n\n        int N=length(xMask)+1;\n        char cMask[N];\n        for(int i=0;i<N;i++)\n            cMask[i]=0;\n        dump(xMask, cMask);\n\n        LoRaWAN->setFreqMask(cMask);\n\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/set-class": {
+      "nodes": {
+        "Hk28wXSPq": {
+          "id": "Hk28wXSPq",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJxnLv7Sv5": {
+          "boundLiterals": {
+            "__out__": "\"2\""
+          },
+          "description": "Class. Options: 0 (A), 1 (B) and 2 (C).",
+          "label": "Class",
+          "id": "HJxnLv7Sv5",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "ry-2UDQSvq": {
+          "description": "Update",
+          "label": "UPD",
+          "id": "ry-2UDQSvq",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1MhLwQSDc": {
+          "description": "A lorawan-device.",
+          "label": "DEV",
+          "id": "r1MhLwQSDc",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lorawan-device"
+        },
+        "r1mhIP7BD5": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "r1mhIP7BD5",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/set-class",
+      "description": "Set class. See: https://www.thethingsnetwork.org/docs/lorawan/classes/",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto LoRaWAN = getValue<input_DEV>(ctx);\n        auto xString = getValue<input_Class>(ctx);\n        \n        int N=length(xString)+1;\n        char cString[N];\n        for(int i=0;i<N;i++)\n            cString[i]=0;\n        dump(xString, cString);\n\n        LoRaWAN->setClass(cString);\n\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "license": "MIT",
+  "version": "0.0.3",
+  "description": "Library for the M5Stack LoRa868 module: https://docs.m5stack.com/en/unit/lorawan868. Wraps a modified version of https://github.com/m5stack/M5-LoRaWAN",
+  "name": "m5stack-unit-lorawan"
+}

@@ -1,0 +1,1387 @@
+{
+  "description": "This library enables an Arduino board to communicate with the Arduino TFT LCD screen. It simplifies the process for drawing shapes, lines, images(COMING SOON), and text to the screen.\n\nThe Arduino TFT library extends the Adafruit GFX, and Adafruit ST7735 libraries that it is based on. The GFX library is responsible for the drawing routines, while the ST7735 library is specific to the screen on the Arduino TFT. The Arduino specific additions were designed to work as similarly to the Processing API as possible.\n\nThis is just a Wrapper for the Arduino TFT Library........",
+  "license": "GPL",
+  "name": "arduino-tft-lib",
+  "patches": {
+    "@/colour": {
+      "attachments": [
+        {
+          "content": "struct State {\n    // this is a regular state related to the patch (i.e. constructor in this case)\n};\n\nstruct Type {\n    uint8_t Red;\n    uint8_t Green;\n    uint8_t Blue;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n\n    if (!isInputDirty<input_INIT>(ctx)){\n        return;}\n\n\n    uint8_t Red = getValue<input_Red>(ctx) * 255.f;\n    uint8_t Green = getValue<input_Green>(ctx) * 255.f;\n    uint8_t Blue = getValue<input_Blue>(ctx) * 255.f;\n    Type Colour = { Red, Green, Blue };\n    emitValue<output_OUT>(ctx, Colour);\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Set Colour's(pulse to update)(Check example for usage)Easy to Theme.",
+      "nodes": {
+        "BJypwwa6X": {
+          "description": "Blue Colour 0 min, 1Max.",
+          "id": "BJypwwa6X",
+          "label": "Blue",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H1S2wD6pX": {
+          "id": "H1S2wD6pX",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "rJa2wvp6Q": {
+          "description": "Green Colour 0 min, 1Max.",
+          "id": "rJa2wvp6Q",
+          "label": "Green",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkh2PD6p7": {
+          "description": "Red Colour 0 min, 1Max.",
+          "id": "rkh2PD6p7",
+          "label": "Red",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryQTDDa67": {
+          "id": "ryQTDDa67",
+          "position": {
+            "x": 68,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rydofjTaQ": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "id": "rydofjTaQ",
+          "label": "INIT",
+          "position": {
+            "x": 238,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/colour"
+    },
+    "@/tft-device": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/arduino-libraries/TFT\"\n// Include C++ library:\n{{#global}}\n#include <TFT.h>  // Arduino TFT LCD library\n#include <SPI.h>\n{{/global}}\n\n// Class wants to know ports in the moment of instantiation\n// but we don't know them at this moment.\n// Therefore, we reserve memory to store an instance of the class,\n// and create the instance later:\nstruct State {\n    uint8_t mem[sizeof(TFT)];\n};\n\n// Define our custom type as a pointer on the class instance.\nusing Type = TFT*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // It should be evaluated only once on the first (setup) transaction\n    if (!isSettingUp())\n        return;\n\n    auto state = getState(ctx);\n    auto pin_cs = getValue<input_pin_cs>(ctx);\n    auto pin_dc = getValue<input_pin_dc>(ctx);\n    auto pin_reset = getValue<input_pin_reset>(ctx);\n\n    // Create a new object in the memory area reserved previously.\n    Type Display = new (state->mem) TFT(pin_cs, pin_dc, pin_reset);\n    Display->begin();\n    emitValue<output_DEV>(ctx, Display);\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Main Display Device",
+      "nodes": {
+        "BkbT-I4hpX": {
+          "boundLiterals": {
+            "__out__": "D10"
+          },
+          "description": "CS Pin Number",
+          "id": "BkbT-I4hpX",
+          "label": "pin_cs",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Sy76WIV26Q": {
+          "boundLiterals": {
+            "__out__": "D9"
+          },
+          "description": "DC Pin Number",
+          "id": "Sy76WIV26Q",
+          "label": "pin_dc",
+          "position": {
+            "x": 67,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SylaWI4hpQ": {
+          "description": "FTOLDE Display device set data pins as per your setup.",
+          "id": "SylaWI4hpQ",
+          "position": {
+            "x": 67,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SyzT-UN3aX": {
+          "boundLiterals": {
+            "__out__": "D8"
+          },
+          "description": "Reset Pin Number",
+          "id": "SyzT-UN3aX",
+          "label": "pin_reset",
+          "position": {
+            "x": 135,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rkpW8En6Q": {
+          "id": "rkpW8En6Q",
+          "label": "DEV",
+          "position": {
+            "x": 67,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/tft-device"
+    },
+    "@/display-text": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n\n    auto Display = getValue<input_DEV>(ctx);  // Get a pointer to the `TFT` class instance\n    auto Colour = getValue<input_Colour>(ctx);\n    auto TXTString = getValue<input_String>(ctx);\n\n    String Stringg = \"\";// I REALY NEED a better way to do this XString to char\n    for (auto it = TXTString.iterate(); it; ++it)\n        Stringg = Stringg + (*it);\n\n    int str_len = Stringg.length() + 1;\n    char TXT[str_len];\n    Stringg.toCharArray(TXT, str_len);\n\n    // write the static text to the screen\n    // set the font color\n    Display->stroke(Colour.Red,Colour.Green,Colour.Blue);\n    // set the font size\n    Display->setTextSize(getValue<input_Size>(ctx));\n    // write the text to the screen\n    Display->text((TXT), getValue<input_XLoc>(ctx), getValue<input_YLoc>(ctx));\n    // Pulse that module initialized successfully\n\n    emitValue<output_OUT>(ctx, Display);\n    emitValue<output_OK>(ctx, 1);\n}"
+        }
+      ],
+      "description": "Write text to the screen at the given coordinates.",
+      "nodes": {
+        "BkE48jpam": {
+          "boundLiterals": {
+            "__out__": "\"Hello World\""
+          },
+          "description": "The text you want to write on the screen.",
+          "id": "BkE48jpam",
+          "label": "String",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "HJV-XUjaTQ": {
+          "description": "Colour of TXT",
+          "id": "HJV-XUjaTQ",
+          "label": "Colour",
+          "position": {
+            "x": 67,
+            "y": -1
+          },
+          "type": "@/input-colour"
+        },
+        "HJec2ECam": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Sets the size of text that follows. The default size is \"1\". Each change in size increases the text by 10 pixels in height. That is, size 1 = 10 pixels, size 2 =20 pixels, and so on.",
+          "id": "HJec2ECam",
+          "label": "Size",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJz-XIja6X": {
+          "id": "HJz-XIja6X",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "@/input-tft-device"
+        },
+        "HkZ-78sppm": {
+          "id": "HkZ-78sppm",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HkeZXIoaTm": {
+          "description": "Display",
+          "id": "HkeZXIoaTm",
+          "label": "INIT",
+          "position": {
+            "x": 408,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkFAnVRpm": {
+          "description": "The location on the Y-axis you want to start drawing text to the screen.",
+          "id": "SkFAnVRpm",
+          "label": "YLoc",
+          "position": {
+            "x": 340,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkvChEAam": {
+          "description": "The location on the X-axis you want to start drawing text to the screen.",
+          "id": "SkvChEAam",
+          "label": "XLoc",
+          "position": {
+            "x": 272,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1QWmIopT7": {
+          "id": "r1QWmIopT7",
+          "label": "OUT",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "@/output-tft-device"
+        },
+        "ryZQUoTaX": {
+          "description": "Completed OK",
+          "id": "ryZQUoTaX",
+          "label": "OK",
+          "position": {
+            "x": 67,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/display-text"
+    },
+    "@/draw-circle": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the `TFT` class instance\n    auto Display = getValue<input_DEV>(ctx);\n    auto ColourFill = getValue<input_ColourFill>(ctx);\n    auto ColourDraw = getValue<input_ColourDraw>(ctx);\n\n    if (!isInputDirty<input_ColourDraw>(ctx)){//Do we want a otline? (is it connected)\n    Display->noStroke();\n    }\n    else\n    {\n    Display->stroke(ColourDraw.Red,ColourDraw.Green,ColourDraw.Blue);\n    }\n\n    if (!isInputDirty<input_ColourFill>(ctx)){//Do we want to Fill? (is it connected)\n    Display->noFill();\n    }\n    else\n    {\n    Display->fill(ColourFill.Red,ColourFill.Green,ColourFill.Blue);\n    }\n\n\n    Display->circle(getValue<input_X>(ctx),getValue<input_Y>(ctx),getValue<input_Rad>(ctx));\n\n    // Pulse that module initialized successfully\n    emitValue<output_OUT>(ctx, Display);\n    emitValue<output_OK>(ctx, 1);\n}"
+        }
+      ],
+      "description": "Draw a Circle at location, With or Without Fill and Outline.",
+      "nodes": {
+        "Bkjh-qC6Q": {
+          "description": "X Center Position",
+          "id": "Bkjh-qC6Q",
+          "label": "X",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H1bA1-9Cam": {
+          "description": "Redraw the display",
+          "id": "H1bA1-9Cam",
+          "label": "INIT",
+          "position": {
+            "x": 476,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HJNRk-cR6m": {
+          "description": "Colour to Fill With",
+          "id": "HJNRk-cR6m",
+          "label": "ColourFill",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "@/input-colour"
+        },
+        "HyG01WqATQ": {
+          "description": "From Device Node",
+          "id": "HyG01WqATQ",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-tft-device"
+        },
+        "SkA1bcATm": {
+          "id": "SkA1bcATm",
+          "label": "OUT",
+          "position": {
+            "x": 0,
+            "y": 204
+          },
+          "type": "@/output-tft-device"
+        },
+        "SyYWZqRa7": {
+          "description": "Colour to Draw With",
+          "id": "SyYWZqRa7",
+          "label": "ColourDraw",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "@/input-colour"
+        },
+        "SylAyZ5Aam": {
+          "description": "Completed OK",
+          "id": "SylAyZ5Aam",
+          "label": "OK",
+          "position": {
+            "x": 136,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SylC3WcAam": {
+          "description": "Radius of Coicle",
+          "id": "SylC3WcAam",
+          "label": "Rad",
+          "position": {
+            "x": 340,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkXCyZ5CpX": {
+          "id": "rkXCyZ5CpX",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ryChZ9CpX": {
+          "description": "X Center Position",
+          "id": "ryChZ9CpX",
+          "label": "Y",
+          "position": {
+            "x": 272,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/draw-circle"
+    },
+    "@/draw-fillscreen": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the `TFT` class instance\n    auto Display = getValue<input_DEV>(ctx);\n    auto Colour = getValue<input_Colour>(ctx);\n\n    Display->background(Colour.Red,Colour.Green,Colour.Blue);\n\n    // Pulse that module initialized successfully\n    emitValue<output_OUT>(ctx, Display);\n    emitValue<output_OK>(ctx, 1);\n}"
+        }
+      ],
+      "description": "Blanck/Fill the display with a Colour.",
+      "nodes": {
+        "BJdP7DTTX": {
+          "id": "BJdP7DTTX",
+          "label": "OUT",
+          "position": {
+            "x": -34,
+            "y": 204
+          },
+          "type": "@/output-tft-device"
+        },
+        "SJZdwYEnTm": {
+          "description": "Completed OK",
+          "id": "SJZdwYEnTm",
+          "label": "OK",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SyV_DtN26X": {
+          "description": "Redraw the display",
+          "id": "SyV_DtN26X",
+          "label": "INIT",
+          "position": {
+            "x": 238,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJGw7v6am": {
+          "description": "From Device Node",
+          "id": "rJGw7v6am",
+          "label": "DEV",
+          "position": {
+            "x": -34,
+            "y": 0
+          },
+          "type": "@/input-tft-device"
+        },
+        "rJQuwKN2aX": {
+          "id": "rJQuwKN2aX",
+          "position": {
+            "x": 0,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rkwbiv6pm": {
+          "description": "Colour to make the Background",
+          "id": "rkwbiv6pm",
+          "label": "Colour",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "@/input-colour"
+        }
+      },
+      "path": "@/draw-fillscreen"
+    },
+    "@/draw-line": {
+      "nodes": {
+        "H1CW7i067": {
+          "description": "X Start Position",
+          "id": "H1CW7i067",
+          "label": "XStart",
+          "position": {
+            "x": 203,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Hyg0bXsRaX": {
+          "description": "Redraw the display",
+          "id": "Hyg0bXsRaX",
+          "label": "INIT",
+          "position": {
+            "x": 475,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S1GCbXoRa7": {
+          "description": "From Device Node",
+          "id": "S1GCbXoRa7",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "@/input-tft-device"
+        },
+        "BJ70ZQiA67": {
+          "id": "BJ70ZQiA67",
+          "label": "OUT",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "@/output-tft-device"
+        },
+        "rkV0-Xj0p7": {
+          "description": "Colour to Draw With",
+          "id": "rkV0-Xj0p7",
+          "label": "ColourDraw",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "@/input-colour"
+        },
+        "S1SCZmjCp7": {
+          "description": "Completed OK",
+          "id": "S1SCZmjCp7",
+          "label": "OK",
+          "position": {
+            "x": 135,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rkwA-QiATX": {
+          "id": "rkwA-QiATX",
+          "position": {
+            "x": 33,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SyORbmoCa7": {
+          "description": "Y Start Position",
+          "id": "SyORbmoCa7",
+          "label": "YStart",
+          "position": {
+            "x": 271,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryZmXoR67": {
+          "description": "X End Position",
+          "id": "ryZmXoR67",
+          "label": "XEnd",
+          "position": {
+            "x": 340,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJlbmmoAp7": {
+          "description": "Y End Position",
+          "id": "BJlbmmoAp7",
+          "label": "YEnd",
+          "position": {
+            "x": 408,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/draw-line",
+      "description": "Draw a Line",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the `TFT` class instance\n    auto Display = getValue<input_DEV>(ctx);\n    auto ColourDraw = getValue<input_ColourDraw>(ctx);\n\n    if (!isInputDirty<input_ColourDraw>(ctx)){//Do we want a otline? (is it connected)\n    Display->noStroke();\n    }\n    else\n    {\n    Display->stroke(ColourDraw.Red,ColourDraw.Green,ColourDraw.Blue);\n    }\n\n\n\n    Display->line(getValue<input_XStart>(ctx),getValue<input_YStart>(ctx),getValue<input_XEnd>(ctx),getValue<input_YEnd>(ctx));\n\n    // Pulse that module initialized successfully\n    emitValue<output_OUT>(ctx, Display);\n    emitValue<output_OK>(ctx, 1);\n}"
+        }
+      ]
+    },
+    "@/draw-point": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the `TFT` class instance\n    auto Display = getValue<input_DEV>(ctx);\n    auto ColourDraw = getValue<input_ColourDraw>(ctx);\n\n    if (!isInputDirty<input_ColourDraw>(ctx)){//Do we want to Colour? (is it connected)\n    Display->noStroke();\n    }\n    else\n    {\n    Display->stroke(ColourDraw.Red,ColourDraw.Green,ColourDraw.Blue);\n    }\n\n    Display->point(getValue<input_X>(ctx),getValue<input_Y>(ctx));\n\n    // Pulse that module initialized successfully\n    emitValue<output_OUT>(ctx, Display);\n    emitValue<output_OK>(ctx, 1);\n}"
+        }
+      ],
+      "description": "Draw a single point on the display.",
+      "nodes": {
+        "H1PyUuqC67": {
+          "description": "X Center Position",
+          "id": "H1PyUuqC67",
+          "label": "Y",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJIJIO5ATX": {
+          "description": "X Center Position",
+          "id": "SJIJIO5ATX",
+          "label": "X",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkXJId506m": {
+          "id": "SkXJId506m",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Sy-1Luc0aX": {
+          "description": "Redraw the display",
+          "id": "Sy-1Luc0aX",
+          "label": "INIT",
+          "position": {
+            "x": 272,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJG1Ld5Cpm": {
+          "description": "From Device Node",
+          "id": "rJG1Ld5Cpm",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-tft-device"
+        },
+        "rk1IdqCT7": {
+          "id": "rk1IdqCT7",
+          "label": "OUT",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "@/output-tft-device"
+        },
+        "ryeJ8d5C6X": {
+          "description": "Completed OK",
+          "id": "ryeJ8d5C6X",
+          "label": "OK",
+          "position": {
+            "x": 135,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ryrJL_5Aa7": {
+          "description": "Colour to Draw With",
+          "id": "ryrJL_5Aa7",
+          "label": "ColourDraw",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "@/input-colour"
+        }
+      },
+      "path": "@/draw-point"
+    },
+    "@/draw-rectangle": {
+      "nodes": {
+        "r1-o3oRpm": {
+          "description": "X Start Position",
+          "id": "r1-o3oRpm",
+          "label": "X1",
+          "position": {
+            "x": 203,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rylZj2jC6Q": {
+          "description": "Redraw the display",
+          "id": "rylZj2jC6Q",
+          "label": "INIT",
+          "position": {
+            "x": 476,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJ-Zj2jRpQ": {
+          "description": "Colour to Fill With",
+          "id": "rJ-Zj2jRpQ",
+          "label": "ColourFill",
+          "position": {
+            "x": 135,
+            "y": -1
+          },
+          "type": "@/input-colour"
+        },
+        "BJGbj2sAT7": {
+          "description": "From Device Node",
+          "id": "BJGbj2sAT7",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "@/input-tft-device"
+        },
+        "H17Zihi0T7": {
+          "id": "H17Zihi0T7",
+          "label": "OUT",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "@/output-tft-device"
+        },
+        "S14Wi2oR6X": {
+          "description": "Colour to Draw With",
+          "id": "S14Wi2oR6X",
+          "label": "ColourDraw",
+          "position": {
+            "x": 67,
+            "y": -1
+          },
+          "type": "@/input-colour"
+        },
+        "SJrbo2sRpm": {
+          "description": "Completed OK",
+          "id": "SJrbo2sRpm",
+          "label": "OK",
+          "position": {
+            "x": 135,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BJU-sni0Tm": {
+          "id": "BJU-sni0Tm",
+          "position": {
+            "x": 33,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SkPWsniApX": {
+          "description": "Y Start Position",
+          "id": "SkPWsniApX",
+          "label": "Y1",
+          "position": {
+            "x": 271,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJuZonsR6Q": {
+          "description": "Width(on the X axis)",
+          "id": "SJuZonsR6Q",
+          "label": "Width",
+          "position": {
+            "x": 340,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1Fbs3sApm": {
+          "description": "Height (on the Y axis)",
+          "id": "S1Fbs3sApm",
+          "label": "Height",
+          "position": {
+            "x": 408,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/draw-rectangle",
+      "description": "Draw a Rectangle",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the `TFT` class instance\n    auto Display = getValue<input_DEV>(ctx);\n    auto ColourFill = getValue<input_ColourFill>(ctx);\n    auto ColourDraw = getValue<input_ColourDraw>(ctx);\n\n    if (!isInputDirty<input_ColourDraw>(ctx)){//Do we want a otline? (is it connected)\n    Display->noStroke();\n    }\n    else\n    {\n    Display->stroke(ColourDraw.Red,ColourDraw.Green,ColourDraw.Blue);\n    }\n\n    if (!isInputDirty<input_ColourFill>(ctx)){//Do we want to Fill? (is it connected)\n    Display->noFill();\n    }\n    else\n    {\n    Display->fill(ColourFill.Red,ColourFill.Green,ColourFill.Blue);\n    }\n\n\n    Display->rect(getValue<input_X1>(ctx),getValue<input_Y1>(ctx),getValue<input_Width>(ctx),getValue<input_Height>(ctx));\n\n    // Pulse that module initialized successfully\n    emitValue<output_OUT>(ctx, Display);\n    emitValue<output_OK>(ctx, 1);\n}"
+        }
+      ]
+    },
+    "@/draw-triangle": {
+      "nodes": {
+        "r1curjRpX": {
+          "description": "First Point X",
+          "id": "r1curjRpX",
+          "label": "X1",
+          "position": {
+            "x": 203,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1g5dHjAam": {
+          "description": "Redraw the display",
+          "id": "r1g5dHjAam",
+          "label": "INIT",
+          "position": {
+            "x": 612,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1Z5uBsA6Q": {
+          "description": "Colour to Fill With",
+          "id": "H1Z5uBsA6Q",
+          "label": "ColourFill",
+          "position": {
+            "x": 135,
+            "y": -1
+          },
+          "type": "@/input-colour"
+        },
+        "ByGqdHoRpQ": {
+          "description": "From Device Node",
+          "id": "ByGqdHoRpQ",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "@/input-tft-device"
+        },
+        "BJmquSjA67": {
+          "id": "BJmquSjA67",
+          "label": "OUT",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "@/output-tft-device"
+        },
+        "ry4quHjAaX": {
+          "description": "Colour to Draw With",
+          "id": "ry4quHjAaX",
+          "label": "ColourDraw",
+          "position": {
+            "x": 67,
+            "y": -1
+          },
+          "type": "@/input-colour"
+        },
+        "r1rcdSsAaQ": {
+          "description": "Completed OK",
+          "id": "r1rcdSsAaQ",
+          "label": "OK",
+          "position": {
+            "x": 135,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Skwc_riRT7": {
+          "id": "Skwc_riRT7",
+          "position": {
+            "x": 33,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJ_9urjAT7": {
+          "description": "First Point Y",
+          "id": "HJ_9urjAT7",
+          "label": "Y1",
+          "position": {
+            "x": 271,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJvFHoCa7": {
+          "description": "Second Point X",
+          "id": "rJvFHoCa7",
+          "label": "X2",
+          "position": {
+            "x": 340,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJgDKBo06m": {
+          "description": "Second Point Y",
+          "id": "BJgDKBo06m",
+          "label": "Y2",
+          "position": {
+            "x": 408,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkWPtSsRaQ": {
+          "description": "Third Point X",
+          "id": "rkWPtSsRaQ",
+          "label": "X3",
+          "position": {
+            "x": 476,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SyfvKSs06m": {
+          "description": "Third Point Y",
+          "id": "SyfvKSs06m",
+          "label": "Y3",
+          "position": {
+            "x": 544,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/draw-triangle",
+      "description": "Draw a Triangle",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the `TFT` class instance\n    auto Display = getValue<input_DEV>(ctx);\n    auto ColourFill = getValue<input_ColourFill>(ctx);\n    auto ColourDraw = getValue<input_ColourDraw>(ctx);\n\n    if (!isInputDirty<input_ColourDraw>(ctx)){//Do we want a otline? (is it connected)\n    Display->noStroke();\n    }\n    else\n    {\n    Display->stroke(ColourDraw.Red,ColourDraw.Green,ColourDraw.Blue);\n    }\n\n    if (!isInputDirty<input_ColourFill>(ctx)){//Do we want to Fill? (is it connected)\n    Display->noFill();\n    }\n    else\n    {\n    Display->fill(ColourFill.Red,ColourFill.Green,ColourFill.Blue);\n    }\n\n\n    Display->triangle(getValue<input_X1>(ctx),getValue<input_Y1>(ctx),getValue<input_X2>(ctx),getValue<input_Y2>(ctx),getValue<input_X3>(ctx),getValue<input_Y3>(ctx));\n\n    // Pulse that module initialized successfully\n    emitValue<output_OUT>(ctx, Display);\n    emitValue<output_OK>(ctx, 1);\n}"
+        }
+      ]
+    },
+    "@/example": {
+      "links": {
+        "B1PpucRT7": {
+          "id": "B1PpucRT7",
+          "input": {
+            "nodeId": "H1qcu9CpX",
+            "pinKey": "rJG1Ld5Cpm"
+          },
+          "output": {
+            "nodeId": "SyTZNq067",
+            "pinKey": "SkA1bcATm"
+          }
+        },
+        "BJshHcRTm": {
+          "id": "BJshHcRTm",
+          "input": {
+            "nodeId": "B1f7Nc0pX",
+            "pinKey": "rJa2wvp6Q"
+          },
+          "output": {
+            "nodeId": "B17nH9AaX",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "BkiAS5Rpm": {
+          "id": "BkiAS5Rpm",
+          "input": {
+            "nodeId": "SyTZNq067",
+            "pinKey": "H1bA1-9Cam"
+          },
+          "output": {
+            "nodeId": "HkDTScAam",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "Bkn2B9R6Q": {
+          "id": "Bkn2B9R6Q",
+          "input": {
+            "nodeId": "B1f7Nc0pX",
+            "pinKey": "BJypwwa6X"
+          },
+          "output": {
+            "nodeId": "B17nH9AaX",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "H1MHUq0pm": {
+          "id": "H1MHUq0pm",
+          "input": {
+            "nodeId": "SyTZNq067",
+            "pinKey": "HJNRk-cR6m"
+          },
+          "output": {
+            "nodeId": "SkPm_waaX",
+            "pinKey": "H1S2wD6pX"
+          }
+        },
+        "HJexYc0pQ": {
+          "id": "HJexYc0pQ",
+          "input": {
+            "nodeId": "H1qcu9CpX",
+            "pinKey": "ryrJL_5Aa7"
+          },
+          "output": {
+            "nodeId": "BkS2ZYR6m",
+            "pinKey": "H1S2wD6pX"
+          }
+        },
+        "SJet8cCaQ": {
+          "id": "SJet8cCaQ",
+          "input": {
+            "nodeId": "SyTZNq067",
+            "pinKey": "SyYWZqRa7"
+          },
+          "output": {
+            "nodeId": "B1f7Nc0pX",
+            "pinKey": "H1S2wD6pX"
+          }
+        },
+        "SJkGV506m": {
+          "id": "SJkGV506m",
+          "input": {
+            "nodeId": "SyTZNq067",
+            "pinKey": "HyG01WqATQ"
+          },
+          "output": {
+            "nodeId": "BkVEQwaaX",
+            "pinKey": "BJdP7DTTX"
+          }
+        },
+        "SJuyMo6pm": {
+          "id": "SJuyMo6pm",
+          "input": {
+            "nodeId": "BkVEQwaaX",
+            "pinKey": "rkwbiv6pm"
+          },
+          "output": {
+            "nodeId": "SkPm_waaX",
+            "pinKey": "H1S2wD6pX"
+          }
+        },
+        "r1B1fo6a7": {
+          "id": "r1B1fo6a7",
+          "input": {
+            "nodeId": "BkVEQwaaX",
+            "pinKey": "rJGw7v6am"
+          },
+          "output": {
+            "nodeId": "r16IwV2TQ",
+            "pinKey": "rkpW8En6Q"
+          }
+        },
+        "r1Kprq0am": {
+          "id": "r1Kprq0am",
+          "input": {
+            "nodeId": "B17nH9AaX",
+            "pinKey": "ryTIROHwkW"
+          },
+          "output": {
+            "nodeId": "HkDTScAam",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "r1_TOq0pQ": {
+          "id": "r1_TOq0pQ",
+          "input": {
+            "nodeId": "H1qcu9CpX",
+            "pinKey": "Sy-1Luc0aX"
+          },
+          "output": {
+            "nodeId": "SyTZNq067",
+            "pinKey": "SylAyZ5Aam"
+          }
+        },
+        "rJX6kcR6Q": {
+          "id": "rJX6kcR6Q",
+          "input": {
+            "nodeId": "BkVEQwaaX",
+            "pinKey": "SyV_DtN26X"
+          },
+          "output": {
+            "nodeId": "B1xayq0aQ",
+            "pinKey": "ryVmUAOrvkb"
+          }
+        },
+        "rkilNo0aQ": {
+          "id": "rkilNo0aQ",
+          "output": {
+            "nodeId": "H1qcu9CpX",
+            "pinKey": "rk1IdqCT7"
+          },
+          "input": {
+            "nodeId": "S1Oe4oCTQ",
+            "pinKey": "S1GCbXoRa7"
+          }
+        },
+        "B13lNoApQ": {
+          "id": "B13lNoApQ",
+          "output": {
+            "nodeId": "H1qcu9CpX",
+            "pinKey": "ryeJ8d5C6X"
+          },
+          "input": {
+            "nodeId": "S1Oe4oCTQ",
+            "pinKey": "Hyg0bXsRaX"
+          }
+        },
+        "SkFVVi0aX": {
+          "id": "SkFVVi0aX",
+          "output": {
+            "nodeId": "BkS2ZYR6m",
+            "pinKey": "H1S2wD6pX"
+          },
+          "input": {
+            "nodeId": "S1Oe4oCTQ",
+            "pinKey": "rkV0-Xj0p7"
+          }
+        },
+        "SJ2dDsCpm": {
+          "id": "SJ2dDsCpm",
+          "output": {
+            "nodeId": "S1Oe4oCTQ",
+            "pinKey": "BJ70ZQiA67"
+          },
+          "input": {
+            "nodeId": "HJ-ODsApm",
+            "pinKey": "ByGqdHoRpQ"
+          }
+        },
+        "Hy1tPsAT7": {
+          "id": "Hy1tPsAT7",
+          "output": {
+            "nodeId": "S1Oe4oCTQ",
+            "pinKey": "S1SCZmjCp7"
+          },
+          "input": {
+            "nodeId": "HJ-ODsApm",
+            "pinKey": "r1g5dHjAam"
+          }
+        },
+        "BkM9vi06m": {
+          "id": "BkM9vi06m",
+          "output": {
+            "nodeId": "BkS2ZYR6m",
+            "pinKey": "H1S2wD6pX"
+          },
+          "input": {
+            "nodeId": "HJ-ODsApm",
+            "pinKey": "ry4quHjAaX"
+          }
+        },
+        "r1z2soATQ": {
+          "id": "r1z2soATQ",
+          "output": {
+            "nodeId": "B1f7Nc0pX",
+            "pinKey": "H1S2wD6pX"
+          },
+          "input": {
+            "nodeId": "HJ-ODsApm",
+            "pinKey": "H1Z5uBsA6Q"
+          }
+        },
+        "rJbansCaX": {
+          "id": "rJbansCaX",
+          "output": {
+            "nodeId": "HJ-ODsApm",
+            "pinKey": "BJmquSjA67"
+          },
+          "input": {
+            "nodeId": "rkJp2s0aQ",
+            "pinKey": "BJGbj2sAT7"
+          }
+        },
+        "H1f6piR67": {
+          "id": "H1f6piR67",
+          "output": {
+            "nodeId": "BkS2ZYR6m",
+            "pinKey": "H1S2wD6pX"
+          },
+          "input": {
+            "nodeId": "rkJp2s0aQ",
+            "pinKey": "rJ-Zj2jRpQ"
+          }
+        },
+        "SJo0enC6X": {
+          "id": "SJo0enC6X",
+          "output": {
+            "nodeId": "HJ-ODsApm",
+            "pinKey": "r1rcdSsAaQ"
+          },
+          "input": {
+            "nodeId": "rkJp2s0aQ",
+            "pinKey": "rylZj2jC6Q"
+          }
+        },
+        "Sy8DZhAam": {
+          "id": "Sy8DZhAam",
+          "output": {
+            "nodeId": "B1f7Nc0pX",
+            "pinKey": "H1S2wD6pX"
+          },
+          "input": {
+            "nodeId": "rkJp2s0aQ",
+            "pinKey": "S14Wi2oR6X"
+          }
+        },
+        "Hy3IBnR6X": {
+          "id": "Hy3IBnR6X",
+          "output": {
+            "nodeId": "rkJp2s0aQ",
+            "pinKey": "H17Zihi0T7"
+          },
+          "input": {
+            "nodeId": "SyoAbnC6m",
+            "pinKey": "HJz-XIja6X"
+          }
+        },
+        "HyGvBnA67": {
+          "id": "HyGvBnA67",
+          "output": {
+            "nodeId": "rkJp2s0aQ",
+            "pinKey": "SJrbo2sRpm"
+          },
+          "input": {
+            "nodeId": "SyoAbnC6m",
+            "pinKey": "HkeZXIoaTm"
+          }
+        },
+        "SJlir30a7": {
+          "id": "SJlir30a7",
+          "output": {
+            "nodeId": "HyhqHn0Tm",
+            "pinKey": "H1S2wD6pX"
+          },
+          "input": {
+            "nodeId": "SyoAbnC6m",
+            "pinKey": "HJV-XUjaTQ"
+          }
+        }
+      },
+      "nodes": {
+        "B17nH9AaX": {
+          "id": "B17nH9AaX",
+          "position": {
+            "x": 612,
+            "y": 408
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "B1f7Nc0pX": {
+          "boundLiterals": {
+            "BJypwwa6X": "1",
+            "rJa2wvp6Q": "1",
+            "rkh2PD6p7": "1"
+          },
+          "id": "B1f7Nc0pX",
+          "position": {
+            "x": 578,
+            "y": 510
+          },
+          "type": "@/colour"
+        },
+        "B1xayq0aQ": {
+          "id": "B1xayq0aQ",
+          "position": {
+            "x": 102,
+            "y": 102
+          },
+          "type": "xod/core/boot"
+        },
+        "BkS2ZYR6m": {
+          "boundLiterals": {
+            "BJypwwa6X": "0",
+            "rJa2wvp6Q": "0.5",
+            "rkh2PD6p7": "1"
+          },
+          "id": "BkS2ZYR6m",
+          "position": {
+            "x": 374,
+            "y": 408
+          },
+          "type": "@/colour"
+        },
+        "BkVEQwaaX": {
+          "boundLiterals": {
+            "SyV_DtN26X": "Never"
+          },
+          "id": "BkVEQwaaX",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "type": "@/draw-fillscreen"
+        },
+        "H1qcu9CpX": {
+          "boundLiterals": {
+            "H1PyUuqC67": "30",
+            "SJIJIO5ATX": "50"
+          },
+          "id": "H1qcu9CpX",
+          "position": {
+            "x": 34,
+            "y": 408
+          },
+          "type": "@/draw-point"
+        },
+        "HkDTScAam": {
+          "id": "HkDTScAam",
+          "position": {
+            "x": 646,
+            "y": 306
+          },
+          "type": "xod/core/clock"
+        },
+        "SkPm_waaX": {
+          "boundLiterals": {
+            "BJypwwa6X": "1",
+            "rJa2wvp6Q": "0",
+            "rkh2PD6p7": "0"
+          },
+          "id": "SkPm_waaX",
+          "position": {
+            "x": 204,
+            "y": 102
+          },
+          "type": "@/colour"
+        },
+        "SyTZNq067": {
+          "boundLiterals": {
+            "Bkjh-qC6Q": "64",
+            "H1bA1-9Cam": "Continuously",
+            "SylC3WcAam": "20",
+            "ryChZ9CpX": "64"
+          },
+          "id": "SyTZNq067",
+          "position": {
+            "x": 34,
+            "y": 306
+          },
+          "type": "@/draw-circle"
+        },
+        "r16IwV2TQ": {
+          "id": "r16IwV2TQ",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "@/tft-device"
+        },
+        "S1Oe4oCTQ": {
+          "id": "S1Oe4oCTQ",
+          "type": "@/draw-line",
+          "position": {
+            "x": 34,
+            "y": 510
+          },
+          "boundLiterals": {
+            "ryZmXoR67": "128",
+            "BJlbmmoAp7": "128"
+          }
+        },
+        "HJ-ODsApm": {
+          "id": "HJ-ODsApm",
+          "type": "@/draw-triangle",
+          "position": {
+            "x": 34,
+            "y": 612
+          },
+          "boundLiterals": {
+            "r1curjRpX": "100",
+            "HJ_9urjAT7": "10",
+            "rJvFHoCa7": "120",
+            "BJgDKBo06m": "10",
+            "rkWPtSsRaQ": "106",
+            "SyfvKSs06m": "90",
+            "ryXvtrsC6Q": "100",
+            "SJEvtHo06m": "100"
+          }
+        },
+        "rkJp2s0aQ": {
+          "id": "rkJp2s0aQ",
+          "type": "@/draw-rectangle",
+          "position": {
+            "x": 34,
+            "y": 714
+          },
+          "boundLiterals": {
+            "r1-o3oRpm": "10",
+            "SkPWsniApX": "100",
+            "SJuZonsR6Q": "10",
+            "S1Fbs3sApm": "15"
+          }
+        },
+        "SyoAbnC6m": {
+          "id": "SyoAbnC6m",
+          "type": "@/display-text",
+          "position": {
+            "x": 34,
+            "y": 816
+          },
+          "boundLiterals": {
+            "SkvChEAam": "10",
+            "SkFAnVRpm": "10",
+            "BkE48jpam": "\"Hello World.\"",
+            "HJec2ECam": "1"
+          }
+        },
+        "HyhqHn0Tm": {
+          "boundLiterals": {
+            "BJypwwa6X": "0",
+            "rJa2wvp6Q": "1",
+            "rkh2PD6p7": "0"
+          },
+          "id": "HyhqHn0Tm",
+          "position": {
+            "x": 340,
+            "y": 816
+          },
+          "type": "@/colour"
+        }
+      },
+      "path": "@/example"
+    }
+  },
+  "version": "0.1.0"
+}

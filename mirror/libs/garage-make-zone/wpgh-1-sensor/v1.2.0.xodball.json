@@ -1,0 +1,203 @@
+{
+  "apiKey": "84635ecb-b679-4375-8897-571cb8d2dc66",
+  "description": "Additional LPG tank sensor. NODE Read sensor values then after recalculation transmit % Level value as STRING to be displayed directly in LCD Ln Line. Requires WPGH-1 LPG Hall sensor.",
+  "license": "MIT",
+  "name": "wpgh-1-sensor",
+  "patches": {
+    "@/wpgh-1-sensor": {
+      "description": "Additional LPG tank sensor Node. Requires WPGH-1 LPG Hall sensor.",
+      "links": {
+        "HJd8pVxfu8": {
+          "id": "HJd8pVxfu8",
+          "output": {
+            "nodeId": "HJ8p4xfdL",
+            "pinKey": "SyBtREhlW"
+          },
+          "input": {
+            "nodeId": "HJeU6VeGOL",
+            "pinKey": "HJjEe1lnb"
+          }
+        },
+        "r1FIpVeMdU": {
+          "id": "r1FIpVeMdU",
+          "output": {
+            "nodeId": "Hy-IpEeMdI",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJ8p4xfdL",
+            "pinKey": "SkuhqCqym"
+          }
+        },
+        "r1q8a4lMuI": {
+          "id": "r1q8a4lMuI",
+          "output": {
+            "nodeId": "SJM86NezdL",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJ8p4xfdL",
+            "pinKey": "SyKd0E2x-"
+          }
+        },
+        "SJiL64ezOL": {
+          "id": "SJiL64ezOL",
+          "output": {
+            "nodeId": "HJeU6VeGOL",
+            "pinKey": "rJFmgJehW"
+          },
+          "input": {
+            "nodeId": "S1mUa4gGO8",
+            "pinKey": "S19J9j6WZ"
+          }
+        },
+        "rkhU6EezOI": {
+          "id": "rkhU6EezOI",
+          "output": {
+            "nodeId": "HJeU6VeGOL",
+            "pinKey": "rJFmgJehW"
+          },
+          "input": {
+            "nodeId": "HJNI6EeGdI",
+            "pinKey": "S1jhaXJvf"
+          }
+        },
+        "rJ6UaVgzOI": {
+          "id": "rJ6UaVgzOI",
+          "output": {
+            "nodeId": "HJBI64efOU",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJNI6EeGdI",
+            "pinKey": "Bybo3pXywM"
+          }
+        },
+        "BJCLaNgMuL": {
+          "id": "BJCLaNgMuL",
+          "output": {
+            "nodeId": "S1mUa4gGO8",
+            "pinKey": "rk4-cs6-W"
+          },
+          "input": {
+            "nodeId": "ByI8pExf_8",
+            "pinKey": "__in__"
+          }
+        },
+        "rkJxLT4eGO8": {
+          "id": "rkJxLT4eGO8",
+          "output": {
+            "nodeId": "HJNI6EeGdI",
+            "pinKey": "S1gs26myDM"
+          },
+          "input": {
+            "nodeId": "BJPLTVgfu8",
+            "pinKey": "__in__"
+          }
+        }
+      },
+      "nodes": {
+        "HJ8p4xfdL": {
+          "id": "HJ8p4xfdL",
+          "type": "xod/gpio/analog-read",
+          "position": {
+            "x": -12.022727272727273,
+            "y": -1.5619047619047617,
+            "units": "slots"
+          }
+        },
+        "HJeU6VeGOL": {
+          "boundLiterals": {
+            "B1rSeJlnZ": "0.93",
+            "HkFBgJehW": "1.00"
+          },
+          "id": "HJeU6VeGOL",
+          "type": "xod/math/map-clip",
+          "position": {
+            "x": -12.022727272727273,
+            "y": -0.5619047619047617,
+            "units": "slots"
+          }
+        },
+        "Hy-IpEeMdI": {
+          "boundLiterals": {
+            "__out__": "A0"
+          },
+          "description": "Analog IN Port - White wire of WPGH-1",
+          "label": "A-PORT",
+          "id": "Hy-IpEeMdI",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": -12.022727272727273,
+            "y": -2.5619047619047617,
+            "units": "slots"
+          }
+        },
+        "SJM86NezdL": {
+          "description": "Update",
+          "label": "UPD",
+          "id": "SJM86NezdL",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": -8.022727272727273,
+            "y": -2.5619047619047617,
+            "units": "slots"
+          }
+        },
+        "S1mUa4gGO8": {
+          "id": "S1mUa4gGO8",
+          "type": "xod/core/to-percent",
+          "position": {
+            "x": -12.022727272727273,
+            "y": 0.4380952380952383,
+            "units": "slots"
+          }
+        },
+        "HJNI6EeGdI": {
+          "id": "HJNI6EeGdI",
+          "type": "e/comparison/less-or-equal",
+          "position": {
+            "x": -11.022727272727273,
+            "y": 0.4380952380952383,
+            "units": "slots"
+          }
+        },
+        "HJBI64efOU": {
+          "description": "Reserve value ( Default = 0.28 )",
+          "label": "RES",
+          "id": "HJBI64efOU",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": -10.022727272727273,
+            "y": -2.5619047619047617,
+            "units": "slots"
+          }
+        },
+        "ByI8pExf_8": {
+          "description": "Level of LPG in % ( To be displayed in Ln Line of LCD )",
+          "label": "Level",
+          "id": "ByI8pExf_8",
+          "type": "xod/patch-nodes/output-string",
+          "position": {
+            "x": -12.022727272727273,
+            "y": 1.4380952380952383,
+            "units": "slots"
+          }
+        },
+        "BJPLTVgfu8": {
+          "description": "Reserve boolean trigger signal. Result TRUE when value is less or equals the RES  value. Can be use as activation signal for Low level alarm and other functions connected",
+          "label": "R-SIG",
+          "id": "BJPLTVgfu8",
+          "type": "xod/patch-nodes/output-boolean",
+          "position": {
+            "x": -10.022727272727273,
+            "y": 1.4380952380952383,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/wpgh-1-sensor"
+    }
+  },
+  "version": "1.2.0"
+}

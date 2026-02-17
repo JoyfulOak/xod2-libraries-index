@@ -1,0 +1,223 @@
+{
+  "description": "A library to control https://amperka.com/products/troyka-quad-display.\nA tiny wrapper around https://github.com/amperka/QuadDisplay2 Arduino library.",
+  "license": "MIT",
+  "name": "troyka-quad-display",
+  "patches": {
+    "@/display-integer": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_SHOW>(ctx)) return;\n\n    auto num = getValue<input_NUM>(ctx);\n    auto includeLeadingZeroes = getValue<input_LZ>(ctx);\n    auto qd = getValue<input_DEV>(ctx);\n\n    qd->displayInt(num, includeLeadingZeroes);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BkXWoS8uE": {
+          "id": "BkXWoS8uE",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HkQ0cSLO4": {
+          "id": "HkQ0cSLO4",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-quad-display"
+        },
+        "S1iojrLOV": {
+          "description": "Controls if the leading zeroes are displayed",
+          "id": "S1iojrLOV",
+          "label": "LZ",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "SyWesHLuE": {
+          "description": "An integer to display",
+          "id": "SyWesHLuE",
+          "label": "NUM",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkYCcrL_E": {
+          "id": "rkYCcrL_E",
+          "label": "SHOW",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/display-integer"
+    },
+    "@/example": {
+      "links": {
+        "BJJ13H8_V": {
+          "id": "BJJ13H8_V",
+          "input": {
+            "nodeId": "r13CsBIuN",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rky6jrUOV",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "H15pjrU_V": {
+          "id": "H15pjrU_V",
+          "input": {
+            "nodeId": "ry93jHIOE",
+            "pinKey": "SyWesHLuE"
+          },
+          "output": {
+            "nodeId": "HkITjSUdV",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "SkL1hA0jV": {
+          "id": "SkL1hA0jV",
+          "input": {
+            "nodeId": "ry93jHIOE",
+            "pinKey": "HkQ0cSLO4"
+          },
+          "output": {
+            "nodeId": "SyWgprIu4",
+            "pinKey": "H1wp_S8OE"
+          }
+        },
+        "rJYasHLuE": {
+          "id": "rJYasHLuE",
+          "input": {
+            "nodeId": "HkITjSUdV",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "rky6jrUOV",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "ryACjHUdE": {
+          "id": "ryACjHUdE",
+          "input": {
+            "nodeId": "ry93jHIOE",
+            "pinKey": "rkYCcrL_E"
+          },
+          "output": {
+            "nodeId": "r13CsBIuN",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "HkITjSUdV": {
+          "id": "HkITjSUdV",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "SyWgprIu4": {
+          "id": "SyWgprIu4",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/quad-display"
+        },
+        "r13CsBIuN": {
+          "id": "r13CsBIuN",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/jumper"
+        },
+        "rky6jrUOV": {
+          "id": "rky6jrUOV",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "ry93jHIOE": {
+          "id": "ry93jHIOE",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/display-integer"
+        }
+      },
+      "path": "@/example"
+    },
+    "@/quad-display": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/amperka/QuadDisplay2\"\n\n{{#global}}\n#include <QuadDisplay2.h>\n{{/global}}\n\nstruct State {\n    uint8_t mem[sizeof(QuadDisplay)];\n};\n\nusing Type = QuadDisplay*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isSettingUp()) return;\n\n    auto state = getState(ctx);\n    auto pinCS = getValue<input_CS>(ctx);\n\n    Type qd = new (state->mem) QuadDisplay(pinCS);\n    qd->begin();\n\n    emitValue<output_DEV>(ctx, qd);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BynauH8dE": {
+          "id": "BynauH8dE",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1gR_BLdE": {
+          "boundLiterals": {
+            "__out__": "D9"
+          },
+          "description": "Chip select port",
+          "id": "H1gR_BLdE",
+          "label": "CS",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "H1wp_S8OE": {
+          "id": "H1wp_S8OE",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/quad-display"
+    }
+  },
+  "version": "0.0.1"
+}

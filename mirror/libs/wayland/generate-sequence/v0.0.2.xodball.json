@@ -1,0 +1,408 @@
+{
+  "description": "Generates a linear sequence of numbers. This patch was created to facilitate the drawing of repeated elements (e.g. gridlines) on displays.",
+  "license": "AGPL-3.0",
+  "version": "0.0.2",
+  "patches": {
+    "@/generate-sequence": {
+      "nodes": {
+        "HJdKUwtPt": {
+          "id": "HJdKUwtPt",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ryxOFUwtvt": {
+          "description": "Sequence start value.",
+          "label": "Start",
+          "id": "ryxOFUwtvt",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HyZOtIwFDK": {
+          "boundLiterals": {
+            "__out__": "9"
+          },
+          "description": "Sequence end value. Should be greater than start value.",
+          "label": "Stop",
+          "id": "HyZOtIwFDK",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H1fOFUwtwt": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Step size. Should be greater than zero.",
+          "label": "Step",
+          "id": "H1fOFUwtwt",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Hy7OFLvtwt": {
+          "description": "Update. Begin generation of sequence.",
+          "label": "UPD",
+          "id": "Hy7OFLvtwt",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ry4uF8vKwF": {
+          "description": "Number in sequence.",
+          "label": "N",
+          "id": "ry4uF8vKwF",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BkSdYIvFvK": {
+          "description": "Pulse each time a new number in the sequence is generated.",
+          "label": "Next",
+          "id": "BkSdYIvFvK",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJ8OtLwKDK": {
+          "description": "Pulse when last number in sequence has been output.",
+          "label": "Done",
+          "id": "rJ8OtLwKDK",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/generate-sequence",
+      "description": "Generate a linear sequence of numbers.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number n;\n    Number start;\n    Number stop;\n    Number step;\n    bool update;\n\n    void evaluate(Context ctx) {\n        if(isInputDirty<input_UPD>(ctx)) {\n            start = getValue<input_Start>(ctx);\n            stop = getValue<input_Stop>(ctx);\n            step = getValue<input_Step>(ctx);\n            n = start;\n            update = true;\n        }\n\n        if (update) {\n            if (n <= stop) {\n                emitValue<output_N>(ctx, n);\n                emitValue<output_Next>(ctx, 1);\n                n += step;\n                setImmediate();\n            }\n            else\n            {\n                update = false;\n                emitValue<output_Done>(ctx, 1);\n            }\n        }\n        \n    }\n}\n"
+        }
+      ]
+    },
+    "@/example": {
+      "nodes": {
+        "HyHRFwtPt": {
+          "id": "HyHRFwtPt",
+          "type": "wayland/ssd1306-oled-i2c/ssd1306-oled-i2c-device",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "H1BxqvFDY": {
+          "id": "H1BxqvFDY",
+          "type": "wayland/ssd1306-oled-i2c/clear-display",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "r1H7MwK8E": "On Boot"
+          }
+        },
+        "ryOM9DYPK": {
+          "id": "ryOM9DYPK",
+          "type": "wayland/ssd1306-oled-i2c/draw-line",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B1h7EAqIV": "63"
+          }
+        },
+        "HJa45vtwt": {
+          "id": "HJa45vtwt",
+          "type": "wayland/ssd1306-oled-i2c/draw-line",
+          "position": {
+            "x": 2,
+            "y": 5,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B1h7EAqIV": "127",
+            "ByxiXEC9UE": "127"
+          }
+        },
+        "HyCHcPYvK": {
+          "id": "HyCHcPYvK",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "S1WDcvYPY": {
+          "id": "S1WDcvYPY",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "BJ0PqvFvt": {
+          "id": "BJ0PqvFvt",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "SJl0w9vtwY": {
+          "id": "SJl0w9vtwY",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 2,
+            "y": 4,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "SJNKcPKvt": {
+          "id": "SJNKcPKvt",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 6,
+            "y": 6,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "B1RYqDtDK": {
+          "id": "B1RYqDtDK",
+          "type": "wayland/ssd1306-oled-i2c/send-buffer-to-display",
+          "position": {
+            "x": 7,
+            "y": 6,
+            "units": "slots"
+          }
+        },
+        "Byko5wFvF": {
+          "id": "Byko5wFvF",
+          "type": "@/generate-sequence",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "H1fOFUwtwt": "16",
+            "HyZOtIwFDK": "127",
+            "ryxOFUwtvt": "8"
+          }
+        },
+        "rJmo9vYwt": {
+          "id": "rJmo9vYwt",
+          "type": "@/generate-sequence",
+          "position": {
+            "x": 5,
+            "y": 4,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "H1fOFUwtwt": "16",
+            "HyZOtIwFDK": "63",
+            "ryxOFUwtvt": "8"
+          }
+        }
+      },
+      "links": {
+        "r1vLcPYDt": {
+          "id": "r1vLcPYDt",
+          "output": {
+            "nodeId": "HyHRFwtPt",
+            "pinKey": "ryH6tSt8N"
+          },
+          "input": {
+            "nodeId": "HyCHcPYvK",
+            "pinKey": "__in__"
+          }
+        },
+        "rySu9PKvt": {
+          "id": "rySu9PKvt",
+          "output": {
+            "nodeId": "SJl0w9vtwY",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJa45vtwt",
+            "pinKey": "r1re4Aq8N"
+          }
+        },
+        "HJdO9wYvt": {
+          "id": "HJdO9wYvt",
+          "output": {
+            "nodeId": "BJ0PqvFvt",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ryOM9DYPK",
+            "pinKey": "r1re4Aq8N"
+          }
+        },
+        "rklK5DKDt": {
+          "id": "rklK5DKDt",
+          "output": {
+            "nodeId": "S1WDcvYPY",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "H1BxqvFDY",
+            "pinKey": "S1mxGvKUN"
+          }
+        },
+        "SJbqqDtPK": {
+          "id": "SJbqqDtPK",
+          "output": {
+            "nodeId": "SJNKcPKvt",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "B1RYqDtDK",
+            "pinKey": "Sy6LZuYIE"
+          }
+        },
+        "H1ABjwtPt": {
+          "id": "H1ABjwtPt",
+          "output": {
+            "nodeId": "Byko5wFvF",
+            "pinKey": "ry4uF8vKwF"
+          },
+          "input": {
+            "nodeId": "ryOM9DYPK",
+            "pinKey": "HkP7VC58V"
+          }
+        },
+        "Sy18jPtwF": {
+          "id": "Sy18jPtwF",
+          "output": {
+            "nodeId": "Byko5wFvF",
+            "pinKey": "ry4uF8vKwF"
+          },
+          "input": {
+            "nodeId": "ryOM9DYPK",
+            "pinKey": "ByxiXEC9UE"
+          }
+        },
+        "rJMvsvtvK": {
+          "id": "rJMvsvtvK",
+          "output": {
+            "nodeId": "rJmo9vYwt",
+            "pinKey": "ry4uF8vKwF"
+          },
+          "input": {
+            "nodeId": "HJa45vtwt",
+            "pinKey": "BJjmVAc8N"
+          }
+        },
+        "r1wTiPFPK": {
+          "id": "r1wTiPFPK",
+          "output": {
+            "nodeId": "rJmo9vYwt",
+            "pinKey": "ry4uF8vKwF"
+          },
+          "input": {
+            "nodeId": "HJa45vtwt",
+            "pinKey": "B1h7EAqIV"
+          }
+        },
+        "SkjAswKPY": {
+          "id": "SkjAswKPY",
+          "output": {
+            "nodeId": "H1BxqvFDY",
+            "pinKey": "rylSGPt8E"
+          },
+          "input": {
+            "nodeId": "Byko5wFvF",
+            "pinKey": "Hy7OFLvtwt"
+          }
+        },
+        "r1GkhPYvY": {
+          "id": "r1GkhPYvY",
+          "output": {
+            "nodeId": "Byko5wFvF",
+            "pinKey": "BkSdYIvFvK"
+          },
+          "input": {
+            "nodeId": "ryOM9DYPK",
+            "pinKey": "Bkr-NC9IN"
+          }
+        },
+        "HJBk2vYvK": {
+          "id": "HJBk2vYvK",
+          "output": {
+            "nodeId": "Byko5wFvF",
+            "pinKey": "rJ8OtLwKDK"
+          },
+          "input": {
+            "nodeId": "rJmo9vYwt",
+            "pinKey": "Hy7OFLvtwt"
+          }
+        },
+        "B1nk2DtwY": {
+          "id": "B1nk2DtwY",
+          "output": {
+            "nodeId": "rJmo9vYwt",
+            "pinKey": "BkSdYIvFvK"
+          },
+          "input": {
+            "nodeId": "HJa45vtwt",
+            "pinKey": "Bkr-NC9IN"
+          }
+        },
+        "HJXz3DKvt": {
+          "id": "HJXz3DKvt",
+          "output": {
+            "nodeId": "rJmo9vYwt",
+            "pinKey": "rJ8OtLwKDK"
+          },
+          "input": {
+            "nodeId": "B1RYqDtDK",
+            "pinKey": "SJDbf_YUV"
+          }
+        }
+      },
+      "path": "@/example",
+      "description": "Draw a grid on an SSD1306 I²C OLED."
+    }
+  },
+  "name": "generate-sequence"
+}

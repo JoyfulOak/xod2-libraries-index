@@ -1,0 +1,1233 @@
+{
+  "description": "Time-of-Flight (ToF) sensor. Arduino library for the ST VL53L0X sensor (https://www.st.com/en/imaging-and-photonics-solutions/vl53l0x.html). Wraps the Pololu VL43L0X library for Arduino (https://github.com/pololu/vl53l0x-arduino).",
+  "license": "BSD-3-Clause",
+  "name": "vl53l0x-time-of-flight",
+  "patches": {
+    "@/example-test-tof-sensor": {
+      "description": "Patch to test tof-sensor.",
+      "links": {
+        "SkrKfKFh7S": {
+          "id": "SkrKfKFh7S",
+          "input": {
+            "nodeId": "HJtMYF3mH",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "r1mKGYK37S",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "SJtXKKhXB": {
+          "id": "SJtXKKhXB",
+          "output": {
+            "nodeId": "H1PlYFn7B",
+            "pinKey": "HkGbuKhmr"
+          },
+          "input": {
+            "nodeId": "S1btMYY37S",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "SJimKK37B": {
+          "id": "SJimKK37B",
+          "output": {
+            "nodeId": "H1PlYFn7B",
+            "pinKey": "SkgV6wFh7r"
+          },
+          "input": {
+            "nodeId": "r1mKGYK37S",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "rksIYYhQr": {
+          "id": "rksIYYhQr",
+          "output": {
+            "nodeId": "rkELKY2QB",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "H1PlYFn7B",
+            "pinKey": "Sk-SLwthXH"
+          }
+        }
+      },
+      "nodes": {
+        "H1PlYFn7B": {
+          "id": "H1PlYFn7B",
+          "type": "@/tof-sensor",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HJtMYF3mH": {
+          "id": "HJtMYF3mH",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "S1btMYY37S": {
+          "id": "S1btMYY37S",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "r1mKGYK37S": {
+          "id": "r1mKGYK37S",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "rkELKY2QB": {
+          "boundLiterals": {
+            "B13SCNhl-": "0.25"
+          },
+          "id": "rkELKY2QB",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        }
+      },
+      "path": "@/example-test-tof-sensor"
+    },
+    "@/get-address": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `VL53L0X` class instance\n    auto sensor = getValue<input_DEV>(ctx);\n\n    emitValue<output_ADDR>(ctx,sensor->getAddress());\n    emitValue<output_DONE>(ctx,1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Read the I²C address of the VL53L0X.",
+      "nodes": {
+        "B1xb3RTsbH": {
+          "description": "Pulses on read of  I²C address.",
+          "id": "B1xb3RTsbH",
+          "label": "DONE",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BkWZhR6ibB": {
+          "description": "Update. Triggers read of address.",
+          "id": "BkWZhR6ibB",
+          "label": "UPD",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Bymb3A6sbB": {
+          "id": "Bymb3A6sbB",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r19zkCjZB": {
+          "description": "A VL53L0X device.",
+          "id": "r19zkCjZB",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-vl53l0x-device"
+        },
+        "rJW3Rpo-B": {
+          "description": "I²C address of the VL53L0X.",
+          "id": "rJW3Rpo-B",
+          "label": "ADDR",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-byte"
+        }
+      },
+      "path": "@/get-address"
+    },
+    "@/get-measurement-timing-budget": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `VL53L0X` class instance\n    auto sensor = getValue<input_DEV>(ctx);\n\n    emitValue<output_MTB>(ctx,sensor->getMeasurementTimingBudget());\n    emitValue<output_DONE>(ctx,1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Read measurement timing budget of VL53L0X.",
+      "nodes": {
+        "BkIaTqhbB": {
+          "id": "BkIaTqhbB",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BybUaa52-S": {
+          "description": "Pulse on read of measurement timing budget.",
+          "id": "BybUaa52-S",
+          "label": "DONE",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "H1g86acnbS": {
+          "description": "Measurement timing budget (microseconds).",
+          "id": "H1g86acnbS",
+          "label": "MTB",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HkQU6aq3WH": {
+          "description": "Update. Triggers read of measurement timing budget.",
+          "id": "HkQU6aq3WH",
+          "label": "UPD",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1rRpq2-B": {
+          "description": "A VL53L0X device.",
+          "id": "r1rRpq2-B",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-vl53l0x-device"
+        }
+      },
+      "path": "@/get-measurement-timing-budget"
+    },
+    "@/get-timeout": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `VL53L0X` class instance\n    auto sensor = getValue<input_DEV>(ctx);\n\n    emitValue<output_TO>(ctx,sensor->getTimeout());\n    emitValue<output_DONE>(ctx,1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Read current timeout setting of VL53L0X.",
+      "nodes": {
+        "B1ZITAq2bH": {
+          "description": "Pulse on read of timeout.",
+          "id": "B1ZITAq2bH",
+          "label": "DONE",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "S1zU6Cc3br": {
+          "id": "S1zU6Cc3br",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJxUaA92-r": {
+          "description": "Timeout (milliseconds).",
+          "id": "SJxUaA92-r",
+          "label": "TO",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "r18aRch-r": {
+          "description": "Update. Triggers read of current timeout.",
+          "id": "r18aRch-r",
+          "label": "UPD",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1gCAc2bS": {
+          "description": "A VL53L0X device.",
+          "id": "r1gCAc2bS",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-vl53l0x-device"
+        }
+      },
+      "path": "@/get-timeout"
+    },
+    "@/init": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulsei\n    if (!isInputDirty<input_INIT>(ctx))\n        return;\n\n    Wire.begin();\n\n    // Get a pointer to the `VL53L0X` class instance\n    auto sensor = getValue<input_DEV>(ctx);\n\n    // Initialize VL53L0X module\n    sensor->init();\n\n    // Don't check for successful initialization - init() returns true even if no VL53L0X connected!\n    // Attempt to initialize VL53L0X module; if attempt fails emit pulse from error port\n    //if (!sensor->init()) {\n        //emitValue<output_ERR>(ctx, 1);\n        //return;\n    //}\n\n    // set timeout\n    sensor->setTimeout(getValue<input_TO>(ctx));\n\n    // Pulse to indicate initialization complete\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ],
+      "description": "Initialize VL53L0X device.",
+      "nodes": {
+        "Bk43xo6iWS": {
+          "id": "Bk43xo6iWS",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H13giTsWr": {
+          "boundLiterals": {
+            "__out__": "500"
+          },
+          "description": "Timeout (microseconds).",
+          "id": "H13giTsWr",
+          "label": "TO",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1Q_y0i-r": {
+          "description": "A VL53L0X device.",
+          "id": "S1Q_y0i-r",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-vl53l0x-device"
+        },
+        "Syb3lipo-r": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Trigger for initialization. Default is to initialize on boot.",
+          "id": "Syb3lipo-r",
+          "label": "INIT",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkQ2go6jWS": {
+          "description": "Pulse on initialization.",
+          "id": "rkQ2go6jWS",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/init"
+    },
+    "@/read-distance": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `VL53L0X` class instance\n    auto sensor = getValue<input_DEV>(ctx);\n\n    emitValue<output_DIST>(ctx,sensor->readRangeContinuousMillimeters());\n    emitValue<output_DONE>(ctx,1);\n}\n"
+        }
+      ],
+      "description": "Read distance (mm).",
+      "nodes": {
+        "SJe3kKuhQr": {
+          "description": "Pulse on read.",
+          "id": "SJe3kKuhQr",
+          "label": "DONE",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SyGnJtu3QB": {
+          "description": "Update. Triggers read.",
+          "id": "SyGnJtu3QB",
+          "label": "UPD",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1m2kKOnXS": {
+          "description": "Distance in millimetres.",
+          "id": "r1m2kKOnXS",
+          "label": "DIST",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "S1S3JKdn7S": {
+          "id": "S1S3JKdn7S",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJxfKO2XB": {
+          "id": "rJxfKO2XB",
+          "type": "@/input-vl53l0x-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "A VL53L0X device."
+        }
+      },
+      "path": "@/read-distance"
+    },
+    "@/set-measurement-timing-budget": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `VL53L0X` class instance\n    auto sensor = getValue<input_DEV>(ctx);\n\n    // set measurement timing budget\n    sensor->setMeasurementTimingBudget(getValue<input_MTB>(ctx));\n\n    // Attempt to set measurement timing budget; if attempt fails emit pulse from error port\n    //if (!sensor->setMeasurementTimingBudget(getValue<input_MTB>(ctx))) {\n        //emitValue<output_ERR>(ctx, 1);\n        //return;\n    //}\n\n    emitValue<output_DONE>(ctx,1);\n}\n"
+        }
+      ],
+      "description": "Set measurement timing budget.",
+      "nodes": {
+        "Bk6dA9h-H": {
+          "description": "A VL53L0X device.",
+          "id": "Bk6dA9h-H",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-vl53l0x-device"
+        },
+        "H1QM_C53-B": {
+          "description": "Pulses when measurement timing budget is set.",
+          "id": "H1QM_C53-B",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "S1zuA5hWB": {
+          "description": "Update. Trigger for setting measurement timing budget.",
+          "id": "S1zuA5hWB",
+          "label": "UPD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJ-GuA5h-r": {
+          "boundLiterals": {
+            "__out__": "200000"
+          },
+          "description": "Measurement timing budget (microseconds). N.B. units are microseconds not milliseconds.",
+          "id": "rJ-GuA5h-r",
+          "label": "MTB",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkeGOAq2bH": {
+          "id": "rkeGOAq2bH",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/set-measurement-timing-budget"
+    },
+    "@/set-timeout": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `VL53L0X` class instance\n    auto sensor = getValue<input_DEV>(ctx);\n\n    sensor->setTimeout(getValue<input_TO>(ctx));\n    emitValue<output_DONE>(ctx,1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Set timeout.",
+      "nodes": {
+        "BkZYG1j2bB": {
+          "description": "Pulses when timeout set.",
+          "id": "BkZYG1j2bB",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJYzJs2-S": {
+          "boundLiterals": {
+            "__out__": "500"
+          },
+          "description": "Timeout (milliseconds).",
+          "id": "HJYzJs2-S",
+          "label": "TO",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SklFfyj2bS": {
+          "description": "Update. Trigger for setting timeout.",
+          "id": "SklFfyj2bS",
+          "label": "UPD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SyGtzJi2ZB": {
+          "id": "SyGtzJi2ZB",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1WQko2WB": {
+          "description": "A VL53L0X device.",
+          "id": "r1WQko2WB",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-vl53l0x-device"
+        }
+      },
+      "path": "@/set-timeout"
+    },
+    "@/start-continuous": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `VL53L0X` class instance\n    auto sensor = getValue<input_DEV>(ctx);\n\n    sensor->startContinuous(getValue<input_IMP>(ctx));\n\n    emitValue<output_DONE>(ctx,1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Start continuous ranging measurements, with the given inter-measurement period in milliseconds determining how often the sensor takes a measurement.",
+      "nodes": {
+        "Byg7A36sZB": {
+          "id": "Byg7A36sZB",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Bym03as-S": {
+          "description": "Trigger for starting continuous ranging.",
+          "id": "Bym03as-S",
+          "label": "UPD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HyUqyRiZB": {
+          "description": "A VL53L0X device.",
+          "id": "HyUqyRiZB",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-vl53l0x-device"
+        },
+        "SkfXA36jZS": {
+          "description": "Pulse on start of continuous ranging.",
+          "id": "SkfXA36jZS",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r177C3aiZH": {
+          "boundLiterals": {
+            "__out__": "50"
+          },
+          "description": "Inter-measurement period (milliseconds). If zero, continuous back-to-back mode is used (the sensor takes measurements as often as possible); otherwise, continuous timed mode is used, with the given inter-measurement period in milliseconds determining how often the sensor takes a measurement.",
+          "id": "r177C3aiZH",
+          "label": "IMP",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/start-continuous"
+    },
+    "@/stop-continuous": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `VL53L0X` class instance\n    auto sensor = getValue<input_DEV>(ctx);\n\n    sensor->stopContinuous();\n\n    emitValue<output_DONE>(ctx,1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Stop continuous measurements.",
+      "nodes": {
+        "HkN4CpjZB": {
+          "description": "Update. Trigger for stopping continuous ranging.",
+          "id": "HkN4CpjZB",
+          "label": "UPD",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SyWNVRTo-S": {
+          "id": "SyWNVRTo-S",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1TokCsbB": {
+          "description": "A VL53L0X device.",
+          "id": "r1TokCsbB",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-vl53l0x-device"
+        },
+        "ryzNERTsWH": {
+          "description": "Pulse when continuous ranging stopped.",
+          "id": "ryzNERTsWH",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/stop-continuous"
+    },
+    "@/timeout-occurred": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `VL53L0X` class instance\n    auto sensor = getValue<input_DEV>(ctx);\n\n    emitValue<output_TO>(ctx,sensor->timeoutOccurred());\n    emitValue<output_DONE>(ctx,1);\n\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Did a timeout occur in one of the read functions since the last call to this node?",
+      "nodes": {
+        "B1B9X87fr": {
+          "description": "Timeout occurred.",
+          "id": "B1B9X87fr",
+          "label": "TO",
+          "position": {
+            "x": 0,
+            "y": 12,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "Bybr5XLQGr": {
+          "description": "Pulse on check for timeout.",
+          "id": "Bybr5XLQGr",
+          "label": "DONE",
+          "position": {
+            "x": 1,
+            "y": 12,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hy-sQLQMB": {
+          "description": "A VL53L0X device.",
+          "id": "Hy-sQLQMB",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 10,
+            "units": "slots"
+          },
+          "type": "@/input-vl53l0x-device"
+        },
+        "S17SqmLXGB": {
+          "description": "Update. Trigger check if timeout occurred.",
+          "id": "S17SqmLXGB",
+          "label": "UPD",
+          "position": {
+            "x": 1,
+            "y": 10,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJfB9XI7fB": {
+          "id": "SJfB9XI7fB",
+          "position": {
+            "x": 0,
+            "y": 11,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/timeout-occurred"
+    },
+    "@/vl53l0x-device": {
+      "attachments": [
+        {
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/pololu/vl53l0x-arduino\"\n\n//Include C++ libraries\n{{#global}}\n#include <VL53L0X.h>\n#include <Wire.h>\n{{/global}}\n\n// Reserve memory to store an instance of the class,\n// and create the instance later:\nstruct State {\n    uint8_t mem[sizeof(VL53L0X)];\n};\n\n// Define our custom type as a pointer on the class instance.\nusing Type = VL53L0X*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // It should be evaluated only once on the first (setup) transaction\n    if (!isSettingUp())\n        return;\n\n    auto state = getState(ctx);\n\n    // Create a new object in the memory area reserved previously.\n    Type sensor = new (state->mem) VL53L0X();\n\n    emitValue<output_DEV>(ctx, sensor);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Create VL53L0X device.",
+      "nodes": {
+        "Sym_iYj-H": {
+          "description": "A VL53L1X device.",
+          "id": "Sym_iYj-H",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "rkgQdsto-H": {
+          "id": "rkgQdsto-H",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/vl53l0x-device"
+    },
+    "@/tof-sensor": {
+      "nodes": {
+        "HJQTSK2QB": {
+          "id": "HJQTSK2QB",
+          "type": "@/vl53l0x-device",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "Sk2TrK2Qr": {
+          "id": "Sk2TrK2Qr",
+          "type": "@/init",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HJuASYh7r": {
+          "id": "HJuASYh7r",
+          "type": "@/set-measurement-timing-budget",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "ByxyLY2mr": {
+          "id": "ByxyLY2mr",
+          "type": "@/start-continuous",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "Hyqz8Y37H": {
+          "id": "Hyqz8Y37H",
+          "type": "xod/core/flip-flop",
+          "position": {
+            "x": 1,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "BJJHIt3QH": {
+          "id": "BJJHIt3QH",
+          "type": "xod/core/gate",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "BkVLIt3mS": {
+          "id": "BkVLIt3mS",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 1,
+            "y": 5,
+            "units": "slots"
+          },
+          "label": "INTD"
+        },
+        "r1HP8Fn7H": {
+          "id": "r1HP8Fn7H",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "INTD"
+        },
+        "HJ9K8Y2Xr": {
+          "id": "HJ9K8Y2Xr",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "SkWiUKnXS": {
+          "id": "SkWiUKnXS",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "r1468F27B": {
+          "id": "r1468F27B",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "ryyCUYhQr": {
+          "id": "ryyCUYhQr",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "BJRmPKnQS": {
+          "id": "BJRmPKnQS",
+          "type": "@/read-distance",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "BJB8DtnmH": {
+          "boundLiterals": {
+            "__out__": "200000"
+          },
+          "description": "Measurement timing budget (microseconds).",
+          "id": "BJB8DtnmH",
+          "label": "MTB",
+          "position": {
+            "x": 3,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1grLPY37r": {
+          "boundLiterals": {
+            "__out__": "500"
+          },
+          "description": "Timeout (milliseconds).",
+          "id": "r1grLPY37r",
+          "label": "TO",
+          "position": {
+            "x": 6,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Sk-SLwthXH": {
+          "description": "Update. Triggers read.",
+          "id": "Sk-SLwthXH",
+          "label": "UPD",
+          "position": {
+            "x": 8,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkfSLDKhmS": {
+          "boundLiterals": {
+            "__out__": "200"
+          },
+          "description": "Inter-measurement period (milliseconds). This period should be at least as long as the measurement timing budget.",
+          "id": "BkfSLDKhmS",
+          "label": "IMP",
+          "position": {
+            "x": 2,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ByNr8DFhXB": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Trigger for initialization. Default is to initialize on boot.",
+          "id": "ByNr8DFhXB",
+          "label": "INIT",
+          "position": {
+            "x": 7,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkgV6wFh7r": {
+          "description": "Pulse on read.",
+          "id": "SkgV6wFh7r",
+          "label": "DONE",
+          "position": {
+            "x": 8,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HkGbuKhmr": {
+          "id": "HkGbuKhmr",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 7,
+            "y": 5,
+            "units": "slots"
+          },
+          "label": "DIST",
+          "description": "Distance in millimetres."
+        }
+      },
+      "links": {
+        "SkZbUF2QB": {
+          "id": "SkZbUF2QB",
+          "output": {
+            "nodeId": "HJQTSK2QB",
+            "pinKey": "Sym_iYj-H"
+          },
+          "input": {
+            "nodeId": "Sk2TrK2Qr",
+            "pinKey": "S1Q_y0i-r"
+          }
+        },
+        "HJfZLF37r": {
+          "id": "HJfZLF37r",
+          "output": {
+            "nodeId": "Sk2TrK2Qr",
+            "pinKey": "rkQ2go6jWS"
+          },
+          "input": {
+            "nodeId": "HJuASYh7r",
+            "pinKey": "S1zuA5hWB"
+          }
+        },
+        "H1EZLY27H": {
+          "id": "H1EZLY27H",
+          "output": {
+            "nodeId": "HJuASYh7r",
+            "pinKey": "H1QM_C53-B"
+          },
+          "input": {
+            "nodeId": "ByxyLY2mr",
+            "pinKey": "Bym03as-S"
+          }
+        },
+        "BkGm8t2QS": {
+          "id": "BkGm8t2QS",
+          "output": {
+            "nodeId": "ByxyLY2mr",
+            "pinKey": "SkfXA36jZS"
+          },
+          "input": {
+            "nodeId": "Hyqz8Y37H",
+            "pinKey": "Bkh8A_Sv1-"
+          }
+        },
+        "BkewIt27S": {
+          "id": "BkewIt27S",
+          "output": {
+            "nodeId": "Hyqz8Y37H",
+            "pinKey": "HkyxURuSPyW"
+          },
+          "input": {
+            "nodeId": "BkVLIt3mS",
+            "pinKey": "__in__"
+          }
+        },
+        "r1bOLYnmr": {
+          "id": "r1bOLYnmr",
+          "output": {
+            "nodeId": "r1HP8Fn7H",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BJJHIt3QH",
+            "pinKey": "B1P1nFwaM"
+          }
+        },
+        "ryVcIt2mS": {
+          "id": "ryVcIt2mS",
+          "output": {
+            "nodeId": "HJQTSK2QB",
+            "pinKey": "Sym_iYj-H"
+          },
+          "input": {
+            "nodeId": "HJ9K8Y2Xr",
+            "pinKey": "__in__"
+          }
+        },
+        "By_C8t3mr": {
+          "id": "By_C8t3mr",
+          "output": {
+            "nodeId": "SkWiUKnXS",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJuASYh7r",
+            "pinKey": "Bk6dA9h-H"
+          }
+        },
+        "BJqCItnQH": {
+          "id": "BJqCItnQH",
+          "output": {
+            "nodeId": "r1468F27B",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ByxyLY2mr",
+            "pinKey": "HyUqyRiZB"
+          }
+        },
+        "H1e4DKh7r": {
+          "id": "H1e4DKh7r",
+          "output": {
+            "nodeId": "ryyCUYhQr",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BJRmPKnQS",
+            "pinKey": "rJxfKO2XB"
+          }
+        },
+        "rJyHvYhQr": {
+          "id": "rJyHvYhQr",
+          "output": {
+            "nodeId": "BJJHIt3QH",
+            "pinKey": "OkPg7GDaW"
+          },
+          "input": {
+            "nodeId": "BJRmPKnQS",
+            "pinKey": "SyGnJtu3QB"
+          }
+        },
+        "SyMOvYhQH": {
+          "id": "SyMOvYhQH",
+          "output": {
+            "nodeId": "BkfSLDKhmS",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ByxyLY2mr",
+            "pinKey": "r177C3aiZH"
+          }
+        },
+        "B1fKwtn7S": {
+          "id": "B1fKwtn7S",
+          "output": {
+            "nodeId": "BJB8DtnmH",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJuASYh7r",
+            "pinKey": "rJ-GuA5h-r"
+          }
+        },
+        "S1FtPKnQr": {
+          "id": "S1FtPKnQr",
+          "output": {
+            "nodeId": "r1grLPY37r",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "Sk2TrK2Qr",
+            "pinKey": "H13giTsWr"
+          }
+        },
+        "S1-5wY3mH": {
+          "id": "S1-5wY3mH",
+          "output": {
+            "nodeId": "ByNr8DFhXB",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "Sk2TrK2Qr",
+            "pinKey": "Syb3lipo-r"
+          }
+        },
+        "SJBqvtnXr": {
+          "id": "SJBqvtnXr",
+          "output": {
+            "nodeId": "Sk-SLwthXH",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BJJHIt3QH",
+            "pinKey": "SJ-1mZPTz"
+          }
+        },
+        "Syq6vF3QS": {
+          "id": "Syq6vF3QS",
+          "output": {
+            "nodeId": "BJRmPKnQS",
+            "pinKey": "SJe3kKuhQr"
+          },
+          "input": {
+            "nodeId": "SkgV6wFh7r",
+            "pinKey": "__in__"
+          }
+        },
+        "BJv-dY2XB": {
+          "id": "BJv-dY2XB",
+          "output": {
+            "nodeId": "BJRmPKnQS",
+            "pinKey": "r1m2kKOnXS"
+          },
+          "input": {
+            "nodeId": "HkGbuKhmr",
+            "pinKey": "__in__"
+          }
+        }
+      },
+      "path": "@/tof-sensor",
+      "description": "Time-of-Flight (ToF) sensor."
+    }
+  },
+  "version": "0.0.2"
+}

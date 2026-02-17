@@ -1,0 +1,1231 @@
+{
+  "description": "For use with Freetronics OLED128 128x128 pixel OLED display(Just a test Lib, Stay tuned for Auduino TFT Lib to be released soon to support TFT LCD's in general) ",
+  "license": "GPL",
+  "name": "ftoled",
+  "patches": {
+    "@/drawbox-ftoled": {
+      "attachments": [
+        {
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the `OLED` class instance\n    auto Display = getValue<input_DEV>(ctx);\n\n    OLED_Colour ColourBox = {getValue<input_RED>(ctx),getValue<input_GREEN>(ctx),getValue<input_BLUE>(ctx)};\n    Display->drawBox(getValue<input_XStart>(ctx),getValue<input_YStart>(ctx),getValue<input_XEnd>(ctx),getValue<input_YEnd>(ctx),getValue<input_Thickness>(ctx),(ColourBox));\n\n    // Pulse that module initialized successfully\n    emitValue<output_OUT>(ctx, Display);\n    emitValue<output_OK>(ctx, 1);\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Draw an Empty Box with Adjustable Thickness",
+      "nodes": {
+        "B1VjIcram": {
+          "description": "Set Background Colour",
+          "id": "B1VjIcram",
+          "position": {
+            "x": 67,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BkH4oIcH6m": {
+          "description": "Y Box Start Location",
+          "id": "BkH4oIcH6m",
+          "label": "YStart",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "By9UPqr67": {
+          "description": "Thickness of Box",
+          "id": "By9UPqr67",
+          "label": "Thickness",
+          "position": {
+            "x": 340,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ByIEsL5STQ": {
+          "description": "X Box End Location",
+          "id": "ByIEsL5STQ",
+          "label": "XEnd",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H1dEsU5BTm": {
+          "description": "Red value 0 to 255(Max)",
+          "id": "H1dEsU5BTm",
+          "label": "RED",
+          "position": {
+            "x": 408,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJQVoIcHT7": {
+          "id": "HJQVoIcHT7",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "@/output-ftoled-display-device"
+        },
+        "HJtEiI5Sam": {
+          "description": "Blue value 0 to 255(Max)",
+          "id": "HJtEiI5Sam",
+          "label": "GREEN",
+          "position": {
+            "x": 476,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HkbVsI9STQ": {
+          "id": "HkbVsI9STQ",
+          "label": "INIT",
+          "position": {
+            "x": 612,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJzEoL9BTX": {
+          "description": "Completed OK",
+          "id": "SJzEoL9BTX",
+          "label": "OK",
+          "position": {
+            "x": 67,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r1VVsIcrTm": {
+          "description": "X Box Start Location",
+          "id": "r1VVsIcrTm",
+          "label": "XStart",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJq4iL5rTm": {
+          "description": "Green value 0 to 255(Max)",
+          "id": "rJq4iL5rTm",
+          "label": "BLUE",
+          "position": {
+            "x": 544,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJx4iL5rTX": {
+          "id": "rJx4iL5rTX",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "@/input-ftoled-display-device"
+        },
+        "ryDVoUqrT7": {
+          "description": "Y Box End Location",
+          "id": "ryDVoUqrT7",
+          "label": "YEnd",
+          "position": {
+            "x": 272,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/drawbox-ftoled"
+    },
+    "@/drawcircle-ftoled": {
+      "attachments": [
+        {
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the `OLED` class instance\n    auto Display = getValue<input_DEV>(ctx);\n\n    OLED_Colour ColourCircle = {getValue<input_RED>(ctx),getValue<input_GREEN>(ctx),getValue<input_BLUE>(ctx)};\n    Display->drawCircle(getValue<input_XCenter>(ctx),getValue<input_YCenter>(ctx),getValue<input_Radius>(ctx),(ColourCircle));\n\n    // Pulse that module initialized successfully\n    emitValue<output_OUT>(ctx, Display);\n    emitValue<output_OK>(ctx, 1);\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Draw an Epmty Circle",
+      "nodes": {
+        "H1_fC1qBTm": {
+          "description": "Blue value 0 to 255(Max)",
+          "id": "H1_fC1qBTm",
+          "label": "GREEN",
+          "position": {
+            "x": 408,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HkrG0y9rpX": {
+          "description": "Y Circle Center Location",
+          "id": "HkrG0y9rpX",
+          "label": "YCenter",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Hktz0k9HaQ": {
+          "description": "Green value 0 to 255(Max)",
+          "id": "Hktz0k9HaQ",
+          "label": "BLUE",
+          "position": {
+            "x": 476,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HyEfAk9rpQ": {
+          "description": "X Circle Center Location",
+          "id": "HyEfAk9rpQ",
+          "label": "XCenter",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1IGAycr6X": {
+          "description": "X Circle Center Location",
+          "id": "S1IGAycr6X",
+          "label": "Radius",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1WMA1qBam": {
+          "id": "S1WMA1qBam",
+          "label": "INIT",
+          "position": {
+            "x": 544,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S1XzRJ5HT7": {
+          "id": "S1XzRJ5HT7",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "@/output-ftoled-display-device"
+        },
+        "S1wMR1cSaX": {
+          "description": "Red value 0 to 255(Max)",
+          "id": "S1wMR1cSaX",
+          "label": "RED",
+          "position": {
+            "x": 340,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJgGC19raX": {
+          "id": "SJgGC19raX",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "@/input-ftoled-display-device"
+        },
+        "SkMR19BpX": {
+          "id": "SkMR19BpX",
+          "position": {
+            "x": 67,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SyfGAJ5SpQ": {
+          "description": "Completed OK",
+          "id": "SyfGAJ5SpQ",
+          "label": "OK",
+          "position": {
+            "x": 67,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/drawcircle-ftoled"
+    },
+    "@/drawfillebdox-ftoled": {
+      "attachments": [
+        {
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the `OLED` class instance\n    auto Display = getValue<input_DEV>(ctx);\n\n    OLED_Colour ColourFilledBox = {getValue<input_RED>(ctx),getValue<input_GREEN>(ctx),getValue<input_BLUE>(ctx)};\n    Display->drawFilledBox(getValue<input_XStart>(ctx),getValue<input_YStart>(ctx),getValue<input_XEnd>(ctx),getValue<input_YEnd>(ctx),(ColourFilledBox));\n\n    // Pulse that module initialized successfully\n    emitValue<output_OUT>(ctx, Display);\n    emitValue<output_OK>(ctx, 1);\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Draw a Filled Box",
+      "nodes": {
+        "BJbmaxcra7": {
+          "id": "BJbmaxcra7",
+          "label": "INIT",
+          "position": {
+            "x": 544,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkSQpg5BTm": {
+          "description": "Y Box Start Location",
+          "id": "BkSQpg5BTm",
+          "label": "YStart",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "By57Tx5H6X": {
+          "description": "Green value 0 to 255(Max)",
+          "id": "By57Tx5H6X",
+          "label": "BLUE",
+          "position": {
+            "x": 476,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ByKm6lqHTX": {
+          "description": "Blue value 0 to 255(Max)",
+          "id": "ByKm6lqHTX",
+          "label": "GREEN",
+          "position": {
+            "x": 408,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Byg76l5rpX": {
+          "id": "Byg76l5rpX",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "@/input-ftoled-display-device"
+        },
+        "HJE7ag5S6m": {
+          "description": "X Box Start Location",
+          "id": "HJE7ag5S6m",
+          "label": "XStart",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HkmQax5S6m": {
+          "id": "HkmQax5S6m",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "@/output-ftoled-display-device"
+        },
+        "SJU7ag9SpX": {
+          "description": "X Box End Location",
+          "id": "SJU7ag9SpX",
+          "label": "XEnd",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Skvmax9SpX": {
+          "description": "Y Box End Location",
+          "id": "Skvmax9SpX",
+          "label": "YEnd",
+          "position": {
+            "x": 272,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJdXTx9SpX": {
+          "description": "Red value 0 to 255(Max)",
+          "id": "rJdXTx9SpX",
+          "label": "RED",
+          "position": {
+            "x": 340,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkzQTecHpQ": {
+          "description": "Completed OK",
+          "id": "rkzQTecHpQ",
+          "label": "OK",
+          "position": {
+            "x": 67,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ry7agcr6Q": {
+          "description": "Set Background Colour",
+          "id": "ry7agcr6Q",
+          "position": {
+            "x": 67,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/drawfillebdox-ftoled"
+    },
+    "@/drawfilledcircle-ftoled": {
+      "attachments": [
+        {
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the `OLED` class instance\n    auto Display = getValue<input_DEV>(ctx);\n\n    OLED_Colour ColourFilledCircle = {getValue<input_RED>(ctx),getValue<input_GREEN>(ctx),getValue<input_BLUE>(ctx)};\n    Display->drawFilledCircle(getValue<input_XCenter>(ctx),getValue<input_YCenter>(ctx),getValue<input_Radius>(ctx),(ColourFilledCircle));\n\n    // Pulse that module initialized successfully\n    emitValue<output_OUT>(ctx, Display);\n    emitValue<output_OK>(ctx, 1);\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Draw a Circle filled with colour",
+      "nodes": {
+        "B1bUgRKHp7": {
+          "id": "B1bUgRKHp7",
+          "label": "INIT",
+          "position": {
+            "x": 544,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "B1mLx0YS6m": {
+          "id": "B1mLx0YS6m",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "@/output-ftoled-display-device"
+        },
+        "BJ8eAFHam": {
+          "id": "BJ8eAFHam",
+          "position": {
+            "x": 67,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BkNLeCtH6X": {
+          "description": "X Circle Center Location",
+          "id": "BkNLeCtH6X",
+          "label": "XCenter",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Hkg8xAtSpQ": {
+          "id": "Hkg8xAtSpQ",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "@/input-ftoled-display-device"
+        },
+        "SkKIe0FHT7": {
+          "description": "Blue value 0 to 255(Max)",
+          "id": "SkKIe0FHT7",
+          "label": "GREEN",
+          "position": {
+            "x": 408,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SyLLlRtrT7": {
+          "description": "Circle Radius in Pixels",
+          "id": "SyLLlRtrT7",
+          "label": "Radius",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJHLeAKHpm": {
+          "description": "Y Circle Center Location",
+          "id": "rJHLeAKHpm",
+          "label": "YCenter",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJM8xCFr67": {
+          "description": "Completed OK",
+          "id": "rJM8xCFr67",
+          "label": "OK",
+          "position": {
+            "x": 67,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJqLeRKBT7": {
+          "description": "Green value 0 to 255(Max)",
+          "id": "rJqLeRKBT7",
+          "label": "BLUE",
+          "position": {
+            "x": 476,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJuUgCFHp7": {
+          "description": "Red value 0 to 255(Max)",
+          "id": "rJuUgCFHp7",
+          "label": "RED",
+          "position": {
+            "x": 340,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/drawfilledcircle-ftoled"
+    },
+    "@/drawline-ftoled": {
+      "attachments": [
+        {
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the `OLED` class instance\n    auto Display = getValue<input_DEV>(ctx);\n\n    OLED_Colour Colourline = {getValue<input_RED>(ctx),getValue<input_GREEN>(ctx),getValue<input_BLUE>(ctx)};\n    Display->drawLine(getValue<input_XStart>(ctx),getValue<input_YStart>(ctx),getValue<input_XEnd>(ctx),getValue<input_YEnd>(ctx),(Colourline));\n\n    // Pulse that module initialized successfully\n    emitValue<output_OUT>(ctx, Display);\n    emitValue<output_OK>(ctx, 1);\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Draw a line from Start XY to End XY",
+      "nodes": {
+        "By18wuSaX": {
+          "description": "Y Line Start Location",
+          "id": "By18wuSaX",
+          "label": "YStart",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ByZkIwuH6m": {
+          "description": "Y Line End Location",
+          "id": "ByZkIwuH6m",
+          "label": "YEnd",
+          "position": {
+            "x": 272,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJe6PLdS67": {
+          "id": "HJe6PLdS67",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "@/input-ftoled-display-device"
+        },
+        "HkMaD8OHpX": {
+          "description": "Completed OK",
+          "id": "HkMaD8OHpX",
+          "label": "OK",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "S1bav8uHaQ": {
+          "id": "S1bav8uHaQ",
+          "label": "INIT",
+          "position": {
+            "x": 544,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S1pDLOBT7": {
+          "description": "Set Background Colour",
+          "id": "S1pDLOBT7",
+          "position": {
+            "x": 67,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJX6wLdH6m": {
+          "id": "SJX6wLdH6m",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "@/output-ftoled-display-device"
+        },
+        "Sk3Bw_HTX": {
+          "description": "X Line Start Location",
+          "id": "Sk3Bw_HTX",
+          "label": "XStart",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SklHiO_BpQ": {
+          "description": "Blue value 0 to 255(Max)",
+          "id": "SklHiO_BpQ",
+          "label": "GREEN",
+          "position": {
+            "x": 408,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SklJLwura7": {
+          "description": "X Line End Location",
+          "id": "SklJLwura7",
+          "label": "XEnd",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJ-HiOuraX": {
+          "description": "Green value 0 to 255(Max)",
+          "id": "rJ-HiOuraX",
+          "label": "BLUE",
+          "position": {
+            "x": 476,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJBiu_BpQ": {
+          "description": "Red value 0 to 255(Max)",
+          "id": "rJBiu_BpQ",
+          "label": "RED",
+          "position": {
+            "x": 340,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/drawline-ftoled"
+    },
+    "@/drawstring-arial14-ftoled": {
+      "attachments": [
+        {
+          "content": "{{#global}}\n#include <fonts/Arial14.h>\n{{/global}}\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the `OLED` class instance\n    auto Display = getValue<input_DEV>(ctx);\n\n    OLED_Colour ColourTXT = {getValue<input_RED>(ctx),getValue<input_GREEN>(ctx),getValue<input_BLUE>(ctx)};\n    OLED_Colour ColourBackground = {getValue<input_REDBackground>(ctx),getValue<input_GREENBackground>(ctx),getValue<input_BLUEBackground>(ctx)};\n    auto TXTString = getValue<input_String>(ctx);\n    String TXT = \"\";\n    for (auto it = TXTString.iterate(); it; ++it)\n        TXT = TXT + (*it);\n    \n    Display->selectFont(Arial14);\n    Display->drawString(getValue<input_XStart>(ctx),getValue<input_YStart>(ctx),(TXT),(ColourTXT),(ColourBackground));\n\n    // Pulse that module initialized successfully\n    emitValue<output_OUT>(ctx, Display);\n    emitValue<output_OK>(ctx, 1);\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Display a string at XY (You can change the font and size in code or Wait for New ver)",
+      "nodes": {
+        "B1x3rWoBTQ": {
+          "description": "Y Text Start Location",
+          "id": "B1x3rWoBTQ",
+          "label": "YStart",
+          "position": {
+            "x": 238,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJHhpJiH6Q": {
+          "description": "Blue value 0 to 255(Max)",
+          "id": "BJHhpJiH6Q",
+          "label": "GREEN",
+          "position": {
+            "x": 340,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJbzNmsSam": {
+          "description": "Green Background value 0 to 255(Max)",
+          "id": "BJbzNmsSam",
+          "label": "BLUEBackground",
+          "position": {
+            "x": 510,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJfNmsBTQ": {
+          "description": "Red Background value 0 to 255(Max)",
+          "id": "BJfNmsBTQ",
+          "label": "REDBackground",
+          "position": {
+            "x": 442,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BkL3p1oHpm": {
+          "description": "Green value 0 to 255(Max)",
+          "id": "BkL3p1oHpm",
+          "label": "BLUE",
+          "position": {
+            "x": 374,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Hk2rbjrTQ": {
+          "description": "X Text Start Location",
+          "id": "Hk2rbjrTQ",
+          "label": "XStart",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Hk4h6yjHa7": {
+          "description": "Red value 0 to 255(Max)",
+          "id": "Hk4h6yjHa7",
+          "label": "RED",
+          "position": {
+            "x": 306,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJ3T1jrpX": {
+          "description": "Set Background Colour",
+          "id": "SJ3T1jrpX",
+          "position": {
+            "x": 67,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJxzV7jHa7": {
+          "description": "Blue Background value 0 to 255(Max)",
+          "id": "SJxzV7jHa7",
+          "label": "GREENBackground",
+          "position": {
+            "x": 476,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkzhT1orpQ": {
+          "description": "Completed OK",
+          "id": "SkzhT1orpQ",
+          "label": "OK",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Sy-nTJjS67": {
+          "id": "Sy-nTJjS67",
+          "label": "INIT",
+          "position": {
+            "x": 612,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SyC9xjHTX": {
+          "description": "The String to print",
+          "id": "SyC9xjHTX",
+          "label": "String",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SyXn61ira7": {
+          "id": "SyXn61ira7",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "@/output-ftoled-display-device"
+        },
+        "r1x36JjBaQ": {
+          "id": "r1x36JjBaQ",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "@/input-ftoled-display-device"
+        }
+      },
+      "path": "@/drawstring-arial14-ftoled"
+    },
+    "@/example-draw": {
+      "description": "Basic Example from Lib for Draw Func",
+      "links": {
+        "BJGlgji5BpQ": {
+          "id": "BJGlgji5BpQ",
+          "input": {
+            "nodeId": "Hklxjo5HpX",
+            "pinKey": "rJsqKDraQ"
+          },
+          "output": {
+            "nodeId": "rJUxoiqrTQ",
+            "pinKey": "ryVmUAOrvkb"
+          }
+        },
+        "HJClii5HT7": {
+          "id": "HJClii5HT7",
+          "input": {
+            "nodeId": "BJ4lijqHam",
+            "pinKey": "S1WMA1qBam"
+          },
+          "output": {
+            "nodeId": "SJfxjo9HTX",
+            "pinKey": "rJM8xCFr67"
+          }
+        },
+        "Hk5xjo9raQ": {
+          "id": "Hk5xjo9raQ",
+          "input": {
+            "nodeId": "BkmxijcH6Q",
+            "pinKey": "HJe6PLdS67"
+          },
+          "output": {
+            "nodeId": "ryWxsi5Bam",
+            "pinKey": "SJX6wLdH6m"
+          }
+        },
+        "HkVxgji9HTX": {
+          "id": "HkVxgji9HTX",
+          "input": {
+            "nodeId": "SyPgssqHa7",
+            "pinKey": "rJx4iL5rTX"
+          },
+          "output": {
+            "nodeId": "Skrxji9r6X",
+            "pinKey": "HkmQax5S6m"
+          }
+        },
+        "Hkdgjs9Sa7": {
+          "id": "Hkdgjs9Sa7",
+          "input": {
+            "nodeId": "Hklxjo5HpX",
+            "pinKey": "SkEqFvSTQ"
+          },
+          "output": {
+            "nodeId": "ryesj5Bp7",
+            "pinKey": "HJJSBPS6Q"
+          }
+        },
+        "Hyagso9ST7": {
+          "id": "Hyagso9ST7",
+          "input": {
+            "nodeId": "SJfxjo9HTX",
+            "pinKey": "B1bUgRKHp7"
+          },
+          "output": {
+            "nodeId": "BkmxijcH6Q",
+            "pinKey": "HkMaD8OHpX"
+          }
+        },
+        "S1Wexsjcr6Q": {
+          "id": "S1Wexsjcr6Q",
+          "input": {
+            "nodeId": "Skrxji9r6X",
+            "pinKey": "BJbmaxcra7"
+          },
+          "output": {
+            "nodeId": "BJ4lijqHam",
+            "pinKey": "SyfGAJ5SpQ"
+          }
+        },
+        "SJSegjiqH6X": {
+          "id": "SJSegjiqH6X",
+          "input": {
+            "nodeId": "SyPgssqHa7",
+            "pinKey": "HkbVsI9STQ"
+          },
+          "output": {
+            "nodeId": "Skrxji9r6X",
+            "pinKey": "rkzQTecHpQ"
+          }
+        },
+        "r1nxijcB6Q": {
+          "id": "r1nxijcB6Q",
+          "input": {
+            "nodeId": "BkmxijcH6Q",
+            "pinKey": "S1bav8uHaQ"
+          },
+          "output": {
+            "nodeId": "ryWxsi5Bam",
+            "pinKey": "HkMaD8OHpX"
+          }
+        },
+        "rJsejscBT7": {
+          "id": "rJsejscBT7",
+          "input": {
+            "nodeId": "SJfxjo9HTX",
+            "pinKey": "Hkg8xAtSpQ"
+          },
+          "output": {
+            "nodeId": "BkmxijcH6Q",
+            "pinKey": "SJX6wLdH6m"
+          }
+        },
+        "rktxjicBa7": {
+          "id": "rktxjicBa7",
+          "input": {
+            "nodeId": "ryWxsi5Bam",
+            "pinKey": "HJe6PLdS67"
+          },
+          "output": {
+            "nodeId": "Hklxjo5HpX",
+            "pinKey": "Bk2zcvHTX"
+          }
+        },
+        "ry7exoocHam": {
+          "id": "ry7exoocHam",
+          "input": {
+            "nodeId": "ryWxsi5Bam",
+            "pinKey": "S1bav8uHaQ"
+          },
+          "output": {
+            "nodeId": "Hklxjo5HpX",
+            "pinKey": "S1EZ5vSam"
+          }
+        },
+        "ryglxji9HTm": {
+          "id": "ryglxji9HTm",
+          "input": {
+            "nodeId": "Skrxji9r6X",
+            "pinKey": "Byg76l5rpX"
+          },
+          "output": {
+            "nodeId": "BJ4lijqHam",
+            "pinKey": "S1XzRJ5HT7"
+          }
+        },
+        "ryygeijqH67": {
+          "id": "ryygeijqH67",
+          "input": {
+            "nodeId": "BJ4lijqHam",
+            "pinKey": "SJgGC19raX"
+          },
+          "output": {
+            "nodeId": "SJfxjo9HTX",
+            "pinKey": "B1mLx0YS6m"
+          }
+        }
+      },
+      "nodes": {
+        "BJ4lijqHam": {
+          "boundLiterals": {
+            "H1_fC1qBTm": "255",
+            "HkrG0y9rpX": "64",
+            "Hktz0k9HaQ": "255",
+            "HyEfAk9rpQ": "64",
+            "S1IGAycr6X": "18",
+            "S1wMR1cSaX": "255"
+          },
+          "id": "BJ4lijqHam",
+          "position": {
+            "x": -1,
+            "y": 509
+          },
+          "type": "@/drawcircle-ftoled"
+        },
+        "BkmxijcH6Q": {
+          "boundLiterals": {
+            "By18wuSaX": "127",
+            "ByZkIwuH6m": "0",
+            "Sk3Bw_HTX": "0",
+            "SklHiO_BpQ": "0",
+            "SklJLwura7": "127",
+            "rJ-HiOuraX": "0"
+          },
+          "id": "BkmxijcH6Q",
+          "position": {
+            "x": -1,
+            "y": 305
+          },
+          "type": "@/drawline-ftoled"
+        },
+        "Hklxjo5HpX": {
+          "boundLiterals": {
+            "Bk_TqvrpX": "255",
+            "Hyeia9DrTX": "0",
+            "Skja5vr6X": "0",
+            "rJsqKDraQ": "Never"
+          },
+          "id": "Hklxjo5HpX",
+          "position": {
+            "x": -1,
+            "y": 101
+          },
+          "type": "@/fillscreen-ftoled"
+        },
+        "SJfxjo9HTX": {
+          "boundLiterals": {
+            "BkNLeCtH6X": "64",
+            "SkKIe0FHT7": "5",
+            "SyLLlRtrT7": "12",
+            "rJHLeAKHpm": "64",
+            "rJqLeRKBT7": "5"
+          },
+          "id": "SJfxjo9HTX",
+          "position": {
+            "x": -1,
+            "y": 407
+          },
+          "type": "@/drawfilledcircle-ftoled"
+        },
+        "Skrxji9r6X": {
+          "boundLiterals": {
+            "BkSQpg5BTm": "90",
+            "ByKm6lqHTX": "100",
+            "HJE7ag5S6m": "90",
+            "SJU7ag9SpX": "120",
+            "Skvmax9SpX": "120",
+            "rJdXTx9SpX": "255"
+          },
+          "id": "Skrxji9r6X",
+          "position": {
+            "x": 0,
+            "y": 612
+          },
+          "type": "@/drawfillebdox-ftoled"
+        },
+        "SyPgssqHa7": {
+          "boundLiterals": {
+            "BkH4oIcH6m": "50",
+            "By9UPqr67": "5",
+            "ByIEsL5STQ": "120",
+            "H1dEsU5BTm": "100",
+            "r1VVsIcrTm": "90",
+            "rJq4iL5rTm": "255",
+            "ryDVoUqrT7": "80"
+          },
+          "id": "SyPgssqHa7",
+          "position": {
+            "x": -1,
+            "y": 713
+          },
+          "type": "@/drawbox-ftoled"
+        },
+        "rJUxoiqrTQ": {
+          "id": "rJUxoiqrTQ",
+          "position": {
+            "x": 203,
+            "y": -1
+          },
+          "type": "xod/core/boot"
+        },
+        "ryWxsi5Bam": {
+          "boundLiterals": {
+            "By18wuSaX": "30",
+            "ByZkIwuH6m": "30",
+            "S1bav8uHaQ": "Continuously",
+            "Sk3Bw_HTX": "30",
+            "SklHiO_BpQ": "10",
+            "SklJLwura7": "90",
+            "rJ-HiOuraX": "0"
+          },
+          "id": "ryWxsi5Bam",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "type": "@/drawline-ftoled"
+        },
+        "ryesj5Bp7": {
+          "id": "ryesj5Bp7",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "@/ftoled-display-device"
+        }
+      },
+      "path": "@/example-draw"
+    },
+    "@/fillscreen-ftoled": {
+      "attachments": [
+        {
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the `OLED` class instance\n    auto Display = getValue<input_DEV>(ctx);\n\n    OLED_Colour Colour = {getValue<input_RED>(ctx),getValue<input_GREEN>(ctx),getValue<input_BLUE>(ctx)};\n    Display->fillScreen(Colour);\n\n    // Pulse that module initialized successfully\n    emitValue<output_OUT>(ctx, Display);\n    emitValue<output_OK>(ctx, 1);\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Fill Display with solid Colour",
+      "nodes": {
+        "Bk2zcvHTX": {
+          "id": "Bk2zcvHTX",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "@/output-ftoled-display-device"
+        },
+        "Bk_TqvrpX": {
+          "description": "Red value 0 to 255(Max)",
+          "id": "Bk_TqvrpX",
+          "label": "RED",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Hyeia9DrTX": {
+          "description": "Green value 0 to 255(Max)",
+          "id": "Hyeia9DrTX",
+          "label": "BLUE",
+          "position": {
+            "x": 306,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1EZ5vSam": {
+          "description": "Completed OK",
+          "id": "S1EZ5vSam",
+          "label": "OK",
+          "position": {
+            "x": 136,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SkEqFvSTQ": {
+          "id": "SkEqFvSTQ",
+          "label": "DEV",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "@/input-ftoled-display-device"
+        },
+        "Skja5vr6X": {
+          "description": "Blue value 0 to 255(Max)",
+          "id": "Skja5vr6X",
+          "label": "GREEN",
+          "position": {
+            "x": 238,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJZNFvBTX": {
+          "description": "Set Background Colour",
+          "id": "rJZNFvBTX",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJsqKDraQ": {
+          "id": "rJsqKDraQ",
+          "label": "INIT",
+          "position": {
+            "x": 442,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/fillscreen-ftoled"
+    },
+    "@/ftoled-display-device": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/freetronics/FTOLED\"\n// Include C++ library:\n{{#global}}\n#include <SPI.h>\n#include <FTOLED.h>\n{{/global}}\n\n// Adafruit_PN532 class wants to know ports in the moment of instantiation\n// but we don't know them at this moment.\n// Therefore, we reserve memory to store an instance of the class,\n// and create the instance later:\nstruct State {\n    uint8_t mem[sizeof(OLED)];\n};\n\n// Define our custom type as a pointer on the class instance.\nusing Type = OLED*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // It should be evaluated only once on the first (setup) transaction\n    if (!isSettingUp())\n        return;\n\n    auto state = getState(ctx);\n    auto pin_cs = getValue<input_pin_cs>(ctx);\n    auto pin_dc = getValue<input_pin_dc>(ctx);\n    auto pin_reset = getValue<input_pin_reset>(ctx);\n\n    // Create a new object in the memory area reserved previously.\n    // Instead of the `reset` port, specify `NOT_A_PORT`, since it is not needed\n    Type Display = new (state->mem) OLED(pin_cs, pin_dc, pin_reset);\n    Display->begin();\n    emitValue<output_DEV>(ctx, Display);\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Base Device to setup (Pass to all blocks)  (For use with Freetronics OLED128 128x128 pixel OLED display)",
+      "nodes": {
+        "HJJSBPS6Q": {
+          "id": "HJJSBPS6Q",
+          "label": "DEV",
+          "position": {
+            "x": 238,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "S1aVQvHTm": {
+          "description": "FTOLDE Display device set data pins as per your setup.",
+          "id": "S1aVQvHTm",
+          "position": {
+            "x": 238,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SkJS8PS6Q": {
+          "boundLiterals": {
+            "__out__": "D7"
+          },
+          "description": "CS Pin Number",
+          "id": "SkJS8PS6Q",
+          "label": "pin_cs",
+          "position": {
+            "x": 170,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rJGBLDBT7": {
+          "boundLiterals": {
+            "__out__": "D3"
+          },
+          "description": "Reset Pin Number",
+          "id": "rJGBLDBT7",
+          "label": "pin_reset",
+          "position": {
+            "x": 306,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rkWrIvHpQ": {
+          "boundLiterals": {
+            "__out__": "D2"
+          },
+          "description": "DC Pin Number",
+          "id": "rkWrIvHpQ",
+          "label": "pin_dc",
+          "position": {
+            "x": 238,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-port"
+        }
+      },
+      "path": "@/ftoled-display-device"
+    }
+  },
+  "version": "0.0.1"
+}

@@ -1,0 +1,104 @@
+{
+  "description": "SinGen library. Generate's through PWM, two sinusoidal signals opposite each other, the frequency is determined by Hz",
+  "license": "GPL",
+  "name": "singen",
+  "patches": {
+    "@/main": {
+      "nodes": {
+        "HkDQKZ4k4": {
+          "boundLiterals": {
+            "Bybkr-NyN": "Continuously"
+          },
+          "id": "HkDQKZ4k4",
+          "position": {
+            "x": 68,
+            "y": 102
+          },
+          "type": "@/singen"
+        }
+      },
+      "path": "@/main"
+    },
+    "@/singen": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/Bradzilla84/SinGen\"\n\n// Include C++ library:\n{{#global}}\n#include \"SinGen.h\"\n{{/global}}\n\n\nstruct State {\n    uint8_t mem[sizeof(SinGen)];\n};\n\n// Define our custom type as a pointer on the class instance.\nusing Type = SinGen*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n\n    // It should be evaluated only once on the first (setup) transaction\n    if (isSettingUp()){\n    auto state = getState(ctx);\n    auto Sin = new (state->mem) SinGen(getValue<input_SL>(ctx), getValue<input_SH>(ctx), getValue<input_HZ>(ctx));\n    Sin->init();\n        return;\n    }\n\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n        return;}\n\n    auto state = getState(ctx);\n    auto Sin = reinterpret_cast<SinGen*>(state->mem);\n    Sin->run();\n\n    emitValue<output_Done>(ctx, 1);\n}\n"
+        }
+      ],
+      "description": "SinGen Arduino is the arduino library that generates sine signals using the PWM outputs 3,5,6,9,10 and 11.",
+      "nodes": {
+        "Bybkr-NyN": {
+          "description": "Starts the Gen on first pulse. and updates on each pulse.",
+          "id": "Bybkr-NyN",
+          "label": "INIT",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Hk11SZNk4": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Frequency",
+          "id": "Hk11SZNk4",
+          "label": "HZ",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HkhC4ZV1N": {
+          "boundLiterals": {
+            "__out__": "D3"
+          },
+          "description": "Pin PWM Low",
+          "id": "HkhC4ZV1N",
+          "label": "SL",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HkvJOZ41N": {
+          "description": "Update Complete and output to pins",
+          "id": "HkvJOZ41N",
+          "label": "Done",
+          "position": {
+            "x": 0,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hy6CN-N1E": {
+          "boundLiterals": {
+            "__out__": "D5"
+          },
+          "description": "Pin PWM High",
+          "id": "Hy6CN-N1E",
+          "label": "SH",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "S1WrEWEyE": {
+          "id": "S1WrEWEyE",
+          "position": {
+            "x": 0,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/singen"
+    }
+  },
+  "version": "0.0.1"
+}

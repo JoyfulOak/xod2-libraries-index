@@ -1,0 +1,187 @@
+{
+  "description": "Hardware sleep to save battery on AVR-based boards. Based on https://xod.io/libs/nkrkv/avr-sleep/",
+  "license": "GPLv3",
+  "version": "0.0.1",
+  "patches": {
+    "@/example": {
+      "nodes": {
+        "rkTP4oqAK": {
+          "id": "rkTP4oqAK",
+          "type": "@/sleep-until-switch",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ryTE2aYRY": "D3"
+          }
+        },
+        "r1bzZCq0K": {
+          "id": "r1bzZCq0K",
+          "type": "xod/common-hardware/led",
+          "position": {
+            "x": 3,
+            "y": 4,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B1oqkTnIb": "D5",
+            "HyYh1a3LZ": "1"
+          }
+        },
+        "ryk9oR5RF": {
+          "id": "ryk9oR5RF",
+          "type": "xod/core/delay",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          }
+        },
+        "SydLT05AY": {
+          "id": "SydLT05AY",
+          "type": "xod/core/defer",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "ryivp0cRF": {
+          "id": "ryivp0cRF",
+          "type": "xod/core/any",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ryv7IRdSP1b": "On Boot"
+          }
+        }
+      },
+      "links": {
+        "rJR6oC90Y": {
+          "id": "rJR6oC90Y",
+          "output": {
+            "nodeId": "ryk9oR5RF",
+            "pinKey": "HkU3vNoTW"
+          },
+          "input": {
+            "nodeId": "r1bzZCq0K",
+            "pinKey": "HyYh1a3LZ"
+          }
+        },
+        "ryX0i05AF": {
+          "id": "ryX0i05AF",
+          "output": {
+            "nodeId": "rkTP4oqAK",
+            "pinKey": "ryp_nTKRF"
+          },
+          "input": {
+            "nodeId": "ryk9oR5RF",
+            "pinKey": "SkSuD6LMb"
+          }
+        },
+        "HJeOTR9CF": {
+          "id": "HJeOTR9CF",
+          "output": {
+            "nodeId": "ryivp0cRF",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "input": {
+            "nodeId": "rkTP4oqAK",
+            "pinKey": "HkmLhTYCK"
+          }
+        },
+        "H1m_TRcCF": {
+          "id": "H1m_TRcCF",
+          "output": {
+            "nodeId": "SydLT05AY",
+            "pinKey": "HJhXDIY9-"
+          },
+          "input": {
+            "nodeId": "ryivp0cRF",
+            "pinKey": "ByU7LRuSPkW"
+          }
+        },
+        "ryZc0090Y": {
+          "id": "ryZc0090Y",
+          "output": {
+            "nodeId": "ryk9oR5RF",
+            "pinKey": "Bk4gU0drwJ-"
+          },
+          "input": {
+            "nodeId": "SydLT05AY",
+            "pinKey": "BJI7P8t9Z"
+          }
+        }
+      },
+      "path": "@/example",
+      "description": "Example for testing sleep-until-switch node. LED will be illuminated for 2 seconds when microcontroller wakes from sleep."
+    },
+    "@/sleep-until-switch": {
+      "nodes": {
+        "ryTE2aYRY": {
+          "id": "ryTE2aYRY",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Wake",
+          "description": "The board port to use for sleep exit. The port should support hardware interrupts. For example, Arduino Uno and Nano only support interrupts on D2 and D3.",
+          "boundLiterals": {
+            "__out__": "D2"
+          }
+        },
+        "HkmLhTYCK": {
+          "id": "HkmLhTYCK",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Sleep",
+          "description": "Put the board into a deep sleep."
+        },
+        "SylDh6tAK": {
+          "id": "SylDh6tAK",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "ryp_nTKRF": {
+          "id": "ryp_nTKRF",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "Done",
+          "description": "Pulse emitted when the board exits the sleep mode."
+        }
+      },
+      "path": "@/sleep-until-switch",
+      "description": "Puts the microcontroller into deep sleep until the signal changes on a port either from high to low or from low to high.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#include <avr/sleep.h>\n\n// To transfer the context to the ISR function, we have to keep the\n// interrupt number global. Will set it in `evaluate`\nvolatile uint8_t g_interruptNum = NOT_AN_INTERRUPT;\n\n// Also store the ADC state to bring it back\nvolatile uint8_t g_prevADCSRA;\n\nnode {\n    static_assert(\n        digitalPinToInterrupt(constant_input_Wake) != NOT_AN_INTERRUPT,\n        \"Port should support interrupts\"\n    );\n\n    static void wakeISR() {\n        // Prevent sleep mode, so we don't enter it again\n        // except deliberately, by code\n        sleep_disable();\n        \n        // Detach the interrupt that brought us out of sleep\n        detachInterrupt(g_interruptNum);\n        g_interruptNum = NOT_AN_INTERRUPT;\n        \n        // Restore ADC state\n        ADCSRA = g_prevADCSRA;\n    }\n    \n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_Sleep>(ctx))\n            return;\n        \n        // Disable the ADC (Analog to digital converter, pins A0 [14] to A5 [19])\n        g_prevADCSRA = ADCSRA;\n        ADCSRA = 0;\n\n        // Ensure we can wake up again by first disabling interupts (temporarily) so\n        // the wakeISR does not run before we are asleep and then prevent interrupts,\n        // and then defining the ISR (Interrupt Service Routine) to run when poked awake\n        noInterrupts();\n        \n        g_interruptNum = digitalPinToInterrupt(constant_input_Wake); // save globally\n        \n        ::pinMode(constant_input_Wake, INPUT);\n        attachInterrupt(g_interruptNum, wakeISR, CHANGE);\n\n        // Clear pending external interrupts on the pin if any\n        EIFR |= (1 << g_interruptNum);\n        \n        set_sleep_mode(SLEEP_MODE_PWR_DOWN);\n        sleep_enable();\n        sleep_bod_disable();\n        interrupts();\n        sleep_cpu();\n\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "name": "avr-sleep"
+}

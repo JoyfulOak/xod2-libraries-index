@@ -1,0 +1,358 @@
+{
+  "patches": {
+    "@/lcd-i2c-init": {
+      "nodes": {
+        "BJkM0nfBf": {
+          "description": "Text for the first line. A null string will leave line untouched. A single space (or other short string) will clear to end-of-line. Lines > ROWS will be ignored\n",
+          "label": "L1",
+          "id": "BJkM0nfBf",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "H1X1GA2fSf": {
+          "boundLiterals": {
+            "__out__": "39"
+          },
+          "description": "I²C address of the expander chip.",
+          "label": "ADDR",
+          "id": "H1X1GA2fSf",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HkjQ0nfSf": {
+          "boundLiterals": {
+            "__out__": "2"
+          },
+          "description": "Number of Rows on LCD display. L pins greater than this will be ignored.",
+          "label": "ROWS",
+          "id": "HkjQ0nfSf",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HyWJGA3frG": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Initialize LCD. Must be done at least once, but also clears screen. If you have multiple nodes for same LCD & each displays on a different line, Init false prevents clearing display and losing other lines.",
+          "label": "Init",
+          "id": "HyWJGA3frG",
+          "position": {
+            "x": -0.05,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "S1zJfA3zrf": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Backlight enable/disable",
+          "label": "BL",
+          "id": "S1zJfA3zrf",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "SJx4d0nzHz": {
+          "description": "Text for the forth line",
+          "label": "L4",
+          "id": "SJx4d0nzHz",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Sy4uC2MSG": {
+          "description": "Text for the third line",
+          "label": "L3",
+          "id": "Sy4uC2MSG",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SyhK16zrM": {
+          "description": "Print to LCD",
+          "id": "SyhK16zrM",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1GS0nzSG": {
+          "boundLiterals": {
+            "__out__": "16"
+          },
+          "description": "Number of columns on LCD display. Output for each line will be truncated at this length.",
+          "label": "COLS",
+          "id": "r1GS0nzSG",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryeJfRnMBf": {
+          "description": "Text for the second line",
+          "label": "L2",
+          "id": "ryeJfRnMBf",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        }
+      },
+      "path": "@/lcd-i2c-init",
+      "description": "Update LCD display on I2C. Specify Columns and up to 4 Rows. Init pin can be used to prevent extra clear displays. Passing null string for a Line will leave the line untouched.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\n{{#global}}\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n{{/global}}\n\nstruct State {\n    LiquidCrystal_I2C* lcd;\n};\n\n{{ GENERATED_CODE }}\n\nvoid printLine(LiquidCrystal_I2C* lcd, uint8_t cols, uint8_t rows, uint8_t lineIndex, XString str) {\n    if (lineIndex >= rows)\n        return;\n\n    lcd->setCursor(0, lineIndex);\n    uint8_t whitespace = cols;\n    for (auto it = str.iterate(); it && whitespace; ++it, --whitespace)\n        lcd->write(*it);\n\n    // Clear the rest of the line\n    if (whitespace < cols) {\n        while (whitespace--)\n            lcd->write(' ');\n    }\n}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    auto lcd = state->lcd;\n    auto rows = getValue<input_ROWS>(ctx);\n    auto cols = getValue<input_COLS>(ctx);\n    if (!state->lcd) {\n        uint8_t addr = getValue<input_ADDR>(ctx);\n        state->lcd = lcd = new LiquidCrystal_I2C(addr, cols, rows);\n        if (getValue<input_Init>(ctx))\n            lcd->begin();\n    }\n\n    printLine(lcd, cols, rows, 0, getValue<input_L1>(ctx));\n    printLine(lcd, cols, rows, 1, getValue<input_L2>(ctx));\n    printLine(lcd, cols, rows, 2, getValue<input_L3>(ctx));\n    printLine(lcd, cols, rows, 3, getValue<input_L4>(ctx));\n    lcd->setBacklight(getValue<input_BL>(ctx));\n}\n"
+        }
+      ]
+    },
+    "@/example-lcd": {
+      "nodes": {
+        "B13pTS7wN": {
+          "boundLiterals": {
+            "BJkM0nfBf": "\"Line 1\"",
+            "BJkM0nfBf-$1": "\"Line 2\""
+          },
+          "arityLevel": 2,
+          "id": "B13pTS7wN",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/lcd-i2c-init-v"
+        },
+        "ByGRprQPE": {
+          "boundLiterals": {
+            "HyWJGA3frG": "False"
+          },
+          "arityLevel": 2,
+          "id": "ByGRprQPE",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/lcd-i2c-init-v"
+        },
+        "BylzArmPE": {
+          "boundLiterals": {
+            "r1AgIROHDJW": "\"Replacement val\"",
+            "ryTeUROHD1b": "\"\""
+          },
+          "id": "BylzArmPE",
+          "position": {
+            "x": 16,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/if-else"
+        },
+        "SymVRBXDN": {
+          "boundLiterals": {
+            "SkSuD6LMb": "On Boot",
+            "Skre8ROSv1-": "10"
+          },
+          "id": "SymVRBXDN",
+          "position": {
+            "x": 15,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        }
+      },
+      "links": {
+        "S1iNAHXDN": {
+          "id": "S1iNAHXDN",
+          "input": {
+            "nodeId": "BylzArmPE",
+            "pinKey": "S1yZIA_rDJZ"
+          },
+          "output": {
+            "nodeId": "SymVRBXDN",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "rypE0BXvV": {
+          "id": "rypE0BXvV",
+          "input": {
+            "nodeId": "ByGRprQPE",
+            "pinKey": "BJkM0nfBf"
+          },
+          "output": {
+            "nodeId": "BylzArmPE",
+            "pinKey": "S13xLCuHvkW"
+          }
+        }
+      },
+      "path": "@/example-lcd"
+    },
+    "@/lcd-i2c-init-v": {
+      "nodes": {
+        "BJkM0nfBf": {
+          "description": "Text for the first line. A null string will leave line untouched. A single space (or other short string) will clear to end-of-line. Lines > ROWS will be ignored\n",
+          "label": "L",
+          "id": "BJkM0nfBf",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "H1X1GA2fSf": {
+          "boundLiterals": {
+            "__out__": "39"
+          },
+          "description": "I²C address of the expander chip.",
+          "label": "ADDR",
+          "id": "H1X1GA2fSf",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJNJ0B7v4": {
+          "description": "Update LCD display on I2C. Specify Columns and  Rows. Init = false will not clear display. Passing null string for a Line will leave the line untouched; space will erase the line.",
+          "id": "HJNJ0B7v4",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/variadic-1"
+        },
+        "HkjQ0nfSf": {
+          "boundLiterals": {
+            "__out__": "2"
+          },
+          "description": "Number of Rows on LCD display. MUST equal # variadic pins for L.",
+          "label": "ROWS",
+          "id": "HkjQ0nfSf",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HyWJGA3frG": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Initialize LCD. Must be done at least once, but also clears screen. If you have multiple nodes for same LCD & each displays on a different line, Init false prevents clearing display and losing other lines.",
+          "label": "Init",
+          "id": "HyWJGA3frG",
+          "position": {
+            "x": -1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "S1zJfA3zrf": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Backlight enable/disable",
+          "label": "BL",
+          "id": "S1zJfA3zrf",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "SJXYprmPN": {
+          "id": "SJXYprmPN",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "Sy_OTHXPV": {
+          "id": "Sy_OTHXPV",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SyhK16zrM": {
+          "description": "Print to LCD",
+          "id": "SyhK16zrM",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1GS0nzSG": {
+          "boundLiterals": {
+            "__out__": "16"
+          },
+          "description": "Number of columns on LCD display. Output for each line will be truncated at this length.",
+          "label": "COLS",
+          "id": "r1GS0nzSG",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/lcd-i2c-init-v",
+      "description": "Update LCD display on I2C. Specify Columns and up to 4 Rows. Init pin can be used to prevent extra clear displays. Null string for a Line will leave the line untouched; space will clear the line.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\n{{#global}}\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n{{/global}}\n\nstruct State {\n    LiquidCrystal_I2C* lcd;\n};\n\n{{ GENERATED_CODE }}\n\nvoid printLine(LiquidCrystal_I2C* lcd, uint8_t cols, uint8_t rows, uint8_t lineIndex, XString str) {\n    if (lineIndex >= rows)\n        return;\n\n    lcd->setCursor(0, lineIndex);\n    uint8_t whitespace = cols;\n    for (auto it = str.iterate(); it && whitespace; ++it, --whitespace)\n        lcd->write(*it);\n\n    // Clear the rest of the line\n    if (whitespace < cols) {\n        while (whitespace--)\n            lcd->write(' ');\n    }\n}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    auto lcd = state->lcd;\n    auto rows = getValue<input_ROWS>(ctx);\n    auto cols = getValue<input_COLS>(ctx);\n    auto row = getValue<input_IN>(ctx);\n    if (!state->lcd) {\n        uint8_t addr = getValue<input_ADDR>(ctx);\n        state->lcd = lcd = new LiquidCrystal_I2C(addr, cols, rows);\n        if (getValue<input_Init>(ctx) && row == 0)\n            lcd->begin();\n    }\n\n    printLine(lcd, cols, rows, row, getValue<input_L>(ctx));\n    lcd->setBacklight(getValue<input_BL>(ctx));\n\n    //emitValue<output_OUT1>(ctx, false);\n    emitValue<output_OUT>(ctx, row + 1);\n    }\n"
+        }
+      ]
+    }
+  },
+  "version": "0.1.1",
+  "description": "Update LCD display on I2C. Specify Columns and Rows. Init pin can be used to prevent extra clear displays. Passing null string for a Line will leave the line untouched; space will clear a line. Variadic pins for rows of text to display.",
+  "name": "lcd-i2c-init"
+}

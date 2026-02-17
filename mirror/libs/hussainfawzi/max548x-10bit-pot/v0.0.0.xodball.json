@@ -1,0 +1,228 @@
+{
+  "apiKey": "c818311e-83bf-48ce-9a3a-6a756cb21c9e",
+  "description": "Node for driving 10bit POT\nChips: MAX5481-4 ",
+  "license": "1.0",
+  "name": "max548x-10bit-pot",
+  "patches": {
+    "@/main": {
+      "comments": {
+        "HkY2RaLwL": {
+          "content": "Node for driving 10-bit digital POTs:\n\t\t- MAX5481 Voltage-divider 10KΩ\n\t\t- MAX5482 Voltage-divider 50KΩ\n\t\t- MAX5483 Variable Resistor 10KΩ\n\t\t- MAX5484 Variable Resistor 50KΩ",
+          "id": "HkY2RaLwL",
+          "position": {
+            "x": 18,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 2,
+            "width": 7,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "BJ7aA3IvI": {
+          "id": "BJ7aA3IvI",
+          "input": {
+            "nodeId": "S1jTX2IDI",
+            "pinKey": "Hk6jqnLP8"
+          },
+          "output": {
+            "nodeId": "ryjhAnLDL",
+            "pinKey": "Bkf4BDsmV"
+          }
+        },
+        "HJngrnIwL": {
+          "id": "HJngrnIwL",
+          "input": {
+            "nodeId": "S1jTX2IDI",
+            "pinKey": "ryX1-G2LwU"
+          },
+          "output": {
+            "nodeId": "BJBlrhLvU",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "SkUzrn8v8": {
+          "id": "SkUzrn8v8",
+          "input": {
+            "nodeId": "rkAZS28DU",
+            "pinKey": "BkjI-COLb"
+          },
+          "output": {
+            "nodeId": "BJBlrhLvU",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "SkryfaUwU": {
+          "id": "SkryfaUwU",
+          "input": {
+            "nodeId": "S1jTX2IDI",
+            "pinKey": "S1C_ba8vU"
+          },
+          "output": {
+            "nodeId": "SkWCb6Lv8",
+            "pinKey": "Bkf4BDsmV"
+          }
+        },
+        "rkSBST8wI": {
+          "id": "rkSBST8wI",
+          "input": {
+            "nodeId": "S1jTX2IDI",
+            "pinKey": "ByYkbfnLwL"
+          },
+          "output": {
+            "nodeId": "rkAZS28DU",
+            "pinKey": "ByAIWR_UZ"
+          }
+        }
+      },
+      "nodes": {
+        "BJBlrhLvU": {
+          "boundLiterals": {
+            "ByfGSDjQE": "0"
+          },
+          "id": "BJBlrhLvU",
+          "position": {
+            "x": 12,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "S1jTX2IDI": {
+          "id": "S1jTX2IDI",
+          "position": {
+            "x": 11,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/max548x"
+        },
+        "SkWCb6Lv8": {
+          "id": "SkWCb6Lv8",
+          "position": {
+            "x": 13,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        },
+        "rkAZS28DU": {
+          "id": "rkAZS28DU",
+          "position": {
+            "x": 15,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-change"
+        },
+        "ryjhAnLDL": {
+          "id": "ryjhAnLDL",
+          "position": {
+            "x": 14,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        }
+      },
+      "path": "@/main"
+    },
+    "@/max548x": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/hussainfawzi/MAX548X\"\n\n{{#global}}\n#include \"MAX548X.h\"\n{{/global}}\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    Number CS = getValue<input_CS>(ctx);\n    MAX548X MAX5482(CS);\n\n    if (isInputDirty<input_FROM_NV_M>(ctx)){MAX5482.fromNV(); emitValue<output_DONE>(ctx, 1);}\n    if (isInputDirty<input_TO_NV_M>(ctx)){MAX5482.toNV(); emitValue<output_DONE>(ctx, 1);}\n    if (!isInputDirty<input_UPDATE>(ctx))\n        return;\n\n    Number buff = getValue<input_WIPER>(ctx);\n    MAX5482.setPOT(buff);\n    emitValue<output_DONE>(ctx, 1);\n};",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1PJZz3IDI": {
+          "description": "ADS1115 Chip",
+          "id": "B1PJZz3IDI",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ByYkbfnLwL": {
+          "description": "Feed a pulse signal to update the wipe positon based on the value applied to WIPER pin.",
+          "id": "ByYkbfnLwL",
+          "label": "UPDATE",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Hk6jqnLP8": {
+          "description": "Update the wiper position from the non-volatile register.",
+          "id": "Hk6jqnLP8",
+          "label": "FROM NV_M",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S1C_ba8vU": {
+          "description": "Store the wiper position to the non-volatile register.",
+          "id": "S1C_ba8vU",
+          "label": "TO NV_M",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkMXznIDL": {
+          "boundLiterals": {
+            "__out__": "D8"
+          },
+          "description": "Chip Select pin",
+          "id": "SkMXznIDL",
+          "label": "CS",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Sy-JWMn8PU": {
+          "description": "Spits a pulse when done.",
+          "id": "Sy-JWMn8PU",
+          "label": "DONE",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ryX1-G2LwU": {
+          "boundLiterals": {
+            "__out__": "0.66"
+          },
+          "description": "Set the wiper position\nRange 0 - 1023",
+          "id": "ryX1-G2LwU",
+          "label": "WIPER",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/max548x"
+    }
+  }
+}

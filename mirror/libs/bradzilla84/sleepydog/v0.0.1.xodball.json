@@ -1,0 +1,186 @@
+{
+  "description": "Adafruit SleepyDog Arduino Library\nArduino library to use the watchdog timer for system reset and low power sleep.\n\nCurrently supports the following hardware:\n\nArduino Uno or other ATmega328P-based boards.\nArduino Mega or other ATmega2560- or 1280-based boards.\nArduino Zero, Adafruit Feather M0 (ATSAMD21).\nArduino Leonardo or other 32u4-based boards.\nPartial support for Teensy 3.X and LC (watchdog, no sleep).\nAdafruit Trinket and other boards using ATtiny MCUs are NOT supported.",
+  "license": "GPL",
+  "version": "0.0.1",
+  "patches": {
+    "@/main": {
+      "nodes": {
+        "Byw5yLK1V": {
+          "id": "Byw5yLK1V",
+          "type": "@/sleepydog-sleep",
+          "position": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        "HJu5JUtkE": {
+          "id": "HJu5JUtkE",
+          "type": "@/sleepydog-watchdog",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "boundLiterals": {
+            "H1YpB_t1N": "4000",
+            "H13BaDKJ4": "Continuously"
+          }
+        },
+        "HyZuKKYk4": {
+          "id": "HyZuKKYk4",
+          "type": "xod/core/watch",
+          "position": {
+            "x": 102,
+            "y": 102
+          },
+          "size": {
+            "width": 68,
+            "height": 51
+          }
+        }
+      },
+      "links": {
+        "SyEOKFKy4": {
+          "id": "SyEOKFKy4",
+          "output": {
+            "nodeId": "HJu5JUtkE",
+            "pinKey": "ryGrL_tkE"
+          },
+          "input": {
+            "nodeId": "HyZuKKYk4",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "comments": {
+        "ryGK1LYkE": {
+          "id": "ryGK1LYkE",
+          "position": {
+            "x": 238,
+            "y": 0
+          },
+          "size": {
+            "width": 680,
+            "height": 255
+          },
+          "content": "Adafruit SleepyDog Arduino Library\nArduino library to use the watchdog timer for system reset and low power sleep.\n\nCurrently supports the following hardware:\n\nArduino Uno or other ATmega328P-based boards.\nArduino Mega or other ATmega2560- or 1280-based boards.\nArduino Zero, Adafruit Feather M0 (ATSAMD21).\nArduino Leonardo or other 32u4-based boards (e.g. Adafruit Feather) WITH CAVEAT: USB Serial connection is clobbered on sleep; if sketch does not require Serial comms, this is not a concern. The example sketches all print to Serial and appear frozen, but the logic does otherwise continue to run. You can restore the USB serial connection after waking up using USBDevice.attach(); and then reconnect to USB serial from the host machine.\nPartial support for Teensy 3.X and LC (watchdog, no sleep).\nAdafruit Trinket and other boards using ATtiny MCUs are NOT supported."
+        }
+      },
+      "path": "@/main"
+    },
+    "@/sleepydog-watchdog": {
+      "nodes": {
+        "HkhHqDYyN": {
+          "id": "HkhHqDYyN",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 102
+          }
+        },
+        "H13BaDKJ4": {
+          "id": "H13BaDKJ4",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "label": "INIT",
+          "description": "Reset the timer (Leave on Continuosuly or pulse more often that MS time)",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        },
+        "H1YpB_t1N": {
+          "id": "H1YpB_t1N",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "label": "MS",
+          "description": "Turn on the watchdog timer with a ~MS milliseconds timeout\nbefore reseting the Arduino.(Each type of board will have a different MAX, Check ActMS for actual timeout)",
+          "boundLiterals": {
+            "__out__": "4000"
+          }
+        },
+        "ryGrL_tkE": {
+          "id": "ryGrL_tkE",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 0,
+            "y": 204
+          },
+          "label": "ActMS",
+          "description": "The estimated actual milliseconds\nbefore reset (in milliseconds) is returned"
+        }
+      },
+      "path": "@/sleepydog-watchdog",
+      "description": "A Watchdog timer to detect if the Arduino hangs/stops for lomger than MS milliseconds, and resets it if it does.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/adafruit/Adafruit_SleepyDog\"\n\n\n{{#global}}\n#include <Adafruit_SleepyDog.h>\n{{/global}}\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (isSettingUp()) {\n        auto state = getState(ctx);\n        auto Dog = Watchdog.enable(getValue<input_MS>(ctx));\n        emitValue<output_ActMS>(ctx, Dog);\n    }\n\n    auto state = getState(ctx);\n\n    if (isInputDirty<input_INIT>(ctx)){\n        Watchdog.reset();\n        return;}\n}"
+        }
+      ]
+    },
+    "@/sleepydog-sleep": {
+      "nodes": {
+        "HyQznFFyE": {
+          "id": "HyQznFFyE",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": -1,
+            "y": 101
+          }
+        },
+        "Byg7f3YFkV": {
+          "id": "Byg7f3YFkV",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 67,
+            "y": -1
+          },
+          "label": "INIT",
+          "description": "Pulse to go to Sleep.",
+          "boundLiterals": {
+            "__out__": "Never"
+          }
+        },
+        "BkbQznKK1E": {
+          "id": "BkbQznKK1E",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "label": "MS",
+          "description": "Time to Low Power sleep ~MS milliseconds timeout\nbefore Returning to active state.(Each type of board will have a different MAX, Check ActMS for actual timeout)",
+          "boundLiterals": {
+            "__out__": "4000"
+          }
+        },
+        "HJz7znttJV": {
+          "id": "HJz7znttJV",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "label": "ActMS",
+          "description": "The estimated actual milliseconds\nbefore Returning (in milliseconds) is returned"
+        }
+      },
+      "path": "@/sleepydog-sleep",
+      "description": "Low power sleep with the watchdog timer.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/adafruit/Adafruit_SleepyDog\"\n\n\n{{#global}}\n#include <Adafruit_SleepyDog.h>\n{{/global}}\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n        if (isInputDirty<input_INIT>(ctx)){\n//            auto state = getState(ctx);\n            auto Sleep = Watchdog.sleep(getValue<input_MS>(ctx));\n            emitValue<output_ActMS>(ctx, Sleep);\n            return;\n    }\n\n}"
+        }
+      ]
+    }
+  },
+  "name": "sleepydog"
+}

@@ -1,0 +1,174 @@
+{
+  "description": "Measure EC, TDS, and temperature with the uFire EC device.",
+  "name": "ufire-ec",
+  "patches": {
+    "@/ufire-ec-device": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/u-fire/Isolated_EC\"\n\n{{#global}}\n#include <uFire_EC.h>\n{{/global}}\n\nstruct State {\n};\n\n//using Type = uFire_EC*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_START>(ctx))\n        return;\n\n    uFire_EC EC;\n    float temp = EC.measureTemp();\n    emitValue<output_EC>(ctx, EC.measureEC(temp));\n    emitValue<output_TEMP>(ctx, temp);\n    emitValue<output_TDS>(ctx, EC.PPM_500);\n\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Measure EC, TDS, and temperature with the uFire EC device.",
+      "nodes": {
+        "BJya-xnA4": {
+          "description": "Temperature in C",
+          "id": "BJya-xnA4",
+          "label": "TEMP",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "Byg9rbiCE": {
+          "description": "Electrical Conductivity in mS",
+          "id": "Byg9rbiCE",
+          "label": "EC",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HyGtzbj04": {
+          "id": "HyGtzbj04",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1D0Tk204": {
+          "id": "S1D0Tk204",
+          "label": "START",
+          "position": {
+            "x": 2,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Sk9Q7e3C4": {
+          "description": "Total dissolved solids (500)",
+          "id": "Sk9Q7e3C4",
+          "label": "TDS",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/ufire-ec-device"
+    },
+    "@/ufire-ec-example": {
+      "comments": {
+        "S1Fo_xnR4": {
+          "id": "S1Fo_xnR4",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "width": 5,
+            "height": 2,
+            "units": "slots"
+          },
+          "content": "This will take a temperature compensated EC measurement every second. \n\nThis node assumes the device has already been calibrated through some other method. \n\nSee ufire.co for more details."
+        }
+      },
+      "links": {
+        "HJGbVl3RV": {
+          "id": "HJGbVl3RV",
+          "input": {
+            "nodeId": "rJqpWLiR4",
+            "pinKey": "S1D0Tk204"
+          },
+          "output": {
+            "nodeId": "HJFgVlhC4",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "SkNNfxnA4": {
+          "id": "SkNNfxnA4",
+          "input": {
+            "nodeId": "HJ1EzxnCN",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rJqpWLiR4",
+            "pinKey": "BJya-xnA4"
+          }
+        },
+        "rkVj0kh0N": {
+          "id": "rkVj0kh0N",
+          "input": {
+            "nodeId": "HJWjR1nCV",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rJqpWLiR4",
+            "pinKey": "Byg9rbiCE"
+          }
+        }
+      },
+      "nodes": {
+        "HJ1EzxnCN": {
+          "id": "HJ1EzxnCN",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "HJFgVlhC4": {
+          "id": "HJFgVlhC4",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "HJWjR1nCV": {
+          "id": "HJWjR1nCV",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "rJqpWLiR4": {
+          "id": "rJqpWLiR4",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/ufire-ec-device"
+        }
+      },
+      "path": "@/ufire-ec-example"
+    }
+  },
+  "version": "0.9.1"
+}

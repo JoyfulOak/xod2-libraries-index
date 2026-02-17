@@ -1,0 +1,131 @@
+{
+  "apiKey": "80902066-4b11-423e-84f0-b3bd7ac2214c",
+  "description": "Node to receive data using a Lora KS0515 Keyestudio LoRa Wireless Expansion Board RFM69HCW 868mhz",
+  "name": "lora-k0515-keyestudio-receive-node",
+  "patches": {
+    "@/lora-receive-message": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/adafruit/RadioHead\"\n#pragma XOD require \"https://github.com/nandland/spi-master\"\n#pragma XOD require \"https://github.com/LowPowerLab/RFM69\"\n\n\n#include <SPI.h>\n#include <RH_RF69.h>\n#include <RHReliableDatagram.h>\n\nint RFM69_INT = 2;   \nint RFM69_RST = 3;\nint RFM69_CS = 10;\nint RF69_FREQ = 343;\nint DEST_ADDRESS = 2;\nint MY_ADDRESS = 1;\n\nRH_RF69 rf69(RFM69_CS, RFM69_INT);\nRHReliableDatagram rf69_manager(rf69, MY_ADDRESS);\n\nnode {\n    // Internal state variables defined at this level persists across evaluations\n\n    Number foo;\n    uint8_t bar = 5;\n    void evaluate(Context ctx) {\n        bar += 42;\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n\n        }\n       \n       if (!isInputDirty<input_UPD>(ctx))\n       return;\n\nNumber RFM69_INT;   \nNumber RF69_FREQ;\nint Message;\nint Power;\n        \n  RF69_FREQ = getValue<input_RF69_FREQ>(ctx);\n  Power = getValue<input_Power>(ctx);\n\n  ::pinMode(RFM69_RST, OUTPUT);\n        \n  digitalWrite(RFM69_RST, HIGH);\n  delay(10);\n  digitalWrite(RFM69_RST, LOW);\n  delay(10);\n        \n\n  ::digitalWrite(RFM69_RST, 0);\n\n//Manual reset\n  ::digitalWrite(RFM69_RST, 1);\n    delay (10);\n  ::digitalWrite(RFM69_RST, 0);\n    delay (10);\n        \n  rf69.setFrequency(RF69_FREQ);\n  rf69_manager.init();\n\n  rf69.setTxPower(Power, true);  // range from 14-20 for power, 2nd arg must be true for 69HCW\n        \n  // The encryption key has to be the same as the one in the server\n  uint8_t key[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,\n                    0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};\n  rf69.setEncryptionKey(key);\n\nuint8_t buf[60];\ndelay (1000);\n\n    while (!rf69_manager.available()){}\n    uint8_t len = sizeof(buf);\n    uint8_t from;\n    while (!rf69_manager.recvfromAck(buf, &len, &from)){}\n    buf[len] = 0; // zero out remaining string\n    Message = atoi((const char*) buf);\n    emitValue<output_Message>(ctx, Message); \n    emitValue<output_DONE>(ctx, 1);\n\n    delay (10);\n}\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "HyqJf5eFD": {
+          "description": "Pulses 1 once the node has been executed",
+          "id": "HyqJf5eFD",
+          "label": "DONE",
+          "position": {
+            "x": 14,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "S1Xy4jaOw": {
+          "id": "S1Xy4jaOw",
+          "position": {
+            "x": 13,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1cgCQgFP": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Update pin to control the signals",
+          "id": "S1cgCQgFP",
+          "label": "UPD",
+          "position": {
+            "x": 16,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SyZNlUwKv": {
+          "boundLiterals": {
+            "__out__": "434.0"
+          },
+          "description": "Frequency used for the communications (must be the same a the frequency on the sender end)",
+          "id": "SyZNlUwKv",
+          "label": "RF69_FREQ",
+          "position": {
+            "x": 13,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkDrBZGtD": {
+          "description": "Displays the message received by the sender device (in decimal numbers)",
+          "id": "rkDrBZGtD",
+          "label": "Message",
+          "position": {
+            "x": 13,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rywNeLwFv": {
+          "boundLiterals": {
+            "__out__": "20"
+          },
+          "description": "Power for the communications. Higher power allows a long-range communication, but consumes more energy.",
+          "id": "rywNeLwFv",
+          "label": "Power",
+          "position": {
+            "x": 14,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/lora-receive-message"
+    },
+    "@/example": {
+      "links": {
+        "BJ1InhFHd": {
+          "id": "BJ1InhFHd",
+          "output": {
+            "nodeId": "Syaubaa_w",
+            "pinKey": "rkDrBZGtD"
+          },
+          "input": {
+            "nodeId": "rJut-66Ow",
+            "pinKey": "BJ3DAE1QS"
+          }
+        }
+      },
+      "nodes": {
+        "Syaubaa_w": {
+          "id": "Syaubaa_w",
+          "position": {
+            "x": -4,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "@/lora-receive-message"
+        },
+        "rJut-66Ow": {
+          "boundLiterals": {
+            "rkedCVkXS": "20h"
+          },
+          "id": "rJut-66Ow",
+          "position": {
+            "x": -6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod-dev/text-lcd/text-lcd-i2c-16x2"
+        }
+      },
+      "path": "@/example"
+    }
+  }
+}

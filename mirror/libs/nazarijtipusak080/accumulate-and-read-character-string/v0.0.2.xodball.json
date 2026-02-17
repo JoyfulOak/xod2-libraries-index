@@ -1,0 +1,1514 @@
+{
+  "description": "Accumulate characters in string and read characters from string. It is possible to store \"namber\" or \"byte\" in a string as a stream of characters. And from this string, read the characters indicated by the index. Characters will be displayed in the form of \"number\" or \"byte\".",
+  "version": "0.0.2",
+  "patches": {
+    "@/shift-string": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "node {\n    char* buff;\n    char* cursor;\n    size_t cap;\n    CStringView view;\n\n    void evaluate(Context ctx) {\n        if (isSettingUp()) {\n            // save initial cap to ignore possiple input changes during program execution\n            cap = getValue<input_CAP>(ctx);\n            buff = new char[cap + 1]; // +1 to make room for terminal '\\0'\n            view = CStringView(buff);\n        }\n\n        if (isSettingUp() || isInputDirty<input_RST>(ctx)) {\n            memset(buff, '\\0', cap + 1);\n            cursor = buff;\n            emitValue<output_FULL>(ctx, 0);\n            emitValue<output_OUT>(ctx, 0);\n            emitValue<output_POP>(ctx, 0);\n            emitValue<output_STR>(ctx, XString(&view));\n            emitValue<output_UPD>(ctx, 1);\n        }\n\n        if (isInputDirty<input_PUSH>(ctx)) {\n            if (cursor >= &buff[cap]) {\n                emitValue<output_FULL>(ctx, 1);\n                emitValue<output_POP>(ctx, buff[0]);\n                for (auto i=0; i < cap; i++) {\n                    buff[i] = buff[i+1];\n                }\n                cursor = &buff[cap-1];\n            }\n\n            *cursor = getValue<input_CHAR>(ctx);\n            if (cursor < &buff[cap]) {\n                cursor++;\n            }\n            emitValue<output_STR>(ctx, XString(&view));\n            emitValue<output_UPD>(ctx, 1);\n        }\n\n        if (isInputDirty<input_IDX>(ctx) || isInputDirty<input_PUSH>(ctx)) {\n            emitValue<output_OUT>(ctx, buff[getValue<input_IDX>(ctx)]);\n        }\n    }\n}\n"
+        }
+      ],
+      "description": "Generated from gweimer/utils/string-queue. This is a character accumulator in the form of \"NUMBER\", which after filling with the number of characters specified in \"CAP\" switches to SHIFT-STRING mode.",
+      "nodes": {
+        "rJxTyZ97HR": {
+          "boundLiterals": {
+            "__out__": "16"
+          },
+          "description": "The capacity of the string buffer. Defines the maximum length. Must be a constant value. Any changes during program execution will be ignored.",
+          "label": "CAP",
+          "id": "rJxTyZ97HR",
+          "position": {
+            "x": 0,
+            "y": 119.04285714285714,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HkWpJ-5QBR": {
+          "id": "HkWpJ-5QBR",
+          "position": {
+            "x": 0,
+            "y": 120.04285714285714,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJf6JZ5QHC": {
+          "description": "Empty the accumulated string and start over",
+          "label": "RST",
+          "id": "SJf6JZ5QHC",
+          "position": {
+            "x": 9,
+            "y": 119.04285714285714,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ByQTyW97SR": {
+          "description": "Pulses when resulting string is updated",
+          "label": "UPD",
+          "id": "ByQTyW97SR",
+          "position": {
+            "x": 3,
+            "y": 121.04285714285714,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "H14aJZ9mHR": {
+          "description": "String that is accumulated so far",
+          "label": "STR",
+          "id": "H14aJZ9mHR",
+          "position": {
+            "x": 0,
+            "y": 121.04285714285714,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "rkB6JZqQSA": {
+          "description": "Push new character",
+          "label": "PUSH",
+          "id": "rkB6JZqQSA",
+          "position": {
+            "x": 6,
+            "y": 119.04285714285714,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BktaJ-5QSA": {
+          "description": "True once string is at capacity",
+          "label": "FULL",
+          "id": "BktaJ-5QSA",
+          "position": {
+            "x": 6,
+            "y": 121.04285714285714,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "BkhGb97HC": {
+          "description": "IDX character in string (0 if IDX is larger than current size of string)",
+          "label": "OUT",
+          "id": "BkhGb97HC",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 9,
+            "y": 121,
+            "units": "slots"
+          }
+        },
+        "Sy8m-cmSC": {
+          "description": "Last character popped of front of string to make room for next CHAR",
+          "label": "POP",
+          "id": "Sy8m-cmSC",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 11,
+            "y": 121,
+            "units": "slots"
+          }
+        },
+        "SkS5QqXSR": {
+          "description": "A new character to be pushed to the end of the string",
+          "label": "CHAR",
+          "id": "SkS5QqXSR",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 3,
+            "y": 119,
+            "units": "slots"
+          }
+        },
+        "ryUL4qQBC": {
+          "description": "Display IDX character of string. This is 0-based,  so range is 0 - (CAP-1)",
+          "label": "IDX",
+          "id": "ryUL4qQBC",
+          "position": {
+            "x": 11,
+            "y": 119,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/shift-string"
+    },
+    "@/accum-byte-to-string": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "node {\n    char* buff;\n    char* cursor;\n    size_t cap;\n    CStringView view;\n\n    void evaluate(Context ctx) {\n        if (isSettingUp()) {\n            // save initial cap to ignore possiple input changes during program execution\n            cap = getValue<input_CAP>(ctx);\n            buff = new char[cap + 1]; // +1 to make room for terminal '\\0'\n            view = CStringView(buff);\n        }\n\n        if (isSettingUp() || isInputDirty<input_RST>(ctx)) {\n            memset(buff, '\\0', cap + 1);\n            cursor = buff;\n        }\n\n        if (isInputDirty<input_PUSH>(ctx)) {\n            if (cursor >= &buff[cap]) {\n                emitValue<output_FULL>(ctx, 1);\n                return;\n            }\n\n            *cursor = getValue<input_CHAR>(ctx);\n            cursor++;\n            emitValue<output_STR>(ctx, XString(&view));\n            emitValue<output_UPD>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ],
+      "description": "Accumulates a string of characters (byte) supplied to the CHAR input.",
+      "nodes": {
+        "BJlXIFFRNR": {
+          "boundLiterals": {
+            "__out__": "16"
+          },
+          "description": "The capacity of the string buffer. Defines the maximum length. Must be a constant value. Any changes during program execution will be ignored.",
+          "label": "CAP",
+          "id": "BJlXIFFRNR",
+          "position": {
+            "x": 0,
+            "y": -2.3095238095238093,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkW7IYKC4C": {
+          "id": "SkW7IYKC4C",
+          "position": {
+            "x": 0,
+            "y": -1.3095238095238093,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJG7IKK040": {
+          "description": "Empty the accumulated string and start over",
+          "label": "RST",
+          "id": "SJG7IKK040",
+          "position": {
+            "x": 9,
+            "y": -2.3095238095238093,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkmQ8YF04A": {
+          "description": "Pulses when resulting string is updated",
+          "label": "UPD",
+          "id": "HkmQ8YF04A",
+          "position": {
+            "x": 3,
+            "y": -0.3095238095238093,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HyVX8FKCEC": {
+          "description": "String that is accumulated so far",
+          "label": "STR",
+          "id": "HyVX8FKCEC",
+          "position": {
+            "x": 0,
+            "y": -0.3095238095238093,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "rJSQLKFRV0": {
+          "description": "Pulses when string reached maximum length and pushed character was ignored",
+          "label": "FULL",
+          "id": "rJSQLKFRV0",
+          "position": {
+            "x": 6,
+            "y": -0.3095238095238093,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "B18mLFtRVA": {
+          "description": "Push new character",
+          "label": "PUSH",
+          "id": "B18mLFtRVA",
+          "position": {
+            "x": 6,
+            "y": -2.3095238095238093,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJvl5tAN0": {
+          "label": "CHAR",
+          "id": "SJvl5tAN0",
+          "type": "xod/patch-nodes/input-byte",
+          "position": {
+            "x": 3,
+            "y": -2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/accum-byte-to-string"
+    },
+    "@/accum-number-to-string": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "node {\n    char* buff;\n    char* cursor;\n    size_t cap;\n    CStringView view;\n\n    void evaluate(Context ctx) {\n        if (isSettingUp()) {\n            // save initial cap to ignore possiple input changes during program execution\n            cap = getValue<input_CAP>(ctx);\n            buff = new char[cap + 1]; // +1 to make room for terminal '\\0'\n            view = CStringView(buff);\n        }\n\n        if (isSettingUp() || isInputDirty<input_RST>(ctx)) {\n            memset(buff, '\\0', cap + 1);\n            cursor = buff;\n        }\n\n        if (isInputDirty<input_PUSH>(ctx)) {\n            if (cursor >= &buff[cap]) {\n                emitValue<output_FULL>(ctx, 1);\n                return;\n            }\n\n            *cursor = getValue<input_CHAR>(ctx);\n            cursor++;\n            emitValue<output_STR>(ctx, XString(&view));\n            emitValue<output_UPD>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ],
+      "description": "Accumulates a string of characters (numbers) supplied to the CHAR input.\n\n",
+      "nodes": {
+        "BJlXIFFRNR": {
+          "boundLiterals": {
+            "__out__": "16"
+          },
+          "description": "The capacity of the string buffer. Defines the maximum length. Must be a constant value. Any changes during program execution will be ignored.",
+          "label": "CAP",
+          "id": "BJlXIFFRNR",
+          "position": {
+            "x": 0,
+            "y": -2.3095238095238093,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkW7IYKC4C": {
+          "id": "SkW7IYKC4C",
+          "position": {
+            "x": 0,
+            "y": -1.3095238095238093,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJG7IKK040": {
+          "description": "Empty the accumulated string and start over",
+          "label": "RST",
+          "id": "SJG7IKK040",
+          "position": {
+            "x": 9,
+            "y": -2.3095238095238093,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkmQ8YF04A": {
+          "description": "Pulses when resulting string is updated",
+          "label": "UPD",
+          "id": "HkmQ8YF04A",
+          "position": {
+            "x": 3,
+            "y": -0.3095238095238093,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HyVX8FKCEC": {
+          "description": "String that is accumulated so far",
+          "label": "STR",
+          "id": "HyVX8FKCEC",
+          "position": {
+            "x": 0,
+            "y": -0.3095238095238093,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "rJSQLKFRV0": {
+          "description": "Pulses when string reached maximum length and pushed character was ignored",
+          "label": "FULL",
+          "id": "rJSQLKFRV0",
+          "position": {
+            "x": 6,
+            "y": -0.3095238095238093,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "B18mLFtRVA": {
+          "description": "Push new character",
+          "label": "PUSH",
+          "id": "B18mLFtRVA",
+          "position": {
+            "x": 6,
+            "y": -2.3095238095238093,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkeDFFANC": {
+          "label": "CHAR",
+          "id": "BkeDFFANC",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 3,
+            "y": -2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/accum-number-to-string"
+    },
+    "@/index-n-string": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto str = getValue<input_STR>(ctx);\n    auto idx = getValue<input_IDX>(ctx);\n    int i = 0;\n    for (auto it = str->iterate(); it; ++it) {\n        if (i == idx) {\n           emitValue<output_CHAR>(ctx,(char)*it);\n           return;\n        }\n        i++;\n    }\n    emitValue<output_CHAR>(ctx,0);\n}"
+        }
+      ],
+      "description": "We output the character by index from the string in the form \"NUMBER\".",
+      "nodes": {
+        "SJQzMFCV0": {
+          "label": "STR",
+          "id": "SJQzMFCV0",
+          "type": "xod/patch-nodes/input-string",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "r14XfFAE0": {
+          "label": "IDX",
+          "id": "r14XfFAE0",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "r1q8zFCN0": {
+          "id": "r1q8zFCN0",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BkvI8F0E0": {
+          "label": "CHAR",
+          "id": "BkvI8F0E0",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/index-n-string"
+    },
+    "@/index-string": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto str = getValue<input_STR>(ctx);\n    auto idx = getValue<input_IDX>(ctx);\n    int i = 0;\n    for (auto it = str->iterate(); it; ++it) {\n        if (i == idx) {\n           emitValue<output_CHAR>(ctx,(char)*it);\n           return;\n        }\n        i++;\n    }\n    emitValue<output_CHAR>(ctx,0);\n}"
+        }
+      ],
+      "description": "We output the character by index from the string in the form \"byte\".",
+      "nodes": {
+        "SJQzMFCV0": {
+          "label": "STR",
+          "id": "SJQzMFCV0",
+          "type": "xod/patch-nodes/input-string",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "r14XfFAE0": {
+          "label": "IDX",
+          "id": "r14XfFAE0",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "r1q8zFCN0": {
+          "id": "r1q8zFCN0",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BJiOut040": {
+          "label": "CHAR",
+          "id": "BJiOut040",
+          "type": "xod/patch-nodes/output-byte",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/index-string"
+    },
+    "@/main": {
+      "description": "Just as a sample, I recorded the counter count in string. Then I read the reference numbers from the string.",
+      "links": {
+        "HJpPp5CEC": {
+          "id": "HJpPp5CEC",
+          "output": {
+            "nodeId": "ryE769040",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "SyPPaqC4A",
+            "pinKey": "HkDgIRdrv1W"
+          }
+        },
+        "S1WY6cANR": {
+          "id": "S1WY6cANR",
+          "output": {
+            "nodeId": "Hy9V6cA40",
+            "pinKey": "HkyxURuSPyW"
+          },
+          "input": {
+            "nodeId": "SyPPaqC4A",
+            "pinKey": "S1OlUAuBD1-"
+          }
+        },
+        "HyB2TqA4R": {
+          "id": "HyB2TqA4R",
+          "output": {
+            "nodeId": "HyGqa9CVC",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "HyxnTcRVR",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "HkWTp9040": {
+          "id": "HkWTp9040",
+          "output": {
+            "nodeId": "rJhFT9ANC",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "rkd3p9AEC",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "ryMJ105REC": {
+          "id": "ryMJ105REC",
+          "output": {
+            "nodeId": "B1WkJ0qC4R",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "SkgC6qAVC",
+            "pinKey": "BJ4mjF04A"
+          }
+        },
+        "S1xkyAcR40": {
+          "id": "S1xkyAcR40",
+          "output": {
+            "nodeId": "HJCfTq04R",
+            "pinKey": "HyVX8FKCEC"
+          },
+          "input": {
+            "nodeId": "Hk11090NA",
+            "pinKey": "__in__"
+          }
+        },
+        "By2eA90VR": {
+          "id": "By2eA90VR",
+          "output": {
+            "nodeId": "SkgC6qAVC",
+            "pinKey": "rJ-4XsF0EC"
+          },
+          "input": {
+            "nodeId": "S1_eCcAVC",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "ryzwMR9CV0": {
+          "id": "ryzwMR9CV0",
+          "output": {
+            "nodeId": "HyWwzCcCVA",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "Hy9V6cA40",
+            "pinKey": "Bkh8A_Sv1-"
+          }
+        },
+        "H1s01s0NC": {
+          "id": "H1s01s0NC",
+          "output": {
+            "nodeId": "ByxpkiAVA",
+            "pinKey": "H1E8AuSPkZ"
+          },
+          "input": {
+            "nodeId": "S1YR1oCER",
+            "pinKey": "BJI7P8t9Z"
+          }
+        },
+        "BJ4vleiCNC": {
+          "id": "BJ4vleiCNC",
+          "output": {
+            "nodeId": "H1XDxgiR4R",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "SkgC6qAVC",
+            "pinKey": "S13koFREA"
+          }
+        },
+        "r1fPxgjCVA": {
+          "id": "r1fPxgjCVA",
+          "output": {
+            "nodeId": "ByWvlesC40",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJhFT9ANC",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "HJlDgxoRVR": {
+          "id": "HJlDgxoRVR",
+          "output": {
+            "nodeId": "SyPPaqC4A",
+            "pinKey": "SJUl8Aurv1W"
+          },
+          "input": {
+            "nodeId": "HJPxxoAVA",
+            "pinKey": "__in__"
+          }
+        },
+        "BJ4CxxsANR": {
+          "id": "BJ4CxxsANR",
+          "output": {
+            "nodeId": "H1QCeloRNA",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJCfTq04R",
+            "pinKey": "B18mLFtRVA"
+          }
+        },
+        "BkGCleoRVR": {
+          "id": "BkGCleoRVR",
+          "output": {
+            "nodeId": "H1WRlli0N0",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HyGqa9CVC",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "BJeRlgjA40": {
+          "id": "BJeRlgjA40",
+          "output": {
+            "nodeId": "SyPPaqC4A",
+            "pinKey": "SyM2ATB-b"
+          },
+          "input": {
+            "nodeId": "Bk0lgoRNR",
+            "pinKey": "__in__"
+          }
+        },
+        "HkVjzlo0NC": {
+          "id": "HkVjzlo0NC",
+          "output": {
+            "nodeId": "HJQjGejANR",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ByxpkiAVA",
+            "pinKey": "rJXICuSwyW"
+          }
+        },
+        "S1fsfljRER": {
+          "id": "S1fsfljRER",
+          "output": {
+            "nodeId": "BkZsMljR4R",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "SkgC6qAVC",
+            "pinKey": "HJg47st0ER"
+          }
+        },
+        "HygizejR4A": {
+          "id": "HygizejR4A",
+          "output": {
+            "nodeId": "rJhFT9ANC",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "HkoMej0NR",
+            "pinKey": "__in__"
+          }
+        },
+        "H1EeNgiA40": {
+          "id": "H1EeNgiA40",
+          "output": {
+            "nodeId": "B1XgVxj0VR",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ByxpkiAVA",
+            "pinKey": "HJG8C_SPkb"
+          }
+        },
+        "ryzx4gsCNA": {
+          "id": "ryzx4gsCNA",
+          "output": {
+            "nodeId": "Hy-lExjAN0",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJCfTq04R",
+            "pinKey": "BkeDFFANC"
+          }
+        },
+        "BkxlEgo0N0": {
+          "id": "BkxlEgo0N0",
+          "output": {
+            "nodeId": "HyGqa9CVC",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "rygVgoCER",
+            "pinKey": "__in__"
+          }
+        },
+        "B1GU8lo04A": {
+          "id": "B1GU8lo04A",
+          "output": {
+            "nodeId": "BJ-I8liANC",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJhFT9ANC",
+            "pinKey": "SkUjZA_L-"
+          }
+        },
+        "HJgULgo0NR": {
+          "id": "HJgULgo0NR",
+          "output": {
+            "nodeId": "S1YR1oCER",
+            "pinKey": "HJhXDIY9-"
+          },
+          "input": {
+            "nodeId": "HyILesAVA",
+            "pinKey": "__in__"
+          }
+        },
+        "ryoRlsCER": {
+          "id": "ryoRlsCER",
+          "output": {
+            "nodeId": "HJCfTq04R",
+            "pinKey": "rJSQLKFRV0"
+          },
+          "input": {
+            "nodeId": "HJK0giC40",
+            "pinKey": "BJI7P8t9Z"
+          }
+        },
+        "Sk3RljRV0": {
+          "id": "Sk3RljRV0",
+          "output": {
+            "nodeId": "HJK0giC40",
+            "pinKey": "HJhXDIY9-"
+          },
+          "input": {
+            "nodeId": "rkvGC90N0",
+            "pinKey": "__in__"
+          }
+        }
+      },
+      "nodes": {
+        "HJCfTq04R": {
+          "id": "HJCfTq04R",
+          "type": "nazarijtipusak080/accumulate-and-read-character-string/accum-number-to-string",
+          "position": {
+            "x": 8,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "ryE769040": {
+          "id": "ryE769040",
+          "type": "xod/core/clock",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "Hy9V6cA40": {
+          "id": "Hy9V6cA40",
+          "type": "xod/core/flip-flop",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SyPPaqC4A": {
+          "id": "SyPPaqC4A",
+          "type": "xod/core/branch",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rJhFT9ANC": {
+          "id": "rJhFT9ANC",
+          "type": "xod/core/count",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "HyGqa9CVC": {
+          "id": "HyGqa9CVC",
+          "type": "xod/core/count",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "HyxnTcRVR": {
+          "id": "HyxnTcRVR",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 12,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "rkd3p9AEC": {
+          "id": "rkd3p9AEC",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 0,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "SkgC6qAVC": {
+          "id": "SkgC6qAVC",
+          "type": "nazarijtipusak080/accumulate-and-read-character-string/read-number-string",
+          "position": {
+            "x": 3,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "B1WkJ0qC4R": {
+          "label": "STR",
+          "id": "B1WkJ0qC4R",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 3,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "Hk11090NA": {
+          "label": "STR",
+          "id": "Hk11090NA",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 8,
+            "y": 6,
+            "units": "slots"
+          }
+        },
+        "S1_eCcAVC": {
+          "size": {
+            "width": 3,
+            "height": 1,
+            "units": "slots"
+          },
+          "id": "S1_eCcAVC",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 3,
+            "y": 6,
+            "units": "slots"
+          }
+        },
+        "HyWwzCcCVA": {
+          "label": "FULL",
+          "id": "HyWwzCcCVA",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 2,
+            "y": -1,
+            "units": "slots"
+          }
+        },
+        "rkvGC90N0": {
+          "label": "FULL",
+          "id": "rkvGC90N0",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 10,
+            "y": 7,
+            "units": "slots"
+          }
+        },
+        "ByxpkiAVA": {
+          "id": "ByxpkiAVA",
+          "type": "xod/core/equal",
+          "position": {
+            "x": 7,
+            "y": 8,
+            "units": "slots"
+          }
+        },
+        "S1YR1oCER": {
+          "id": "S1YR1oCER",
+          "type": "xod/core/defer",
+          "position": {
+            "x": 7,
+            "y": 9,
+            "units": "slots"
+          }
+        },
+        "H1XDxgiR4R": {
+          "label": "T",
+          "id": "H1XDxgiR4R",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 4,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "ByWvlesC40": {
+          "label": "T",
+          "id": "ByWvlesC40",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HJPxxoAVA": {
+          "label": "T",
+          "id": "HJPxxoAVA",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "H1QCeloRNA": {
+          "label": "F",
+          "id": "H1QCeloRNA",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 10,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "H1WRlli0N0": {
+          "label": "F",
+          "id": "H1WRlli0N0",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "Bk0lgoRNR": {
+          "label": "F",
+          "id": "Bk0lgoRNR",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "HJQjGejANR": {
+          "id": "HJQjGejANR",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 7,
+            "y": 7,
+            "units": "slots"
+          }
+        },
+        "BkZsMljR4R": {
+          "id": "BkZsMljR4R",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 5,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "HkoMej0NR": {
+          "id": "HkoMej0NR",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "B1XgVxj0VR": {
+          "label": "1",
+          "id": "B1XgVxj0VR",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 8,
+            "y": 7,
+            "units": "slots"
+          }
+        },
+        "Hy-lExjAN0": {
+          "label": "1",
+          "id": "Hy-lExjAN0",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 9,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "rygVgoCER": {
+          "label": "1",
+          "id": "rygVgoCER",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "BJ-I8liANC": {
+          "label": "4",
+          "id": "BJ-I8liANC",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HyILesAVA": {
+          "label": "4",
+          "id": "HyILesAVA",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 7,
+            "y": 10,
+            "units": "slots"
+          }
+        },
+        "HJK0giC40": {
+          "id": "HJK0giC40",
+          "type": "xod/core/defer",
+          "position": {
+            "x": 10,
+            "y": 6,
+            "units": "slots"
+          }
+        }
+      },
+      "comments": {
+        "H1oi05RE0": {
+          "id": "H1oi05RE0",
+          "position": {
+            "x": 12,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "width": 4,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "we write the numbers from the counter into string"
+        },
+        "Sk23C9RVR": {
+          "id": "Sk23C9RVR",
+          "position": {
+            "x": -1,
+            "y": 6,
+            "units": "slots"
+          },
+          "size": {
+            "width": 4,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "we read the recorded numbers from the string\n\n\n"
+        }
+      },
+      "path": "@/main"
+    },
+    "@/read-byte-string": {
+      "description": "We read a byte (character) from the line when a pulse arrives on the UPD.",
+      "links": {
+        "SJLVb3tCVR": {
+          "id": "SJLVb3tCVR",
+          "output": {
+            "nodeId": "B1-VW2tAVR",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BkV-nKR4A",
+            "pinKey": "Hy-QUR_BPkZ"
+          }
+        },
+        "Sy_VhKCE0": {
+          "id": "Sy_VhKCE0",
+          "output": {
+            "nodeId": "SJ7NWnYANC",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ryUM3KCV0",
+            "pinKey": "r14XfFAE0"
+          }
+        },
+        "HymJ6c0EC": {
+          "id": "HymJ6c0EC",
+          "output": {
+            "nodeId": "ryUM3KCV0",
+            "pinKey": "BJiOut040"
+          },
+          "input": {
+            "nodeId": "BkV-nKR4A",
+            "pinKey": "HkXm80uHPyb"
+          }
+        },
+        "HkS1690NA": {
+          "id": "HkS1690NA",
+          "output": {
+            "nodeId": "BkV-nKR4A",
+            "pinKey": "r1lQLAOBwJb"
+          },
+          "input": {
+            "nodeId": "B1epmhYANR",
+            "pinKey": "__in__"
+          }
+        },
+        "BJPyaqANC": {
+          "id": "BJPyaqANC",
+          "output": {
+            "nodeId": "H1MEZhFRER",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ryUM3KCV0",
+            "pinKey": "SJQzMFCV0"
+          }
+        }
+      },
+      "nodes": {
+        "BkV-nKR4A": {
+          "id": "BkV-nKR4A",
+          "type": "xod/core/buffer",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "B1-VW2tAVR": {
+          "description": "Saves `NEW` value in memory",
+          "label": "UPD",
+          "id": "B1-VW2tAVR",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1MEZhFRER": {
+          "label": "STR",
+          "id": "H1MEZhFRER",
+          "type": "xod/patch-nodes/input-string",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SJ7NWnYANC": {
+          "label": "IDX",
+          "id": "SJ7NWnYANC",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "ryUM3KCV0": {
+          "id": "ryUM3KCV0",
+          "type": "nazarijtipusak080/accumulate-and-read-character-string/index-string",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "B1epmhYANR": {
+          "label": "CHAR",
+          "id": "B1epmhYANR",
+          "type": "xod/patch-nodes/output-byte",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/read-byte-string"
+    },
+    "@/read-number-string": {
+      "description": "We read a number (character) from the line when a pulse arrives on the UPD.",
+      "links": {
+        "ry5QsF0EA": {
+          "id": "ry5QsF0EA",
+          "output": {
+            "nodeId": "S13koFREA",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJ3icKRVC",
+            "pinKey": "Hy-QUR_BPkZ"
+          }
+        },
+        "Bk07otREC": {
+          "id": "Bk07otREC",
+          "output": {
+            "nodeId": "HJg47st0ER",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "Bkza5YA4R",
+            "pinKey": "r14XfFAE0"
+          }
+        },
+        "HyAep9RV0": {
+          "id": "HyAep9RV0",
+          "output": {
+            "nodeId": "rJ3icKRVC",
+            "pinKey": "r1lQLAOBwJb"
+          },
+          "input": {
+            "nodeId": "rJ-4XsF0EC",
+            "pinKey": "__in__"
+          }
+        },
+        "r1ebT50NC": {
+          "id": "r1ebT50NC",
+          "output": {
+            "nodeId": "Bkza5YA4R",
+            "pinKey": "BkvI8F0E0"
+          },
+          "input": {
+            "nodeId": "rJ3icKRVC",
+            "pinKey": "HkXm80uHPyb"
+          }
+        },
+        "S1G-p5R4C": {
+          "id": "S1G-p5R4C",
+          "output": {
+            "nodeId": "BJ4mjF04A",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "Bkza5YA4R",
+            "pinKey": "SJQzMFCV0"
+          }
+        }
+      },
+      "nodes": {
+        "rJ3icKRVC": {
+          "id": "rJ3icKRVC",
+          "type": "xod/core/buffer",
+          "position": {
+            "x": 8,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "Bkza5YA4R": {
+          "id": "Bkza5YA4R",
+          "type": "nazarijtipusak080/accumulate-and-read-character-string/index-n-string",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "S13koFREA": {
+          "description": "Saves `NEW` value in memory",
+          "label": "UPD",
+          "id": "S13koFREA",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BJ4mjF04A": {
+          "label": "STR",
+          "id": "BJ4mjF04A",
+          "type": "xod/patch-nodes/input-string",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "HJg47st0ER": {
+          "label": "IDX",
+          "id": "HJg47st0ER",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "rJ-4XsF0EC": {
+          "label": "CHAR",
+          "id": "rJ-4XsF0EC",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 8,
+            "y": 5,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/read-number-string"
+    },
+    "@/string-queue-copy": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    char* buff;\n    char* cursor;\n    size_t cap;\n    CStringView view;\n\n    void evaluate(Context ctx) {\n        if (isSettingUp()) {\n            // save initial cap to ignore possiple input changes during program execution\n            cap = getValue<input_CAP>(ctx);\n            buff = new char[cap + 1]; // +1 to make room for terminal '\\0'\n            view = CStringView(buff);\n        }\n\n        if (isSettingUp() || isInputDirty<input_RST>(ctx)) {\n            memset(buff, '\\0', cap + 1);\n            cursor = buff;\n            emitValue<output_FULL>(ctx, 0);\n            emitValue<output_OUT>(ctx, 0);\n            emitValue<output_POP>(ctx, 0);\n            emitValue<output_STR>(ctx, XString(&view));\n            emitValue<output_UPD>(ctx, 1);\n        }\n\n        if (isInputDirty<input_PUSH>(ctx)) {\n            if (cursor >= &buff[cap]) {\n                emitValue<output_FULL>(ctx, 1);\n                emitValue<output_POP>(ctx, buff[0]);\n                for (auto i=0; i < cap; i++) {\n                    buff[i] = buff[i+1];\n                }\n                cursor = &buff[cap-1];\n            }\n\n            *cursor = getValue<input_CHAR>(ctx);\n            if (cursor < &buff[cap]) {\n                cursor++;\n            }\n            emitValue<output_STR>(ctx, XString(&view));\n            emitValue<output_UPD>(ctx, 1);\n        }\n\n        if (isInputDirty<input_IDX>(ctx) || isInputDirty<input_PUSH>(ctx)) {\n            emitValue<output_OUT>(ctx, buff[getValue<input_IDX>(ctx)]);\n        }\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "B1_w-fWHR": {
+          "boundLiterals": {
+            "__out__": "41h"
+          },
+          "description": "A new character to be pushed to the end of the string",
+          "label": "CHAR",
+          "id": "B1_w-fWHR",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HJg_vWzbBR": {
+          "boundLiterals": {
+            "__out__": "16"
+          },
+          "description": "The capacity of the string buffer. Defines the maximum length. Must be a constant value. Any changes during program execution will be ignored.",
+          "label": "CAP",
+          "id": "HJg_vWzbBR",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "B1bdwZMWBA": {
+          "id": "B1bdwZMWBA",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJzOw-GbSR": {
+          "description": "Empty the accumulated string and start over",
+          "label": "RST",
+          "id": "rJzOw-GbSR",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HJQOP-MbBC": {
+          "description": "Pulses when resulting string is updated",
+          "label": "UPD",
+          "id": "HJQOP-MbBC",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rkNODbzbrR": {
+          "description": "String that is accumulated so far",
+          "label": "STR",
+          "id": "rkNODbzbrR",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "rkI_wZG-SC": {
+          "description": "Push new character",
+          "label": "PUSH",
+          "id": "rkI_wZG-SC",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJw_PZf-HA": {
+          "description": "IDX character in string (0 if IDX is larger than current size of string)",
+          "label": "OUT",
+          "id": "SJw_PZf-HA",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-byte"
+        },
+        "Bku_D-G-BR": {
+          "description": "Last character popped of front of string to make room for next CHAR",
+          "label": "POP",
+          "id": "Bku_D-G-BR",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-byte"
+        },
+        "H1FdP-zZHC": {
+          "description": "Display IDX character of string. This is 0-based,  so range is 0 - (CAP-1)",
+          "label": "IDX",
+          "id": "H1FdP-zZHC",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HkXoWG-S0": {
+          "description": "True once string is at capacity",
+          "label": "FULL",
+          "id": "HkXoWG-S0",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        }
+      },
+      "path": "@/string-queue-copy"
+    },
+    "@/sub-string-copy": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    char* strBuff;\n    char* subBuff;\n    size_t maxlen;\n    CStringView view;\n\n    void evaluate(Context ctx) {\n\n        if (isSettingUp() || isInputDirty<input_STR>(ctx) || isInputDirty<input_OFST>(ctx) || isInputDirty<input_LEN>(ctx)) {\n            auto str = getValue<input_STR>(ctx);\n            maxlen = length(str);\n            char* strBuff = new char[maxlen+1];\n            memset(strBuff, '\\0', maxlen + 1);\n            dump(str, strBuff);\n            auto ofst = getValue<input_OFST>(ctx);\n            auto len = getValue<input_LEN>(ctx);\n            subBuff = new char[maxlen+1];\n            memset(subBuff, '\\0', maxlen + 1);\n            if (ofst < maxlen) {\n                if (ofst+len > maxlen) {\n                    len = maxlen-ofst;\n                }\n                for (auto i = 0; i < len; i++) {\n                    subBuff[i] = strBuff[ofst+i];\n                }\n            }\n            view = CStringView(subBuff);\n            emitValue<output_SUB>(ctx, XString(&view));\n        }\n    }\n}\n"
+        }
+      ],
+      "description": "Pull substring from STR starting at OFST for LEN",
+      "nodes": {
+        "HJxn3GQbr0": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "description": "String to parse\n",
+          "label": "STR",
+          "id": "HJxn3GQbr0",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "rkb23zmWrC": {
+          "id": "rkb23zmWrC",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rkzImXWrR": {
+          "description": "Substring found",
+          "label": "SUB",
+          "id": "rkzImXWrR",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "r1YHc7-SA": {
+          "description": "Offset for starting substring",
+          "label": "OFST",
+          "id": "r1YHc7-SA",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "Hkir9m-H0": {
+          "boundLiterals": {
+            "__out__": "1d"
+          },
+          "description": "Length of substring",
+          "label": "LEN",
+          "id": "Hkir9m-H0",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/sub-string-copy"
+    }
+  },
+  "name": "accumulate-and-read-character-string",
+  "apiKey": "e13c10b7-615e-489a-ac03-78408d1c93e0"
+}

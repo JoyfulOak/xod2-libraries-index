@@ -1,0 +1,115 @@
+{
+  "description": "Library for the gy-30 light sensor device",
+  "name": "gy-30",
+  "patches": {
+    "@/example": {
+      "links": {
+        "HJml7SgZu": {
+          "id": "HJml7SgZu",
+          "input": {
+            "nodeId": "BkyxQSlbO",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "ryTRvqrxu",
+            "pinKey": "rJfmEaHgd"
+          }
+        }
+      },
+      "nodes": {
+        "BkyxQSlbO": {
+          "id": "BkyxQSlbO",
+          "position": {
+            "x": -3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "ryTRvqrxu": {
+          "boundLiterals": {
+            "S14wy6BxO": "Continuously"
+          },
+          "id": "ryTRvqrxu",
+          "position": {
+            "x": -3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/gy-30"
+        }
+      },
+      "path": "@/example"
+    },
+    "@/gy-30": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/SV-Zanshin/BME680\"\n#include <Wire.h>\n#define ADDR 0b0100011\n\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n\n  if (!isInputDirty<input_UPD>(ctx))\n  return;\n        int val;\n        val = 0;\n\nWire.begin();\n        \ndelay(100);\n        \nWire.beginTransmission(ADDR);\nWire.write(0b00000111);\nWire.endTransmission();\nWire.beginTransmission(ADDR);\nWire.write(0b00100000);\nWire.endTransmission();\n\ndelay(120);\n\nWire.requestFrom(ADDR, 2); // 2byte every time\n\nfor (val = 0; Wire.available() >= 1; ) {\n\nchar c = Wire.read();\n\nval = (val << 8) + (c & 0xFF);\n}\n\nval = val / 1.2;\nemitValue<output_Light>(ctx, val);\nemitValue<output_DONE>(ctx, 1);\n\ndelay(100);\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "comments": {
+        "Bke-fzfZu": {
+          "content": "Double-click to edit comment",
+          "id": "Bke-fzfZu",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "Node for using the gy-30 light sensor",
+      "nodes": {
+        "ByVdkTBgO": {
+          "id": "ByVdkTBgO",
+          "label": "DONE",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "S14wy6BxO": {
+          "id": "S14wy6BxO",
+          "label": "UPD",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJfmEaHgd": {
+          "description": "Value of the light intensity",
+          "id": "rJfmEaHgd",
+          "label": "Light",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rJnry5Hl_": {
+          "id": "rJnry5Hl_",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/gy-30"
+    }
+  },
+  "version": "0.0.2"
+}

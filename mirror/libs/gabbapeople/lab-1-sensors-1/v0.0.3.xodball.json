@@ -1,0 +1,237 @@
+{
+  "name": "lab-1-sensors-1",
+  "patches": {
+    "@/demo": {
+      "links": {
+        "BynHht3Av": {
+          "id": "BynHht3Av",
+          "input": {
+            "nodeId": "By042YnRD",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "rJWNnY2Aw",
+            "pinKey": "HyDCiF3RD"
+          }
+        },
+        "Sk-9H2t2AP": {
+          "id": "Sk-9H2t2AP",
+          "input": {
+            "nodeId": "BkxqS2t2AP",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "Hy5H2Yn0P",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "rJtB3K20v": {
+          "id": "rJtB3K20v",
+          "input": {
+            "nodeId": "SJUH2KhRP",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "By042YnRD",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "rypHhY2AD": {
+          "id": "rypHhY2AD",
+          "input": {
+            "nodeId": "Hy5H2Yn0P",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "rJWNnY2Aw",
+            "pinKey": "Hy9JhK2RP"
+          }
+        }
+      },
+      "nodes": {
+        "BkxqS2t2AP": {
+          "id": "BkxqS2t2AP",
+          "position": {
+            "x": 20,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "By042YnRD": {
+          "id": "By042YnRD",
+          "position": {
+            "x": 11,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "Hy5H2Yn0P": {
+          "id": "Hy5H2Yn0P",
+          "position": {
+            "x": 17,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "SJUH2KhRP": {
+          "id": "SJUH2KhRP",
+          "position": {
+            "x": 14,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "rJWNnY2Aw": {
+          "boundLiterals": {
+            "B1JTjK3Rv": "D2",
+            "BJZpsF2CP": "D3",
+            "Sy1QhF2CP": "Continuously"
+          },
+          "id": "rJWNnY2Aw",
+          "position": {
+            "x": 13,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "@/opto-sensors"
+        }
+      },
+      "path": "@/demo"
+    },
+    "@/opto-sensors": {
+      "attachments": [
+        {
+          "content": "nodespace {\n\n    volatile bool event0 = false;\n    volatile bool event1 = false;\n\n    void interrupt0Handler() {\n            event0 = true;\n    }\n    void interrupt1Handler() {\n            event1 = true;\n    }\n}\n\nnode {\n    void evaluate(Context ctx) {\n\n        if (isSettingUp()) {\n            ::pinMode(constant_input_P0, INPUT_PULLUP);\n            ::pinMode(constant_input_P1, INPUT_PULLUP);\n            attachInterrupt(digitalPinToInterrupt(constant_input_P0), interrupt0Handler, FALLING);\n            attachInterrupt(digitalPinToInterrupt(constant_input_P1), interrupt1Handler, RISING);\n        }\n\n\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        if (event0) {\n            event0 = false;\n            emitValue<output_EV0>(ctx, 1);\n        }\n        if (event1) {\n            event1 = false;\n            emitValue<output_EV1>(ctx, 1);\n        }\n    }\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1JTjK3Rv": {
+          "id": "B1JTjK3Rv",
+          "label": "P0",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "BJZpsF2CP": {
+          "id": "BJZpsF2CP",
+          "label": "P1",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Hy9JhK2RP": {
+          "id": "Hy9JhK2RP",
+          "label": "EV1",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HyDCiF3RD": {
+          "id": "HyDCiF3RD",
+          "label": "EV0",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Sy1QhF2CP": {
+          "id": "Sy1QhF2CP",
+          "label": "UPD",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1HnoF3Rw": {
+          "id": "r1HnoF3Rw",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/opto-sensors"
+    },
+    "@/sensors": {
+      "nodes": {
+        "SywRpYhCP": {
+          "id": "SywRpYhCP",
+          "type": "@/opto-sensors",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "Sy1QhF2CP": "Continuously"
+          }
+        },
+        "B1CAaFhCw": {
+          "id": "B1CAaFhCw",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "S1lkCKnCw": {
+          "id": "S1lkCKnCw",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "Hk-1RY3AP": {
+          "id": "Hk-1RY3AP",
+          "output": {
+            "nodeId": "SywRpYhCP",
+            "pinKey": "HyDCiF3RD"
+          },
+          "input": {
+            "nodeId": "B1CAaFhCw",
+            "pinKey": "__in__"
+          }
+        },
+        "rynWyAt2RD": {
+          "id": "rynWyAt2RD",
+          "output": {
+            "nodeId": "SywRpYhCP",
+            "pinKey": "Hy9JhK2RP"
+          },
+          "input": {
+            "nodeId": "S1lkCKnCw",
+            "pinKey": "__in__"
+          }
+        }
+      },
+      "path": "@/sensors"
+    }
+  },
+  "version": "0.0.3"
+}

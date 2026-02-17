@@ -1,0 +1,179 @@
+{
+  "patches": {
+    "@/capacitive-soil-sensor": {
+      "nodes": {
+        "H1GrVECdh": {
+          "boundLiterals": {
+            "SkuhqCqym": "A1"
+          },
+          "id": "H1GrVECdh",
+          "position": {
+            "x": 9,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/gpio/analog-read"
+        },
+        "Hy3MdVRuh": {
+          "boundLiterals": {
+            "HJCWLAdSwyW": "1",
+            "rJbGU0_Hv1Z": "1.2",
+            "rkpbU0OrwyZ": "3"
+          },
+          "id": "Hy3MdVRuh",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/math/map"
+        },
+        "B18TKN0O2": {
+          "id": "B18TKN0O2",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        }
+      },
+      "links": {
+        "rJd6KVAOn": {
+          "id": "rJd6KVAOn",
+          "input": {
+            "nodeId": "B18TKN0O2",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "Hy3MdVRuh",
+            "pinKey": "H12bIR_SPyZ"
+          }
+        },
+        "rk5DPuRO3": {
+          "id": "rk5DPuRO3",
+          "input": {
+            "nodeId": "Hy3MdVRuh",
+            "pinKey": "BJlzICOSv1-"
+          },
+          "output": {
+            "nodeId": "H1GrVECdh",
+            "pinKey": "SyBtREhlW"
+          }
+        }
+      },
+      "comments": {
+        "H1xi7NCOn": {
+          "content": "The analog pin reads a voltage value between 0 to 5V, the analog-read node converts the range to 0-1.\n\nThis number is what is being read from the \"val\" port of the analog-read node.\n\nWe can scale this value to anything we want so it's easier to read! \n\nCan you manipulate the output value so that a higher moisture level will produce a higher reading?",
+          "id": "H1xi7NCOn",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 3,
+            "width": 7,
+            "units": "slots"
+          }
+        },
+        "B1qFaMJF2": {
+          "content": "High capacitance == lower reading\n\nSo lower reading means more moisture!",
+          "id": "B1qFaMJF2",
+          "position": {
+            "x": 13,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 7,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/capacitive-soil-sensor"
+    },
+    "@/main": {
+      "nodes": {
+        "Bk7IJVCd2": {
+          "id": "Bk7IJVCd2",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "wayland/dht20/hygrometer-thermometer"
+        }
+      },
+      "path": "@/main"
+    },
+    "@/chlorophyll-sensor": {
+      "comments": {
+        "S1VaGNkF3": {
+          "content": "1. Place red LED light in front of sensor at a specific distance\n2. Taking a reading\n3. Place a leaf in between the sensor and the LED, make sure the distance between the sensor and the light is the same as in step 1\n\nThe difference in the reading equals to the amount of red light absorbed by the chlorophyll!\n\nCheck the values from time to time -> you can \nmonitor the chlorophyll level and use it to figure out when you should use fertilize your plant with nitrogen\n",
+          "id": "S1VaGNkF3",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 3,
+            "width": 8,
+            "units": "slots"
+          }
+        },
+        "rJ5Um4yYn": {
+          "content": "Monitor the chlorophyll level in the leaves of your plant!\n",
+          "id": "rJ5Um4yYn",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 11,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/chlorophyll-sensor"
+    },
+    "@/temperature-humidity-sensor": {
+      "comments": {
+        "BJvxbE0uh": {
+          "content": "1. Search the sensor model number [dht20] in the library search engine\n2. Install it\n3. Open the example patch from the library, run it in debug mode\n\nNow, use what you have learned from the example and export the reading on your OLED device!\n\nTry to manipulate the reading:\nCan you convert the temperature into Fahrenheit?\n\nHint: (y°C × 9/5) + 32 = val F",
+          "id": "BJvxbE0uh",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 3,
+            "width": 7,
+            "units": "slots"
+          }
+        },
+        "By2QQ4Ruh": {
+          "content": "Helpful library:\n\nxod/core",
+          "id": "By2QQ4Ruh",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 7,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/temperature-humidity-sensor"
+    }
+  },
+  "name": "plants-processors-day2"
+}

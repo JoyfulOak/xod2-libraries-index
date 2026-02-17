@@ -1,0 +1,488 @@
+{
+  "patches": {
+    "@/count-looped": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    void evaluate(Context ctx) \n    {\n        int count = (int)getValue<output_OUT>(ctx);\n        int begin = (int)getValue<input_BEGIN>(ctx);\n        int end = (int)getValue<input_END>(ctx);\n        int width = (int)getValue<input_WIDTH>(ctx);\n        if( width > 0 ) // Use width instead of end if available\n            end = min( 16, begin + width);      // Truncate to max. allowed border-value if needed\n        int increment = (int)getValue<input_INC>(ctx); \n        \n        if( begin > end )                  // Reverse direction?\n        {\n            int original_begin = begin;\n            begin = end;\n            end = original_begin;\n            increment %= end-begin+1;     // Reduce increment to max possible stepwidth \n            increment *= -1;              // Reverse increment to fit with intended stepping-direction  \n        } \n        else\n            increment %= end-begin+1;     // Reduce increment to max possible stepwidth\n        \n        if (isInputDirty<input_RST>(ctx))\n            count = begin;\n        else if (isInputDirty<input_TRIG>(ctx))\n        {    \n            count += increment;\n            if( count > end )\n                count = begin;\n            else if( count < begin)\n                count = end;\n        }\n        emitValue<output_OUT>(ctx, count);\n    }\n}\n"
+        }
+      ],
+      "description": "Stores a number which gets incremented on each `INC` pulse.",
+      "nodes": {
+        "H1MAWAu8-": {
+          "id": "H1MAWAu8-",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJAq-A_8-": {
+          "description": "Triggers a single increment.",
+          "label": "TRIG",
+          "id": "HJAq-A_8-",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HJvqZ0dLZ": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Value to add on each increment. Use a negative value (e.g. -1) to make decrements.",
+          "label": "INC",
+          "id": "HJvqZ0dLZ",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkUjZA_L-": {
+          "description": "Resets the accumulated value to zero.",
+          "label": "RST",
+          "id": "SkUjZA_L-",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1yhZRd8W": {
+          "description": "The accumulated value. (range 1-16)",
+          "id": "r1yhZRd8W",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "Sksz4B91c": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "First step to be activated",
+          "label": "BEGIN",
+          "id": "Sksz4B91c",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkkVEB9Jq": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Last Step to be activated, you may use WIDTH to calculate this , alternatively!",
+          "label": "END",
+          "id": "rkkVEB9Jq",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJrfQaAyc": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Number of steps to be activated after BEGIN, you may use END to determine this , alternatively!",
+          "label": "WIDTH",
+          "id": "BJrfQaAyc",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/count-looped"
+    },
+    "@/seq16-step-rec": {
+      "description": "Record  CV input step-by-step or playback previiously recorded values",
+      "links": {
+        "SyfB-a9Jc": {
+          "id": "SyfB-a9Jc",
+          "output": {
+            "nodeId": "SJhEZp9k5",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HknxVS5yq",
+            "pinKey": "HJvqZ0dLZ"
+          }
+        },
+        "SkQrZT9k5": {
+          "id": "SkQrZT9k5",
+          "output": {
+            "nodeId": "HJD2_KF1c",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HknxVS5yq",
+            "pinKey": "Sksz4B91c"
+          }
+        },
+        "SkpZ7a515": {
+          "id": "SkpZ7a515",
+          "output": {
+            "nodeId": "Sy5Oh5PNy9",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HknxVS5yq",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "S14CqYpJc": {
+          "id": "S14CqYpJc",
+          "output": {
+            "nodeId": "Sy5Oh5PNy9",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BJLpqKayc",
+            "pinKey": "H15PFt6yc"
+          }
+        },
+        "ByDRqtTkc": {
+          "id": "ByDRqtTkc",
+          "output": {
+            "nodeId": "rk4RqvT19",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BJLpqKayc",
+            "pinKey": "BkZcDFtakq"
+          }
+        },
+        "SkgJoKakq": {
+          "id": "SkgJoKakq",
+          "output": {
+            "nodeId": "HknxVS5yq",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "BJLpqKayc",
+            "pinKey": "ryg5wFY61c"
+          }
+        },
+        "BkNI-3CJ5": {
+          "id": "BkNI-3CJ5",
+          "output": {
+            "nodeId": "SynRKj0J5",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BJLpqKayc",
+            "pinKey": "BkeD9iAJ5"
+          }
+        },
+        "Sygc4p0y5": {
+          "id": "Sygc4p0y5",
+          "output": {
+            "nodeId": "rkBEb69Jc",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HknxVS5yq",
+            "pinKey": "BJrfQaAyc"
+          }
+        },
+        "rkkEH60y9": {
+          "id": "rkkEH60y9",
+          "output": {
+            "nodeId": "rJ5WS6Cyq",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HknxVS5yq",
+            "pinKey": "rkkVEB9Jq"
+          }
+        },
+        "rJce9iylc": {
+          "id": "rJce9iylc",
+          "output": {
+            "nodeId": "ryECFsJec",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HknxVS5yq",
+            "pinKey": "SkUjZA_L-"
+          }
+        },
+        "Hyhfqiyx5": {
+          "id": "Hyhfqiyx5",
+          "output": {
+            "nodeId": "BJLpqKayc",
+            "pinKey": "BJApOY6kc"
+          },
+          "input": {
+            "nodeId": "Bkad2cvE19",
+            "pinKey": "__in__"
+          }
+        }
+      },
+      "nodes": {
+        "Sy5Oh5PNy9": {
+          "description": "Trigger next Step",
+          "label": "TRIG",
+          "id": "Sy5Oh5PNy9",
+          "position": {
+            "x": 12,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Bkad2cvE19": {
+          "description": "Output CV value of current step",
+          "label": "CVout",
+          "id": "Bkad2cvE19",
+          "position": {
+            "x": 12,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-t1"
+        },
+        "HJD2_KF1c": {
+          "boundLiterals": {
+            "__out__": "0"
+          },
+          "description": "Startstep of Sequence (0...n)\nMovement goes backwards if BEGIN>END",
+          "label": "BEGIN",
+          "id": "HJD2_KF1c",
+          "position": {
+            "x": 17,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HknxVS5yq": {
+          "boundLiterals": {
+            "SkUjZA_L-": "On Boot",
+            "BJrfQaAyc": "0"
+          },
+          "id": "HknxVS5yq",
+          "type": "@/count-looped",
+          "position": {
+            "x": 15,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rkBEb69Jc": {
+          "boundLiterals": {
+            "__out__": "0"
+          },
+          "description": "End-Step of Sequence (0...16) my adding and truncating to BEGIN\n",
+          "label": "WIDTH",
+          "id": "rkBEb69Jc",
+          "position": {
+            "x": 19,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJhEZp9k5": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Number of steps to increment per trigger, may be negative for backwards-movements\n",
+          "label": "INC",
+          "id": "SJhEZp9k5",
+          "position": {
+            "x": 16,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rk4RqvT19": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "CV input\n",
+          "label": "CVin",
+          "id": "rk4RqvT19",
+          "position": {
+            "x": 13,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJLpqKayc": {
+          "id": "BJLpqKayc",
+          "type": "@/step16-storage",
+          "position": {
+            "x": 12,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SynRKj0J5": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Enable Recordmode if > 0.5",
+          "label": "REC",
+          "id": "SynRKj0J5",
+          "position": {
+            "x": 14,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJ5WS6Cyq": {
+          "boundLiterals": {
+            "__out__": "0"
+          },
+          "description": "Endstep of Sequence (0...n)\nMovement goes backwards if END<BEGIN\n",
+          "label": "END",
+          "id": "rJ5WS6Cyq",
+          "position": {
+            "x": 18,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryECFsJec": {
+          "description": "Reset active step to BEGIN if triggered",
+          "label": "RST",
+          "id": "ryECFsJec",
+          "position": {
+            "x": 20,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/seq16-step-rec"
+    },
+    "@/step16-storage": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number step[16] = {31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46};  // Array of the 16 needed steps\n\n    void evaluate(Context ctx) \n    {\n        if (!isInputDirty<input_TRIG>(ctx))     // Next step to play or record\n            return;\n        \n        int step_idx = (int)getValue<input_STNUM>(ctx)-1;    // Current stepnumber (1-16)\n        if( ((step_idx<0) || (step_idx>15)) )    // Check for unexpected array over- or underflow!\n            return;\n        \n         if(getValue<input_REC>(ctx) > 0.45f)   // Record-mode?\n            step[step_idx] = getValue<input_CVin>(ctx);    // Input-CV that maybe has to be recorded (do not convert to MIDI-note here!)\n      \n#ifdef DEBUG_PRINT        \n        Serial.print(\" cv / step[\"); Serial.print(step_idx); Serial.print(\"] \"); Serial.print(getValue<input_CVin>(ctx)); Serial.print(\" / \"); Serial.println(step[step_idx]);\n#endif         \n        emitValue<output_CVout>(ctx, step[step_idx]); // Output the current step, possibly changed via step-record just now\n   \n    }\n}\n"
+        }
+      ],
+      "description": "Store up to 16 steps during recording or output previously stored CV-values",
+      "nodes": {
+        "BJApOY6kc": {
+          "description": "CV output of current step - Please note: you can use this as a thruough-option during record-mode as well!",
+          "label": "CVout",
+          "id": "BJApOY6kc",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "H15PFt6yc": {
+          "description": "Trigger next Step",
+          "label": "TRIG",
+          "id": "H15PFt6yc",
+          "position": {
+            "x": 0,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryg5wFY61c": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Number of step to be triggered and possibly recorded if record-mode is enabled\n",
+          "label": "STNUM",
+          "id": "ryg5wFY61c",
+          "position": {
+            "x": 3,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BkZcDFtakq": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "CV to be recorded if record-mode is enabled\n",
+          "label": "CVin",
+          "id": "BkZcDFtakq",
+          "position": {
+            "x": 1,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BkeD9iAJ5": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Enable Record if > 0.5\n",
+          "label": "REC",
+          "id": "BkeD9iAJ5",
+          "position": {
+            "x": 2,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Bk5Wtoklc": {
+          "id": "Bk5Wtoklc",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/step16-storage"
+    },
+    "@/16-step-sequencer-record": {
+      "description": "Main Node / Entry point for your 16 step-sequencer ",
+      "nodes": {
+        "H1HMiPpk9": {
+          "description": "Main patch, use this node when you want to integrate the 16-step seqeuncer into your environment!",
+          "id": "H1HMiPpk9",
+          "type": "@/seq16-step-rec",
+          "position": {
+            "x": 15,
+            "y": -2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/16-step-sequencer-record"
+    }
+  },
+  "license": "AGPL-3",
+  "version": "0.9.3",
+  "description": "16 Step sequencer with record option",
+  "name": "16-step-sequencer-library"
+}

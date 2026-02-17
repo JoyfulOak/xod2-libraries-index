@@ -1,0 +1,53 @@
+{
+  "description": "Returns supply voltage of Arduino board\n\nBased on the code by sweebee\n\nhttps://github.com/sweebee/Arduino-home-automation/blob/master/libraries/readVcc/readVcc.h",
+  "license": "gpd",
+  "name": "read-vcc",
+  "patches": {
+    "@/read-vcc": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n    long lastVcc;\n};\n\nlong readVcc() {\n\n  //delay(3); // Wait for Vref to settle \n    \n  // Read 1.1V reference against AVcc\n  // set the reference to Vcc and the measurement to the internal 1.1V reference\n  #if defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)\n    ADMUX = _BV(REFS0) | _BV(MUX4) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);\n  #elif defined (__AVR_ATtiny24__) || defined(__AVR_ATtiny44__) || defined(__AVR_ATtiny84__)\n    ADMUX = _BV(MUX5) | _BV(MUX0);\n  #elif defined (__AVR_ATtiny25__) || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny85__)\n    ADMUX = _BV(MUX3) | _BV(MUX2);\n  #else\n    ADMUX = _BV(REFS0) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);\n  #endif  \n \n  delay(3); // Wait for Vref to settle\n  \n  ADCSRA |= _BV(ADSC); // Start conversion\n  while (bit_is_set(ADCSRA,ADSC)); // measuring\n \n  uint8_t low  = ADCL; // must read ADCL first - it then locks ADCH  \n  uint8_t high = ADCH; // unlocks both\n \n  long result = (high<<8) | low;\n \n  result = 1125300L / result; // Calculate Vcc (in mV); 1125300 = 1.1*1023*1000\n  return result; // Vcc in millivolts\n}\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n\n     \n    //State* state = getState(ctx);\n\n    if(isSettingUp()) state->lastVcc = 0.0;\n    \n    if(isInputDirty<input_UPD>(ctx)){\n        state->lastVcc = readVcc();\n        emitValue<output_VCC>(ctx, state->lastVcc);\n    }else{\n        return;\n    }\n\n}\n\n"
+        }
+      ],
+      "description": "Returns supply voltage of Arduino board\n\nBased on the code by sweebee\n\nhttps://github.com/sweebee/Arduino-home-automation/blob/master/libraries/readVcc/readVcc.h",
+      "nodes": {
+        "BJgRPcX6R8": {
+          "id": "BJgRPcX6R8",
+          "label": "VCC",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BkRD5m6RI": {
+          "id": "BkRD5m6RI",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJ-Aw5X6C8": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "id": "rJ-Aw5X6C8",
+          "label": "UPD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/read-vcc"
+    }
+  },
+  "version": "1.0.5"
+}

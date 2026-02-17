@@ -1,0 +1,285 @@
+{
+  "description": "Nodes for use with I2C-Text-LCD-Displays",
+  "license": "Public",
+  "name": "lcd-i2c",
+  "patches": {
+    "@/main": {
+      "nodes": {
+        "Bkw4bFqXM": {
+          "id": "Bkw4bFqXM",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "@/text-lcd-16x4-i2c"
+        },
+        "rkcrgF9QM": {
+          "id": "rkcrgF9QM",
+          "position": {
+            "x": 68,
+            "y": 102
+          },
+          "type": "@/text-lcd-20x4-i2c"
+        },
+        "ryGbDKqQM": {
+          "id": "ryGbDKqQM",
+          "type": "@/text-lcd-16x3-i2c",
+          "position": {
+            "x": 68,
+            "y": 306
+          }
+        }
+      },
+      "path": "@/main"
+    },
+    "@/text-lcd-16x4-i2c": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\n{{#global}}\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n{{/global}}\n\nstruct State {\n    LiquidCrystal_I2C* lcd;\n};\n\n{{ GENERATED_CODE }}\n\nvoid printLine(LiquidCrystal_I2C* lcd, uint8_t lineIndex, XString str) {\n    lcd->setCursor(0, lineIndex);\n    uint8_t whitespace = 16;\n    for (auto it = str.iterate(); it; ++it, --whitespace)\n        lcd->write(*it);\n\n    // Clear the rest of the line\n    while (whitespace--)\n        lcd->write(' ');\n}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    auto lcd = state->lcd;\n    if (!state->lcd) {\n        uint8_t addr = getValue<input_ADDR>(ctx);\n        state->lcd = lcd = new LiquidCrystal_I2C(addr, 16, 4);\n        lcd->begin();\n    }\n\n    printLine(lcd, 0, getValue<input_L1>(ctx));\n    printLine(lcd, 1, getValue<input_L2>(ctx));\n    printLine(lcd, 2, getValue<input_L3>(ctx));\n    printLine(lcd, 3, getValue<input_L4>(ctx));\n    lcd->setBacklight(getValue<input_BL>(ctx));\n}\n"
+        }
+      ],
+      "nodes": {
+        "HkbCWbKcQM": {
+          "id": "HkbCWbKcQM",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1MAWbt9Qz": {
+          "boundValues": {
+            "__out__": true
+          },
+          "description": "Backlight enable/disable",
+          "id": "S1MAWbt9Qz",
+          "label": "BL",
+          "position": {
+            "x": 33,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "S1mCZWF9XM": {
+          "boundValues": {
+            "__out__": 39
+          },
+          "description": "I²C address of the expander chip.",
+          "id": "S1mCZWF9XM",
+          "label": "ADDR",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJ4RWZYq7G": {
+          "description": "Text for the third line",
+          "id": "SJ4RWZYq7G",
+          "label": "L3",
+          "position": {
+            "x": 169,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SkgCZZK57f": {
+          "description": "Text for the second line",
+          "id": "SkgCZZK57f",
+          "label": "L2",
+          "position": {
+            "x": 135,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "r1HRZbFcQG": {
+          "description": "Text for the fourth line",
+          "id": "r1HRZbFcQG",
+          "label": "L4",
+          "position": {
+            "x": 203,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "ryAZ-Fcmf": {
+          "description": "Text for the first line",
+          "id": "ryAZ-Fcmf",
+          "label": "L1",
+          "position": {
+            "x": 101,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-string"
+        }
+      },
+      "path": "@/text-lcd-16x4-i2c"
+    },
+    "@/text-lcd-20x4-i2c": {
+      "attachments": [
+        {
+          "content": "\n{{#global}}\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n{{/global}}\n\nstruct State {\n    LiquidCrystal_I2C* lcd;\n};\n\n{{ GENERATED_CODE }}\n\nvoid printLine(LiquidCrystal_I2C* lcd, uint8_t lineIndex, XString str) {\n    lcd->setCursor(0, lineIndex);\n    uint8_t whitespace = 20;\n    for (auto it = str.iterate(); it; ++it, --whitespace)\n        lcd->write(*it);\n\n    // Clear the rest of the line\n    while (whitespace--)\n        lcd->write(' ');\n}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    auto lcd = state->lcd;\n    if (!state->lcd) {\n        uint8_t addr = getValue<input_ADDR>(ctx);\n        state->lcd = lcd = new LiquidCrystal_I2C(addr, 20, 4);\n        lcd->begin();\n    }\n\n    printLine(lcd, 0, getValue<input_L1>(ctx));\n    printLine(lcd, 1, getValue<input_L2>(ctx));\n    printLine(lcd, 2, getValue<input_L3>(ctx));\n    printLine(lcd, 3, getValue<input_L4>(ctx));\n    lcd->setBacklight(getValue<input_BL>(ctx));\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1GMc1K57f": {
+          "boundValues": {
+            "__out__": true
+          },
+          "description": "Backlight enable/disable",
+          "id": "B1GMc1K57f",
+          "label": "BL",
+          "position": {
+            "x": 33,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "BkH9kt57f": {
+          "description": "Text for the fourth line",
+          "id": "BkH9kt57f",
+          "label": "L4",
+          "position": {
+            "x": 203,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "HkMq1F5Xz": {
+          "description": "Text for the first line",
+          "id": "HkMq1F5Xz",
+          "label": "L1",
+          "position": {
+            "x": 101,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "S1lzqkt9QG": {
+          "description": "Text for the second line",
+          "id": "S1lzqkt9QG",
+          "label": "L2",
+          "position": {
+            "x": 135,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SyWM5ytc7M": {
+          "id": "SyWM5ytc7M",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJ7fqkF9QG": {
+          "boundValues": {
+            "__out__": 39
+          },
+          "description": "I²C address of the expander chip.",
+          "id": "rJ7fqkF9QG",
+          "label": "ADDR",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkVcJKcXz": {
+          "description": "Text for the third line",
+          "id": "rkVcJKcXz",
+          "label": "L3",
+          "position": {
+            "x": 169,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-string"
+        }
+      },
+      "path": "@/text-lcd-20x4-i2c"
+    },
+    "@/text-lcd-16x3-i2c": {
+      "nodes": {
+        "BJWRUF57z": {
+          "id": "BJWRUF57z",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJlb0UK9Qf": {
+          "boundValues": {
+            "__out__": true
+          },
+          "description": "Backlight enable/disable",
+          "id": "rJlb0UK9Qf",
+          "label": "BL",
+          "position": {
+            "x": 33,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "HJbbA8Kcmf": {
+          "boundValues": {
+            "__out__": 39
+          },
+          "description": "I²C address of the expander chip.",
+          "id": "HJbbA8Kcmf",
+          "label": "ADDR",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SyGb0LKcXM": {
+          "description": "Text for the third line",
+          "id": "SyGb0LKcXM",
+          "label": "L3",
+          "position": {
+            "x": 169,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "r1mZALtqQG": {
+          "description": "Text for the second line",
+          "id": "r1mZALtqQG",
+          "label": "L2",
+          "position": {
+            "x": 135,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SkS-AItq7f": {
+          "description": "Text for the first line",
+          "id": "SkS-AItq7f",
+          "label": "L1",
+          "position": {
+            "x": 101,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-string"
+        }
+      },
+      "path": "@/text-lcd-16x3-i2c",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\n{{#global}}\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n{{/global}}\n\nstruct State {\n    LiquidCrystal_I2C* lcd;\n};\n\n{{ GENERATED_CODE }}\n\nvoid printLine(LiquidCrystal_I2C* lcd, uint8_t lineIndex, XString str) {\n    lcd->setCursor(0, lineIndex);\n    uint8_t whitespace = 16;\n    for (auto it = str.iterate(); it; ++it, --whitespace)\n        lcd->write(*it);\n\n    // Clear the rest of the line\n    while (whitespace--)\n        lcd->write(' ');\n}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    auto lcd = state->lcd;\n    if (!state->lcd) {\n        uint8_t addr = getValue<input_ADDR>(ctx);\n        state->lcd = lcd = new LiquidCrystal_I2C(addr, 16, 3);\n        lcd->begin();\n    }\n\n    printLine(lcd, 0, getValue<input_L1>(ctx));\n    printLine(lcd, 1, getValue<input_L2>(ctx));\n    printLine(lcd, 2, getValue<input_L3>(ctx));\n    lcd->setBacklight(getValue<input_BL>(ctx));\n}\n"
+        }
+      ]
+    }
+  },
+  "version": "0.0.2"
+}

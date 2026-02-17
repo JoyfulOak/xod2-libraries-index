@@ -1,0 +1,515 @@
+{
+  "description": "A simplified one dimensional Kalman filter implementation for Arduino.",
+  "license": "GPL",
+  "version": "0.0.2",
+  "patches": {
+    "@/kalman-filter": {
+      "nodes": {
+        "BJfQ5XrxN": {
+          "id": "BJfQ5XrxN",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "label": "X",
+          "description": "Value of interest"
+        },
+        "B1VQ97SxE": {
+          "id": "B1VQ97SxE",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "label": "Q",
+          "description": "Process noise covariance",
+          "boundLiterals": {
+            "__out__": "0.125"
+          }
+        },
+        "BkUQ57HeV": {
+          "id": "BkUQ57HeV",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "label": "R",
+          "description": "Measurement noise covariance",
+          "boundLiterals": {
+            "__out__": "32"
+          }
+        },
+        "BJPQ5XreN": {
+          "id": "BJPQ5XreN",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 238,
+            "y": 0
+          },
+          "label": "P",
+          "description": "Estimation error covariance",
+          "boundLiterals": {
+            "__out__": "1023"
+          }
+        },
+        "SkKQ5XHg4": {
+          "id": "SkKQ5XHg4",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 306,
+            "y": 0
+          },
+          "label": "K",
+          "description": "Kalman gain"
+        },
+        "Sk6mqmHgE": {
+          "id": "Sk6mqmHgE",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 34,
+            "y": 102
+          }
+        },
+        "r1oVa7Bg4": {
+          "id": "r1oVa7Bg4",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "label": "VAL",
+          "description": "Filtered Value"
+        },
+        "ry2EpXrg4": {
+          "id": "ry2EpXrg4",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "label": "PNoise",
+          "description": "ProcessNoise"
+        },
+        "S1aNpXreE": {
+          "id": "S1aNpXreE",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 170,
+            "y": 204
+          },
+          "label": "SNoise",
+          "description": "SensorNoise"
+        },
+        "rkJr6mHlE": {
+          "id": "rkJr6mHlE",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 238,
+            "y": 204
+          },
+          "label": "EError",
+          "description": "EstimatedError"
+        }
+      },
+      "path": "@/kalman-filter",
+      "description": "The variables are X for the filtered value, Q for the process noise, R for the sensor noise, P for the estimated error and K for the Kalman Gain. The state of the filter is defined by the values of these variables.\n\nThe initial values for p is not very important since it is adjusted during the process. It must be just high enough to narrow down. The initial value for the readout is also not very important, since it is updated during the process. But tweaking the values for the process noise and sensor noise is essential to get clear readouts.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/bachagas/Kalman\"\n\n\n{{#global}}\n#include <Kalman.h>\n{{/global}}\n\nstruct State {\n    uint8_t mem[sizeof(Kalman)];\n};\n\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n\n    if (isSettingUp()) {\n        auto state = getState(ctx);\n        // Create a new object in the memory area reserved previously.\n        auto kalman = new (state->mem) Kalman(getValue<input_Q>(ctx),getValue<input_R>(ctx), getValue<input_P>(ctx), getValue<input_K>(ctx));\n        return;\n    }\n\n    auto state = getState(ctx);\n    auto kalman = reinterpret_cast<Kalman*>(state->mem);\n\n    emitValue<output_VAL>(ctx, kalman->getFilteredValue(getValue<input_X>(ctx)));\n    emitValue<output_PNoise>(ctx, kalman->getProcessNoise());\n    emitValue<output_SNoise>(ctx, kalman->getSensorNoise());\n    emitValue<output_EError>(ctx, kalman->getEstimatedError());\n}\n"
+        }
+      ]
+    },
+    "@/example": {
+      "nodes": {
+        "HJFU-ErxN": {
+          "id": "HJFU-ErxN",
+          "type": "@/kalman-filter",
+          "position": {
+            "x": 34,
+            "y": 204
+          }
+        },
+        "HJdxmVSl4": {
+          "id": "HJdxmVSl4",
+          "type": "nkrkv/random/random",
+          "position": {
+            "x": 34,
+            "y": 102
+          }
+        },
+        "SkTlQESx4": {
+          "id": "SkTlQESx4",
+          "type": "xod/core/sine-wave",
+          "position": {
+            "x": 34,
+            "y": 0
+          }
+        },
+        "Bk55NSHxE": {
+          "id": "Bk55NSHxE",
+          "type": "xod/core/watch",
+          "position": {
+            "x": 34,
+            "y": 306
+          }
+        },
+        "HJAq4rSeV": {
+          "id": "HJAq4rSeV",
+          "type": "xod/core/watch",
+          "position": {
+            "x": 68,
+            "y": 306
+          }
+        },
+        "H1eRc4BBxN": {
+          "id": "H1eRc4BBxN",
+          "type": "xod/core/watch",
+          "position": {
+            "x": 102,
+            "y": 306
+          }
+        },
+        "rykiVBBg4": {
+          "id": "rykiVBBg4",
+          "type": "xod/core/watch",
+          "position": {
+            "x": 136,
+            "y": 306
+          }
+        },
+        "ByljVHSeN": {
+          "id": "ByljVHSeN",
+          "type": "xod/core/watch",
+          "position": {
+            "x": 170,
+            "y": 102
+          }
+        },
+        "ryxgi4SHx4": {
+          "id": "ryxgi4SHx4",
+          "type": "xod/core/watch",
+          "position": {
+            "x": 238,
+            "y": 204
+          }
+        }
+      },
+      "links": {
+        "HJZWQVHg4": {
+          "id": "HJZWQVHg4",
+          "output": {
+            "nodeId": "SkTlQESx4",
+            "pinKey": "BJB_WYnYyM"
+          },
+          "input": {
+            "nodeId": "HJdxmVSl4",
+            "pinKey": "ryegt8FwM"
+          }
+        },
+        "Bkf-XNrxE": {
+          "id": "Bkf-XNrxE",
+          "output": {
+            "nodeId": "HJdxmVSl4",
+            "pinKey": "rkJ7YItPM"
+          },
+          "input": {
+            "nodeId": "HJFU-ErxN",
+            "pinKey": "BJfQ5XrxN"
+          }
+        },
+        "ByUo4HSxN": {
+          "id": "ByUo4HSxN",
+          "output": {
+            "nodeId": "SkTlQESx4",
+            "pinKey": "BJB_WYnYyM"
+          },
+          "input": {
+            "nodeId": "ByljVHSeN",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "rJ_jVrBeN": {
+          "id": "rJ_jVrBeN",
+          "output": {
+            "nodeId": "HJdxmVSl4",
+            "pinKey": "rkJ7YItPM"
+          },
+          "input": {
+            "nodeId": "ryxgi4SHx4",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "Sk5jNBHlN": {
+          "id": "Sk5jNBHlN",
+          "output": {
+            "nodeId": "HJFU-ErxN",
+            "pinKey": "r1oVa7Bg4"
+          },
+          "input": {
+            "nodeId": "Bk55NSHxE",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "ByijNSreN": {
+          "id": "ByijNSreN",
+          "output": {
+            "nodeId": "HJFU-ErxN",
+            "pinKey": "ry2EpXrg4"
+          },
+          "input": {
+            "nodeId": "HJAq4rSeV",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "Hk2oVBBeV": {
+          "id": "Hk2oVBBeV",
+          "output": {
+            "nodeId": "HJFU-ErxN",
+            "pinKey": "S1aNpXreE"
+          },
+          "input": {
+            "nodeId": "H1eRc4BBxN",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "SJTi4BreE": {
+          "id": "SJTi4BreE",
+          "output": {
+            "nodeId": "HJFU-ErxN",
+            "pinKey": "rkJr6mHlE"
+          },
+          "input": {
+            "nodeId": "rykiVBBg4",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/example"
+    },
+    "@/example-serial-plotter": {
+      "nodes": {
+        "rkhtNSHxV": {
+          "id": "rkhtNSHxV",
+          "type": "@/kalman-filter",
+          "position": {
+            "x": -1,
+            "y": 203
+          }
+        },
+        "HyxnKErHg4": {
+          "id": "HyxnKErHg4",
+          "type": "nkrkv/random/random",
+          "position": {
+            "x": -1,
+            "y": 101
+          }
+        },
+        "S1WntVrBeE": {
+          "id": "S1WntVrBeE",
+          "type": "xod/core/sine-wave",
+          "position": {
+            "x": -1,
+            "y": -1
+          }
+        },
+        "SkfhK4SHe4": {
+          "id": "SkfhK4SHe4",
+          "type": "xod/core/pulse-on-change",
+          "position": {
+            "x": 203,
+            "y": -1
+          }
+        },
+        "B17hK4rHeV": {
+          "id": "B17hK4rHeV",
+          "type": "xod/core/concat",
+          "position": {
+            "x": 135,
+            "y": 305
+          },
+          "boundLiterals": {
+            "BkeKcj6ZZ": "\",\"",
+            "BkeKcj6ZZ-$2": "\",\"",
+            "BkeKcj6ZZ-$4": "\",\""
+          },
+          "arityLevel": 4
+        },
+        "rJE3FNSrgV": {
+          "id": "rJE3FNSrgV",
+          "type": "xod/core/format-number",
+          "position": {
+            "x": -1,
+            "y": 305
+          }
+        },
+        "ryH2Y4BrlV": {
+          "id": "ryH2Y4BrlV",
+          "type": "xod/core/format-number",
+          "position": {
+            "x": 203,
+            "y": 203
+          }
+        },
+        "rkL2tVSSxE": {
+          "id": "rkL2tVSSxE",
+          "type": "xod/core/format-number",
+          "position": {
+            "x": 135,
+            "y": 101
+          }
+        },
+        "SkwhYNBSxN": {
+          "id": "SkwhYNBSxN",
+          "type": "xod/core/console-log",
+          "position": {
+            "x": 135,
+            "y": 407
+          }
+        }
+      },
+      "links": {
+        "ryd2YNBHg4": {
+          "id": "ryd2YNBHg4",
+          "output": {
+            "nodeId": "S1WntVrBeE",
+            "pinKey": "BJB_WYnYyM"
+          },
+          "input": {
+            "nodeId": "HyxnKErHg4",
+            "pinKey": "ryegt8FwM"
+          }
+        },
+        "SyK2K4HBg4": {
+          "id": "SyK2K4HBg4",
+          "output": {
+            "nodeId": "HyxnKErHg4",
+            "pinKey": "rkJ7YItPM"
+          },
+          "input": {
+            "nodeId": "rkhtNSHxV",
+            "pinKey": "BJfQ5XrxN"
+          }
+        },
+        "ry5nFNHSgN": {
+          "id": "ry5nFNHSgN",
+          "output": {
+            "nodeId": "S1WntVrBeE",
+            "pinKey": "BJB_WYnYyM"
+          },
+          "input": {
+            "nodeId": "SkfhK4SHe4",
+            "pinKey": "BkjI-COLb"
+          }
+        },
+        "S1i2FNrHlN": {
+          "id": "S1i2FNrHlN",
+          "output": {
+            "nodeId": "rkhtNSHxV",
+            "pinKey": "r1oVa7Bg4"
+          },
+          "input": {
+            "nodeId": "rJE3FNSrgV",
+            "pinKey": "BJlHojaWZ"
+          }
+        },
+        "SJhnKNSBg4": {
+          "id": "SJhnKNSBg4",
+          "output": {
+            "nodeId": "S1WntVrBeE",
+            "pinKey": "BJB_WYnYyM"
+          },
+          "input": {
+            "nodeId": "rkL2tVSSxE",
+            "pinKey": "BJlHojaWZ"
+          }
+        },
+        "rkphF4HHeE": {
+          "id": "rkphF4HHeE",
+          "output": {
+            "nodeId": "HyxnKErHg4",
+            "pinKey": "rkJ7YItPM"
+          },
+          "input": {
+            "nodeId": "ryH2Y4BrlV",
+            "pinKey": "BJlHojaWZ"
+          }
+        },
+        "HJC2FESreE": {
+          "id": "HJC2FESreE",
+          "output": {
+            "nodeId": "rkL2tVSSxE",
+            "pinKey": "r1H_oipZb"
+          },
+          "input": {
+            "nodeId": "B17hK4rHeV",
+            "pinKey": "Hkqu9oaWb"
+          }
+        },
+        "Hy1g3F4HrxV": {
+          "id": "Hy1g3F4HrxV",
+          "output": {
+            "nodeId": "ryH2Y4BrlV",
+            "pinKey": "r1H_oipZb"
+          },
+          "input": {
+            "nodeId": "B17hK4rHeV",
+            "pinKey": "BkeKcj6ZZ-$1"
+          }
+        },
+        "Bkle3tVrHlE": {
+          "id": "Bkle3tVrHlE",
+          "output": {
+            "nodeId": "rJE3FNSrgV",
+            "pinKey": "r1H_oipZb"
+          },
+          "input": {
+            "nodeId": "B17hK4rHeV",
+            "pinKey": "BkeKcj6ZZ-$3"
+          }
+        },
+        "Bk-lnt4SSeE": {
+          "id": "Bk-lnt4SSeE",
+          "output": {
+            "nodeId": "B17hK4rHeV",
+            "pinKey": "rksccsp-W"
+          },
+          "input": {
+            "nodeId": "SkwhYNBSxN",
+            "pinKey": "HJdO9HwJ-"
+          }
+        },
+        "Bkzx3YErBe4": {
+          "id": "Bkzx3YErBe4",
+          "output": {
+            "nodeId": "SkfhK4SHe4",
+            "pinKey": "ByAIWR_UZ"
+          },
+          "input": {
+            "nodeId": "SkwhYNBSxN",
+            "pinKey": "S1n95SDJb"
+          }
+        }
+      },
+      "comments": {
+        "Sk524BrlN": {
+          "id": "Sk524BrlN",
+          "position": {
+            "x": 374,
+            "y": 102
+          },
+          "size": {
+            "width": 272,
+            "height": 153
+          },
+          "content": "Upload with debug on then exit debug and open the Arduino IDE Serial Plotter"
+        }
+      },
+      "path": "@/example-serial-plotter"
+    }
+  },
+  "name": "kalman-filter"
+}

@@ -1,0 +1,186 @@
+{
+  "description": "This is an example of the Adafruit 16-channel PWM & Servo driver\nJust a simple wrapper (NEEDS TESTING)",
+  "license": "GPL",
+  "name": "i2c-pwm-servo-16ch",
+  "patches": {
+    "@/i2c-pwm-servo": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n    \n    auto pwm = getValue<input_DEV>(ctx);\n\n    pwm->setPWM(getValue<input_Pin>(ctx), 0, getValue<input_PWM>(ctx));\n\n    emitValue<output_OK>(ctx, 1);\n}"
+        }
+      ],
+      "description": "Set Servo PWM output",
+      "nodes": {
+        "Bk-7L-1Rm": {
+          "id": "Bk-7L-1Rm",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Hy64dWkC7": {
+          "id": "Hy64dWkC7",
+          "type": "@/input-i2c-servo-pwm-device",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "label": "DEV"
+        },
+        "SyvSdb1RX": {
+          "id": "SyvSdb1RX",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "label": "PWM",
+          "description": "Freq 0 to 4096"
+        },
+        "B1MTobkRm": {
+          "id": "B1MTobkRm",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "label": "Pin",
+          "description": "Pin 1 to 16"
+        },
+        "Sk6_a-yCX": {
+          "id": "Sk6_a-yCX",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "label": "OK",
+          "description": "Set"
+        },
+        "SyFNkM1CQ": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers new write",
+          "id": "SyFNkM1CQ",
+          "label": "UPD",
+          "position": {
+            "x": 238,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/i2c-pwm-servo"
+    },
+    "@/i2c-servo-pwm-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library\"\n// Include C++ library:\n{{#global}}\n#include <Wire.h>\n#include <Adafruit_PWMServoDriver.h>\n{{/global}}\n\nstruct State {\n    uint8_t mem[sizeof(Adafruit_PWMServoDriver)];\n};\n\n// Define our custom type as a pointer on the class instance.\nusing Type = Adafruit_PWMServoDriver*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // It should be evaluated only once on the first (setup) transaction\n    if (!isSettingUp())\n        return;\n\n    auto state = getState(ctx);\n\n    // Create a new object in the memory area reserved previously.\n    Type pwm = new (state->mem) Adafruit_PWMServoDriver();\n    pwm->begin();\n    pwm->setPWMFreq(getValue<input_PWMFreq>(ctx));  // Analog servos run at ~60 Hz updates\n\n    emitValue<output_DEV>(ctx, pwm);\n}"
+        }
+      ],
+      "description": "i2c Device. Uses the default address 0x40",
+      "nodes": {
+        "HJQpRrbJAm": {
+          "id": "HJQpRrbJAm",
+          "label": "DEV",
+          "position": {
+            "x": 67,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "Sk-6AHbJAm": {
+          "description": "FTOLDE Display device set data pins as per your setup.",
+          "id": "Sk-6AHbJAm",
+          "position": {
+            "x": 68,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Hy9E5ZkRQ": {
+          "id": "Hy9E5ZkRQ",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "label": "PWMFreq",
+          "description": "PWM frequency 0 to 1600",
+          "boundLiterals": {
+            "__out__": "60"
+          }
+        }
+      },
+      "path": "@/i2c-servo-pwm-device"
+    },
+    "@/example": {
+      "links": {
+        "HyEi9ZyAX": {
+          "id": "HyEi9ZyAX",
+          "output": {
+            "nodeId": "ryb4uW1Am",
+            "pinKey": "HJQpRrbJAm"
+          },
+          "input": {
+            "nodeId": "S1QVdZyAX",
+            "pinKey": "Hy64dWkC7"
+          }
+        },
+        "S1d5yGkR7": {
+          "id": "S1d5yGkR7",
+          "output": {
+            "nodeId": "ryb4uW1Am",
+            "pinKey": "HJQpRrbJAm"
+          },
+          "input": {
+            "nodeId": "SkE91MJR7",
+            "pinKey": "Hy64dWkC7"
+          }
+        }
+      },
+      "nodes": {
+        "ryb4uW1Am": {
+          "id": "ryb4uW1Am",
+          "type": "@/i2c-servo-pwm-device",
+          "position": {
+            "x": 204,
+            "y": 0
+          }
+        },
+        "S1QVdZyAX": {
+          "id": "S1QVdZyAX",
+          "type": "@/i2c-pwm-servo",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "boundLiterals": {
+            "B1MTobkRm": "1",
+            "SyvSdb1RX": "20"
+          }
+        },
+        "SkE91MJR7": {
+          "id": "SkE91MJR7",
+          "type": "@/i2c-pwm-servo",
+          "position": {
+            "x": 272,
+            "y": 204
+          },
+          "boundLiterals": {
+            "B1MTobkRm": "2",
+            "SyvSdb1RX": "180"
+          }
+        }
+      },
+      "path": "@/example"
+    }
+  },
+  "version": "0.0.1"
+}

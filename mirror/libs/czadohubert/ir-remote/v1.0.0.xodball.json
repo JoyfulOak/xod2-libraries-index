@@ -1,0 +1,167 @@
+{
+  "patches": {
+    "@/ir-remote": {
+      "nodes": {
+        "B1lkwsMeq": {
+          "id": "B1lkwsMeq",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "By6yvsfg5": {
+          "label": "PORT",
+          "id": "By6yvsfg5",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SyJWDifgq": {
+          "label": "UPD",
+          "id": "SyJWDifgq",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SyXfPozxc": {
+          "id": "SyXfPozxc",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/ir-remote",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/z3t0/Arduino-IRremote\"\n\n{{#global}}\n#include <IRremote.h>\n{{/global}}\n\nstruct State {\n    int configuredPort = -1;\n    IRrecv* irrecv;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    auto port = getValue<input_PORT>(ctx);\n    auto irrecv = state->irrecv;\n    if (state->configuredPort != port) {\n        state->irrecv = irrecv = new IRrecv(port);\n        irrecv->enableIRIn(); // Start the receiver\n        state->configuredPort = port;\n    }\n    if (isInputDirty<input_UPD>(ctx)) {\n        long int out = 0;\n        decode_results results;         //cache of decode of IR remoter control\n        if (irrecv->decode(&results)) {\n            out = results.value;\n            irrecv->resume();\n        }\n        emitValue<output_OUT>(ctx, out);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/ir-gate": {
+      "nodes": {
+        "BJnqOsMgc": {
+          "id": "BJnqOsMgc",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "BkfjOiGg9": {
+          "id": "BkfjOiGg9",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "IR  IN"
+        },
+        "SJSjOoGx5": {
+          "id": "SJSjOoGx5",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "IR CODE"
+        },
+        "Skb2uozeq": {
+          "id": "Skb2uozeq",
+          "type": "xod/patch-nodes/output-boolean",
+          "position": {
+            "x": 5,
+            "y": 4,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/ir-gate",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n\n        auto inValue = getValue<input_IN>(ctx);\n        emitValue<output_OUT>(ctx, inValue);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/examle": {
+      "nodes": {
+        "H1KXtoGxc": {
+          "id": "H1KXtoGxc",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/examle",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n\n        auto inValue = getValue<input_IN>(ctx);\n        emitValue<output_OUT>(ctx, inValue);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/ir-decode": {
+      "nodes": {
+        "SkyRtjfl9": {
+          "id": "SkyRtjfl9",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rklk0tiGec": {
+          "id": "rklk0tiGec",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SyZ1Ctifg5": {
+          "id": "SyZ1Ctifg5",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/ir-decode",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    long int out = 0xFF;\n    long int key = getValue<input_IN>(ctx);\n                switch (key & 0xFFFFu) {\n                case 0xFFFF: // repeat\n                    out = getValue<output_OUT>(ctx);\n                    break;\n                case 0x629D: // up\n                case 0x1DBB:\n                    out = 11;\n                    break;\n                case 0xD41F: // left\n                case 0x22DD:\n                    out = 12;\n                    break;\n                case 0x4B1B: // OK\n                case 0x02FD:\n                    out = 13;\n                    break;\n                case 0x4DBB: // right\n                case 0xC23D:\n                    out = 14;\n                    break;\n                case 0xA857: // down\n                case 0xEDDB:\n                    out = 15;\n                    break;\n                case 0xE57B: // 1\n                case 0x6897:\n                    out = 1;\n                    break;\n                case 0x3BFB: // 2\n                case 0x9867:\n                    out = 2;\n                    break;\n                case 0xB04F: // 3\n                case 0x1643:\n                    out = 3;\n                    break;\n                case 0x30CF:\n                case 0xBE3F:\n                    out = 4;\n                    break;\n                case 0x18E7:\n                case 0xE3F7:\n                    out = 5;\n                    break;\n                case 0x7A85:\n                case 0x021B:\n                    out = 6;\n                    break;\n                case 0x657B:\n                case 0x10EF:\n                    out = 7;\n                    break;\n                case 0x38C7:\n                case 0x3CBB:\n                    out = 8;\n                    break;\n                case 0xE79F:\n                case 0x5AA5:\n                    out = 9;\n                    break;\n                case 0x4AB5: // 0\n                case 0x157B:\n                    out = 0;\n                    break;\n                case 0x42BD: // *\n                case 0xFDF7:\n                    out = 16;\n                    break;\n                case 0xFC1B: // #\n                case 0x52AD:\n                    out = 17;\n                    break;\n            }\n    emitValue<output_OUT>(ctx, out);\n}\n"
+        }
+      ]
+    }
+  },
+  "version": "1.0.0",
+  "description": "library to operate the ir remote control",
+  "name": "ir-remote"
+}

@@ -1,0 +1,202 @@
+{
+  "apiKey": "53cb64d1-855f-45e8-a43f-afb51db2ad32",
+  "description": "Nodes to work with the bme680 environmental sensor",
+  "name": "bme680",
+  "patches": {
+    "@/bme680sensor": {
+      "attachments": [
+        {
+          "content": "\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n    \n  \n  if (!isInputDirty<input_UPD>(ctx))\n  return;\n  \n  int32_t  temp, humidity, pressure, gas;  // BME readings\n  char     buf[16];                        // sprintf text buffer\n  float    alt;                            // Temporary variable\n  char buft[16];\n  char bufh[16];\n  char bufp[16];\n  char bufg[16];\n  int Num1;\n  int Num2;\n  int Num3;\n  int Num4;\n   \n  auto BME680 = getValue<input_IN>(ctx);\n\n  BME680->getSensorData(temp, humidity, pressure, gas); \n  \n  temp = temp/100;\n  emitValue<output_Temperature>(ctx, temp);\n  humidity = humidity/1000;\n  emitValue<output_Humidity>(ctx, humidity);\n  pressure = pressure/100;\n  emitValue<output_Pressure>(ctx, pressure);\n  gas = gas/100;\n  emitValue<output_Gas>(ctx, gas);\n  emitValue<output_DONE>(ctx, 1);\n\n}\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJSaPQYqP": {
+          "description": "Needs to connect with the self-ouput from the bme680-device node for initialisation",
+          "id": "BJSaPQYqP",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-bme680-device"
+        },
+        "BkRYISKqw": {
+          "description": "Outputs the humidity (in %)",
+          "id": "BkRYISKqw",
+          "label": "Humidity",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ByOQimKqw": {
+          "description": "Pulses 1 when the node has been executed",
+          "id": "ByOQimKqw",
+          "label": "DONE",
+          "position": {
+            "x": 12,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HyhCtUBY5P": {
+          "description": "Outputs the gas concentration (in kOhm)",
+          "id": "HyhCtUBY5P",
+          "label": "Gas",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "S1jpKUHFcw": {
+          "description": "Outputs the environmental Pressure (in hPa)",
+          "id": "S1jpKUHFcw",
+          "label": "Pressure",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SJZBPmKcw": {
+          "id": "SJZBPmKcw",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Sk5VoXKqw": {
+          "description": "Updates the pin",
+          "id": "Sk5VoXKqw",
+          "label": "UPD",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkjY8rF9v": {
+          "description": "Outputs the temperature (in oC)",
+          "id": "SkjY8rF9v",
+          "label": "Temperature",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/bme680sensor"
+    },
+    "@/bme680-device": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/SV-Zanshin/BME680\"\n#include <Zanshin_BME680.h>\n#include <Adafruit_Sensor.h>\n\n\n#define BME_SCK 13\n#define BME_MISO 12\n#define BME_MOSI 11\n#define BME_CS 10\n\n\n\n\n\n\nnode {\n\n\n        meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = BME680_Class*;\n    }\n\n    // Create an object of class Adafruit_TSL2591\n    BME680_Class BME680 = BME680_Class();\n\n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n       if (!isInputDirty<input_UPD>(ctx))\n       return;\n        Number Test = 6;\n        uint8_t IIC_ADDR;\n        IIC_ADDR = getValue<input_ADDR>(ctx);\n        while(!BME680.begin(IIC_ADDR)){\n\n            Test = 16;\n        }\n\n        BME680.begin(IIC_ADDR);\n\n        BME680.setOversampling(TemperatureSensor, Oversample16);  // Use enumerated type values\n        BME680.setOversampling(HumiditySensor, Oversample16);     // Use enumerated type values\n        BME680.setOversampling(PressureSensor, Oversample16);     // Use enumerated type values\n        BME680.setIIRFilter(IIR4);\n        BME680.setGas(320, 150);  // 320�c for 150 milliseconds\n        \n        emitValue<output_OUT>(ctx, &BME680);\n\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BkL58mY9v": {
+          "description": "Pin to control the initialisation node",
+          "id": "BkL58mY9v",
+          "label": "UPD",
+          "position": {
+            "x": 24,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S14abQtcv": {
+          "boundLiterals": {
+            "__out__": "76h"
+          },
+          "description": "Address of the bme680 device",
+          "id": "S14abQtcv",
+          "label": "ADDR",
+          "position": {
+            "x": 23,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SJFL2DHqP": {
+          "id": "SJFL2DHqP",
+          "position": {
+            "x": 23,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJ14f_Bcw": {
+          "description": "NEeds to be connected to the bme680 sensor node",
+          "id": "rJ14f_Bcw",
+          "position": {
+            "x": 23,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/bme680-device"
+    },
+    "@/example-bme680": {
+      "links": {
+        "H1piJrY5w": {
+          "id": "H1piJrY5w",
+          "input": {
+            "nodeId": "rk2ikrY5P",
+            "pinKey": "BJSaPQYqP"
+          },
+          "output": {
+            "nodeId": "rJDjyHK5P",
+            "pinKey": "rJ14f_Bcw"
+          }
+        }
+      },
+      "nodes": {
+        "rJDjyHK5P": {
+          "boundLiterals": {
+            "BkL58mY9v": "On Boot"
+          },
+          "id": "rJDjyHK5P",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/bme680-device"
+        },
+        "rk2ikrY5P": {
+          "boundLiterals": {
+            "Sk5VoXKqw": "Continuously"
+          },
+          "id": "rk2ikrY5P",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/bme680sensor"
+        }
+      },
+      "path": "@/example-bme680"
+    }
+  }
+}

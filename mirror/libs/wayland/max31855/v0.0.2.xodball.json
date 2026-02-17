@@ -1,0 +1,218 @@
+{
+  "patches": {
+    "@/max31855": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/adafruit/Adafruit-MAX31855-library\"\n\n//Include C++ libraries\n#include <SPI.h>\n#include <Adafruit_MAX31855.h>\n\nnode {\n\n    meta {\n        using Type = Adafruit_MAX31855*;\n    }\n    \n    static_assert(isValidDigitalPort(constant_input_SCLK), \"must be a valid digital port\");\n    static_assert(isValidDigitalPort(constant_input_CS), \"must be a valid digital port\");\n    static_assert(isValidDigitalPort(constant_input_MISO), \"must be a valid digital port\");\n\n    Adafruit_MAX31855 thermocouple = Adafruit_MAX31855(constant_input_SCLK, constant_input_CS, constant_input_MISO);\n\n    void evaluate(Context ctx) {\n\n        if (isSettingUp()) {\n            if (!thermocouple.begin()) {\n                raiseError(ctx);\n                return;\n            }\n        }\n        \n        if (isInputDirty<input_UPD>(ctx)) {\n            emitValue<output_tempC>(ctx, thermocouple.readCelsius());\n            emitValue<output_DONE>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ],
+      "description": "MAX31855 Thermocouple Amplifier",
+      "nodes": {
+        "SkpIN1UBu": {
+          "id": "SkpIN1UBu",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": -8,
+            "units": "slots"
+          }
+        },
+        "ryLDEJIHO": {
+          "boundLiterals": {
+            "__out__": "D5"
+          },
+          "description": "Pin to use for SPI Serial Clock.",
+          "label": "SCLK",
+          "id": "ryLDEJIHO",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 0,
+            "y": -9,
+            "units": "slots"
+          }
+        },
+        "BJKPVkUS_": {
+          "boundLiterals": {
+            "__out__": "D4"
+          },
+          "description": "Pin to use for SPI Chip Select.",
+          "label": "CS",
+          "id": "BJKPVkUS_",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 1,
+            "y": -9,
+            "units": "slots"
+          }
+        },
+        "BJcvEJIrd": {
+          "boundLiterals": {
+            "__out__": "D3"
+          },
+          "description": "Pin to use for SPI Master In Slave Out.",
+          "label": "MISO",
+          "id": "BJcvEJIrd",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 2,
+            "y": -9,
+            "units": "slots"
+          }
+        },
+        "ryNCVk8rO": {
+          "boundLiterals": {
+            "__out__": "Never"
+          },
+          "description": "Update. Trigger read.",
+          "label": "UPD",
+          "id": "ryNCVk8rO",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 3,
+            "y": -9,
+            "units": "slots"
+          }
+        },
+        "B1NyByIrd": {
+          "description": "Pulse on read.",
+          "label": "DONE",
+          "id": "B1NyByIrd",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 1,
+            "y": -7,
+            "units": "slots"
+          }
+        },
+        "rkSeSkISd": {
+          "description": "Temperature in degrees Celsius.",
+          "label": "tempC",
+          "id": "rkSeSkISd",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 0,
+            "y": -7,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/max31855"
+    },
+    "@/example": {
+      "description": "Patch to test max31855 node. Run in debugger.",
+      "links": {
+        "Skqe91Lru": {
+          "id": "Skqe91Lru",
+          "output": {
+            "nodeId": "BJIlcyIB_",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "r1xCFyUSO",
+            "pinKey": "ryNCVk8rO"
+          }
+        },
+        "HyLW9JISO": {
+          "id": "HyLW9JISO",
+          "output": {
+            "nodeId": "r1xCFyUSO",
+            "pinKey": "rkSeSkISd"
+          },
+          "input": {
+            "nodeId": "Sk-W9kUH_",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "SJ4X91IBO": {
+          "id": "SJ4X91IBO",
+          "output": {
+            "nodeId": "r1xCFyUSO",
+            "pinKey": "B1NyByIrd"
+          },
+          "input": {
+            "nodeId": "rJTzqkIH_",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "B1IX5yLru": {
+          "id": "B1IX5yLru",
+          "output": {
+            "nodeId": "rJTzqkIH_",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "rksZ9yUru",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "nodes": {
+        "r1xCFyUSO": {
+          "boundLiterals": {
+            "ryNCVk8rO": "Continuously"
+          },
+          "id": "r1xCFyUSO",
+          "type": "@/max31855",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BJIlcyIB_": {
+          "id": "BJIlcyIB_",
+          "type": "xod/core/clock",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "Sk-W9kUH_": {
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          },
+          "id": "Sk-W9kUH_",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rksZ9yUru": {
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          },
+          "id": "rksZ9yUru",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "rJTzqkIH_": {
+          "id": "rJTzqkIH_",
+          "type": "xod/core/count",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example"
+    }
+  },
+  "license": "BSD",
+  "version": "0.0.2",
+  "description": "MAX31855 Thermocouple Amplifier. Wraps https://github.com/adafruit/Adafruit-MAX31855-library. ",
+  "name": "max31855"
+}

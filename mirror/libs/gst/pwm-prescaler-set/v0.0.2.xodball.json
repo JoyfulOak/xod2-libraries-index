@@ -1,0 +1,123 @@
+{
+  "patches": {
+    "@/pwm-prescaler-set": {
+      "nodes": {
+        "H1bNEP33O": {
+          "description": "High resolution fast PWM node\nFrequency range: 0Hz - 500kHz\nDuty cycle: 0 - 255",
+          "id": "H1bNEP33O",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BkebEND2nu": {
+          "description": "Spits a pulse when done",
+          "label": "DONE",
+          "id": "BkebEND2nu",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rkWb4NPhnu": {
+          "boundLiterals": {
+            "__out__": "Never"
+          },
+          "description": "switches the prescaler\nto  divisor 1 (highest frequency)",
+          "label": "INIT_1",
+          "id": "rkWb4NPhnu",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SybHEv3nd": {
+          "boundLiterals": {
+            "__out__": "Never"
+          },
+          "description": "switches the prescaler\nto  divisor 8",
+          "label": "INIT_2",
+          "id": "SybHEv3nd",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJ2OAD32_": {
+          "boundLiterals": {
+            "__out__": "Never"
+          },
+          "description": "switches the prescaler\nto  divisor 64",
+          "label": "INIT_3",
+          "id": "SJ2OAD32_",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkT_0v3hO": {
+          "boundLiterals": {
+            "__out__": "Never"
+          },
+          "description": "switches the prescaler\nto  divisor 256",
+          "label": "INIT_4",
+          "id": "BkT_0v3hO",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkhT_CDnh_": {
+          "boundLiterals": {
+            "__out__": "Never"
+          },
+          "description": "switches the prescaler\nto  divisor  1024 (lowest frequency)",
+          "label": "INIT_5",
+          "id": "HkhT_CDnh_",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1EsXKn2u": {
+          "description": "0 -5 = choise timer 0-5",
+          "label": "Timer",
+          "id": "r1EsXKn2u",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/pwm-prescaler-set",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD require \"https://github.com/terryjmyers/PWM\"\n\n{{#global}}\n#include <PWM.h>\n{{/global}}\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n\nNumber Tmr = getValue<input_Timer>(ctx);\n\n     \n\n    \n  \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n     if (isInputDirty<input_INIT_1>(ctx) \n     &&  (Tmr == 0))\n      Timer0_SetPrescaler (1);\n \n     if (isInputDirty<input_INIT_2>(ctx)\n     &&  (Tmr == 0))\n      Timer0_SetPrescaler (2);\n    \n     if (isInputDirty<input_INIT_3>(ctx)\n     &&  (Tmr == 0))  \n      Timer0_SetPrescaler (3);\n \n     if (isInputDirty<input_INIT_4>(ctx) \n     &&  (Tmr == 0))\n      Timer0_SetPrescaler (4);\n    \n     if (isInputDirty<input_INIT_5>(ctx)\n     &&  (Tmr == 0))\n      Timer0_SetPrescaler (5);\n    \n    \n    \n     if (isInputDirty<input_INIT_1>(ctx) \n     &&  (Tmr == 1))\n      Timer1_SetPrescaler (1);\n \n     if (isInputDirty<input_INIT_2>(ctx)\n     &&  (Tmr == 1))\n      Timer1_SetPrescaler (2);\n    \n     if (isInputDirty<input_INIT_3>(ctx)\n     &&  (Tmr == 1))  \n      Timer1_SetPrescaler (3);\n \n     if (isInputDirty<input_INIT_4>(ctx) \n     &&  (Tmr == 1))\n      Timer1_SetPrescaler (4);\n    \n     if (isInputDirty<input_INIT_5>(ctx)\n     &&  (Tmr == 1))\n      Timer1_SetPrescaler (5);\n    \n    \n     if (isInputDirty<input_INIT_1>(ctx) \n     &&  (Tmr == 2))\n      Timer2_SetPrescaler (1);\n \n     if (isInputDirty<input_INIT_2>(ctx)\n     &&  (Tmr == 2))\n      Timer2_SetPrescaler (2);\n    \n     if (isInputDirty<input_INIT_3>(ctx)\n     &&  (Tmr == 2))  \n      Timer2_SetPrescaler (3);\n \n     if (isInputDirty<input_INIT_4>(ctx) \n     &&  (Tmr == 2))\n      Timer2_SetPrescaler (4);\n    \n     if (isInputDirty<input_INIT_5>(ctx)\n     &&  (Tmr == 2))\n      Timer2_SetPrescaler (5);\n    \n    \n     if (isInputDirty<input_INIT_1>(ctx) \n     &&  (Tmr == 3))\n      Timer3_SetPrescaler (1);\n \n     if (isInputDirty<input_INIT_2>(ctx)\n     &&  (Tmr == 3))\n      Timer3_SetPrescaler (2);\n    \n     if (isInputDirty<input_INIT_3>(ctx)\n     &&  (Tmr == 3))  \n      Timer3_SetPrescaler (3);\n \n     if (isInputDirty<input_INIT_4>(ctx) \n     &&  (Tmr == 3))\n      Timer3_SetPrescaler (4);\n    \n     if (isInputDirty<input_INIT_5>(ctx)\n     &&  (Tmr == 3))\n      Timer3_SetPrescaler (5);\n    \n    \n     if (isInputDirty<input_INIT_1>(ctx) \n     &&  (Tmr == 4))\n      Timer4_SetPrescaler (1);\n \n     if (isInputDirty<input_INIT_2>(ctx)\n     &&  (Tmr == 4))\n      Timer4_SetPrescaler (2);\n    \n     if (isInputDirty<input_INIT_3>(ctx)\n       &&  (Tmr == 4))  \n      Timer4_SetPrescaler (3);\n \n     if (isInputDirty<input_INIT_4>(ctx) \n     &&  (Tmr == 4))\n      Timer4_SetPrescaler (4);\n    \n     if (isInputDirty<input_INIT_5>(ctx)\n     &&  (Tmr == 4))\n      Timer4_SetPrescaler (5);\n    \n    \n     if (isInputDirty<input_INIT_1>(ctx) \n        &&  (Tmr == 5))\n      Timer5_SetPrescaler (1);\n \n     if (isInputDirty<input_INIT_2>(ctx)\n     &&  (Tmr == 5))\n      Timer5_SetPrescaler (2);\n    \n     if (isInputDirty<input_INIT_3>(ctx)\n       &&  (Tmr == 5))  \n      Timer5_SetPrescaler (3);\n \n     if (isInputDirty<input_INIT_4>(ctx) \n     &&  (Tmr == 5))\n      Timer5_SetPrescaler (4);\n    \n     if (isInputDirty<input_INIT_5>(ctx)\n     &&  (Tmr == 5))\n      Timer5_SetPrescaler (5);\n    \n    \n    \n  //  ATMEGA 2560 \n  //  Timer0 = D4 and D13 Attention! Timer0 is also used for other tasks (millis, micros, delay).\n  //  Timer1 = D11, D12\n  //  Timer2 = D9, D10\n  //  Timer3 = D2, D3, D5\n  //  Timer4 = D6, D7, D8\n  //  Timer5 = D44, D45, D46\n \n  \n\n  //  Prescaler 1= 31372,55Hz, 2= 3921,16Hz, 3= 490Hz, 4= 122.55Hz 5= 30Hz (in case of timer0 the PWM frequency for prescaler values 1-5 are doubled)\n  //  Timer1_SetPrescaler (2);\n  //  Timer2_SetPrescaler (2);\n  //  Timer3_SetPrescaler (2);\n  //  Timer4_SetPrescaler (2);\n  //  Timer5_SetPrescaler (2);\n  \n   \n    \n    emitValue<output_DONE>(ctx, 1);\n};\n"
+        }
+      ]
+    }
+  },
+  "license": "MIT",
+  "version": "0.0.2",
+  "description": "  \n  Supports alternativ PWM frequencies for MEGA2560\n  Attention! Timer0 is also used for other tasks (millis, micros, delay).\n \n  Timer0 = D4 and D13 \n  Timer1 = D11, D12\n  Timer2 = D9, D10\n  Timer3 = D2, D3, D5\n  Timer4 = D6, D7, D8\n  Timer5 = D44, D45, D46\n \n  Prescaler 1= 31372,55Hz, 2= 3921,16Hz, 3= 490Hz, 4= 122.55Hz 5= 30Hz (in case of timer0 the PWM frequency for prescaler values 1-5 are doubled)\n ",
+  "apiKey": "1c6ff697-cb07-4263-a875-487b286839a4",
+  "name": "pwm-prescaler-set"
+}

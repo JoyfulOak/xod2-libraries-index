@@ -1,0 +1,2500 @@
+{
+  "patches": {
+    "@/as7341-device": {
+      "nodes": {
+        "S1O7FfGF5": {
+          "id": "S1O7FfGF5",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJiHKfzYq": {
+          "description": "An as7341 device.",
+          "label": "DEV",
+          "id": "rJiHKfzYq",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/as7341-device",
+      "description": "Create an as7341-device.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/adafruit/Adafruit_BusIO\"\n#pragma XOD require \"https://github.com/adafruit/Adafruit_AS7341\"\n\n#include <Wire.h>\n#include <Adafruit_AS7341.h>\n\nnode {\n    meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = Adafruit_AS7341*;\n    }\n\n    // Create an object of the class AS7341\n    Adafruit_AS7341 sensor = Adafruit_AS7341();\n\n    void evaluate(Context ctx) {\n        // It should be evaluated only once on the first (setup) transaction\n        if (!isSettingUp())\n            return;\n\n        emitValue<output_DEV>(ctx, &sensor);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/enable-led": {
+      "nodes": {
+        "rkBHEzAXi": {
+          "id": "rkBHEzAXi",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BklHHVfAms": {
+          "id": "BklHHVfAms",
+          "type": "@/input-as7341-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An as7341-device."
+        },
+        "S1-SrVGRmj": {
+          "id": "S1-SrVGRmj",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulses if LED is successfully enabled/disabled."
+        },
+        "SyGSHNMAQs": {
+          "id": "SyGSHNMAQs",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update.",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        },
+        "ByL8NMRXs": {
+          "id": "ByL8NMRXs",
+          "type": "xod/patch-nodes/input-boolean",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Enable",
+          "description": "If true, LED is enabled. If false, LED is disabled."
+        }
+      },
+      "path": "@/enable-led",
+      "description": "Enable control of attached LED.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n   void evaluate(Context ctx) {\n       // The node responds only if there is an input pulse\n       if (!isInputDirty<input_UPD>(ctx))\n           return;\n\n       auto sensor = getValue<input_DEV>(ctx);\n       auto enable = getValue<input_Enable>(ctx);\n\n       if (!sensor->enableLED(enable)) {\n            raiseError(ctx);\n            return;\n       }\n       \n       emitValue<output_DONE>(ctx, 1);\n    }\n}"
+        }
+      ]
+    },
+    "@/detect-flicker": {
+      "nodes": {
+        "r1nJ8MCmi": {
+          "id": "r1nJ8MCmi",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HJl21IM0Xo": {
+          "id": "HJl21IM0Xo",
+          "type": "@/input-as7341-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An as7341-device."
+        },
+        "rJWhyIGCmo": {
+          "id": "rJWhyIGCmo",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "Hz",
+          "description": "The frequency of a detected flicker or 1 if a flicker of unknown frequency is detected."
+        },
+        "rkf2kIzC7j": {
+          "id": "rkf2kIzC7j",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulse on read."
+        },
+        "B1X3k8MCQj": {
+          "id": "B1X3k8MCQj",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update.",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        }
+      },
+      "path": "@/detect-flicker",
+      "description": "Detect a flickering light.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n   void evaluate(Context ctx) {\n       // The node responds only if there is an input pulse\n       if (!isInputDirty<input_UPD>(ctx))\n           return;\n\n       auto sensor = getValue<input_DEV>(ctx);\n\n       emitValue<output_Hz>(ctx, sensor->detectFlickerHz());\n\n       emitValue<output_DONE>(ctx, 1);\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/init": {
+      "nodes": {
+        "SJYO9GfYq": {
+          "id": "SJYO9GfYq",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BJk95MGF5": {
+          "description": "An as7341-device.",
+          "label": "DEV",
+          "id": "BJk95MGF5",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-as7341-device"
+        },
+        "rJdsqfMtc": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Pulse triggers initialization.",
+          "label": "INIT",
+          "id": "rJdsqfMtc",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1v6qMzK5": {
+          "description": "Pulse on successful initialization.",
+          "label": "OK",
+          "id": "H1v6qMzK5",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJ-xhvTQi": {
+          "id": "HJ-xhvTQi",
+          "type": "xod/i2c/input-i2c",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "I2C",
+          "description": "I²C bus"
+        }
+      },
+      "path": "@/init",
+      "description": "Initialize sensor.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_INIT\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulsei\n        if (!isInputDirty<input_INIT>(ctx))\n            return;\n        \n        // Get a pointer to the `Adafruit_AS7341` class instance\n        auto sensor = getValue<input_DEV>(ctx);\n\n        auto wire = getValue<input_I2C>(ctx);\n\n        // Attempt to initialize AS7341 module; if attempt fails emit error\n        if (!sensor->begin(AS7341_I2CADDR_DEFAULT, wire, 0)) {\n            raiseError(ctx);\n            return;\n        }\n\n        emitValue<output_OK>(ctx, 1);\n\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/read-all-channels": {
+      "nodes": {
+        "BJgz0vamj": {
+          "id": "BJgz0vamj",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HyIz0w6Qo": {
+          "id": "HyIz0w6Qo",
+          "type": "@/input-as7341-device",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An as7341-device."
+        },
+        "rJ6zAwp7j": {
+          "id": "rJ6zAwp7j",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update. Pulse triggers read.",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        },
+        "HJMw0waQi": {
+          "id": "HJMw0waQi",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulse on successful read."
+        }
+      },
+      "path": "@/read-all-channels",
+      "description": "Read all channels and store measurements in an internal buffer. To retrieve a measurement for a specific channel, use the appropriate get-ch-* node.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n   void evaluate(Context ctx) {\n       // The node responds only if there is an input pulse\n       if (!isInputDirty<input_UPD>(ctx))\n           return;\n\n       auto sensor = getValue<input_DEV>(ctx);\n\n       if (!sensor->readAllChannels()) {\n            raiseError(ctx);\n            return;\n       }\n\n       emitValue<output_DONE>(ctx, 1);\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/set-astep": {
+      "nodes": {
+        "ryIgB-07s": {
+          "id": "ryIgB-07s",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "S1gUgHZ0Xi": {
+          "id": "S1gUgHZ0Xi",
+          "type": "@/input-as7341-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An as7341-device."
+        },
+        "SyzUxrbRQi": {
+          "id": "SyzUxrbRQi",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulses if integration time step size is successfully set."
+        },
+        "H1XUeH-CQj": {
+          "id": "H1XUeH-CQj",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update.",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        },
+        "HyvbSZCXo": {
+          "id": "HyvbSZCXo",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "ASTEP",
+          "description": "Integration time step size in 2.78 microsecond increments. Step size is ASTEP × 2.78µS.",
+          "boundLiterals": {
+            "__out__": "100"
+          }
+        }
+      },
+      "path": "@/set-astep",
+      "description": "Set integration time step size.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n   void evaluate(Context ctx) {\n       // The node responds only if there is an input pulse\n       if (!isInputDirty<input_UPD>(ctx))\n           return;\n\n       auto sensor = getValue<input_DEV>(ctx);\n       auto astep = getValue<input_ASTEP>(ctx);\n\n       if (!sensor->setASTEP(astep)) {\n            raiseError(ctx);\n            return;\n       }\n\n       emitValue<output_DONE>(ctx, 1);\n    }\n}"
+        }
+      ]
+    },
+    "@/set-gain": {
+      "nodes": {
+        "r1-pKWRQs": {
+          "id": "r1-pKWRQs",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BkeZaFZ0Qs": {
+          "id": "BkeZaFZ0Qs",
+          "type": "@/input-as7341-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An as7341-device."
+        },
+        "B1WZpYb0Qs": {
+          "id": "B1WZpYb0Qs",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulses if gain is successfully set."
+        },
+        "ByM-atbAXj": {
+          "id": "ByM-atbAXj",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update.",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        },
+        "HynToWA7j": {
+          "id": "HynToWA7j",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "GAIN",
+          "description": "ADC gain multiplier. Can take values of: 0.5, 1, 2, 4, 8, 16, 32, 64, 128, 256 and 512.",
+          "boundLiterals": {
+            "__out__": "256"
+          }
+        }
+      },
+      "path": "@/set-gain",
+      "description": "Set the ADC gain multiplier.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n   void evaluate(Context ctx) {\n       // The node responds only if there is an input pulse\n       if (!isInputDirty<input_UPD>(ctx))\n           return;\n\n       auto sensor = getValue<input_DEV>(ctx);\n       auto gain = getValue<input_GAIN>(ctx);\n\n\n       if (gain<1) {\n           if (!sensor->setGain(AS7341_GAIN_0_5X)) {\n               raiseError(ctx);\n               return;\n           }\n           emitValue<output_DONE>(ctx, 1);\n       }\n\n       if (gain==1) {\n           if (!sensor->setGain(AS7341_GAIN_1X)) {\n               raiseError(ctx);\n               return;\n           }\n           emitValue<output_DONE>(ctx, 1);\n       }\n\n       if (gain==2) {\n           if (!sensor->setGain(AS7341_GAIN_2X)) {\n               raiseError(ctx);\n               return;\n           }\n           emitValue<output_DONE>(ctx, 1);\n       }\n\n       if (gain==4) {\n           if (!sensor->setGain(AS7341_GAIN_4X)) {\n               raiseError(ctx);\n               return;\n           }\n           emitValue<output_DONE>(ctx, 1);\n       }\n\n       if (gain==8) {\n           if (!sensor->setGain(AS7341_GAIN_8X)) {\n               raiseError(ctx);\n               return;\n           }\n           emitValue<output_DONE>(ctx, 1);\n       }\n\n       if (gain==16) {\n           if (!sensor->setGain(AS7341_GAIN_16X)) {\n               raiseError(ctx);\n               return;\n           }\n           emitValue<output_DONE>(ctx, 1);\n       }\n\n       if (gain==32) {\n           if (!sensor->setGain(AS7341_GAIN_32X)) {\n               raiseError(ctx);\n               return;\n           }\n           emitValue<output_DONE>(ctx, 1);\n       }\n\n       if (gain==64) {\n           if (!sensor->setGain(AS7341_GAIN_64X)) {\n               raiseError(ctx);\n               return;\n           }\n           emitValue<output_DONE>(ctx, 1);\n       }\n\n       if (gain==128) {\n           if (!sensor->setGain(AS7341_GAIN_128X)) {\n               raiseError(ctx);\n               return;\n           }\n           emitValue<output_DONE>(ctx, 1);\n       }\n\n       if (gain==256) {\n           if (!sensor->setGain(AS7341_GAIN_256X)) {\n               raiseError(ctx);\n               return;\n           }\n           emitValue<output_DONE>(ctx, 1);\n       }\n\n       if (gain==512) {\n           if (!sensor->setGain(AS7341_GAIN_512X)) {\n               raiseError(ctx);\n               return;\n           }\n           emitValue<output_DONE>(ctx, 1);\n       }\n\n    }\n}"
+        }
+      ]
+    },
+    "@/set-led-current": {
+      "nodes": {
+        "Bkh9Zf0Qi": {
+          "id": "Bkh9Zf0Qi",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "S1gn9bzRXi": {
+          "id": "S1gn9bzRXi",
+          "type": "@/input-as7341-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An as7341-device."
+        },
+        "Hy-h9ZzRXi": {
+          "id": "Hy-h9ZzRXi",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulses if LED current limit is set successfully."
+        },
+        "rJfhcZGRms": {
+          "id": "rJfhcZGRms",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update.",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        },
+        "ryXnqWGRmj": {
+          "id": "ryXnqWGRmj",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "mA",
+          "description": "LED current limit in mA. Range is 4mA to 258mA.",
+          "boundLiterals": {
+            "__out__": "100"
+          }
+        }
+      },
+      "path": "@/set-led-current",
+      "description": "Set the current limit for the LED.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n   void evaluate(Context ctx) {\n       // The node responds only if there is an input pulse\n       if (!isInputDirty<input_UPD>(ctx))\n           return;\n\n       auto sensor = getValue<input_DEV>(ctx);\n       auto mA = getValue<input_mA>(ctx);\n\n       if (!sensor->setLEDCurrent(mA)) {\n            raiseError(ctx);\n            return;\n       }\n       \n       emitValue<output_DONE>(ctx, 1);\n    }\n}"
+        }
+      ]
+    },
+    "@/set-atime": {
+      "nodes": {
+        "H1oP_-Rmj": {
+          "id": "H1oP_-Rmj",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "S1loPOZC7i": {
+          "id": "S1loPOZC7i",
+          "type": "@/input-as7341-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An as7341-device."
+        },
+        "H1-iPu-CQj": {
+          "id": "H1-iPu-CQj",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulses if integration time step count is successfully set."
+        },
+        "SkGiv_WAQs": {
+          "id": "SkGiv_WAQs",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update.",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        },
+        "S1XsvdZAQi": {
+          "id": "S1XsvdZAQi",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "ATIME",
+          "description": "Integration time step count.",
+          "boundLiterals": {
+            "__out__": "999"
+          }
+        }
+      },
+      "path": "@/set-atime",
+      "description": "Set the integration time step count. Total integration time will be (ATIME + 1) × (ASTEP + 1) × 2.78µS",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n   void evaluate(Context ctx) {\n       // The node responds only if there is an input pulse\n       if (!isInputDirty<input_UPD>(ctx))\n           return;\n\n       auto sensor = getValue<input_DEV>(ctx);\n       auto atime = getValue<input_ATIME>(ctx);\n\n       if (!sensor->setATIME(atime)) {\n            raiseError(ctx);\n            return;\n       }\n       \n       emitValue<output_DONE>(ctx, 1);\n    }\n}"
+        }
+      ]
+    },
+    "@/01-example-spectrometer": {
+      "nodes": {
+        "HyXDTD67i": {
+          "id": "HyXDTD67i",
+          "type": "@/as7341-device",
+          "position": {
+            "x": -7,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "r1tDTDa7s": {
+          "id": "r1tDTDa7s",
+          "type": "@/init",
+          "position": {
+            "x": -7,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "ByjdADTQo": {
+          "id": "ByjdADTQo",
+          "type": "@/read-all-channels",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "r1lvb_a7i": {
+          "id": "r1lvb_a7i",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 2,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "BJzulKpQs": {
+          "id": "BJzulKpQs",
+          "type": "@/get-ch-415nm",
+          "position": {
+            "x": 2,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "SkduxtT7o": {
+          "id": "SkduxtT7o",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": -8,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "S1YRltaQs": {
+          "id": "S1YRltaQs",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "rJxgWFpmo": {
+          "id": "rJxgWFpmo",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 1,
+            "y": 4,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "Bks7DzAQo": {
+          "id": "Bks7DzAQo",
+          "type": "@/get-ch-445nm",
+          "position": {
+            "x": 4,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "S1yVPGRmj": {
+          "id": "S1yVPGRmj",
+          "type": "@/get-ch-480nm",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "Hy4VvzRQs": {
+          "id": "Hy4VvzRQs",
+          "type": "@/get-ch-515nm",
+          "position": {
+            "x": 8,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "B1YEPGRXo": {
+          "id": "B1YEPGRXo",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "B1jp4Pf07o": {
+          "id": "B1jp4Pf07o",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "r1grvGCXj": {
+          "id": "r1grvGCXj",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "SJWHvGR7i": {
+          "id": "SJWHvGR7i",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "HJzBDMCQs": {
+          "id": "HJzBDMCQs",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 12,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "SyRMSDM0mi": {
+          "id": "SyRMSDM0mi",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 14,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "r14HvMAQo": {
+          "id": "r14HvMAQo",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 16,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "HJ9rvMRXi": {
+          "id": "HJ9rvMRXi",
+          "type": "@/get-ch-555nm",
+          "position": {
+            "x": 10,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "B1MLvzR7o": {
+          "id": "B1MLvzR7o",
+          "type": "@/get-ch-590nm",
+          "position": {
+            "x": 12,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "H1BUPfAXo": {
+          "id": "H1BUPfAXo",
+          "type": "@/get-ch-630nm",
+          "position": {
+            "x": 14,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "B1KIvMRQj": {
+          "id": "B1KIvMRQj",
+          "type": "@/get-ch-680nm",
+          "position": {
+            "x": 16,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "SJ68vzRQj": {
+          "id": "SJ68vzRQj",
+          "type": "@/get-ch-clear",
+          "position": {
+            "x": 18,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "ByzwDzCXo": {
+          "id": "ByzwDzCXo",
+          "type": "@/get-ch-nir",
+          "position": {
+            "x": 20,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "rksDPzRQi": {
+          "id": "rksDPzRQi",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 18,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "H16wPf0Qi": {
+          "id": "H16wPf0Qi",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 20,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "SJNowMCQs": {
+          "id": "SJNowMCQs",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 4,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "SJ9sPfCQs": {
+          "id": "SJ9sPfCQs",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 6,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "HJajvzRXo": {
+          "id": "HJajvzRXo",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 8,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "S11nDzCQi": {
+          "id": "S11nDzCQi",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 10,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "rJjbhvfRXj": {
+          "id": "rJjbhvfRXj",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 12,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "ryoQ3vGR7s": {
+          "id": "ryoQ3vGR7s",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 14,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "SyjSnPf0Qi": {
+          "id": "SyjSnPf0Qi",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 16,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "BJuhvGAXi": {
+          "id": "BJuhvGAXi",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 18,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "SJicnwGC7i": {
+          "id": "SJicnwGC7i",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 20,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "BkiwKfA7o": {
+          "id": "BkiwKfA7o",
+          "type": "@/set-astep",
+          "position": {
+            "x": -6,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "ByJOKMAXs": {
+          "id": "ByJOKMAXs",
+          "type": "@/set-atime",
+          "position": {
+            "x": -9,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "rkX_KMAXo": {
+          "id": "rkX_KMAXo",
+          "type": "@/set-gain",
+          "position": {
+            "x": -3,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "Sk1FYzA7s": {
+          "id": "Sk1FYzA7s",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": -6,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "H1LKFzCmj": {
+          "id": "H1LKFzCmj",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": -9,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "H1httG0Qj": {
+          "id": "H1httG0Qj",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": -3,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "DEV"
+        }
+      },
+      "links": {
+        "rk9DpDTQj": {
+          "id": "rk9DpDTQj",
+          "output": {
+            "nodeId": "HyXDTD67i",
+            "pinKey": "rJiHKfzYq"
+          },
+          "input": {
+            "nodeId": "r1tDTDa7s",
+            "pinKey": "BJk95MGF5"
+          }
+        },
+        "ByGKxY6Xs": {
+          "id": "ByGKxY6Xs",
+          "output": {
+            "nodeId": "HyXDTD67i",
+            "pinKey": "rJiHKfzYq"
+          },
+          "input": {
+            "nodeId": "SkduxtT7o",
+            "pinKey": "__in__"
+          }
+        },
+        "r1rg-YTXi": {
+          "id": "r1rg-YTXi",
+          "output": {
+            "nodeId": "S1YRltaQs",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ByjdADTQo",
+            "pinKey": "HyIz0w6Qo"
+          }
+        },
+        "rkVfZYaQj": {
+          "id": "rkVfZYaQj",
+          "output": {
+            "nodeId": "rJxgWFpmo",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BJzulKpQs",
+            "pinKey": "Sylyphdamo"
+          }
+        },
+        "HJ8MZKpXs": {
+          "id": "HJ8MZKpXs",
+          "output": {
+            "nodeId": "ByjdADTQo",
+            "pinKey": "HJMw0waQi"
+          },
+          "input": {
+            "nodeId": "BJzulKpQs",
+            "pinKey": "HJJqaOpQo"
+          }
+        },
+        "rkqGWKaXs": {
+          "id": "rkqGWKaXs",
+          "output": {
+            "nodeId": "BJzulKpQs",
+            "pinKey": "Sysl6dpXj"
+          },
+          "input": {
+            "nodeId": "r1lvb_a7i",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "SyadvzRQj": {
+          "id": "SyadvzRQj",
+          "output": {
+            "nodeId": "B1YEPGRXo",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "Bks7DzAQo",
+            "pinKey": "Hkg6S6T6mo"
+          }
+        },
+        "ByyKPzCmi": {
+          "id": "ByyKPzCmi",
+          "output": {
+            "nodeId": "B1jp4Pf07o",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "S1yVPGRmj",
+            "pinKey": "H1e1npTams"
+          }
+        },
+        "SkftPzCXi": {
+          "id": "SkftPzCXi",
+          "output": {
+            "nodeId": "r1grvGCXj",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "Hy4VvzRQs",
+            "pinKey": "SygQxxATXo"
+          }
+        },
+        "H14tDfCmo": {
+          "id": "H14tDfCmo",
+          "output": {
+            "nodeId": "SJWHvGR7i",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJ9rvMRXi",
+            "pinKey": "HylhVN0amo"
+          }
+        },
+        "ByLFvf0Xj": {
+          "id": "ByLFvf0Xj",
+          "output": {
+            "nodeId": "HJzBDMCQs",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "B1MLvzR7o",
+            "pinKey": "ryxIkIATmj"
+          }
+        },
+        "HyOFDGA7o": {
+          "id": "HyOFDGA7o",
+          "output": {
+            "nodeId": "SyRMSDM0mi",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "H1BUPfAXo",
+            "pinKey": "H1xgZwRaQj"
+          }
+        },
+        "HyqFvz0Qj": {
+          "id": "HyqFvz0Qj",
+          "output": {
+            "nodeId": "r14HvMAQo",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "B1KIvMRQj",
+            "pinKey": "S1gEt11A7i"
+          }
+        },
+        "HknKDMRXo": {
+          "id": "HknKDMRXo",
+          "output": {
+            "nodeId": "rksDPzRQi",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "SJ68vzRQj",
+            "pinKey": "BygvnMeCXi"
+          }
+        },
+        "Bk15wfRmi": {
+          "id": "Bk15wfRmi",
+          "output": {
+            "nodeId": "H16wPf0Qi",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ByzwDzCXo",
+            "pinKey": "rkxoVQl0Qs"
+          }
+        },
+        "H1GcDMCms": {
+          "id": "H1GcDMCms",
+          "output": {
+            "nodeId": "BJzulKpQs",
+            "pinKey": "HJ1w6dTXo"
+          },
+          "input": {
+            "nodeId": "Bks7DzAQo",
+            "pinKey": "S1m6rpa6ms"
+          }
+        },
+        "Bk45vMAms": {
+          "id": "Bk45vMAms",
+          "output": {
+            "nodeId": "Bks7DzAQo",
+            "pinKey": "r1MaSpTp7o"
+          },
+          "input": {
+            "nodeId": "S1yVPGRmj",
+            "pinKey": "ByX1h6p6Xi"
+          }
+        },
+        "ByHcPG07s": {
+          "id": "ByHcPG07s",
+          "output": {
+            "nodeId": "S1yVPGRmj",
+            "pinKey": "ByG126ppQs"
+          },
+          "input": {
+            "nodeId": "Hy4VvzRQs",
+            "pinKey": "SyQXelRT7i"
+          }
+        },
+        "Bkw5wzRQi": {
+          "id": "Bkw5wzRQi",
+          "output": {
+            "nodeId": "Hy4VvzRQs",
+            "pinKey": "H1GQleRpmi"
+          },
+          "input": {
+            "nodeId": "HJ9rvMRXi",
+            "pinKey": "rJQ24NR6Qo"
+          }
+        },
+        "H1FcvfCQi": {
+          "id": "H1FcvfCQi",
+          "output": {
+            "nodeId": "HJ9rvMRXi",
+            "pinKey": "Skf2440pQi"
+          },
+          "input": {
+            "nodeId": "B1MLvzR7o",
+            "pinKey": "SJmIyLRaQj"
+          }
+        },
+        "Hyo9vfCmo": {
+          "id": "Hyo9vfCmo",
+          "output": {
+            "nodeId": "B1MLvzR7o",
+            "pinKey": "SJMUyLRTXo"
+          },
+          "input": {
+            "nodeId": "H1BUPfAXo",
+            "pinKey": "ByQx-P0TQo"
+          }
+        },
+        "BJTqvf0Qj": {
+          "id": "BJTqvf0Qj",
+          "output": {
+            "nodeId": "H1BUPfAXo",
+            "pinKey": "BJzlZDRp7i"
+          },
+          "input": {
+            "nodeId": "B1KIvMRQj",
+            "pinKey": "SJ7NKkJ07i"
+          }
+        },
+        "S1JsvGRms": {
+          "id": "S1JsvGRms",
+          "output": {
+            "nodeId": "B1KIvMRQj",
+            "pinKey": "rJMVKyyAmj"
+          },
+          "input": {
+            "nodeId": "SJ68vzRQj",
+            "pinKey": "S1mv3fxC7s"
+          }
+        },
+        "B1-svMCXj": {
+          "id": "B1-svMCXj",
+          "output": {
+            "nodeId": "SJ68vzRQj",
+            "pinKey": "ryGPnMx0mo"
+          },
+          "input": {
+            "nodeId": "ByzwDzCXo",
+            "pinKey": "BkmiE7gAQs"
+          }
+        },
+        "ryThwzCQs": {
+          "id": "ryThwzCQs",
+          "output": {
+            "nodeId": "ByzwDzCXo",
+            "pinKey": "B1-oV7eRXs"
+          },
+          "input": {
+            "nodeId": "SJicnwGC7i",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "ByyawfAQi": {
+          "id": "ByyawfAQi",
+          "output": {
+            "nodeId": "SJ68vzRQj",
+            "pinKey": "HJ-wnMeAmi"
+          },
+          "input": {
+            "nodeId": "BJuhvGAXi",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "SJb6DzCmj": {
+          "id": "SJb6DzCmj",
+          "output": {
+            "nodeId": "B1KIvMRQj",
+            "pinKey": "BybEtkkR7j"
+          },
+          "input": {
+            "nodeId": "SyjSnPf0Qi",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "r1zawzAmj": {
+          "id": "r1zawzAmj",
+          "output": {
+            "nodeId": "H1BUPfAXo",
+            "pinKey": "B1Wgbv067s"
+          },
+          "input": {
+            "nodeId": "ryoQ3vGR7s",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "rJX6wzR7i": {
+          "id": "rJX6wzR7i",
+          "output": {
+            "nodeId": "B1MLvzR7o",
+            "pinKey": "BkbLk8CTXj"
+          },
+          "input": {
+            "nodeId": "rJjbhvfRXj",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "HJHaPfRXj": {
+          "id": "HJHaPfRXj",
+          "output": {
+            "nodeId": "HJ9rvMRXi",
+            "pinKey": "Skb3ENC67o"
+          },
+          "input": {
+            "nodeId": "S11nDzCQi",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "r18pvM0Xo": {
+          "id": "r18pvM0Xo",
+          "output": {
+            "nodeId": "Hy4VvzRQs",
+            "pinKey": "rybQxxCpXj"
+          },
+          "input": {
+            "nodeId": "HJajvzRXo",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "HyuaDz07i": {
+          "id": "HyuaDz07i",
+          "output": {
+            "nodeId": "S1yVPGRmj",
+            "pinKey": "Hkbk2paaQs"
+          },
+          "input": {
+            "nodeId": "SJ9sPfCQs",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "By9TPzCQj": {
+          "id": "By9TPzCQj",
+          "output": {
+            "nodeId": "Bks7DzAQo",
+            "pinKey": "BkbaB6T67i"
+          },
+          "input": {
+            "nodeId": "SJNowMCQs",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "r1VFYMRmi": {
+          "id": "r1VFYMRmi",
+          "output": {
+            "nodeId": "Sk1FYzA7s",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BkiwKfA7o",
+            "pinKey": "S1gUgHZ0Xi"
+          }
+        },
+        "HJ9YtM0Xi": {
+          "id": "HJ9YtM0Xi",
+          "output": {
+            "nodeId": "H1LKFzCmj",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ByJOKMAXs",
+            "pinKey": "S1loPOZC7i"
+          }
+        },
+        "S1k9tzR7j": {
+          "id": "S1k9tzR7j",
+          "output": {
+            "nodeId": "H1httG0Qj",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rkX_KMAXo",
+            "pinKey": "BkeZaFZ0Qs"
+          }
+        },
+        "H1ZTYGCQi": {
+          "id": "H1ZTYGCQi",
+          "output": {
+            "nodeId": "r1tDTDa7s",
+            "pinKey": "H1v6qMzK5"
+          },
+          "input": {
+            "nodeId": "ByJOKMAXs",
+            "pinKey": "SkGiv_WAQs"
+          }
+        },
+        "Bk7pYfCmi": {
+          "id": "Bk7pYfCmi",
+          "output": {
+            "nodeId": "ByJOKMAXs",
+            "pinKey": "H1-iPu-CQj"
+          },
+          "input": {
+            "nodeId": "BkiwKfA7o",
+            "pinKey": "H1XUeH-CQj"
+          }
+        },
+        "BkyzqzC7j": {
+          "id": "BkyzqzC7j",
+          "output": {
+            "nodeId": "BkiwKfA7o",
+            "pinKey": "SyzUxrbRQi"
+          },
+          "input": {
+            "nodeId": "rkX_KMAXo",
+            "pinKey": "ByM-atbAXj"
+          }
+        }
+      },
+      "path": "@/01-example-spectrometer",
+      "description": "Spectrometer example. Run in debugger."
+    },
+    "@/02-example-flicker-detection": {
+      "nodes": {
+        "BJtWjMA7i": {
+          "id": "BJtWjMA7i",
+          "type": "@/as7341-device",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "S1xtZjzRmj": {
+          "id": "S1xtZjzRmj",
+          "type": "@/init",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rkZYWsfRQi": {
+          "id": "rkZYWsfRQi",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "rJMKbsfRXs": {
+          "id": "rJMKbsfRXs",
+          "type": "@/set-astep",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "B1XKZoMRQo": {
+          "id": "B1XKZoMRQo",
+          "type": "@/set-atime",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SyEt-sz07i": {
+          "id": "SyEt-sz07i",
+          "type": "@/set-gain",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "r1SKWjzAXj": {
+          "id": "r1SKWjzAXj",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "r1UtWozAXi": {
+          "id": "r1UtWozAXi",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "HyDKbsM0Xo": {
+          "id": "HyDKbsM0Xo",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "r1gfjzRQs": {
+          "id": "r1gfjzRQs",
+          "type": "@/detect-flicker",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "HyQGofAQo": {
+          "id": "HyQGofAQo",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "rygmoz07o": {
+          "id": "rygmoz07o",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "H1_FWsz07j": {
+          "id": "H1_FWsz07j",
+          "output": {
+            "nodeId": "BJtWjMA7i",
+            "pinKey": "rJiHKfzYq"
+          },
+          "input": {
+            "nodeId": "S1xtZjzRmj",
+            "pinKey": "BJk95MGF5"
+          }
+        },
+        "rJtt-jG07i": {
+          "id": "rJtt-jG07i",
+          "output": {
+            "nodeId": "BJtWjMA7i",
+            "pinKey": "rJiHKfzYq"
+          },
+          "input": {
+            "nodeId": "rkZYWsfRQi",
+            "pinKey": "__in__"
+          }
+        },
+        "By5K-jfRmi": {
+          "id": "By5K-jfRmi",
+          "output": {
+            "nodeId": "r1SKWjzAXj",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJMKbsfRXs",
+            "pinKey": "S1gUgHZ0Xi"
+          }
+        },
+        "SJjFWiGC7o": {
+          "id": "SJjFWiGC7o",
+          "output": {
+            "nodeId": "r1UtWozAXi",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "B1XKZoMRQo",
+            "pinKey": "S1loPOZC7i"
+          }
+        },
+        "Sy2K-iMAQo": {
+          "id": "Sy2K-iMAQo",
+          "output": {
+            "nodeId": "HyDKbsM0Xo",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "SyEt-sz07i",
+            "pinKey": "BkeZaFZ0Qs"
+          }
+        },
+        "S16FbiMCms": {
+          "id": "S16FbiMCms",
+          "output": {
+            "nodeId": "S1xtZjzRmj",
+            "pinKey": "H1v6qMzK5"
+          },
+          "input": {
+            "nodeId": "B1XKZoMRQo",
+            "pinKey": "SkGiv_WAQs"
+          }
+        },
+        "rkCtWoMA7j": {
+          "id": "rkCtWoMA7j",
+          "output": {
+            "nodeId": "B1XKZoMRQo",
+            "pinKey": "H1-iPu-CQj"
+          },
+          "input": {
+            "nodeId": "rJMKbsfRXs",
+            "pinKey": "H1XUeH-CQj"
+          }
+        },
+        "SkyeKbozCmo": {
+          "id": "SkyeKbozCmo",
+          "output": {
+            "nodeId": "rJMKbsfRXs",
+            "pinKey": "SyzUxrbRQi"
+          },
+          "input": {
+            "nodeId": "SyEt-sz07i",
+            "pinKey": "ByM-atbAXj"
+          }
+        },
+        "S1DziMCXs": {
+          "id": "S1DziMCXs",
+          "output": {
+            "nodeId": "HyQGofAQo",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "r1gfjzRQs",
+            "pinKey": "HJl21IM0Xo"
+          }
+        },
+        "ry47ofC7o": {
+          "id": "ry47ofC7o",
+          "output": {
+            "nodeId": "r1gfjzRQs",
+            "pinKey": "rJWhyIGCmo"
+          },
+          "input": {
+            "nodeId": "rygmoz07o",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/02-example-flicker-detection",
+      "description": "Flicker detection example. Run in debugger."
+    },
+    "@/get-ch-clear": {
+      "nodes": {
+        "BJPhMxAQo": {
+          "id": "BJPhMxAQo",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BygvnMeCXi": {
+          "id": "BygvnMeCXi",
+          "type": "@/input-as7341-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An as7341-device."
+        },
+        "HJ-wnMeAmi": {
+          "id": "HJ-wnMeAmi",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "VALUE",
+          "description": "Raw measurement from the \"clear\" (unfiltered) channel."
+        },
+        "ryGPnMx0mo": {
+          "id": "ryGPnMx0mo",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulse on read."
+        },
+        "S1mv3fxC7s": {
+          "id": "S1mv3fxC7s",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update.",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        }
+      },
+      "path": "@/get-ch-clear",
+      "description": "Get the most recent measurement from the \"clear\" (unfiltered) channel.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n   void evaluate(Context ctx) {\n       // The node responds only if there is an input pulse\n       if (!isInputDirty<input_UPD>(ctx))\n           return;\n\n       auto sensor = getValue<input_DEV>(ctx);\n\n       emitValue<output_VALUE>(ctx, sensor->getChannel(AS7341_CHANNEL_CLEAR));\n       \n       emitValue<output_DONE>(ctx, 1);\n    }\n}"
+        }
+      ]
+    },
+    "@/get-ch-nir": {
+      "nodes": {
+        "BkoVmgCmi": {
+          "id": "BkoVmgCmi",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": -8,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "rkxoVQl0Qs": {
+          "id": "rkxoVQl0Qs",
+          "type": "@/input-as7341-device",
+          "position": {
+            "x": -8,
+            "y": -1,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An as7341-device."
+        },
+        "B1-oV7eRXs": {
+          "id": "B1-oV7eRXs",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": -8,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "VALUE",
+          "description": "Raw measurement from the near infrared (NIR) channel."
+        },
+        "H1fjNmlA7o": {
+          "id": "H1fjNmlA7o",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": -7,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulse on read."
+        },
+        "BkmiE7gAQs": {
+          "id": "BkmiE7gAQs",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": -7,
+            "y": -1,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update.",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        }
+      },
+      "path": "@/get-ch-nir",
+      "description": "Get the most recent measurement from the near infrared (NIR) channel.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n   void evaluate(Context ctx) {\n       // The node responds only if there is an input pulse\n       if (!isInputDirty<input_UPD>(ctx))\n           return;\n\n       auto sensor = getValue<input_DEV>(ctx);\n\n       emitValue<output_VALUE>(ctx, sensor->getChannel(AS7341_CHANNEL_NIR));\n       \n       emitValue<output_DONE>(ctx, 1);\n    }\n}"
+        }
+      ]
+    },
+    "@/get-ch-415nm": {
+      "nodes": {
+        "Hkk6ndTQj": {
+          "id": "Hkk6ndTQj",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "Sylyphdamo": {
+          "id": "Sylyphdamo",
+          "type": "@/input-as7341-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An as7341-device."
+        },
+        "Sysl6dpXj": {
+          "id": "Sysl6dpXj",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "VALUE",
+          "description": "Raw measurement from the 415nm channel."
+        },
+        "HJ1w6dTXo": {
+          "id": "HJ1w6dTXo",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulse on read."
+        },
+        "HJJqaOpQo": {
+          "id": "HJJqaOpQo",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update.",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        }
+      },
+      "path": "@/get-ch-415nm",
+      "description": "Get the most recent measurement from the 415nm channel.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n   void evaluate(Context ctx) {\n       // The node responds only if there is an input pulse\n       if (!isInputDirty<input_UPD>(ctx))\n           return;\n\n       auto sensor = getValue<input_DEV>(ctx);\n\n       emitValue<output_VALUE>(ctx, sensor->getChannel(AS7341_CHANNEL_415nm_F1));\n\n       emitValue<output_DONE>(ctx, 1);\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-ch-445nm": {
+      "nodes": {
+        "Sk6Sa6aQi": {
+          "id": "Sk6Sa6aQi",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "Hkg6S6T6mo": {
+          "id": "Hkg6S6T6mo",
+          "type": "@/input-as7341-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An as7341-device."
+        },
+        "BkbaB6T67i": {
+          "id": "BkbaB6T67i",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "VALUE",
+          "description": "Raw measurement from the 445nm channel."
+        },
+        "r1MaSpTp7o": {
+          "id": "r1MaSpTp7o",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulse on read."
+        },
+        "S1m6rpa6ms": {
+          "id": "S1m6rpa6ms",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update.",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        }
+      },
+      "path": "@/get-ch-445nm",
+      "description": "Get the most recent measurement from the 445nm channel.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n   void evaluate(Context ctx) {\n       // The node responds only if there is an input pulse\n       if (!isInputDirty<input_UPD>(ctx))\n           return;\n\n       auto sensor = getValue<input_DEV>(ctx);\n\n       emitValue<output_VALUE>(ctx, sensor->getChannel(AS7341_CHANNEL_445nm_F2));\n\n       emitValue<output_DONE>(ctx, 1);\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-ch-480nm": {
+      "nodes": {
+        "By1ha6p7i": {
+          "id": "By1ha6p7i",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "H1e1npTams": {
+          "id": "H1e1npTams",
+          "type": "@/input-as7341-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An as7341-device."
+        },
+        "Hkbk2paaQs": {
+          "id": "Hkbk2paaQs",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "VALUE",
+          "description": "Raw measurement from the 480nm channel."
+        },
+        "ByG126ppQs": {
+          "id": "ByG126ppQs",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulse on read."
+        },
+        "ByX1h6p6Xi": {
+          "id": "ByX1h6p6Xi",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update.",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        }
+      },
+      "path": "@/get-ch-480nm",
+      "description": "Get the most recent measurement from the 480nm channel.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n   void evaluate(Context ctx) {\n       // The node responds only if there is an input pulse\n       if (!isInputDirty<input_UPD>(ctx))\n           return;\n\n       auto sensor = getValue<input_DEV>(ctx);\n\n       emitValue<output_VALUE>(ctx, sensor->getChannel(AS7341_CHANNEL_480nm_F3));\n\n       emitValue<output_DONE>(ctx, 1);\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-ch-515nm": {
+      "nodes": {
+        "Sy7gxRpQo": {
+          "id": "Sy7gxRpQo",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SygQxxATXo": {
+          "id": "SygQxxATXo",
+          "type": "@/input-as7341-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An as7341-device."
+        },
+        "rybQxxCpXj": {
+          "id": "rybQxxCpXj",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "VALUE",
+          "description": "Raw measurement from the 515nm channel."
+        },
+        "H1GQleRpmi": {
+          "id": "H1GQleRpmi",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulse on read."
+        },
+        "SyQXelRT7i": {
+          "id": "SyQXelRT7i",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update.",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        }
+      },
+      "path": "@/get-ch-515nm",
+      "description": "Get the most recent measurement from the 515nm channel.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n   void evaluate(Context ctx) {\n       // The node responds only if there is an input pulse\n       if (!isInputDirty<input_UPD>(ctx))\n           return;\n\n       auto sensor = getValue<input_DEV>(ctx);\n\n       emitValue<output_VALUE>(ctx, sensor->getChannel(AS7341_CHANNEL_515nm_F4));\n\n       emitValue<output_DONE>(ctx, 1);\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-ch-555nm": {
+      "nodes": {
+        "SJ2VVA67j": {
+          "id": "SJ2VVA67j",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HylhVN0amo": {
+          "id": "HylhVN0amo",
+          "type": "@/input-as7341-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An as7341-device."
+        },
+        "Skb3ENC67o": {
+          "id": "Skb3ENC67o",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "VALUE",
+          "description": "Raw measurement from the 555nm channel."
+        },
+        "Skf2440pQi": {
+          "id": "Skf2440pQi",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulse on read."
+        },
+        "rJQ24NR6Qo": {
+          "id": "rJQ24NR6Qo",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update.",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        }
+      },
+      "path": "@/get-ch-555nm",
+      "description": "Get the most recent measurement from the 555nm channel.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n   void evaluate(Context ctx) {\n       // The node responds only if there is an input pulse\n       if (!isInputDirty<input_UPD>(ctx))\n           return;\n\n       auto sensor = getValue<input_DEV>(ctx);\n\n       emitValue<output_VALUE>(ctx, sensor->getChannel(AS7341_CHANNEL_555nm_F5));\n\n       emitValue<output_DONE>(ctx, 1);\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-ch-590nm": {
+      "nodes": {
+        "rkIJUCa7s": {
+          "id": "rkIJUCa7s",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "ryxIkIATmj": {
+          "id": "ryxIkIATmj",
+          "type": "@/input-as7341-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An as7341-device."
+        },
+        "BkbLk8CTXj": {
+          "id": "BkbLk8CTXj",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "VALUE",
+          "description": "Raw measurement from the 590nm channel."
+        },
+        "SJMUyLRTXo": {
+          "id": "SJMUyLRTXo",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulse on read."
+        },
+        "SJmIyLRaQj": {
+          "id": "SJmIyLRaQj",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update.",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        }
+      },
+      "path": "@/get-ch-590nm",
+      "description": "Get the most recent measurement from the 590nm channel.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n   void evaluate(Context ctx) {\n       // The node responds only if there is an input pulse\n       if (!isInputDirty<input_UPD>(ctx))\n           return;\n\n       auto sensor = getValue<input_DEV>(ctx);\n\n       emitValue<output_VALUE>(ctx, sensor->getChannel(AS7341_CHANNEL_590nm_F6));\n\n       emitValue<output_DONE>(ctx, 1);\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-ch-630nm": {
+      "nodes": {
+        "B1gZDCamj": {
+          "id": "B1gZDCamj",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "H1xgZwRaQj": {
+          "id": "H1xgZwRaQj",
+          "type": "@/input-as7341-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An as7341-device."
+        },
+        "B1Wgbv067s": {
+          "id": "B1Wgbv067s",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "VALUE",
+          "description": "Raw measurement from the 630nm channel."
+        },
+        "BJzlZDRp7i": {
+          "id": "BJzlZDRp7i",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulse on read."
+        },
+        "ByQx-P0TQo": {
+          "id": "ByQx-P0TQo",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update.",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        }
+      },
+      "path": "@/get-ch-630nm",
+      "description": "Get the most recent measurement from the 630nm channel.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n   void evaluate(Context ctx) {\n       // The node responds only if there is an input pulse\n       if (!isInputDirty<input_UPD>(ctx))\n           return;\n\n       auto sensor = getValue<input_DEV>(ctx);\n\n       emitValue<output_VALUE>(ctx, sensor->getChannel(AS7341_CHANNEL_630nm_F7));\n\n       emitValue<output_DONE>(ctx, 1);\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-ch-680nm": {
+      "nodes": {
+        "Hk4FyJA7s": {
+          "id": "Hk4FyJA7s",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "S1gEt11A7i": {
+          "id": "S1gEt11A7i",
+          "type": "@/input-as7341-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An as7341-device."
+        },
+        "BybEtkkR7j": {
+          "id": "BybEtkkR7j",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "VALUE",
+          "description": "Raw measurement from the 680nm channel."
+        },
+        "rJMVKyyAmj": {
+          "id": "rJMVKyyAmj",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulse on read."
+        },
+        "SJ7NKkJ07i": {
+          "id": "SJ7NKkJ07i",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update.",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        }
+      },
+      "path": "@/get-ch-680nm",
+      "description": "Get the most recent measurement from the 680nm channel.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n   void evaluate(Context ctx) {\n       // The node responds only if there is an input pulse\n       if (!isInputDirty<input_UPD>(ctx))\n           return;\n\n       auto sensor = getValue<input_DEV>(ctx);\n\n       emitValue<output_VALUE>(ctx, sensor->getChannel(AS7341_CHANNEL_680nm_F8));\n       \n       emitValue<output_DONE>(ctx, 1);\n    }\n}"
+        }
+      ]
+    },
+    "@/03-example-led": {
+      "nodes": {
+        "BJVmhGRmj": {
+          "id": "BJVmhGRmj",
+          "type": "@/as7341-device",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "BklV72GCms": {
+          "id": "BklV72GCms",
+          "type": "@/init",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BybVX3zAms": {
+          "id": "BybVX3zAms",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "Sy0Q2G07i": {
+          "id": "Sy0Q2G07i",
+          "type": "@/set-led-current",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "Hk84nfRQj": {
+          "id": "Hk84nfRQj",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "Sk9EnG0ms": {
+          "id": "Sk9EnG0ms",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "rJ5rnGAmo": {
+          "id": "rJ5rnGAmo",
+          "type": "@/enable-led",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "B1VLhfCmo": {
+          "id": "B1VLhfCmo",
+          "type": "xod/debug/tweak-boolean",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "Sk1e_NIVE": "False"
+          }
+        },
+        "HkUDnzR7j": {
+          "id": "HkUDnzR7j",
+          "type": "xod/debug/tweak-number",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ByfGSDjQE": "100"
+          }
+        }
+      },
+      "links": {
+        "H1zVXhf07j": {
+          "id": "H1zVXhf07j",
+          "output": {
+            "nodeId": "BJVmhGRmj",
+            "pinKey": "rJiHKfzYq"
+          },
+          "input": {
+            "nodeId": "BklV72GCms",
+            "pinKey": "BJk95MGF5"
+          }
+        },
+        "B1XEQ3fAXo": {
+          "id": "B1XEQ3fAXo",
+          "output": {
+            "nodeId": "BJVmhGRmj",
+            "pinKey": "rJiHKfzYq"
+          },
+          "input": {
+            "nodeId": "BybVX3zAms",
+            "pinKey": "__in__"
+          }
+        },
+        "rkWr3GAms": {
+          "id": "rkWr3GAms",
+          "output": {
+            "nodeId": "Hk84nfRQj",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "Sy0Q2G07i",
+            "pinKey": "S1gn9bzRXi"
+          }
+        },
+        "B16B3fR7o": {
+          "id": "B16B3fR7o",
+          "output": {
+            "nodeId": "Sk9EnG0ms",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJ5rnGAmo",
+            "pinKey": "BklHHVfAms"
+          }
+        },
+        "rydLnM07i": {
+          "id": "rydLnM07i",
+          "output": {
+            "nodeId": "B1VLhfCmo",
+            "pinKey": "Sk1e_NIVE"
+          },
+          "input": {
+            "nodeId": "rJ5rnGAmo",
+            "pinKey": "ByL8NMRXs"
+          }
+        },
+        "H15vhGA7o": {
+          "id": "H15vhGA7o",
+          "output": {
+            "nodeId": "HkUDnzR7j",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "Sy0Q2G07i",
+            "pinKey": "ryXnqWGRmj"
+          }
+        }
+      },
+      "path": "@/03-example-led",
+      "description": "LED control example."
+    }
+  },
+  "license": "BSD",
+  "version": "0.0.3",
+  "description": "Adafruit AS7341 10-Channel Spectral Sensor. Wraps https://github.com/adafruit/Adafruit_AS7341.",
+  "name": "as7341-spectrometer"
+}

@@ -1,0 +1,474 @@
+{
+  "patches": {
+    "@/web-interface-esp32": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/me-no-dev/ESPAsyncWebServer\"\n#pragma XOD require \"https://github.com/me-no-dev/AsyncTCP\"\n\n#pragma XOD error_raise enable\n\n#include <WiFi.h>\n#include <AsyncTCP.h>\n#include <ESPAsyncWebServer.h>\n\nAsyncWebServer server(80);\n\n// --- глобальні прапорці кнопок ---\nbool btn1 = false;\nbool btn2 = false;\nbool btn3 = false;\nbool btn4 = false;\n\n// --- текст змінної для відображення на сторінці ---\nnamespace input {\n    String title = \"\";\n    String style = \"\";\n    String operation = \"\";\n}\n\nconst char index_html[] PROGMEM = R\"rawliteral(\n<!DOCTYPE HTML><html>\n<head>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  %TITLE%\n  <style>\n    button { width:120px; height:50px; font-size:18px; margin:10px; }\n    %STYLE%\n  </style>\n</head>\n<body>\n  <h2>ESP32 Button Interface</h2>\n  <button onclick=\"press(1)\">Button 1</button>\n  <button onclick=\"press(2)\">Button 2</button>\n  <button onclick=\"press(3)\">Button 3</button>\n  <button onclick=\"press(4)\">Button 4</button>\n  <hr>\n  <b>Last pressed:</b> <span id=\"operation\">%OPERATION%</span>\n\n<script>\nfunction press(num){\n  var xhttp = new XMLHttpRequest();\n  xhttp.open(\"GET\", \"/press?b=\" + num, true);\n  xhttp.send();\n}\n\nsetInterval(function(){\n  var xhttp = new XMLHttpRequest();\n  xhttp.onreadystatechange = function() {\n    if (this.readyState == 4 && this.status == 200) {\n      document.getElementById(\"operation\").innerHTML = this.responseText;\n    }\n  };\n  xhttp.open(\"GET\", \"/operation\", true);\n  xhttp.send();\n}, 1000);\n</script>\n</body>\n</html>\n)rawliteral\";\n\nString processor(const String& var) {\n  if (var == \"TITLE\") return input::title;\n  if (var == \"STYLE\") return input::style;\n  if (var == \"OPERATION\") return input::operation;\n  return String();\n}\n\nnode {\n    #define WIFI_TIMEOUT_MS 20000\n\n    void evaluate(Context ctx) {\n        // --- старт сервера при CONN ---\n        if (isInputDirty<input_CONN>(ctx)) {\n            // TITLE\n            auto tt = getValue<input_TITLE>(ctx);\n            char _tt[length(tt) + 1] = {0};\n            dump(tt, _tt);\n            // build title string\n            String ttl = \"\";\n            for (size_t i = 0; i < sizeof(_tt) && _tt[i] != 0; ++i) ttl += _tt[i];\n            input::title = \"<title>\" + ttl + \"</title>\";\n\n            // STYLE\n            auto st = getValue<input_STYLE>(ctx);\n            char _st[length(st) + 1] = {0};\n            dump(st, _st);\n            String sty = \"\";\n            for (size_t i = 0; i < sizeof(_st) && _st[i] != 0; ++i) sty += _st[i];\n            input::style = sty;\n\n            // OP initial\n            auto op = getValue<input_OP>(ctx);\n            char _op[length(op) + 1] = {0};\n            dump(op, _op);\n            String opp = \"\";\n            for (size_t i = 0; i < sizeof(_op) && _op[i] != 0; ++i) opp += _op[i];\n            input::operation = opp;\n\n            // routes\n            server.on(\"/\", HTTP_GET, [](AsyncWebServerRequest *request){\n                request->send_P(200, \"text/html\", index_html, processor);\n            });\n\n            server.on(\"/operation\", HTTP_GET, [](AsyncWebServerRequest *request){\n                request->send_P(200, \"text/plain\", input::operation.c_str());\n            });\n\n            server.on(\"/press\", HTTP_GET, [](AsyncWebServerRequest *request){\n                if (request->hasParam(\"b\")) {\n                    int b = request->getParam(\"b\")->value().toInt();\n                    if (b == 1) { btn1 = true; input::operation = \"Button 1\"; }\n                    if (b == 2) { btn2 = true; input::operation = \"Button 2\"; }\n                    if (b == 3) { btn3 = true; input::operation = \"Button 3\"; }\n                    if (b == 4) { btn4 = true; input::operation = \"Button 4\"; }\n                    request->send(200, \"text/plain\", input::operation.c_str());\n                } else {\n                    request->send(400, \"text/plain\", \"Missing b parameter\");\n                }\n            });\n\n            server.begin();\n\n            // Видаємо IP (якщо Wi-Fi підключений) і DONE\n            if (WiFi.status() == WL_CONNECTED) {\n                emitValue<output_IP>(ctx, WiFi.localIP());\n            } else {\n                // все одно емiтимо локальний IP (0.0.0.0) якщо немає підключення\n                emitValue<output_IP>(ctx, WiFi.localIP());\n            }\n           \n        }\n\n        // --- обробка RUN: оновлюємо OP і STYLE зі входів (ручне оновлення) ---\n        if (isInputDirty<input_RUN>(ctx)) {\n            // OP\n            auto op = getValue<input_OP>(ctx);\n            char _op[length(op) + 1] = {0};\n            dump(op, _op);\n            String opp = \"\";\n            for (size_t i = 0; i < sizeof(_op) && _op[i] != 0; ++i) opp += _op[i];\n            input::operation = opp;\n\n            // STYLE (оновлюємо стиль при RUN)\n            auto st = getValue<input_STYLE>(ctx);\n            char _st[length(st) + 1] = {0};\n            dump(st, _st);\n            String sty = \"\";\n            for (size_t i = 0; i < sizeof(_st) && _st[i] != 0; ++i) sty += _st[i];\n            input::style = sty;\n        }\n\n        // --- генерування виходів (імпульси при натисканні) ---\n        if (btn1) {\n            // видати короткий імпульс — тут ми робимо toggle від поточного стану виходу\n            emitValue<output_B1>(ctx, !(getValue<output_B1>(ctx)));\n            btn1 = false;\n        }\n        if (btn2) {\n            emitValue<output_B2>(ctx, !(getValue<output_B2>(ctx)));\n            btn2 = false;\n        }\n        if (btn3) {\n            emitValue<output_B3>(ctx, !(getValue<output_B3>(ctx)));\n            btn3 = false;\n        }\n        if (btn4) {\n            emitValue<output_B4>(ctx, !(getValue<output_B4>(ctx)));\n            btn4 = false;\n        }\n         emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "B1w9ctaCee": {
+          "description": "Pulse when get the IP address ",
+          "label": "DONE",
+          "id": "B1w9ctaCee",
+          "position": {
+            "x": -5.534090909090908,
+            "y": 3.0619047619047617,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ryePqctTAee": {
+          "boundLiterals": {
+            "__out__": "Never"
+          },
+          "description": "Establish the connection",
+          "label": "CONN",
+          "id": "ryePqctTAee",
+          "position": {
+            "x": -5.534090909090908,
+            "y": 1.061904761904762,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1-PqcK6Cxe": {
+          "description": "IP address for the web server",
+          "label": "IP",
+          "id": "H1-PqcK6Cxe",
+          "position": {
+            "x": -6.534090909090908,
+            "y": 3.0619047619047617,
+            "units": "slots"
+          },
+          "type": "xod/net/output-ip-address"
+        },
+        "ryzPq5t60gg": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "label": "RUN",
+          "id": "ryzPq5t60gg",
+          "position": {
+            "x": -1.5340909090909083,
+            "y": 1.061904761904762,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HyQD95F60ll": {
+          "boundLiterals": {
+            "__out__": "\"<p>Hello World</p>\""
+          },
+          "description": "Operation to be done on the web server",
+          "label": "OP",
+          "id": "HyQD95F60ll",
+          "position": {
+            "x": -3.5340909090909083,
+            "y": 1.061904761904762,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Hy4vqqtp0xg": {
+          "label": "INET",
+          "id": "Hy4vqqtp0xg",
+          "position": {
+            "x": -6.534090909090908,
+            "y": 1.061904761904762,
+            "units": "slots"
+          },
+          "type": "jesuso/esp32-wifi/input-esp32-inet"
+        },
+        "SJrP95F6Aee": {
+          "boundLiterals": {
+            "__out__": "\"<p>Hello World</p>\""
+          },
+          "description": "HTML code to style the web server",
+          "label": "STYLE",
+          "id": "SJrP95F6Aee",
+          "position": {
+            "x": -2.5340909090909083,
+            "y": 1.061904761904762,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SJUPq9tTAge": {
+          "boundLiterals": {
+            "__out__": "\"ESP32 Web Server\""
+          },
+          "description": "HTML Title",
+          "label": "TITLE",
+          "id": "SJUPq9tTAge",
+          "position": {
+            "x": -4.534090909090908,
+            "y": 1.061904761904762,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "B1vw59YT0xg": {
+          "id": "B1vw59YT0xg",
+          "position": {
+            "x": -6.534090909090908,
+            "y": 2.0619047619047617,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1dwq9KpCxg": {
+          "label": "B1",
+          "id": "r1dwq9KpCxg",
+          "position": {
+            "x": -4.534090909090908,
+            "y": 3.0619047619047617,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "rJKwq9Y6Rxl": {
+          "label": "B2",
+          "id": "rJKwq9Y6Rxl",
+          "position": {
+            "x": -3.5340909090909083,
+            "y": 3.0619047619047617,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "SJqw55YpRgl": {
+          "label": "B3",
+          "id": "SJqw55YpRgl",
+          "position": {
+            "x": -2.5340909090909083,
+            "y": 3.0619047619047617,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "r1oD55FaAlg": {
+          "label": "B4",
+          "id": "r1oD55FaAlg",
+          "position": {
+            "x": -1.5340909090909083,
+            "y": 3.0619047619047617,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        }
+      },
+      "path": "@/web-interface-esp32"
+    },
+    "@/example": {
+      "links": {
+        "rJTm1iFpCge": {
+          "id": "rJTm1iFpCge",
+          "input": {
+            "nodeId": "ryM71oFa0lg",
+            "pinKey": "S1mxGvKUN"
+          },
+          "output": {
+            "nodeId": "rkmmysKpCgx",
+            "pinKey": "ryH6tSt8N"
+          }
+        },
+        "rkAmyiY6Cll": {
+          "id": "rkAmyiY6Cll",
+          "input": {
+            "nodeId": "B1NQ1sKaRgg",
+            "pinKey": "Sy6LZuYIE"
+          },
+          "output": {
+            "nodeId": "rkmmysKpCgx",
+            "pinKey": "ryH6tSt8N"
+          }
+        },
+        "S1ylmysY60lg": {
+          "id": "S1ylmysY60lg",
+          "input": {
+            "nodeId": "rJB7yoFa0eg",
+            "pinKey": "HJIQ6AY8E"
+          },
+          "output": {
+            "nodeId": "rkmmysKpCgx",
+            "pinKey": "ryH6tSt8N"
+          }
+        },
+        "SkxxQJstpAxl": {
+          "id": "SkxxQJstpAxl",
+          "input": {
+            "nodeId": "ByUQysFpRll",
+            "pinKey": "HJIQ6AY8E"
+          },
+          "output": {
+            "nodeId": "rkmmysKpCgx",
+            "pinKey": "ryH6tSt8N"
+          }
+        },
+        "HybxXkjY6Clg": {
+          "id": "HybxXkjY6Clg",
+          "input": {
+            "nodeId": "ByUQysFpRll",
+            "pinKey": "S1gH6CKIN"
+          },
+          "output": {
+            "nodeId": "rkZQJjtTAgl",
+            "pinKey": "By1xaQb-m"
+          }
+        },
+        "Syfl7kjFaRxx": {
+          "id": "Syfl7kjFaRxx",
+          "input": {
+            "nodeId": "rJB7yoFa0eg",
+            "pinKey": "S1gH6CKIN"
+          },
+          "output": {
+            "nodeId": "B1DQkiF6Rxe",
+            "pinKey": "HJrBNr4dG"
+          }
+        },
+        "Sk7e7yjta0le": {
+          "id": "Sk7e7yjta0le",
+          "output": {
+            "nodeId": "ryM71oFa0lg",
+            "pinKey": "rylSGPt8E"
+          },
+          "input": {
+            "nodeId": "ByUQysFpRll",
+            "pinKey": "B11QT1qLN"
+          }
+        },
+        "Hy4x71oKp0ee": {
+          "id": "Hy4x71oKp0ee",
+          "output": {
+            "nodeId": "ByUQysFpRll",
+            "pinKey": "r1DL6CFU4"
+          },
+          "input": {
+            "nodeId": "rJB7yoFa0eg",
+            "pinKey": "B11QT1qLN"
+          }
+        },
+        "r1rg7JjKaRgx": {
+          "id": "r1rg7JjKaRgx",
+          "output": {
+            "nodeId": "rJB7yoFa0eg",
+            "pinKey": "r1DL6CFU4"
+          },
+          "input": {
+            "nodeId": "B1NQ1sKaRgg",
+            "pinKey": "SJDbf_YUV"
+          }
+        },
+        "S1uemysKa0lx": {
+          "id": "S1uemysKa0lx",
+          "output": {
+            "nodeId": "B1DQkiF6Rxe",
+            "pinKey": "HJrBNr4dG"
+          },
+          "input": {
+            "nodeId": "ry_Qyot6Cgg",
+            "pinKey": "BJI7P8t9Z"
+          }
+        },
+        "BJ8ejFTRxl": {
+          "id": "BJ8ejFTRxl",
+          "output": {
+            "nodeId": "BkgmJjtaRxl",
+            "pinKey": "BySbdxbws_"
+          },
+          "input": {
+            "nodeId": "SkQesKT0ge",
+            "pinKey": "Hy4vqqtp0xg"
+          }
+        },
+        "Sy_gjt6Cxl": {
+          "id": "Sy_gjt6Cxl",
+          "output": {
+            "nodeId": "BkgmJjtaRxl",
+            "pinKey": "ryxbOxbwsu"
+          },
+          "input": {
+            "nodeId": "SkQesKT0ge",
+            "pinKey": "ryePqctTAee"
+          }
+        },
+        "H1TfjtpClx": {
+          "id": "H1TfjtpClx",
+          "output": {
+            "nodeId": "SkQesKT0ge",
+            "pinKey": "r1dwq9KpCxg"
+          },
+          "input": {
+            "nodeId": "B1DQkiF6Rxe",
+            "pinKey": "HynENHNOz"
+          }
+        },
+        "S1lmsK6Rle": {
+          "id": "S1lmsK6Rle",
+          "output": {
+            "nodeId": "SkQesKT0ge",
+            "pinKey": "rJKwq9Y6Rxl"
+          },
+          "input": {
+            "nodeId": "B1DQkiF6Rxe",
+            "pinKey": "rJJHNrVuM"
+          }
+        },
+        "SyXXsYaCle": {
+          "id": "SyXXsYaCle",
+          "output": {
+            "nodeId": "ry_Qyot6Cgg",
+            "pinKey": "HJhXDIY9-"
+          },
+          "input": {
+            "nodeId": "SkQesKT0ge",
+            "pinKey": "SJrP95F6Aee"
+          }
+        },
+        "B1oXiYTCxx": {
+          "id": "B1oXiYTCxx",
+          "output": {
+            "nodeId": "SkQesKT0ge",
+            "pinKey": "H1-PqcK6Cxe"
+          },
+          "input": {
+            "nodeId": "rkZQJjtTAgl",
+            "pinKey": "H17mp7ZZX"
+          }
+        },
+        "r1frjK6Alx": {
+          "id": "r1frjK6Alx",
+          "output": {
+            "nodeId": "SkQesKT0ge",
+            "pinKey": "B1w9ctaCee"
+          },
+          "input": {
+            "nodeId": "ryM71oFa0lg",
+            "pinKey": "r1H7MwK8E"
+          }
+        }
+      },
+      "nodes": {
+        "BkgmJjtaRxl": {
+          "boundLiterals": {
+            "Hk--deWwsu": "\"1234567890\"",
+            "S1zZdeWDjO": "On Boot",
+            "rkWugbwoO": "\"XOD123\""
+          },
+          "id": "BkgmJjtaRxl",
+          "position": {
+            "x": 3,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "jesuso/esp32-wifi/esp32-connect"
+        },
+        "rkZQJjtTAgl": {
+          "id": "rkZQJjtTAgl",
+          "position": {
+            "x": 3,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/net/format-ip"
+        },
+        "ryM71oFa0lg": {
+          "id": "ryM71oFa0lg",
+          "position": {
+            "x": 10,
+            "y": 2.75,
+            "units": "slots"
+          },
+          "type": "wayland/ssd1306-oled-i2c/clear-display"
+        },
+        "rkmmysKpCgx": {
+          "id": "rkmmysKpCgx",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "wayland/ssd1306-oled-i2c/ssd1306-oled-i2c-device"
+        },
+        "B1NQ1sKaRgg": {
+          "id": "B1NQ1sKaRgg",
+          "position": {
+            "x": 6,
+            "y": 6.75,
+            "units": "slots"
+          },
+          "type": "wayland/ssd1306-oled-i2c/send-buffer-to-display"
+        },
+        "rJB7yoFa0eg": {
+          "boundLiterals": {
+            "Bkw-6yqI4": "40",
+            "ByW_2k9IN": "01h"
+          },
+          "id": "rJB7yoFa0eg",
+          "position": {
+            "x": 10,
+            "y": 5.75,
+            "units": "slots"
+          },
+          "type": "wayland/ssd1306-oled-i2c/draw-text"
+        },
+        "ByUQysFpRll": {
+          "boundLiterals": {
+            "Bkw-6yqI4": "16",
+            "ByW_2k9IN": "01h",
+            "Hypl61qUE": "0"
+          },
+          "id": "ByUQysFpRll",
+          "position": {
+            "x": -1,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "wayland/ssd1306-oled-i2c/draw-text"
+        },
+        "B1DQkiF6Rxe": {
+          "boundLiterals": {
+            "rJGQNB4df": "\" \\n\""
+          },
+          "id": "B1DQkiF6Rxe",
+          "position": {
+            "x": 19,
+            "y": 3.75,
+            "units": "slots"
+          },
+          "type": "xod/core/join"
+        },
+        "ry_Qyot6Cgg": {
+          "id": "ry_Qyot6Cgg",
+          "type": "xod/core/defer",
+          "position": {
+            "x": 15,
+            "y": 1.75,
+            "units": "slots"
+          }
+        },
+        "SkQesKT0ge": {
+          "boundLiterals": {
+            "SJrP95F6Aee": "\"\""
+          },
+          "id": "SkQesKT0ge",
+          "type": "@/web-interface-esp32",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example"
+    }
+  },
+  "version": "0.0.1",
+  "description": "Simple asynchronous web interface with four buttons",
+  "apiKey": "f582d6fa-0c4b-4085-9173-d0b92582ff73",
+  "name": "esp32-web-interface-1"
+}

@@ -1,0 +1,359 @@
+{
+  "description": "Use mservo node to drive a servo motor, connected to Amperka Multiservo Shield.",
+  "name": "mservo",
+  "patches": {
+    "@/mrotate": {
+      "attachments": [
+        {
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_DO\n\nnode {\n    void evaluate(Context ctx) {\n        auto xservo = getValue<input_DEV>(ctx);\n\n        if (isSettingUp()) {\n            // Short-circuit DEV and DEV'\n            emitValue<output_DEVU0027>(ctx, xservo);\n        }\n\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        auto angle = getValue<input_VAL>(ctx);\n        xservo->write01(angle);\n        emitValue<output_ACK>(ctx, 1);\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "Hyz7b-SDOP": {
+          "description": "Pulses to acknowledge the new target. It will take time for the servo to complete the order.",
+          "id": "Hyz7b-SDOP",
+          "label": "ACK",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "S1X-bHwuD": {
+          "boundLiterals": {
+            "__out__": "0.5"
+          },
+          "description": "The target shaft rotation position in the [0; 1] range. The real angle/pulse values corresponding to the 0 and 1 boundaries are defined by the servo device node.",
+          "id": "S1X-bHwuD",
+          "label": "VAL",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SyV7bbHP_D": {
+          "id": "SyV7bbHP_D",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SyX0brPOD": {
+          "id": "SyX0brPOD",
+          "label": "DEV'",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-mservo-device"
+        },
+        "rJyXbHPdw": {
+          "id": "rJyXbHPdw",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-mservo-device"
+        },
+        "ryWm-bBPOP": {
+          "boundLiterals": {
+            "__out__": "Never"
+          },
+          "description": "Set the new target rotation value for the given device.",
+          "id": "ryWm-bBPOP",
+          "label": "DO",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/mrotate"
+    },
+    "@/mservo": {
+      "description": "Servo motor, connected to Amperka Multiservo Shield",
+      "links": {
+        "BylMbBDOP": {
+          "id": "BylMbBDOP",
+          "input": {
+            "nodeId": "BysZ-HvOw",
+            "pinKey": "S1X-bHwuD"
+          },
+          "output": {
+            "nodeId": "Bk-FVzwuP",
+            "pinKey": "__out__"
+          }
+        },
+        "HkHzbrPdP": {
+          "id": "HkHzbrPdP",
+          "input": {
+            "nodeId": "B1M-K4zPOw",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BysZ-HvOw",
+            "pinKey": "Hyz7b-SDOP"
+          }
+        },
+        "SJnWYNGDuP": {
+          "id": "SJnWYNGDuP",
+          "input": {
+            "nodeId": "rkEbFNfDOw",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "Bk-FVzwuP",
+            "pinKey": "__out__"
+          }
+        },
+        "SklqkBDOD": {
+          "id": "SklqkBDOD",
+          "input": {
+            "nodeId": "Syls4MvOw",
+            "pinKey": "ryQn_ySv_w"
+          },
+          "output": {
+            "nodeId": "H1sESMPuw",
+            "pinKey": "__out__"
+          }
+        },
+        "SksWYEMvdv": {
+          "id": "SksWYEMvdv",
+          "input": {
+            "nodeId": "rkEbFNfDOw",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "ByQWtNGDuw",
+            "pinKey": "__out__"
+          }
+        },
+        "ryS4ZSP_w": {
+          "id": "ryS4ZSP_w",
+          "input": {
+            "nodeId": "BysZ-HvOw",
+            "pinKey": "rJyXbHPdw"
+          },
+          "output": {
+            "nodeId": "Syls4MvOw",
+            "pinKey": "BJZhu1SDdw"
+          }
+        },
+        "ryfGZrw_v": {
+          "id": "ryfGZrw_v",
+          "input": {
+            "nodeId": "BysZ-HvOw",
+            "pinKey": "ryWm-bBPOP"
+          },
+          "output": {
+            "nodeId": "rkEbFNfDOw",
+            "pinKey": "H1fx68wzB"
+          }
+        }
+      },
+      "nodes": {
+        "B1M-K4zPOw": {
+          "id": "B1M-K4zPOw",
+          "label": "ACK",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Bk-FVzwuP": {
+          "description": "Number value in [0, 1] range corresponding to the angle/speed of the servo/continuous servo motor.",
+          "id": "Bk-FVzwuP",
+          "label": "VAL",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ByQWtNGDuw": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Makes the servo react to incoming values while `ACT` is true",
+          "id": "ByQWtNGDuw",
+          "label": "ACT",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "BysZ-HvOw": {
+          "id": "BysZ-HvOw",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/mrotate"
+        },
+        "H1sESMPuw": {
+          "description": "The Multiservo shield pin (0-17) the servo is connected to",
+          "id": "H1sESMPuw",
+          "label": "M-PIN",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Syls4MvOw": {
+          "description": "Represents a servo motor, connected to Amperka Multiservo Shield. Don't mix up servos connected to this shield (multiservo pins 0-17 will look like D0-D17 in XOD) and devices, connected to Arduino itself through the shield (pins D2, D3..., D8).",
+          "id": "Syls4MvOw",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/mservo-device"
+        },
+        "rkEbFNfDOw": {
+          "id": "rkEbFNfDOw",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/act"
+        }
+      },
+      "path": "@/mservo"
+    },
+    "@/mservo-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/prplkn/Multiservo/\"\n\n#include <Wire.h>\n#include <Multiservo.h>\n\nnode {\n    meta {\n        /*\n        A wrapper around the stock Servo object because we need to keep some details\n        which the original object hides in private fields. This over-protection leads\n        to increased RAM usage to duplicate the data. A pull request to the original\n        library asking to add field read methods would be nice.\n        */\n        class XServo : public Multiservo {\n          protected:\n            // Here are the duplicates\n            uint8_t port;\n            int pulseMin;\n            int pulseMax;\n\n          public:\n            // Set pulse duration according the given `value` and set pulseMin, pulseMax\n            // The value is clipped to the [0; 1] range\n            void write01(Number value) {\n                ensureAttached();\n                int pseudoAngle = constrain((int)(value * 180), 0, 180);\n                this->write(pseudoAngle);\n            }\n\n            // Performs Servo::attach with the parameters set previously\n            void ensureAttached() {\n                if (this->attached())\n                    return;\n\n                this->attach(port, pulseMin, pulseMax);\n            }\n\n            Number read01() {\n                int us = this->readMicroseconds();\n                return (Number)(us - pulseMin) / (Number)(pulseMax - pulseMin);\n            }\n\n            void reattach(uint8_t port, int pulseMin, int pulseMax) {\n                this->port = port;\n                this->pulseMin = pulseMin;\n                this->pulseMax = pulseMax;\n                if (this->attached())\n                    this->attach(port, pulseMin, pulseMax);\n            }\n        };\n\n        using Type = XServo*;\n    }\n\n    XServo mservo;\n\n    void evaluate(Context ctx) {\n        static_assert(isValidDigitalPort(constant_input_PORT), \"must be a valid digital port\");\n\n        mservo.reattach(\n            constant_input_PORT,\n            getValue<input_Pmin>(ctx),\n            getValue<input_Pmax>(ctx)\n        );\n\n        emitValue<output_DEV>(ctx, &mservo);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "BJZhu1SDdw": {
+          "description": "The servo device",
+          "id": "BJZhu1SDdw",
+          "label": "DEV",
+          "position": {
+            "x": -6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "SyM2u1SPuv": {
+          "id": "SyM2u1SPuv",
+          "position": {
+            "x": -6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ry3_1rwOD": {
+          "boundLiterals": {
+            "__out__": "544"
+          },
+          "description": "The minimal rated pulse width (in µS) ",
+          "id": "ry3_1rwOD",
+          "label": "Pmin",
+          "position": {
+            "x": -5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryQn_ySv_w": {
+          "description": "The Multiservo shield port (0-17) the servo is connected to",
+          "id": "ryQn_ySv_w",
+          "label": "PORT",
+          "position": {
+            "x": -6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rygnuySDOv": {
+          "boundLiterals": {
+            "__out__": "2400"
+          },
+          "description": "The maximal rated pulse width (in µS) ",
+          "id": "rygnuySDOv",
+          "label": "Pmax",
+          "position": {
+            "x": -4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/mservo-device"
+    },
+    "@/tweak-test": {
+      "links": {
+        "SkIBGHDuv": {
+          "id": "SkIBGHDuv",
+          "input": {
+            "nodeId": "SkaXzSDdP",
+            "pinKey": "Bk-FVzwuP"
+          },
+          "output": {
+            "nodeId": "SJbrzBw_D",
+            "pinKey": "ByfGSDjQE"
+          }
+        }
+      },
+      "nodes": {
+        "SJbrzBw_D": {
+          "boundLiterals": {
+            "ByfGSDjQE": "0.5"
+          },
+          "id": "SJbrzBw_D",
+          "position": {
+            "x": 7,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "SkaXzSDdP": {
+          "boundLiterals": {
+            "H1sESMPuw": "D0"
+          },
+          "id": "SkaXzSDdP",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/mservo"
+        }
+      },
+      "path": "@/tweak-test"
+    }
+  },
+  "version": "0.1.2"
+}

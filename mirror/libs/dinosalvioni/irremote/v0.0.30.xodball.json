@@ -1,0 +1,242 @@
+{
+  "description": "(beta) Libreria hardware dedicata alle espansioni per Arduino come pcf8574",
+  "name": "irremote",
+  "patches": {
+    "@/ir-receive": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/z3t0/Arduino-IRremote\"\n\n\n{{#global}}\n#include <IRremote.h>\n{{/global}}\n\nstruct State {\n    int configuredPort = -1;\n    IRrecv* irrecv;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    auto port = getValue<input_PORT>(ctx);\n    auto irrecv = state->irrecv;\n    if (state->configuredPort != port) {\n        state->irrecv = irrecv = new IRrecv(port);\n        irrecv->enableIRIn(); // Start the receiver\n        state->configuredPort = port;\n    }\n\n    \n\n    if (isInputDirty<input_UPD>(ctx)) {\n        decode_results results; //cache of decode of IR remoter control\n\n        if (irrecv->decode(&results)) {\n\n            if (results.decode_type == UNKNOWN) {\n                emitValue<output_ERR>(ctx, 1);\n            } else if (results.bits > 0)  {\n                emitValue<output_CODE>(ctx, results.value);\n                emitValue<output_Type>(ctx, results.decode_type);\n                emitValue<output_Bits>(ctx, results.bits);\n                // volatile unsigned int rawbuf = results.rawbuf;\n                //emitValue<output_Rawbuf>(ctx, rawbuf);\n                emitValue<output_Rawlen>(ctx, results.rawlen);\n                emitValue<output_REC>(ctx, 1);\n                \n                \n            }\n        irrecv->resume();   \n        }\n     \n     //delay(500);\n     }\n\n\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1xkVn6BPV": {
+          "id": "B1xkVn6BPV",
+          "position": {
+            "x": 7,
+            "y": 1.5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BkSyV3prP4": {
+          "id": "BkSyV3prP4",
+          "label": "Rawlen",
+          "position": {
+            "x": 11,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ByyE2prv4": {
+          "boundLiterals": {
+            "__out__": "5"
+          },
+          "id": "ByyE2prv4",
+          "label": "PORT",
+          "position": {
+            "x": 6,
+            "y": 0.5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H1aiz9Uw4": {
+          "id": "H1aiz9Uw4",
+          "label": "Rawbuf",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "Hk44pQ8IL": {
+          "id": "Hk44pQ8IL",
+          "label": "CODE",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "S181VnpBvE": {
+          "id": "S181VnpBvE",
+          "label": "Bits",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "S1PoSrLvE": {
+          "id": "S1PoSrLvE",
+          "label": "ERR",
+          "position": {
+            "x": 15,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "S1QJ42aHDE": {
+          "id": "S1QJ42aHDE",
+          "label": "Type",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SJZy42prvV": {
+          "id": "SJZy42prvV",
+          "label": "UPD",
+          "position": {
+            "x": 9,
+            "y": 0.5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJvBuJ8DN": {
+          "id": "SJvBuJ8DN",
+          "label": "REC",
+          "position": {
+            "x": 14,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/ir-receive"
+    },
+    "@/ir-send": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/z3t0/Arduino-IRremote\"\n\n\n{{#global}}\n#include <IRremote.h>\n{{/global}}\n\n\nstruct State {\n    IRsend* irsend;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    auto irsend = state->irsend;\n    \n    auto type = getValue<input_Type>(ctx);\n    auto value = getValue<input_CODE>(ctx);\n    auto bits = getValue<input_Bits>(ctx);\n    \n    if (isInputDirty<input_UPD>(ctx)) {\n    emitValue<output_ACT>(ctx, true);\n\n    for (int i = 0; i < getValue<input_Repeat>(ctx); i++) {\n\t\t\n        if (type == NEC) {\n             irsend->sendNEC(value, bits);\n         } \n         else if (type == SONY) {\n              irsend->sendSony(value, bits);\n         } \n         else if (type == RC5) {\n             irsend->sendRC5(value, bits);\n         } \n         else if (type == RC6) {\n             irsend->sendRC6(value, bits);\n         }\n        else {\n             //Error\n             //Serial.print(label);\n             //Serial.println(\"Bad type!\");\n         }\n        delay(getValue<input_Delay>(ctx));\n    }\n    emitValue<output_ACT>(ctx, false);    \n    emitValue<output_DONE>(ctx, 1); \n    \n    }\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJjI6XUUL": {
+          "id": "BJjI6XUUL",
+          "label": "CODE",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJzD36SwN": {
+          "boundLiterals": {
+            "__out__": "20"
+          },
+          "id": "BJzD36SwN",
+          "label": "Bits",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Hkg6laqSv4": {
+          "id": "Hkg6laqSv4",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1WqJlUDV": {
+          "boundLiterals": {
+            "__out__": "40"
+          },
+          "description": "in ms",
+          "id": "S1WqJlUDV",
+          "label": "Delay",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkkksJLwV": {
+          "id": "SkkksJLwV",
+          "label": "DONE",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r1Z6ga5SvE": {
+          "id": "r1Z6ga5SvE",
+          "label": "UPD",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1zbJyUD4": {
+          "boundLiterals": {
+            "__out__": "3"
+          },
+          "description": "ripetizione impulsi",
+          "id": "r1zbJyUD4",
+          "label": "Repeat",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJjB3arPN": {
+          "boundLiterals": {
+            "__out__": "2"
+          },
+          "description": "tipo codifica",
+          "id": "rJjB3arPN",
+          "label": "Type",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryiMWHaiE": {
+          "description": "Is flip sequence active",
+          "id": "ryiMWHaiE",
+          "label": "ACT",
+          "position": {
+            "x": 15,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        }
+      },
+      "path": "@/ir-send"
+    },
+    "@/main": {
+      "description": "per sensori BMP280 BME280",
+      "path": "@/main"
+    }
+  },
+  "version": "0.0.30"
+}

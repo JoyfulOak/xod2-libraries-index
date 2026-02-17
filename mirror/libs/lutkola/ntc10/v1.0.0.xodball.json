@@ -1,0 +1,89 @@
+{
+  "apiKey": "5126e7c4-36a7-4ec3-83cd-b89586535974",
+  "license": "OSS",
+  "name": "ntc10",
+  "patches": {
+    "@/ntc10-device": {
+      "attachments": [
+        {
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n#pragma XOD error_raise enable\n\n#define referenceResistance 10000\n#define nominalResistance 10000\n#define nominalTemperature 298.15\n#define bValue 3950\n#define adcres 1023\n\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n   \n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    const uint8_t port = getValue<input_PORT>(ctx);\n    \n    if (!isValidAnalogPort(port)) {\n        raiseError(ctx);\n        return;\n    }\n      \n\n    ::pinMode(port, INPUT);\n\n    double avgR = 0;\n\n    for(int i = 0; i < 10; i++){\n       avgR += analogRead(port);\n       delay(100);\n    }\n\n    avgR /= 10;\n\n    //avgR = 476;\n\n    avgR = referenceResistance / (adcres / avgR - 1); \n    \n    double inverseKelvin = 1.0 / nominalTemperature + log(avgR / nominalResistance) / bValue;\n    double Celsius = 1.0/inverseKelvin - 273.15;\n\n\n   \n    emitValue<output_VAL>(ctx, Celsius);\n    emitValue<output_DONE>(ctx, 1);\n    \n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "S1oiJ1rDU": {
+          "id": "S1oiJ1rDU",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJgo11SP8": {
+          "id": "SJgo11SP8",
+          "label": "VAL",
+          "position": {
+            "x": 6,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "Sk0AXkSvL": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "id": "Sk0AXkSvL",
+          "label": "UPD",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkRcmyBDL": {
+          "id": "SkRcmyBDL",
+          "label": "DONE",
+          "position": {
+            "x": 7,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SyB5kkrv8": {
+          "boundLiterals": {
+            "__out__": "A0"
+          },
+          "id": "SyB5kkrv8",
+          "label": "PORT",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        }
+      },
+      "path": "@/ntc10-device"
+    },
+    "@/main": {
+      "nodes": {
+        "rJ7Zsy2zw": {
+          "id": "rJ7Zsy2zw",
+          "type": "@/ntc10-device",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/main"
+    }
+  },
+  "version": "1.0.0"
+}

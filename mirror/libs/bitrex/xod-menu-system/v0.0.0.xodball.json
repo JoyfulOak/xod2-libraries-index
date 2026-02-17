@@ -1,0 +1,2030 @@
+{
+  "license": "GPL v3",
+  "name": "xod-menu-system",
+  "patches": {
+    "@/branch-menu-item": {
+      "attachments": [
+        {
+          "content": "#pragma XOD dirtiness disable\n\n/* include the base class type of a Menu item */\n\nnamespace menu_base = ____menu_base;\nusing menu_base_t = menu_base::MenuBase;\n\n/* A wrapper for a raw BiDirectionalList that allows a Branch-type\n   menu to retain/manage location state when the user is paging thru its\n   sub-menus */\n\ntemplate <typename MenuBase>\nclass SubMenuIterator {\n  public:\n   SubMenuIterator() = default;\n\n  explicit SubMenuIterator(menu_base::BiDirectionalList<MenuBase*> sub_menus) :\n                     sub_menu_ptr_list_(sub_menus), length_(xod::length(sub_menus)) {}\n\n  menu_base::BiDirectionalList<MenuBase*> menu_ptr_list() const {\n    return sub_menu_ptr_list_;\n  }\n\n  SubMenuIterator<MenuBase>& operator++() {\n    if (cursor_ < length_ - 1) ++cursor_;\n    return *this;\n  }\n\n  SubMenuIterator<MenuBase>& operator--() {\n    if (cursor_ > 0) --cursor_;\n    return *this;\n  }\n\n  MenuBase* current_menu_ptr() {\n    auto it = sub_menu_ptr_list_.iterate();\n    for (uint8_t i = 0; i < cursor_; ++i) { ++it; }\n    return *it;\n  }\n\n  void reset() {\n    cursor_ = 0;\n  }\n\n  private:\n    menu_base::BiDirectionalList<MenuBase*> sub_menu_ptr_list_;\n    uint8_t length_ = 0;\n    uint8_t cursor_ = 0;\n};\n\n\n/* An interface class for a Branch-type menu page which inherits the default\n   MenuInterface methods plus additional Branch-type specific methods to allow \n   navigation thru its sub-menus. */\n\ntemplate <typename MenuBase, template <typename> class BranchMenuImpl>\nclass BranchMenuInterface : public menu_base::MenuInterface<MenuBase, BranchMenuImpl> {\n public:\n    MenuBase* sub_menu_ptr() {\n        return static_cast<BranchMenuImpl<MenuBase>*>(this)->sub_menu_ptr_();\n    }\n\n    MenuBase* next() {\n        return static_cast<BranchMenuImpl<MenuBase>*>(this)->next_();\n    }\n\n    MenuBase* prev() {\n        return static_cast<BranchMenuImpl<MenuBase>*>(this)->prev_();\n    }\n\n    BranchMenuImpl<MenuBase>* parent() {\n        return static_cast<BranchMenuImpl<MenuBase>*>(this)->parent_();\n    }\n\n    void set_parent(BranchMenuImpl<MenuBase>* parent) {\n        static_cast<BranchMenuImpl<MenuBase>*>(this)->set_parent_(parent);\n    }\n};\n\n/* an implementation of a Branch-type menu page satisfying the requirements\n  from the above interface. */\n\ntemplate <typename MenuBase>\nclass BranchMenuImpl final\n    : public BranchMenuInterface<MenuBase, BranchMenuImpl>,\n      public MenuBase {\n  friend class menu_base::MenuInterface<MenuBase, BranchMenuImpl>;\n  friend class BranchMenuInterface<MenuBase, BranchMenuImpl>;\n\n public:\n  constexpr BranchMenuImpl()\n      : MenuBase(0),\n        menu_text_lines_view_(PlainListView<XString>(nullptr, 0)) {}\n\n  BranchMenuImpl(menu_base::BiDirectionalList<MenuBase*> sub_menu_ptr_list,\n                 XString menu_text_1, XString menu_text_2, Number user_id)\n      : MenuBase(user_id),\n        menu_text_({menu_text_1, menu_text_2}),\n        menu_text_lines_view_(PlainListView<XString>(menu_text_, 2)),\n        sub_menu_it_(SubMenuIterator<MenuBase>(sub_menu_ptr_list))\n        {}\n\n protected:\n  List<XString> text_() override {\n    menu_text_lines_view_ = PlainListView<XString>(menu_text_, 2);\n    return List<XString>(&menu_text_lines_view_);\n  }\n\n  MenuBase* invoke_(Number /* param */) override {\n      sub_menu_it_.reset();\n      return this;\n  }\n\n  MenuBase* sub_menu_ptr_() {\n      return sub_menu_it_.current_menu_ptr();\n  }\n\n  MenuBase* next_() {\n      ++sub_menu_it_;\n      return sub_menu_it_.current_menu_ptr();\n  }\n\n  MenuBase* prev_() {\n      --sub_menu_it_;\n      return sub_menu_it_.current_menu_ptr();\n  }\n\n  BranchMenuImpl<MenuBase>* parent_() const {\n    return parent_ptr_;\n  }\n\n  void set_parent_(BranchMenuImpl<MenuBase>* parent) {\n      parent_ptr_ = parent;\n  }\n\n private:\n  XString menu_text_[2];\n  PlainListView<XString> menu_text_lines_view_;\n  SubMenuIterator<MenuBase> sub_menu_it_;\n  BranchMenuImpl<MenuBase>* parent_ptr_ = nullptr;\n};\n\n/* The state for this node contains an instance of a Branch-type menu class\n   plus a ListView, so that the node can output a List-type wrapper holding its\n   pointer, so that its pointer can be appended into further lists of Menu-type\n   pointers to allow automatic construction of a tree-like data structure. */\n\nstruct State {\n  BranchMenuImpl<menu_base_t> branch_menu;\n  menu_base_t* branch_menu_ptr;\n  menu_base::BiDirectionalPlainListView<menu_base_t*> branch_menu_ptr_view =\n      menu_base::BiDirectionalPlainListView<menu_base_t*>(&branch_menu_ptr, 1);\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n  if (isSettingUp()) {\n    using menu_base::BiDirectionalList;\n    auto state = getState(ctx);\n    auto in = getValue<input_IN>(ctx);\n    auto text1 = getValue<input_LINE1>(ctx);\n    auto text2 = getValue<input_LINE2>(ctx);\n    auto id = getValue<input_ID>(ctx);\n    state->branch_menu = BranchMenuImpl<menu_base_t>(in, text1, text2, id);\n    state->branch_menu_ptr = &state->branch_menu;\n    emitValue<output_OUT>(ctx, menu_base::BiDirectionalList<menu_base_t*>(&state->branch_menu_ptr_view));\n  }\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BkXo6sVbN": {
+          "id": "BkXo6sVbN",
+          "label": "IN",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "@/input-leaf-menu-item-impl"
+        },
+        "Bkf6piNZE": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "id": "Bkf6piNZE",
+          "label": "LINE1",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Bkzec3074": {
+          "id": "Bkzec3074",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "@/output-leaf-menu-item-impl"
+        },
+        "HJdTo7L44": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "id": "HJdTo7L44",
+          "label": "LINE2",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SkCj0j4bN": {
+          "id": "SkCj0j4bN",
+          "label": "ID",
+          "position": {
+            "x": 272,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "rJGEai7k4": {
+          "id": "rJGEai7k4",
+          "position": {
+            "x": 68,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/branch-menu-item"
+    },
+    "@/concat-menu": {
+      "attachments": [
+        {
+          "content": "#pragma XOD dirtiness disable\n\nnamespace menu_base = ____menu_base;\nusing menu_base_t = menu_base::MenuBase;\n\n/* A derived type of BiDirectionalListView, used to concatenate two\n   bi-directional lists and iterate forward and backwards over both\n   as a single unit. This can also be instantiated recursively. See\n   e.g. the XOD standard library class \"ConcatListView\"*/\n\ntemplate <typename T>\nclass BiDirectionalConcatListView : public menu_base::BiDirectionalListView<T> {\n public:\n  class Cursor : public menu_base::BiDirectionalCursor<T> {\n   public:\n     Cursor(const BiDirectionalConcatListView<T>* owner)\n        : _left(std::move(owner->_left.biterate())),\n          _right(std::move(owner->_right.biterate())),\n          _owner(owner) {}\n\n    bool isValid() const override { return _left && _right; }\n\n    bool value(T* out) const override {\n      return _cursor < _owner->_length_left ? _left.value(out) : _right.value(out);\n    }\n\n    void next() override {\n      const auto total = _owner->_length_left + _owner->_length_right;\n      if (_cursor < _owner->_length_left - 1) {\n        ++_left;\n      } else if (_cursor >= _owner->_length_left - 1 && _cursor < total) {\n        if (_cursor != _owner->_length_left - 1) {\n          ++_right;\n        }\n      }\n      ++_cursor;\n    }\n\n    void prev() override {\n      const auto total = _owner->_length_left + _owner->_length_right;\n      if (_cursor > _owner->_length_left - 1 && _cursor != total - _owner->_length_right) {\n        --_right;\n      } else if (_cursor <= _owner->_length_left - 1) {\n        --_left;\n      }\n      if (_cursor) {\n        --_cursor;\n      }\n    }\n\n   private:\n    menu_base::BiDirectionalIterator<T> _left;\n    menu_base::BiDirectionalIterator<T> _right;\n    const BiDirectionalConcatListView<T>* _owner;\n    size_t _cursor = 0;\n  };\n\n public:\n  BiDirectionalConcatListView() = default;\n\n  BiDirectionalConcatListView(menu_base::BiDirectionalList<T> left,\n                              menu_base::BiDirectionalList<T> right)\n      : _left(left), _right(right), _length_left(length(left)), _length_right(length(right)) {}\n\n  BiDirectionalConcatListView& operator=(\n      const BiDirectionalConcatListView& rhs) {\n    _left = rhs._left;\n    _right = rhs._right;\n    _length_left = rhs._length_left;\n    _length_right = rhs._length_right;\n    return *this;\n  }\n\n  Iterator<T> iterate() const override {\n     return Iterator<T>(new Cursor(this));\n  }\n\n  menu_base::BiDirectionalIterator<T> biterate() const override {\n    return menu_base::BiDirectionalIterator<T>(new Cursor(this));\n  }\n\n private:\n  friend class Cursor;\n  menu_base::BiDirectionalList<T> _left;\n  menu_base::BiDirectionalList<T> _right;\n  size_t _length_left;\n  size_t _length_right;\n};\n\n/* The state for this node contains a BiDirectionalConcatListView\n   of over the two BiDirectionalLists of menu_base_t-type pointers\n   it accepts as  inputs. This node is employed variadically so there\n   will be an additional BiDirectionalConcatListView-containing state\n   genearted for each additional input created beyond the first two. */\n\nstruct State {\n    BiDirectionalConcatListView<menu_base_t*> menu_ptr_list_view;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if(isSettingUp()) {\n        using menu_base::BiDirectionalList;\n        auto state = getState(ctx);\n        const auto in1 = getValue<input_IN1>(ctx);\n        const auto in2 = getValue<input_IN2>(ctx);\n        //create a new concat-view join the incoming lists once on startup,\n        //the outputs remain static after that\n        state->menu_ptr_list_view = BiDirectionalConcatListView<menu_base_t*>(in1, in2);\n        //output is a list that can be further concatenated\n        emitValue<output_OUT>(ctx, BiDirectionalList<menu_base_t*>(&state->menu_ptr_list_view));\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJ3X9hAXE": {
+          "id": "BJ3X9hAXE",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-leaf-menu-item-impl"
+        },
+        "BJn2q3CQ4": {
+          "id": "BJn2q3CQ4",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "@/input-leaf-menu-item-impl"
+        },
+        "SJVu9h0XV": {
+          "id": "SJVu9h0XV",
+          "position": {
+            "x": 0,
+            "y": 204
+          },
+          "type": "@/output-leaf-menu-item-impl"
+        },
+        "rkJ1j3CXN": {
+          "id": "rkJ1j3CXN",
+          "position": {
+            "x": 68,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/variadic-1"
+        },
+        "rkgG25nRQV": {
+          "id": "rkgG25nRQV",
+          "position": {
+            "x": 0,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/concat-menu"
+    },
+    "@/flash-string-1": {
+      "attachments": [
+        {
+          "content": "#pragma XOD dirtiness disable\n\nclass FlashStringView : public ListView<char> {\n public:\n  class Cursor : public detail::Cursor<char> {\n   public:\n    Cursor(const char PROGMEM* str) : _ptr(str) {}\n\n    bool isValid() const override {\n      return static_cast<bool>(static_cast<char>(pgm_read_byte(_ptr)));\n    }\n\n    bool value(char* out) const override {\n      *out = static_cast<char>(pgm_read_byte(_ptr));\n      return static_cast<bool>(*out);\n    }\n\n    void next() override { ++_ptr; }\n\n   private:\n    const char PROGMEM* _ptr;\n  };\n\n public:\n  FlashStringView(const char PROGMEM* str = nullptr) : _str(str) {}\n  FlashStringView(const __FlashStringHelper* str)\n      : _str(reinterpret_cast<const char PROGMEM*>(str)) {}\n\n  FlashStringView& operator=(const FlashStringView& rhs) {\n    _str = rhs._str;\n    return *this;\n  }\n\n  virtual Iterator<char> iterate() const override {\n    return _str ? Iterator<char>(new Cursor(_str)) : Iterator<char>::nil();\n  }\n\n private:\n  friend class Cursor;\n  const char PROGMEM* _str;\n};\n\n\nclass XStringFlashString : public XString {\n public:\n  XStringFlashString(const char PROGMEM* str) : XString(&_view), _view(str) {}\n\n  XStringFlashString(const __FlashStringHelper* str)\n      : XString(&_view), _view(str) {}\n\n private:\n  FlashStringView _view;\n};\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nconst char text[] PROGMEM = {\"Make XOD Menus!\"};\nstatic XStringFlashString out_text = XStringFlashString(text);\n\nvoid evaluate(Context ctx) {\n    if (isSettingUp()) {\n        emitValue<output_TXT>(ctx, out_text);\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BktKGEgNV": {
+          "id": "BktKGEgNV",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "By79MNlVN": {
+          "id": "By79MNlVN",
+          "label": "TXT",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-string"
+        }
+      },
+      "path": "@/flash-string-1"
+    },
+    "@/flash-string-2": {
+      "attachments": [
+        {
+          "content": "#pragma XOD dirtiness disable\n\nclass FlashStringView : public ListView<char> {\n public:\n  class Cursor : public detail::Cursor<char> {\n   public:\n    Cursor(const char PROGMEM* str) : _ptr(str) {}\n\n    bool isValid() const override {\n      return static_cast<bool>(static_cast<char>(pgm_read_byte(_ptr)));\n    }\n\n    bool value(char* out) const override {\n      *out = static_cast<char>(pgm_read_byte(_ptr));\n      return static_cast<bool>(*out);\n    }\n\n    void next() override { ++_ptr; }\n\n   private:\n    const char PROGMEM* _ptr;\n  };\n\n public:\n  FlashStringView(const char PROGMEM* str = nullptr) : _str(str) {}\n  FlashStringView(const __FlashStringHelper* str)\n      : _str(reinterpret_cast<const char PROGMEM*>(str)) {}\n\n  FlashStringView& operator=(const FlashStringView& rhs) {\n    _str = rhs._str;\n    return *this;\n  }\n\n  virtual Iterator<char> iterate() const override {\n    return _str ? Iterator<char>(new Cursor(_str)) : Iterator<char>::nil();\n  }\n\n private:\n  friend class Cursor;\n  const char PROGMEM* _str;\n};\n\n\nclass XStringFlashString : public XString {\n public:\n  XStringFlashString(const char PROGMEM* str) : XString(&_view), _view(str) {}\n\n  XStringFlashString(const __FlashStringHelper* str)\n      : XString(&_view), _view(str) {}\n\n private:\n  FlashStringView _view;\n};\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nconst char text[] PROGMEM = {\"Select? (Y/N)\"};\nstatic XStringFlashString out_text = XStringFlashString(text);\n\nvoid evaluate(Context ctx) {\n    if (isSettingUp()) {\n        emitValue<output_TXT>(ctx, out_text);\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1e_o8DbEN": {
+          "id": "B1e_o8DbEN",
+          "label": "TXT",
+          "position": {
+            "x": -1,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "Skdj8wW4N": {
+          "id": "Skdj8wW4N",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/flash-string-2"
+    },
+    "@/flash-string-3": {
+      "attachments": [
+        {
+          "content": "#pragma XOD dirtiness disable\n\nclass FlashStringView : public ListView<char> {\n public:\n  class Cursor : public detail::Cursor<char> {\n   public:\n    Cursor(const char PROGMEM* str) : _ptr(str) {}\n\n    bool isValid() const override {\n      return static_cast<bool>(static_cast<char>(pgm_read_byte(_ptr)));\n    }\n\n    bool value(char* out) const override {\n      *out = static_cast<char>(pgm_read_byte(_ptr));\n      return static_cast<bool>(*out);\n    }\n\n    void next() override { ++_ptr; }\n\n   private:\n    const char PROGMEM* _ptr;\n  };\n\n public:\n  FlashStringView(const char PROGMEM* str = nullptr) : _str(str) {}\n  FlashStringView(const __FlashStringHelper* str)\n      : _str(reinterpret_cast<const char PROGMEM*>(str)) {}\n\n  FlashStringView& operator=(const FlashStringView& rhs) {\n    _str = rhs._str;\n    return *this;\n  }\n\n  virtual Iterator<char> iterate() const override {\n    return _str ? Iterator<char>(new Cursor(_str)) : Iterator<char>::nil();\n  }\n\n private:\n  friend class Cursor;\n  const char PROGMEM* _str;\n};\n\n\nclass XStringFlashString : public XString {\n public:\n  XStringFlashString(const char PROGMEM* str) : XString(&_view), _view(str) {}\n\n  XStringFlashString(const __FlashStringHelper* str)\n      : XString(&_view), _view(str) {}\n\n private:\n  FlashStringView _view;\n};\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nconst char text[] PROGMEM = {\"Branch Menu 1\"};\nstatic XStringFlashString out_text = XStringFlashString(text);\n\nvoid evaluate(Context ctx) {\n    if (isSettingUp()) {\n        emitValue<output_TXT>(ctx, out_text);\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "SJxexvPZ4V": {
+          "id": "SJxexvPZ4V",
+          "label": "TXT",
+          "position": {
+            "x": -1,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "ryexDwbVN": {
+          "id": "ryexDwbVN",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/flash-string-3"
+    },
+    "@/flash-string-4": {
+      "attachments": [
+        {
+          "content": "#pragma XOD dirtiness disable\n\nclass FlashStringView : public ListView<char> {\n public:\n  class Cursor : public detail::Cursor<char> {\n   public:\n    Cursor(const char PROGMEM* str) : _ptr(str) {}\n\n    bool isValid() const override {\n      return static_cast<bool>(static_cast<char>(pgm_read_byte(_ptr)));\n    }\n\n    bool value(char* out) const override {\n      *out = static_cast<char>(pgm_read_byte(_ptr));\n      return static_cast<bool>(*out);\n    }\n\n    void next() override { ++_ptr; }\n\n   private:\n    const char PROGMEM* _ptr;\n  };\n\n public:\n  FlashStringView(const char PROGMEM* str = nullptr) : _str(str) {}\n  FlashStringView(const __FlashStringHelper* str)\n      : _str(reinterpret_cast<const char PROGMEM*>(str)) {}\n\n  FlashStringView& operator=(const FlashStringView& rhs) {\n    _str = rhs._str;\n    return *this;\n  }\n\n  virtual Iterator<char> iterate() const override {\n    return _str ? Iterator<char>(new Cursor(_str)) : Iterator<char>::nil();\n  }\n\n private:\n  friend class Cursor;\n  const char PROGMEM* _str;\n};\n\n\nclass XStringFlashString : public XString {\n public:\n  XStringFlashString(const char PROGMEM* str) : XString(&_view), _view(str) {}\n\n  XStringFlashString(const __FlashStringHelper* str)\n      : XString(&_view), _view(str) {}\n\n private:\n  FlashStringView _view;\n};\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nconst char text[] PROGMEM = {\"Branch Menu 2\"};\nstatic XStringFlashString out_text = XStringFlashString(text);\n\nvoid evaluate(Context ctx) {\n    if (isSettingUp()) {\n        emitValue<output_TXT>(ctx, out_text);\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "S1emyuwW4V": {
+          "id": "S1emyuwW4V",
+          "label": "TXT",
+          "position": {
+            "x": -1,
+            "y": 101
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "rym1dvWV4": {
+          "id": "rym1dvWV4",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/flash-string-4"
+    },
+    "@/flash-string-5": {
+      "attachments": [
+        {
+          "content": "#pragma XOD dirtiness disable\n\nclass FlashStringView : public ListView<char> {\n public:\n  class Cursor : public detail::Cursor<char> {\n   public:\n    Cursor(const char PROGMEM* str) : _ptr(str) {}\n\n    bool isValid() const override {\n      return static_cast<bool>(static_cast<char>(pgm_read_byte(_ptr)));\n    }\n\n    bool value(char* out) const override {\n      *out = static_cast<char>(pgm_read_byte(_ptr));\n      return static_cast<bool>(*out);\n    }\n\n    void next() override { ++_ptr; }\n\n   private:\n    const char PROGMEM* _ptr;\n  };\n\n public:\n  FlashStringView(const char PROGMEM* str = nullptr) : _str(str) {}\n  FlashStringView(const __FlashStringHelper* str)\n      : _str(reinterpret_cast<const char PROGMEM*>(str)) {}\n\n  FlashStringView& operator=(const FlashStringView& rhs) {\n    _str = rhs._str;\n    return *this;\n  }\n\n  virtual Iterator<char> iterate() const override {\n    return _str ? Iterator<char>(new Cursor(_str)) : Iterator<char>::nil();\n  }\n\n private:\n  friend class Cursor;\n  const char PROGMEM* _str;\n};\n\n\nclass XStringFlashString : public XString {\n public:\n  XStringFlashString(const char PROGMEM* str) : XString(&_view), _view(str) {}\n\n  XStringFlashString(const __FlashStringHelper* str)\n      : XString(&_view), _view(str) {}\n\n private:\n  FlashStringView _view;\n};\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nconst char text[] PROGMEM = {\"A Out\"};\nstatic XStringFlashString out_text = XStringFlashString(text);\n\nvoid evaluate(Context ctx) {\n    if (isSettingUp()) {\n        emitValue<output_TXT>(ctx, out_text);\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "Bkl1BvGIEV": {
+          "id": "Bkl1BvGIEV",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1ySDMI44": {
+          "id": "H1ySDMI44",
+          "label": "TXT",
+          "position": {
+            "x": -1,
+            "y": 100
+          },
+          "type": "xod/patch-nodes/output-string"
+        }
+      },
+      "path": "@/flash-string-5"
+    },
+    "@/flash-string-6": {
+      "attachments": [
+        {
+          "content": "#pragma XOD dirtiness disable\n\nclass FlashStringView : public ListView<char> {\n public:\n  class Cursor : public detail::Cursor<char> {\n   public:\n    Cursor(const char PROGMEM* str) : _ptr(str) {}\n\n    bool isValid() const override {\n      return static_cast<bool>(static_cast<char>(pgm_read_byte(_ptr)));\n    }\n\n    bool value(char* out) const override {\n      *out = static_cast<char>(pgm_read_byte(_ptr));\n      return static_cast<bool>(*out);\n    }\n\n    void next() override { ++_ptr; }\n\n   private:\n    const char PROGMEM* _ptr;\n  };\n\n public:\n  FlashStringView(const char PROGMEM* str = nullptr) : _str(str) {}\n  FlashStringView(const __FlashStringHelper* str)\n      : _str(reinterpret_cast<const char PROGMEM*>(str)) {}\n\n  FlashStringView& operator=(const FlashStringView& rhs) {\n    _str = rhs._str;\n    return *this;\n  }\n\n  virtual Iterator<char> iterate() const override {\n    return _str ? Iterator<char>(new Cursor(_str)) : Iterator<char>::nil();\n  }\n\n private:\n  friend class Cursor;\n  const char PROGMEM* _str;\n};\n\n\nclass XStringFlashString : public XString {\n public:\n  XStringFlashString(const char PROGMEM* str) : XString(&_view), _view(str) {}\n\n  XStringFlashString(const __FlashStringHelper* str)\n      : XString(&_view), _view(str) {}\n\n private:\n  FlashStringView _view;\n};\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nconst char text[] PROGMEM = {\"B Out\"};\nstatic XStringFlashString out_text = XStringFlashString(text);\n\nvoid evaluate(Context ctx) {\n    if (isSettingUp()) {\n        emitValue<output_TXT>(ctx, out_text);\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1R8wG8N4": {
+          "id": "B1R8wG8N4",
+          "label": "TXT",
+          "position": {
+            "x": -1,
+            "y": 100
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "rkgAUwGINN": {
+          "id": "rkgAUwGINN",
+          "position": {
+            "x": 0,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/flash-string-6"
+    },
+    "@/flash-string-7": {
+      "attachments": [
+        {
+          "content": "#pragma XOD dirtiness disable\n\nclass FlashStringView : public ListView<char> {\n public:\n  class Cursor : public detail::Cursor<char> {\n   public:\n    Cursor(const char PROGMEM* str) : _ptr(str) {}\n\n    bool isValid() const override {\n      return static_cast<bool>(static_cast<char>(pgm_read_byte(_ptr)));\n    }\n\n    bool value(char* out) const override {\n      *out = static_cast<char>(pgm_read_byte(_ptr));\n      return static_cast<bool>(*out);\n    }\n\n    void next() override { ++_ptr; }\n\n   private:\n    const char PROGMEM* _ptr;\n  };\n\n public:\n  FlashStringView(const char PROGMEM* str = nullptr) : _str(str) {}\n  FlashStringView(const __FlashStringHelper* str)\n      : _str(reinterpret_cast<const char PROGMEM*>(str)) {}\n\n  FlashStringView& operator=(const FlashStringView& rhs) {\n    _str = rhs._str;\n    return *this;\n  }\n\n  virtual Iterator<char> iterate() const override {\n    return _str ? Iterator<char>(new Cursor(_str)) : Iterator<char>::nil();\n  }\n\n private:\n  friend class Cursor;\n  const char PROGMEM* _str;\n};\n\n\nclass XStringFlashString : public XString {\n public:\n  XStringFlashString(const char PROGMEM* str) : XString(&_view), _view(str) {}\n\n  XStringFlashString(const __FlashStringHelper* str)\n      : XString(&_view), _view(str) {}\n\n private:\n  FlashStringView _view;\n};\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nconst char text[] PROGMEM = {\"C Out\"};\nstatic XStringFlashString out_text = XStringFlashString(text);\n\nvoid evaluate(Context ctx) {\n    if (isSettingUp()) {\n        emitValue<output_TXT>(ctx, out_text);\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "SJgnkFzI4E": {
+          "id": "SJgnkFzI4E",
+          "position": {
+            "x": 0,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Sk31FfI44": {
+          "id": "Sk31FfI44",
+          "label": "TXT",
+          "position": {
+            "x": -1,
+            "y": 100
+          },
+          "type": "xod/patch-nodes/output-string"
+        }
+      },
+      "path": "@/flash-string-7"
+    },
+    "@/flash-string-8": {
+      "attachments": [
+        {
+          "content": "#pragma XOD dirtiness disable\n\nclass FlashStringView : public ListView<char> {\n public:\n  class Cursor : public detail::Cursor<char> {\n   public:\n    Cursor(const char PROGMEM* str) : _ptr(str) {}\n\n    bool isValid() const override {\n      return static_cast<bool>(static_cast<char>(pgm_read_byte(_ptr)));\n    }\n\n    bool value(char* out) const override {\n      *out = static_cast<char>(pgm_read_byte(_ptr));\n      return static_cast<bool>(*out);\n    }\n\n    void next() override { ++_ptr; }\n\n   private:\n    const char PROGMEM* _ptr;\n  };\n\n public:\n  FlashStringView(const char PROGMEM* str = nullptr) : _str(str) {}\n  FlashStringView(const __FlashStringHelper* str)\n      : _str(reinterpret_cast<const char PROGMEM*>(str)) {}\n\n  FlashStringView& operator=(const FlashStringView& rhs) {\n    _str = rhs._str;\n    return *this;\n  }\n\n  virtual Iterator<char> iterate() const override {\n    return _str ? Iterator<char>(new Cursor(_str)) : Iterator<char>::nil();\n  }\n\n private:\n  friend class Cursor;\n  const char PROGMEM* _str;\n};\n\n\nclass XStringFlashString : public XString {\n public:\n  XStringFlashString(const char PROGMEM* str) : XString(&_view), _view(str) {}\n\n  XStringFlashString(const __FlashStringHelper* str)\n      : XString(&_view), _view(str) {}\n\n private:\n  FlashStringView _view;\n};\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nconst char text[] PROGMEM = {\"D Out\"};\nstatic XStringFlashString out_text = XStringFlashString(text);\n\nvoid evaluate(Context ctx) {\n    if (isSettingUp()) {\n        emitValue<output_TXT>(ctx, out_text);\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1QiYBaNV": {
+          "id": "B1QiYBaNV",
+          "position": {
+            "x": 0,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SyeQsKSpEE": {
+          "id": "SyeQsKSpEE",
+          "label": "TXT",
+          "position": {
+            "x": -1,
+            "y": 100
+          },
+          "type": "xod/patch-nodes/output-string"
+        }
+      },
+      "path": "@/flash-string-8"
+    },
+    "@/input-leaf-menu-item-impl": {
+      "path": "@/input-leaf-menu-item-impl"
+    },
+    "@/input-menu-base": {
+      "path": "@/input-menu-base"
+    },
+    "@/leaf-menu-item": {
+      "links": {
+        "B1Urv3t5Q": {
+          "id": "B1Urv3t5Q",
+          "input": {
+            "nodeId": "By6Qz7RvX",
+            "pinKey": "rkcHexR_Q"
+          },
+          "output": {
+            "nodeId": "B163hQvYm",
+            "pinKey": "HkN7geRd7"
+          }
+        },
+        "BJj1pm79X": {
+          "id": "BJj1pm79X",
+          "input": {
+            "nodeId": "By6Qz7RvX",
+            "pinKey": "Bya62QQqX"
+          },
+          "output": {
+            "nodeId": "B1GhbmCDX",
+            "pinKey": "__out__"
+          }
+        },
+        "H1K6zUGy4": {
+          "id": "H1K6zUGy4",
+          "input": {
+            "nodeId": "rkEaM8MJE",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "By6Qz7RvX",
+            "pinKey": "S1DiGLzJE"
+          }
+        },
+        "HJxOPhK5X": {
+          "id": "HJxOPhK5X",
+          "input": {
+            "nodeId": "By6Qz7RvX",
+            "pinKey": "HJ1gU3t57"
+          },
+          "output": {
+            "nodeId": "Hk87v3tcQ",
+            "pinKey": "__out__"
+          }
+        },
+        "SJw9BnQ1N": {
+          "id": "SJw9BnQ1N",
+          "input": {
+            "nodeId": "rkV5H2XkE",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "By6Qz7RvX",
+            "pinKey": "HkEPSnX14"
+          }
+        },
+        "r1YJT7X5X": {
+          "id": "r1YJT7X5X",
+          "input": {
+            "nodeId": "By6Qz7RvX",
+            "pinKey": "SkC-G70PX"
+          },
+          "output": {
+            "nodeId": "SyBpf7AvQ",
+            "pinKey": "__out__"
+          }
+        },
+        "rJQAZIMJV": {
+          "id": "rJQAZIMJV",
+          "input": {
+            "nodeId": "SJh6WIM14",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "By6Qz7RvX",
+            "pinKey": "SJPj-UMyV"
+          }
+        }
+      },
+      "nodes": {
+        "B163hQvYm": {
+          "id": "B163hQvYm",
+          "position": {
+            "x": 68,
+            "y": 102
+          },
+          "type": "@/menu-base"
+        },
+        "B1GhbmCDX": {
+          "id": "B1GhbmCDX",
+          "label": "LINE1",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "By6Qz7RvX": {
+          "id": "By6Qz7RvX",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "@/leaf-menu-item-impl"
+        },
+        "Hk87v3tcQ": {
+          "id": "Hk87v3tcQ",
+          "label": "ID",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SJh6WIM14": {
+          "id": "SJh6WIM14",
+          "label": "INVOKED",
+          "position": {
+            "x": 136,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SyBpf7AvQ": {
+          "id": "SyBpf7AvQ",
+          "label": "LINE2",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "rkEaM8MJE": {
+          "id": "rkEaM8MJE",
+          "label": "PARAM",
+          "position": {
+            "x": 102,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rkV5H2XkE": {
+          "id": "rkV5H2XkE",
+          "position": {
+            "x": 68,
+            "y": 306
+          },
+          "type": "@/output-leaf-menu-item-impl"
+        }
+      },
+      "path": "@/leaf-menu-item"
+    },
+    "@/leaf-menu-item-impl": {
+      "attachments": [
+        {
+          "content": "#pragma XOD dirtiness disable\n\nnamespace menu_base = ____menu_base;\nusing menu_base_t = menu_base::MenuBase;\n\nusing Type = menu_base::BiDirectionalList<menu_base_t*>;\n\nstruct State {\n    menu_base::LeafMenuImpl<menu_base_t> leaf_menu;\n    menu_base::BiDirectionalPlainListView<menu_base_t*> leaf_menu_view =\n    menu_base::BiDirectionalPlainListView<menu_base_t*>(nullptr, 0);\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto state = getState(ctx);\n    auto line1 = getValue<input_LINE1>(ctx);\n    auto line2 = getValue<input_LINE2>(ctx);\n\n    if (isSettingUp())\n    {\n        using menu_base::BiDirectionalPlainListView;\n        using menu_base::BiDirectionalList;\n        using menu_base::LeafMenuImpl;\n\n        const auto user_id = getValue<input_ID>(ctx);\n        const auto menu_base_p2p = getValue<input_MENU_PTR>(ctx);\n        state->leaf_menu_view = menu_base::BiDirectionalPlainListView<menu_base_t*>(menu_base_p2p, 1);\n        state->leaf_menu = LeafMenuImpl<menu_base_t>(line1, line2, user_id);\n        *menu_base_p2p = &state->leaf_menu;\n        emitValue<output_OUT>(ctx,  menu_base::BiDirectionalList<menu_base_t*>(&state->leaf_menu_view));\n        setTimeout(ctx, 10);\n    }\n\n    if (isTimedOut(ctx)) {\n        auto menu_base_ptr = *state->leaf_menu_view.iterate();\n        state->leaf_menu.set_text(line1, line2);\n        Number out;\n        auto invoked = state->leaf_menu.update(&out);\n        if (invoked) {\n         emitValue<output_INVOKED>(ctx, 1);\n         emitValue<output_PARAM>(ctx, out);\n        }\n        setTimeout(ctx, 10);\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "Bya62QQqX": {
+          "id": "Bya62QQqX",
+          "label": "LINE1",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "HJ1gU3t57": {
+          "id": "HJ1gU3t57",
+          "label": "ID",
+          "position": {
+            "x": 238,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HkEPSnX14": {
+          "id": "HkEPSnX14",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "S1DiGLzJE": {
+          "id": "S1DiGLzJE",
+          "label": "PARAM",
+          "position": {
+            "x": 136,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SJPj-UMyV": {
+          "id": "SJPj-UMyV",
+          "label": "INVOKED",
+          "position": {
+            "x": 238,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SkC-G70PX": {
+          "id": "SkC-G70PX",
+          "label": "LINE2",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SkkeMmADm": {
+          "id": "SkkeMmADm",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/utility"
+        },
+        "rkcHexR_Q": {
+          "id": "rkcHexR_Q",
+          "label": "MENU_PTR",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "@/input-menu-base"
+        },
+        "rkuxfm0v7": {
+          "id": "rkuxfm0v7",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/leaf-menu-item-impl"
+    },
+    "@/main": {
+      "comments": {
+        "Hyblgg64E": {
+          "content": "A tree of interconnected menu items your user can navigate thru, see data displayed, make selections and trigger other actions.The graph represents how each sub-menu derives from its parents. It can be any structure you need for your particular design..",
+          "id": "Hyblgg64E",
+          "position": {
+            "x": 612,
+            "y": -306
+          },
+          "size": {
+            "height": 153,
+            "width": 238
+          }
+        },
+        "SkRkZeTN4": {
+          "content": "A series of digital outputs, each triggered by selecting/\"invoking\" its associated menu on the LCD display.",
+          "id": "SkRkZeTN4",
+          "position": {
+            "x": 476,
+            "y": 408
+          },
+          "size": {
+            "height": 51,
+            "width": 340
+          }
+        },
+        "rJTdkxaNN": {
+          "content": "LCD shield keypad controller patch, fed from appropriate Arduino analog input, sends button presses to the menu controller.\n",
+          "id": "rJTdkxaNN",
+          "position": {
+            "x": 1122,
+            "y": 0
+          },
+          "size": {
+            "height": 153,
+            "width": 170
+          }
+        },
+        "rkS5WeaVV": {
+          "content": "A 16 character by two line LCD display driven by the menu controller. Displays from 1 to 4 lines are currently supported",
+          "id": "rkS5WeaVV",
+          "position": {
+            "x": 1122,
+            "y": 306
+          },
+          "size": {
+            "height": 51,
+            "width": 374
+          }
+        }
+      },
+      "links": {
+        "B1E-n1aNE": {
+          "id": "B1E-n1aNE",
+          "input": {
+            "nodeId": "ByTe2J6VV",
+            "pinKey": "BJ3X9hAXE"
+          },
+          "output": {
+            "nodeId": "SkMlhk6NV",
+            "pinKey": "rkV5H2XkE"
+          }
+        },
+        "BJrYs16EN": {
+          "id": "BJrYs16EN",
+          "input": {
+            "nodeId": "H19_jyp4V",
+            "pinKey": "rytiIB8kE"
+          },
+          "output": {
+            "nodeId": "S1AdokpEV",
+            "pinKey": "HkffpftWzE"
+          }
+        },
+        "BkMt3JaVE": {
+          "id": "BkMt3JaVE",
+          "input": {
+            "nodeId": "H19_jyp4V",
+            "pinKey": "ryAVpML4V"
+          },
+          "output": {
+            "nodeId": "S1gt3k6N4",
+            "pinKey": "B1e_o8DbEN"
+          }
+        },
+        "Bkfc2JaE4": {
+          "id": "Bkfc2JaE4",
+          "input": {
+            "nodeId": "H19_jyp4V",
+            "pinKey": "rk7w8SIkN"
+          },
+          "output": {
+            "nodeId": "Byy53kpE4",
+            "pinKey": "__out__"
+          }
+        },
+        "By-Gh1T4E": {
+          "id": "By-Gh1T4E",
+          "input": {
+            "nodeId": "ByTe2J6VV",
+            "pinKey": "BJn2q3CQ4"
+          },
+          "output": {
+            "nodeId": "Hkp-2ypVN",
+            "pinKey": "rkV5H2XkE"
+          }
+        },
+        "ByDD31aNN": {
+          "id": "ByDD31aNN",
+          "input": {
+            "nodeId": "S1AdokpEV",
+            "pinKey": "ryt3ftZzN"
+          },
+          "output": {
+            "nodeId": "BkNDhyaNE",
+            "pinKey": "SyBtREhlW"
+          }
+        },
+        "ByiCj1aEN": {
+          "id": "ByiCj1aEN",
+          "input": {
+            "nodeId": "rkb0i1a4E",
+            "pinKey": "BJ3X9hAXE"
+          },
+          "output": {
+            "nodeId": "ryt0oypV4",
+            "pinKey": "Bkzec3074"
+          }
+        },
+        "ByvDd01aVE": {
+          "id": "ByvDd01aVE",
+          "input": {
+            "nodeId": "HkQvdCJaN4",
+            "pinKey": "HJ6HsEngZ"
+          },
+          "output": {
+            "nodeId": "SkfwdAy6VV",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "H1Mo3164N": {
+          "id": "H1Mo3164N",
+          "input": {
+            "nodeId": "r1gjnJpEV",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkb0i1a4E",
+            "pinKey": "SJVu9h0XV"
+          }
+        },
+        "H1fxO0J6EE": {
+          "id": "H1fxO0J6EE",
+          "input": {
+            "nodeId": "rkex_AyaVE",
+            "pinKey": "HJ6HsEngZ"
+          },
+          "output": {
+            "nodeId": "BkgdRypE4",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "HJdgkeaEV": {
+          "id": "HJdgkeaEV",
+          "input": {
+            "nodeId": "HyeXCJ6VN",
+            "pinKey": "ryTIROHwkW"
+          },
+          "output": {
+            "nodeId": "SywP0JTEN",
+            "pinKey": "__out__"
+          }
+        },
+        "HJlYjypE4": {
+          "id": "HJlYjypE4",
+          "input": {
+            "nodeId": "H19_jyp4V",
+            "pinKey": "HkEhLHLJE"
+          },
+          "output": {
+            "nodeId": "S1AdokpEV",
+            "pinKey": "HJGTGFbGE"
+          }
+        },
+        "HJn3ikpVN": {
+          "id": "HJn3ikpVN",
+          "input": {
+            "nodeId": "BJYnsy6VN",
+            "pinKey": "B1TSE9tZ-"
+          },
+          "output": {
+            "nodeId": "H19_jyp4V",
+            "pinKey": "SJl_mc7yV"
+          }
+        },
+        "Hk--CyTEE": {
+          "id": "Hk--CyTEE",
+          "input": {
+            "nodeId": "rJpxAJ6VE",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HkWUznya44",
+            "pinKey": "SJh6WIM14"
+          }
+        },
+        "HyBPd01aEN": {
+          "id": "HyBPd01aEN",
+          "input": {
+            "nodeId": "Bkxw_R1TNE",
+            "pinKey": "HJ6HsEngZ"
+          },
+          "output": {
+            "nodeId": "BywuR1TEV",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "Hyne1xaN4": {
+          "id": "Hyne1xaN4",
+          "input": {
+            "nodeId": "BkgdRypE4",
+            "pinKey": "ryTIROHwkW"
+          },
+          "output": {
+            "nodeId": "HyWg_0kTEV",
+            "pinKey": "__out__"
+          }
+        },
+        "S19lCJaVE": {
+          "id": "S19lCJaVE",
+          "input": {
+            "nodeId": "HyVl0JpEN",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJUMnJTEN",
+            "pinKey": "SJh6WIM14"
+          }
+        },
+        "S1NkCkp4V": {
+          "id": "S1NkCkp4V",
+          "input": {
+            "nodeId": "Hyp0akpE4",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Hkp-2ypVN",
+            "pinKey": "SJh6WIM14"
+          }
+        },
+        "S1ybkgp4E": {
+          "id": "S1ybkgp4E",
+          "input": {
+            "nodeId": "BywuR1TEV",
+            "pinKey": "ryTIROHwkW"
+          },
+          "output": {
+            "nodeId": "Hkbw_Ay6N4",
+            "pinKey": "__out__"
+          }
+        },
+        "Skm5iyaVN": {
+          "id": "Skm5iyaVN",
+          "input": {
+            "nodeId": "H19_jyp4V",
+            "pinKey": "B19c8SUJV"
+          },
+          "output": {
+            "nodeId": "S1AdokpEV",
+            "pinKey": "r1ezpfKbfV"
+          }
+        },
+        "Sy-ZnyTE4": {
+          "id": "Sy-ZnyTE4",
+          "input": {
+            "nodeId": "ryt0oypV4",
+            "pinKey": "BkXo6sVbN"
+          },
+          "output": {
+            "nodeId": "ByTe2J6VV",
+            "pinKey": "SJVu9h0XV"
+          }
+        },
+        "SyAhiJpVV": {
+          "id": "SyAhiJpVV",
+          "input": {
+            "nodeId": "BJYnsy6VN",
+            "pinKey": "H1bLN9F-b"
+          },
+          "output": {
+            "nodeId": "H19_jyp4V",
+            "pinKey": "SyaiQdSX4"
+          }
+        },
+        "SyD73y6V4": {
+          "id": "SyD73y6V4",
+          "input": {
+            "nodeId": "ByTCo1p4E",
+            "pinKey": "BkXo6sVbN"
+          },
+          "output": {
+            "nodeId": "Bye8G2yTVV",
+            "pinKey": "SJVu9h0XV"
+          }
+        },
+        "Syuqj1TEN": {
+          "id": "Syuqj1TEN",
+          "input": {
+            "nodeId": "H19_jyp4V",
+            "pinKey": "Bk22ISLyV"
+          },
+          "output": {
+            "nodeId": "S1AdokpEV",
+            "pinKey": "r1QG6zFWM4"
+          }
+        },
+        "r1fJh1pEV": {
+          "id": "r1fJh1pEV",
+          "input": {
+            "nodeId": "rkb0i1a4E",
+            "pinKey": "BJn2q3CQ4"
+          },
+          "output": {
+            "nodeId": "ByTCo1p4E",
+            "pinKey": "Bkzec3074"
+          }
+        },
+        "r1mIfhJaNN": {
+          "id": "r1mIfhJaNN",
+          "input": {
+            "nodeId": "Bye8G2yTVV",
+            "pinKey": "BJn2q3CQ4"
+          },
+          "output": {
+            "nodeId": "HkWUznya44",
+            "pinKey": "rkV5H2XkE"
+          }
+        },
+        "rkF1TkTNV": {
+          "id": "rkF1TkTNV",
+          "input": {
+            "nodeId": "ryt0oypV4",
+            "pinKey": "Bkf6piNZE"
+          },
+          "output": {
+            "nodeId": "H1bJpypEV",
+            "pinKey": "SJxexvPZ4V"
+          }
+        },
+        "rkT_3JTVV": {
+          "id": "rkT_3JTVV",
+          "input": {
+            "nodeId": "H19_jyp4V",
+            "pinKey": "SJqEaMIVN"
+          },
+          "output": {
+            "nodeId": "S1mO21p4V",
+            "pinKey": "By79MNlVN"
+          }
+        },
+        "rkXW1e6NV": {
+          "id": "rkXW1e6NV",
+          "input": {
+            "nodeId": "SkfwdAy6VV",
+            "pinKey": "ryTIROHwkW"
+          },
+          "output": {
+            "nodeId": "r1EP_RJTNV",
+            "pinKey": "__out__"
+          }
+        },
+        "rktCTkTNV": {
+          "id": "rktCTkTNV",
+          "input": {
+            "nodeId": "rk0aTka4V",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SkMlhk6NV",
+            "pinKey": "SJh6WIM14"
+          }
+        },
+        "rkvk6yTVN": {
+          "id": "rkvk6yTVN",
+          "input": {
+            "nodeId": "ByTCo1p4E",
+            "pinKey": "Bkf6piNZE"
+          },
+          "output": {
+            "nodeId": "BJSk6ypEN",
+            "pinKey": "S1emyuwW4V"
+          }
+        },
+        "ryJV0JTV4": {
+          "id": "ryJV0JTV4",
+          "input": {
+            "nodeId": "ByR7AkpVV",
+            "pinKey": "HJ6HsEngZ"
+          },
+          "output": {
+            "nodeId": "HyeXCJ6VN",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "ryzUG2yTEE": {
+          "id": "ryzUG2yTEE",
+          "input": {
+            "nodeId": "Bye8G2yTVV",
+            "pinKey": "BJ3X9hAXE"
+          },
+          "output": {
+            "nodeId": "rJUMnJTEN",
+            "pinKey": "rkV5H2XkE"
+          }
+        }
+      },
+      "nodes": {
+        "BJSk6ypEN": {
+          "id": "BJSk6ypEN",
+          "position": {
+            "x": 850,
+            "y": -204
+          },
+          "type": "@/flash-string-4"
+        },
+        "BJYnsy6VN": {
+          "boundLiterals": {
+            "BJJqaX4Gb": "D4",
+            "HJysTXVMb": "D6",
+            "S1nqa7NMZ": "D5",
+            "SkBK6Q4fb": "D9",
+            "rJlYT7EfW": "D8",
+            "rkbjp7Ezb": "D7"
+          },
+          "id": "BJYnsy6VN",
+          "position": {
+            "x": 1122,
+            "y": 204
+          },
+          "type": "xod/common-hardware/text-lcd-16x2"
+        },
+        "BkNDhyaNE": {
+          "id": "BkNDhyaNE",
+          "position": {
+            "x": 1462,
+            "y": -102
+          },
+          "type": "xod/gpio/analog-read"
+        },
+        "BkgdRypE4": {
+          "id": "BkgdRypE4",
+          "position": {
+            "x": 476,
+            "y": 204
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "Bkxw_R1TNE": {
+          "boundLiterals": {
+            "rJjXFA9JQ": "D2"
+          },
+          "id": "Bkxw_R1TNE",
+          "label": "C-output",
+          "position": {
+            "x": 680,
+            "y": 306
+          },
+          "type": "xod/gpio/digital-write"
+        },
+        "ByR7AkpVV": {
+          "boundLiterals": {
+            "rJjXFA9JQ": "D13"
+          },
+          "id": "ByR7AkpVV",
+          "label": "A-output",
+          "position": {
+            "x": 238,
+            "y": 306
+          },
+          "type": "xod/gpio/digital-write"
+        },
+        "ByTCo1p4E": {
+          "id": "ByTCo1p4E",
+          "position": {
+            "x": 816,
+            "y": -102
+          },
+          "type": "@/branch-menu-item"
+        },
+        "ByTe2J6VV": {
+          "id": "ByTe2J6VV",
+          "position": {
+            "x": 374,
+            "y": -204
+          },
+          "type": "@/concat-menu"
+        },
+        "Bye8G2yTVV": {
+          "id": "Bye8G2yTVV",
+          "position": {
+            "x": 952,
+            "y": -204
+          },
+          "type": "@/concat-menu"
+        },
+        "BywuR1TEV": {
+          "id": "BywuR1TEV",
+          "position": {
+            "x": 714,
+            "y": 204
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "Byy53kpE4": {
+          "id": "Byy53kpE4",
+          "label": "MENU",
+          "position": {
+            "x": 1326,
+            "y": -102
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "H19_jyp4V": {
+          "id": "H19_jyp4V",
+          "position": {
+            "x": 1326,
+            "y": 102
+          },
+          "type": "@/menu-controller"
+        },
+        "H1bJpypEV": {
+          "id": "H1bJpypEV",
+          "position": {
+            "x": 544,
+            "y": -204
+          },
+          "type": "@/flash-string-3"
+        },
+        "HkQvdCJaN4": {
+          "boundLiterals": {
+            "rJjXFA9JQ": "D3"
+          },
+          "id": "HkQvdCJaN4",
+          "label": "D-output",
+          "position": {
+            "x": 884,
+            "y": 306
+          },
+          "type": "xod/gpio/digital-write"
+        },
+        "HkWUznya44": {
+          "boundLiterals": {
+            "B1GhbmCDX": "\"D out\""
+          },
+          "id": "HkWUznya44",
+          "label": "D-out-menu",
+          "position": {
+            "x": 1054,
+            "y": -408
+          },
+          "type": "@/leaf-menu-item"
+        },
+        "Hkbw_Ay6N4": {
+          "id": "Hkbw_Ay6N4",
+          "label": "INVOKED3",
+          "position": {
+            "x": 748,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "Hkp-2ypVN": {
+          "boundLiterals": {
+            "B1GhbmCDX": "\"B Out\""
+          },
+          "id": "Hkp-2ypVN",
+          "label": "B-out-menu",
+          "position": {
+            "x": 476,
+            "y": -408
+          },
+          "type": "@/leaf-menu-item"
+        },
+        "HyVl0JpEN": {
+          "id": "HyVl0JpEN",
+          "label": "INVOKED3",
+          "position": {
+            "x": 918,
+            "y": -306
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "HyWg_0kTEV": {
+          "id": "HyWg_0kTEV",
+          "label": "INVOKED2",
+          "position": {
+            "x": 510,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HyeXCJ6VN": {
+          "id": "HyeXCJ6VN",
+          "position": {
+            "x": 272,
+            "y": 204
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "Hyp0akpE4": {
+          "id": "Hyp0akpE4",
+          "label": "INVOKED2",
+          "position": {
+            "x": 544,
+            "y": -306
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "S1AdokpEV": {
+          "boundLiterals": {
+            "Skzm5cbfE": "0.03"
+          },
+          "id": "S1AdokpEV",
+          "position": {
+            "x": 1462,
+            "y": 0
+          },
+          "type": "@/text-lcd-16x2-keypad"
+        },
+        "S1gt3k6N4": {
+          "id": "S1gt3k6N4",
+          "position": {
+            "x": 1394,
+            "y": -102
+          },
+          "type": "@/flash-string-2"
+        },
+        "S1mO21p4V": {
+          "id": "S1mO21p4V",
+          "position": {
+            "x": 1360,
+            "y": -102
+          },
+          "type": "@/flash-string-1"
+        },
+        "SkMlhk6NV": {
+          "boundLiterals": {
+            "B1GhbmCDX": "\"A Out\""
+          },
+          "id": "SkMlhk6NV",
+          "label": "A-out-menu",
+          "position": {
+            "x": 238,
+            "y": -408
+          },
+          "type": "@/leaf-menu-item"
+        },
+        "SkfwdAy6VV": {
+          "id": "SkfwdAy6VV",
+          "position": {
+            "x": 918,
+            "y": 204
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "SywP0JTEN": {
+          "id": "SywP0JTEN",
+          "label": "INVOKED1",
+          "position": {
+            "x": 306,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "r1EP_RJTNV": {
+          "id": "r1EP_RJTNV",
+          "label": "INVOKED4",
+          "position": {
+            "x": 952,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "r1gjnJpEV": {
+          "id": "r1gjnJpEV",
+          "label": "MENU",
+          "position": {
+            "x": 646,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "rJUMnJTEN": {
+          "boundLiterals": {
+            "B1GhbmCDX": "\"C out\""
+          },
+          "id": "rJUMnJTEN",
+          "label": "C-out-menu",
+          "position": {
+            "x": 850,
+            "y": -408
+          },
+          "type": "@/leaf-menu-item"
+        },
+        "rJpxAJ6VE": {
+          "id": "rJpxAJ6VE",
+          "label": "INVOKED4",
+          "position": {
+            "x": 1122,
+            "y": -306
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "rk0aTka4V": {
+          "id": "rk0aTka4V",
+          "label": "INVOKED1",
+          "position": {
+            "x": 306,
+            "y": -306
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "rkb0i1a4E": {
+          "id": "rkb0i1a4E",
+          "position": {
+            "x": 646,
+            "y": 0
+          },
+          "type": "@/concat-menu"
+        },
+        "rkex_AyaVE": {
+          "boundLiterals": {
+            "rJjXFA9JQ": "D1"
+          },
+          "id": "rkex_AyaVE",
+          "label": "B-output",
+          "position": {
+            "x": 442,
+            "y": 306
+          },
+          "type": "xod/gpio/digital-write"
+        },
+        "ryt0oypV4": {
+          "id": "ryt0oypV4",
+          "position": {
+            "x": 510,
+            "y": -102
+          },
+          "type": "@/branch-menu-item"
+        }
+      },
+      "path": "@/main"
+    },
+    "@/menu-base": {
+      "attachments": [
+        {
+          "content": "#pragma XOD dirtiness disable\n\n/* Base classes for a BiDirectionalCursor oover a ListView,\n   this adds the required virtual method \"prev\" for iterating in\n   reverse-order, in addition to inheriting \"next\" */\ntemplate <typename T>\nclass BiDirectionalCursor : public detail::Cursor<T> {\n public:\n  virtual void prev() = 0;\n};\n\ntemplate <typename T>\nclass BiDirectionalNilCursor : public BiDirectionalCursor<T> {\n  bool isValid() const { return false; }\n  bool value(T*) const { return false; }\n  void next() {}\n  void prev() {}\n};\n\n/* Reverse iterator implementation */\n\ntemplate <typename T>\nclass ReverseIterator {\n public:\n  static Iterator<T> nil() { return Iterator<T>(new detail::NilCursor<T>()); }\n\n  explicit ReverseIterator(BiDirectionalCursor<T>* cursor) : _cursor(cursor) {}\n\n  ReverseIterator(const ReverseIterator<T>&) = delete;\n  ReverseIterator& operator=(const ReverseIterator<T>&) = delete;\n  ReverseIterator(ReverseIterator<T>&& other) : _cursor(other._cursor) {\n    other._cursor = nullptr;\n  }\n\n  ReverseIterator& operator=(ReverseIterator<T>&& other) {\n    auto tmp = _cursor;\n    _cursor = other._cursor;\n    other._cursor = tmp;\n    return *this;\n  }\n\n  operator bool() const { return _cursor.isValid(); }\n\n  bool value(T* out) const { return _cursor.value(out); }\n\n  T operator*() const {\n    T out;\n    _cursor->value(&out);\n    return out;\n  }\n\n  ReverseIterator& operator--() {\n    _cursor->prev();\n    return *this;\n  }\n\n private:\n  BiDirectionalCursor<T>* _cursor;\n};\n\ntemplate <typename T>\nclass BiDirectionalIterator;\n\n/* A ListView which can return a bi-directional iterator\n   via the \"biterate\" method, compare with the XOD library\n   class \"ListView\" and \"iterate\" method. */\n\ntemplate <typename T>\nclass BiDirectionalListView : public ListView<T> {\n public:\n  virtual BiDirectionalIterator<T> biterate() const = 0;\n\n protected:\n  BiDirectionalListView() = default;\n};\n\ntemplate <typename T>\nclass BiDirectionalList : public List<T> {\n public:\n  constexpr BiDirectionalList() = default;\n\n  explicit BiDirectionalList(const BiDirectionalListView<T>* view)\n      : List<T>(view), _view(view) {}\n\n  BiDirectionalIterator<T> biterate() const {\n    return _view ? _view->biterate() : BiDirectionalIterator<T>::nil();\n  }\n\n private:\n   const BiDirectionalListView<T>* _view = nullptr;\n};\n\n/* A bi-directional iterator which functions similar to the XOD\n   library class \"Iterator\" but can be iterated through forwards\n   and backwards. Both forward-iterating past the end of the\n   underlying container/array and backwards past the starting\n   element will invalidate the iterator, and the user-defined\n   conversion to bool will return false. */\n\ntemplate <typename T>\nclass BiDirectionalIterator {\n public:\n  static BiDirectionalIterator<T> nil() {\n    return BiDirectionalIterator<T>(new BiDirectionalNilCursor<T>());\n  }\n\n  BiDirectionalIterator(BiDirectionalCursor<T>* cursor)\n      : _forward_iterator(cursor), _reverse_iterator(cursor) {}\n\n  operator bool() const { return (bool)_forward_iterator; }\n\n  bool value(T* out) const { return _forward_iterator.value(out); }\n\n  T operator*() const {\n    T out;\n    _forward_iterator.value(&out);\n    return out;\n  }\n\n  BiDirectionalIterator& operator++() {\n    ++_forward_iterator;\n    return *this;\n  }\n\n  BiDirectionalIterator& operator--() {\n    --_reverse_iterator;\n    return *this;\n  }\n\n private:\n  Iterator<T> _forward_iterator;\n  ReverseIterator<T> _reverse_iterator;\n};\n\n/* A bi-directional list view over a good ol' C-style array. Compare\n   XOD library class \"PlainListView\" */\n\ntemplate <typename T>\nclass BiDirectionalPlainListView : public BiDirectionalListView<T> {\n  class Cursor : public BiDirectionalCursor<T> {\n   public:\n    explicit Cursor(const BiDirectionalPlainListView* owner) : _owner(owner), _idx(0) {}\n\n    bool isValid() const override { return _valid; }\n\n    bool value(T* out) const override {\n      if (!isValid()) return false;\n      *out = _owner->_data[_idx];\n      return true;\n    }\n\n    void next() override {\n      if (!(++_idx < _owner->_len)) {\n        _valid = false;\n      }\n    }\n\n    void prev() override { _idx != 0 ? --_idx : _valid = false; }\n\n   private:\n    const BiDirectionalPlainListView* _owner;\n    size_t _idx;\n    bool _valid = true;\n  };\n\n public:\n  BiDirectionalPlainListView(const T* data, size_t len)\n      : _data(data), _len(len) {}\n\n  Iterator<T> iterate() const override { return Iterator<T>(new Cursor(this)); }\n\n  BiDirectionalIterator<T> biterate() const override {\n    return BiDirectionalIterator<T>(new Cursor(this));\n  }\n\n private:\n  friend class BiDirectionalCursor<T>;\n  const T* _data;\n  size_t _len;\n};\n\n/* Base class tpye for all Menu instances representing a\n   particular kind of menu that can be displayed and defines\n   a minimal required set of interface methods. All Menu interface\n   classes must derive from this base type so these base methods\n   may be called polymorphically by the MenuController \n   implementation. */\n\nclass MenuBase {\n public:\n  virtual ~MenuBase() = default;\n\n  List<XString> text() { return text_(); }\n\n  MenuBase* invoke(Number param) { return invoke_(param); }\n\n  uint8_t internal_id() const { return internal_id_; }\n\n  uint8_t user_id() const { return user_id_; }\n\n protected:\n  explicit MenuBase(uint8_t user_id) : user_id_(user_id),\n           internal_id_(id_count()++) {}\n\n private:\n   uint8_t user_id_ = 0;\n   uint8_t internal_id_ = 0;\n\n  static uint8_t& id_count() {\n    static uint8_t id_count = 0;\n    return id_count;\n  }\n\n  virtual List<XString> text_() = 0;\n  virtual MenuBase* invoke_(Number) = 0;\n};\n\n/* Base interface class for a menu type, this can be further\n   inherited from to define necessary non-virtual method calls\n   for various types of menu items. */\n\ntemplate <typename MenuBase, template <typename> class MenuImpl>\nclass MenuInterface {\n public:\n  List<XString> text() {\n    return static_cast<MenuImpl<MenuBase>*>(this)->text_();\n  }\n\n  MenuBase* invoke() {\n    return static_cast<MenuImpl<MenuBase>*>(this)->invoke_();\n  }\n};\n\nusing Type = MenuBase**;\n\n/* The state is used to provide storage for a single base-type\n   Menu pointer which will be assigned to a Leaf menu instance. */\n\nstruct State {\n   MenuBase* leaf_menu_ptr = nullptr;\n};\n\n{{ GENERATED_CODE }}\n\n/* An interface to a simp leaf-type menu, which cannot have further sub-menus\n   called from it, and generates a pulse output plus a paramter change output\n   when it's selected from the MenuController. Particular implementation\n   behavior is injected using the CRTP/static polymorphism to avoid runtime\n   overhead/program memory bloat. */\n\ntemplate <typename MenuBase, template <typename> class LeafMenuImpl>\nclass LeafMenuInterface : public MenuInterface<MenuBase, LeafMenuImpl> {\n public:\n  void set_text(XString line1, XString line2) {\n    static_cast<LeafMenuImpl<MenuBase>*>(this)->set_text_(line1, line2);\n  }\n\n  bool update(Number* out) {\n    return static_cast<LeafMenuImpl<MenuBase>*>(this)->update_(out);\n  }\n};\n\n/* Simple leaf menu implementation example */\n\ntemplate <typename MenuBase>\nclass LeafMenuImpl final : public LeafMenuInterface<MenuBase, LeafMenuImpl>,\n                           public MenuBase {\n  friend class MenuInterface<MenuBase, LeafMenuImpl>;\n  friend class LeafMenuInterface<MenuBase, LeafMenuImpl>;\n\n public:\n  LeafMenuImpl() : MenuBase(0), menu_text_lines_view_(nullptr, 0) {}\n\n  LeafMenuImpl(XString line1, XString line2, uint8_t user_id)\n      : MenuBase(user_id),\n        lines_({line1, line2}),\n        menu_text_lines_view_(PlainListView<XString>(lines_, 2)) {}\n\n protected:\n  List<XString> text_() override {\n    return List<XString>(&menu_text_lines_view_);\n  }\n\n  MenuBase* invoke_(Number param) override {\n    invoked_ = true;\n    param_ = param;\n    return nullptr;\n  }\n\n  void set_text_(XString line1, XString line2) {\n    lines_[0] = line1;\n    lines_[1] = line2;\n    menu_text_lines_view_ = PlainListView<XString>(lines_, 2);\n  }\n\n  bool update_(Number* out) {\n    if (invoked_) {\n      *out = param_;\n      invoked_ = false;\n      return true;\n    }\n    return false;\n  }\n\n private:\n  XString lines_[2];\n  PlainListView<XString> menu_text_lines_view_;\n  bool invoked_ = false;\n  Number param_;\n};\n\nvoid evaluate(Context ctx) {\n  if (isSettingUp()) {\n    auto state = getState(ctx);\n    emitValue<output_OUT>(ctx, &state->leaf_menu_ptr);\n  }\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1Djf06wX": {
+          "id": "B1Djf06wX",
+          "position": {
+            "x": 68,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HkN7geRd7": {
+          "id": "HkN7geRd7",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "S1gH-7APm": {
+          "id": "S1gH-7APm",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/utility"
+        }
+      },
+      "path": "@/menu-base"
+    },
+    "@/menu-controller": {
+      "attachments": [
+        {
+          "content": "#pragma XOD dirtiness disable\n\nnamespace menu_base = ____menu_base;\nusing menu_base_t = menu_base::MenuBase;\nnamespace branch_menu_item = ____branch_menu_item;\n\n/* a MenuCursor interface, providing an interface from user \n   selections on a keypad to navigating thru the menu tree, \n   selecting, and invoking menu items */\n\ntemplate <typename MenuBase>\nclass MenuCursor {\n public:\n  MenuCursor() = default;\n\n  explicit MenuCursor(branch_menu_item::BranchMenuImpl<MenuBase>* top_menu)\n      : top_menu_ptr_(top_menu),\n        current_root_menu_ptr_(nullptr),\n        current_sub_menu_ptr_(top_menu) {}\n\n  void back() {\n    auto parent_ptr = current_root_menu_ptr_->parent();\n    if (parent_ptr && current_sub_menu_ptr_!= top_menu_ptr_) {\n      current_root_menu_ptr_ = parent_ptr;\n      current_sub_menu_ptr_ = current_root_menu_ptr_->sub_menu_ptr();\n    } else {\n      current_sub_menu_ptr_ = top_menu_ptr_;\n      current_root_menu_ptr_ = nullptr;\n    }\n  }\n\n  void left() {\n    if (current_root_menu_ptr_) {\n      current_sub_menu_ptr_ = current_root_menu_ptr_->prev();\n    }\n  }\n\n  void right() {\n    if (current_root_menu_ptr_) {\n      current_sub_menu_ptr_ = current_root_menu_ptr_->next();\n    }\n  }\n\n  void invoke(Number param) {\n    auto menu_ptr = current_sub_menu_ptr_->invoke(param);\n    if (menu_ptr) {\n      auto prev_root_menu_ = current_root_menu_ptr_;\n      current_root_menu_ptr_ =\n          static_cast<branch_menu_item::BranchMenuImpl<MenuBase>*>(\n              menu_ptr);\n      current_root_menu_ptr_->set_parent(prev_root_menu_);\n      current_sub_menu_ptr_ = current_root_menu_ptr_->sub_menu_ptr();\n    }\n  }\n\n  List<XString> text() const { return current_sub_menu_ptr_->text(); }\n\n private:\n  branch_menu_item::BranchMenuImpl<MenuBase>* top_menu_ptr_ = nullptr;\n  branch_menu_item::BranchMenuImpl<MenuBase>* current_root_menu_ptr_ = nullptr;\n  MenuBase* current_sub_menu_ptr_ = nullptr;\n};\n\n/* State for this node holds a branch menu to which the rest of\n   the menu structure is connected and derives from */\n\nstruct State {\n  MenuCursor<menu_base_t> menu_cursor;\n  branch_menu_item::BranchMenuImpl<menu_base_t> root_menu;\n};\n\n{{ GENERATED_CODE }}\n\nstatic XStringCString null_string = XStringCString(\"\");\n\nvoid evaluate(Context ctx) {\n  auto state = getState(ctx);\n\n  if (isSettingUp()) {\n    auto title_1 = getValue<input_TITLE_1>(ctx);\n    auto title_2 = getValue<input_TITLE_2>(ctx);\n    state->root_menu =\n    branch_menu_item::BranchMenuImpl<menu_base_t>(getValue<input_MENU_TREE>(ctx), title_1,\n                                                  title_2, 0);\n    state->root_menu.set_parent(&state->root_menu);\n    state->menu_cursor = MenuCursor<menu_base_t>(&state->root_menu);\n  }\n\n /* update all trigger pulse inputs */\n\n  bool back = isInputDirty<input_BACK>(ctx);\n  bool left = isInputDirty<input_LEFT>(ctx);\n  bool right = isInputDirty<input_RIGHT>(ctx);\n  bool invoke = isInputDirty<input_INVOKE>(ctx);\n\n  if (back) {\n    state->menu_cursor.back();\n  }\n  if (left) {\n    state->menu_cursor.left();\n  }\n  if (right) {\n    state->menu_cursor.right();\n  }\n  if (invoke) {\n    // if a menu is invoked pass along the input parameter\n    // to the appropriate MenuBase class instance\n    auto param = getValue<input_PARAM_IN>(ctx);\n    state->menu_cursor.invoke(param);\n  }\n\n  //Update the menu dispaly text\n\n  auto text_list = state->menu_cursor.text();\n  auto text_it = text_list.iterate();\n  emitValue<output_LINE1>(ctx, *text_it);\n\n  if (++text_it) {\n    emitValue<output_LINE2>(ctx, *text_it);\n  } else {\n    emitValue<output_LINE2>(ctx, null_string);\n    return;\n  }\n  if (++text_it) {\n    emitValue<output_LINE3>(ctx, *text_it);\n  } else {\n    emitValue<output_LINE3>(ctx, null_string);\n    return;\n  }\n  if (++text_it) {\n    emitValue<output_LINE4>(ctx, *text_it);\n  } else {\n    emitValue<output_LINE4>(ctx, null_string);\n    return;\n  }\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B19c8SUJV": {
+          "id": "B19c8SUJV",
+          "label": "BACK",
+          "position": {
+            "x": 374,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BJGiIBLkE": {
+          "id": "BJGiIBLkE",
+          "label": "PARAM_IN",
+          "position": {
+            "x": 578,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Bk22ISLyV": {
+          "id": "Bk22ISLyV",
+          "label": "INVOKE",
+          "position": {
+            "x": 442,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkEhLHLJE": {
+          "id": "HkEhLHLJE",
+          "label": "RIGHT",
+          "position": {
+            "x": 238,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJl_mc7yV": {
+          "boundLiterals": {
+            "__in__": "\"\""
+          },
+          "id": "SJl_mc7yV",
+          "label": "LINE1",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "SJqEaMIVN": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "id": "SJqEaMIVN",
+          "label": "TITLE_1",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SkeKhQOH74": {
+          "boundLiterals": {
+            "__in__": "\"DISP_LINE_4\""
+          },
+          "id": "SkeKhQOH74",
+          "label": "LINE4",
+          "position": {
+            "x": 238,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "SyY3mOB7E": {
+          "boundLiterals": {
+            "__in__": "\"DISP_LINE_3\""
+          },
+          "id": "SyY3mOB7E",
+          "label": "LINE3",
+          "position": {
+            "x": 170,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "SyaiQdSX4": {
+          "boundLiterals": {
+            "__in__": "\"DISP_LINE_2\""
+          },
+          "id": "SyaiQdSX4",
+          "label": "LINE2",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "rJQPX97JV": {
+          "id": "rJQPX97JV",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rk7w8SIkN": {
+          "id": "rk7w8SIkN",
+          "label": "MENU_TREE",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "@/input-leaf-menu-item-impl"
+        },
+        "rktQN2FZN": {
+          "id": "rktQN2FZN",
+          "label": "TOP",
+          "position": {
+            "x": 510,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryAVpML4V": {
+          "boundLiterals": {
+            "__out__": "\"Title 2\""
+          },
+          "id": "ryAVpML4V",
+          "label": "TITLE_2",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "rytiIB8kE": {
+          "id": "rytiIB8kE",
+          "label": "LEFT",
+          "position": {
+            "x": 306,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/menu-controller"
+    },
+    "@/output-leaf-menu-item-impl": {
+      "path": "@/output-leaf-menu-item-impl"
+    },
+    "@/output-menu-base": {
+      "path": "@/output-menu-base"
+    },
+    "@/text-lcd-16x2-keypad": {
+      "links": {
+        "BJ28F5ZGN": {
+          "id": "BJ28F5ZGN",
+          "input": {
+            "nodeId": "BJNCiK-MV",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ByKIKqWMN",
+            "pinKey": "Sk7EARu8-"
+          }
+        },
+        "BJY49q-MV": {
+          "id": "BJY49q-MV",
+          "input": {
+            "nodeId": "rJx6vPq-GN",
+            "pinKey": "SkqxAC_LW"
+          },
+          "output": {
+            "nodeId": "Skzm5cbfE",
+            "pinKey": "__out__"
+          }
+        },
+        "BJcOvq-MV": {
+          "id": "BJcOvq-MV",
+          "input": {
+            "nodeId": "rJx6vPq-GN",
+            "pinKey": "S101C0OU-"
+          },
+          "output": {
+            "nodeId": "HyziGYWzE",
+            "pinKey": "ryeHHoKbzE"
+          }
+        },
+        "Bkx_P9WGV": {
+          "id": "Bkx_P9WGV",
+          "input": {
+            "nodeId": "ByQTjKbM4",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "By6vw9bfN",
+            "pinKey": "Sk7EARu8-"
+          }
+        },
+        "ByYpiK-fN": {
+          "id": "ByYpiK-fN",
+          "input": {
+            "nodeId": "H1bGaGYWfN",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ByQTjKbM4",
+            "pinKey": "__out__"
+          }
+        },
+        "H1C8w9WzN": {
+          "id": "H1C8w9WzN",
+          "input": {
+            "nodeId": "BJnLPqWM4",
+            "pinKey": "S101C0OU-"
+          },
+          "output": {
+            "nodeId": "HyziGYWzE",
+            "pinKey": "SJ2NoFWGV"
+          }
+        },
+        "H1Muw9Zf4": {
+          "id": "H1Muw9Zf4",
+          "input": {
+            "nodeId": "BygQpjYWG4",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJx6vPq-GN",
+            "pinKey": "Sk7EARu8-"
+          }
+        },
+        "HJ-pstbGE": {
+          "id": "HJ-pstbGE",
+          "input": {
+            "nodeId": "r1ezpfKbfV",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJs3otWME",
+            "pinKey": "__out__"
+          }
+        },
+        "HJ7Nq9WGV": {
+          "id": "HJ7Nq9WGV",
+          "input": {
+            "nodeId": "r1MPPcZzV",
+            "pinKey": "SkqxAC_LW"
+          },
+          "output": {
+            "nodeId": "Skzm5cbfE",
+            "pinKey": "__out__"
+          }
+        },
+        "Hk22MK-G4": {
+          "id": "Hk22MK-G4",
+          "input": {
+            "nodeId": "HyziGYWzE",
+            "pinKey": "HyJP6_-zN"
+          },
+          "output": {
+            "nodeId": "ryt3ftZzN",
+            "pinKey": "__out__"
+          }
+        },
+        "HkINc5bfE": {
+          "id": "HkINc5bfE",
+          "input": {
+            "nodeId": "By6vw9bfN",
+            "pinKey": "SkqxAC_LW"
+          },
+          "output": {
+            "nodeId": "Skzm5cbfE",
+            "pinKey": "__out__"
+          }
+        },
+        "HklV95ZzV": {
+          "id": "HklV95ZzV",
+          "input": {
+            "nodeId": "BJnLPqWM4",
+            "pinKey": "SkqxAC_LW"
+          },
+          "output": {
+            "nodeId": "Skzm5cbfE",
+            "pinKey": "__out__"
+          }
+        },
+        "SJu3oYWGE": {
+          "id": "SJu3oYWGE",
+          "input": {
+            "nodeId": "HJGTGFbGE",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HkrniKWzE",
+            "pinKey": "__out__"
+          }
+        },
+        "SJxvD9-zE": {
+          "id": "SJxvD9-zE",
+          "input": {
+            "nodeId": "HkrniKWzE",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJnLPqWM4",
+            "pinKey": "Sk7EARu8-"
+          }
+        },
+        "SkDPDqZzV": {
+          "id": "SkDPDqZzV",
+          "input": {
+            "nodeId": "r1MPPcZzV",
+            "pinKey": "S101C0OU-"
+          },
+          "output": {
+            "nodeId": "HyziGYWzE",
+            "pinKey": "rJeBiKbfE"
+          }
+        },
+        "SkyDY5-MN": {
+          "id": "SkyDY5-MN",
+          "input": {
+            "nodeId": "ByKIKqWMN",
+            "pinKey": "S101C0OU-"
+          },
+          "output": {
+            "nodeId": "HyziGYWzE",
+            "pinKey": "BJlOrit-z4"
+          }
+        },
+        "SyBvv9ZMN": {
+          "id": "SyBvv9ZMN",
+          "input": {
+            "nodeId": "rJs3otWME",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1MPPcZzV",
+            "pinKey": "Sk7EARu8-"
+          }
+        },
+        "SyvuDcZMV": {
+          "id": "SyvuDcZMV",
+          "input": {
+            "nodeId": "By6vw9bfN",
+            "pinKey": "S101C0OU-"
+          },
+          "output": {
+            "nodeId": "HyziGYWzE",
+            "pinKey": "rkrBjtbz4"
+          }
+        },
+        "r1WAstWfV": {
+          "id": "r1WAstWfV",
+          "input": {
+            "nodeId": "HkffpftWzE",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BygQpjYWG4",
+            "pinKey": "__out__"
+          }
+        },
+        "r1jNqqWzV": {
+          "id": "r1jNqqWzV",
+          "input": {
+            "nodeId": "ByKIKqWMN",
+            "pinKey": "SkqxAC_LW"
+          },
+          "output": {
+            "nodeId": "Skzm5cbfE",
+            "pinKey": "__out__"
+          }
+        },
+        "rJ2RoYZGN": {
+          "id": "rJ2RoYZGN",
+          "input": {
+            "nodeId": "r1QG6zFWM4",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJNCiK-MV",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "BJNCiK-MV": {
+          "id": "BJNCiK-MV",
+          "position": {
+            "x": 408,
+            "y": 306
+          },
+          "type": "xod/core/pulse-on-true"
+        },
+        "BJnLPqWM4": {
+          "id": "BJnLPqWM4",
+          "position": {
+            "x": 0,
+            "y": 204
+          },
+          "type": "xod/core/debounce(boolean)"
+        },
+        "By6vw9bfN": {
+          "id": "By6vw9bfN",
+          "position": {
+            "x": 306,
+            "y": 204
+          },
+          "type": "xod/core/debounce(boolean)"
+        },
+        "ByKIKqWMN": {
+          "id": "ByKIKqWMN",
+          "position": {
+            "x": 408,
+            "y": 204
+          },
+          "type": "xod/core/debounce(boolean)"
+        },
+        "ByQTjKbM4": {
+          "id": "ByQTjKbM4",
+          "position": {
+            "x": 306,
+            "y": 306
+          },
+          "type": "xod/core/pulse-on-true"
+        },
+        "BygQpjYWG4": {
+          "id": "BygQpjYWG4",
+          "position": {
+            "x": 102,
+            "y": 306
+          },
+          "type": "xod/core/pulse-on-true"
+        },
+        "H1bGaGYWfN": {
+          "id": "H1bGaGYWfN",
+          "label": "DOWN",
+          "position": {
+            "x": 306,
+            "y": 408
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJGTGFbGE": {
+          "id": "HJGTGFbGE",
+          "label": "RIGHT",
+          "position": {
+            "x": 0,
+            "y": 408
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HkffpftWzE": {
+          "id": "HkffpftWzE",
+          "label": "LEFT",
+          "position": {
+            "x": 102,
+            "y": 408
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HkrniKWzE": {
+          "id": "HkrniKWzE",
+          "position": {
+            "x": 0,
+            "y": 306
+          },
+          "type": "xod/core/pulse-on-true"
+        },
+        "HyziGYWzE": {
+          "id": "HyziGYWzE",
+          "position": {
+            "x": 102,
+            "y": 102
+          },
+          "type": "@/text-lcd-16x2-keypad-impl"
+        },
+        "Skzm5cbfE": {
+          "id": "Skzm5cbfE",
+          "label": "DEBOUNCE_T",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1MPPcZzV": {
+          "id": "r1MPPcZzV",
+          "position": {
+            "x": 204,
+            "y": 204
+          },
+          "type": "xod/core/debounce(boolean)"
+        },
+        "r1QG6zFWM4": {
+          "id": "r1QG6zFWM4",
+          "label": "SELET",
+          "position": {
+            "x": 408,
+            "y": 408
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r1ezpfKbfV": {
+          "id": "r1ezpfKbfV",
+          "label": "UP",
+          "position": {
+            "x": 204,
+            "y": 408
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJs3otWME": {
+          "id": "rJs3otWME",
+          "position": {
+            "x": 204,
+            "y": 306
+          },
+          "type": "xod/core/pulse-on-true"
+        },
+        "rJx6vPq-GN": {
+          "id": "rJx6vPq-GN",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "xod/core/debounce(boolean)"
+        },
+        "ryt3ftZzN": {
+          "id": "ryt3ftZzN",
+          "label": "ADC_IN",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/text-lcd-16x2-keypad"
+    },
+    "@/text-lcd-16x2-keypad-impl": {
+      "attachments": [
+        {
+          "content": "struct State {\n  const size_t num_keys = 5;\n  const float adc_key_val[5] = {0.05f, 0.15f, 0.35f, 0.55f, 0.75f};\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n  auto state = getState(ctx);\n  auto input = getValue<input_ADC_IN>(ctx);\n  if (input > 0.9) {\n    emitValue<output_RIGHT>(ctx, false);\n    emitValue<output_UP>(ctx, false);\n    emitValue<output_DOWN>(ctx, false);\n    emitValue<output_LEFT>(ctx, false);\n    emitValue<output_SELECT>(ctx, false);\n    return;\n  }\n\n  int i = 0;\n  for (; i < state->num_keys; ++i) {\n    if (input < state->adc_key_val[i]) {\n      break;\n    }\n  }\n\n  if (i >= state->num_keys) {\n    i = -1;\n  }\n\n  switch (i) {\n    case 0:\n      emitValue<output_RIGHT>(ctx, true);\n      break;\n    case 1:\n      emitValue<output_UP>(ctx, true);\n      break;\n    case 2:\n      emitValue<output_DOWN>(ctx, true);\n      break;\n    case 3:\n      emitValue<output_LEFT>(ctx, true);\n      break;\n    case 4:\n      emitValue<output_SELECT>(ctx, true);\n      break;\n    default:\n      break;\n  }\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1oBadZf4": {
+          "id": "B1oBadZf4",
+          "position": {
+            "x": 102,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BJlOrit-z4": {
+          "id": "BJlOrit-z4",
+          "label": "SELECT",
+          "position": {
+            "x": 306,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "HyJP6_-zN": {
+          "id": "HyJP6_-zN",
+          "label": "ADC_IN",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJ2NoFWGV": {
+          "id": "SJ2NoFWGV",
+          "label": "RIGHT",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "SJEOfF-zE": {
+          "id": "SJEOfF-zE",
+          "position": {
+            "x": 170,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/utility"
+        },
+        "rJeBiKbfE": {
+          "id": "rJeBiKbfE",
+          "label": "UP",
+          "position": {
+            "x": 170,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "rkrBjtbz4": {
+          "id": "rkrBjtbz4",
+          "label": "DOWN",
+          "position": {
+            "x": 238,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "ryeHHoKbzE": {
+          "id": "ryeHHoKbzE",
+          "label": "LEFT",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        }
+      },
+      "path": "@/text-lcd-16x2-keypad-impl"
+    }
+  }
+}

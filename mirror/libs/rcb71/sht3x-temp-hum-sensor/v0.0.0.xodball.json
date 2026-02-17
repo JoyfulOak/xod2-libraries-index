@@ -1,0 +1,761 @@
+{
+  "patches": {
+    "@/sht3x-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "// Tell XOD where it can download the libraries:\n#pragma XOD require \"https://github.com/DFRobot/DFRobot_SHT3x\"\n\n//Include C++ libraries\n#include <Wire.h>\n#include <DFRobot_SHT3x.h>\n\nnode {\n\n    meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = DFRobot_SHT3x*;\n    }\n\n    // check that a valid port has been specified for the reset pin\n    static_assert(isValidDigitalPort(constant_input_Reset), \"must be a valid digital port\");\n\n    // Reserve memory to store an instance of the DFRobot_SHT3x class,\n    // and create the instance later:\n    uint8_t mem[sizeof(DFRobot_SHT3x)];\n\n    void evaluate(Context ctx) {\n        // It should be evaluated only once on the first (setup) transaction\n        if (!isSettingUp())\n            return;\n\n        auto wire = getValue<input_I2C>(ctx);\n        auto addr = getValue<input_ADDR>(ctx);\n\n        // Create a new object of the class DFRobot_SHT3x in the memory area reserved previously.\n        Type sht3x = new (mem) DFRobot_SHT3x(wire, addr, constant_input_Reset);\n\n        //while (sht3x->begin() != 0) {\n            //raiseError(ctx);\n            //return;\n        //}\n        \n        //if(!sht3x->softReset()) {\n            //raiseError(ctx);\n            //return;\n        //}\n        \n        emitValue<output_DEV>(ctx, sht3x);\n    }\n}\n"
+        }
+      ],
+      "description": "Create a SHT3X device.",
+      "nodes": {
+        "Bkr1TBT39": {
+          "id": "Bkr1TBT39",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BkjH6H629": {
+          "description": "I²C bus",
+          "label": "I2C",
+          "id": "BkjH6H629",
+          "type": "xod/i2c/input-i2c",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "HkLUTHpnc": {
+          "label": "DEV",
+          "id": "HkLUTHpnc",
+          "type": "xod/patch-nodes/output-self",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "S1qLhdC2c": {
+          "boundLiterals": {
+            "__out__": "D4"
+          },
+          "description": "Reset pin.",
+          "label": "Reset",
+          "id": "S1qLhdC2c",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "ByKDh_C3c": {
+          "boundLiterals": {
+            "__out__": "45h"
+          },
+          "description": "I²C address.",
+          "label": "ADDR",
+          "id": "ByKDh_C3c",
+          "type": "xod/patch-nodes/input-byte",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/sht3x-device"
+    },
+    "@/read-sht3x": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {    \n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sht3x = getValue<input_DEV>(ctx);\n        emitValue<output_Temp>(ctx, sht3x->getTemperatureC());\n        emitValue<output_Hum>(ctx, sht3x->getHumidityRH());\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "description": "Measure relative humidity and temperature.",
+      "nodes": {
+        "rkMJRH6h9": {
+          "id": "rkMJRH6h9",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rkkQl8T3q": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "label": "UPD",
+          "id": "rkkQl8T3q",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SJzNl8a2q": {
+          "label": "Temp",
+          "id": "SJzNl8a2q",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "BJBEgIThc": {
+          "label": "Hum",
+          "id": "BJBEgIThc",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "BJo4l86h5": {
+          "label": "Done",
+          "id": "BJo4l86h5",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "H10dNUT35": {
+          "label": "DEV",
+          "id": "H10dNUT35",
+          "type": "@/input-sht3x-device",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/read-sht3x"
+    },
+    "@/sht3x-hygrometer": {
+      "description": "Combines low-level to make a ready to use sensor.",
+      "links": {
+        "SJzV48a35": {
+          "id": "SJzV48a35",
+          "output": {
+            "nodeId": "Syg3M48a25",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ryeNNIa2c",
+            "pinKey": "BkjH6H629"
+          }
+        },
+        "BkSN4Ia29": {
+          "id": "BkSN4Ia29",
+          "output": {
+            "nodeId": "SJFQELp3q",
+            "pinKey": "SJzNl8a2q"
+          },
+          "input": {
+            "nodeId": "Hkf3GNIa3c",
+            "pinKey": "__in__"
+          }
+        },
+        "By1qNU6nc": {
+          "id": "By1qNU6nc",
+          "output": {
+            "nodeId": "SJFQELp3q",
+            "pinKey": "BJBEgIThc"
+          },
+          "input": {
+            "nodeId": "SkX2GVUpnq",
+            "pinKey": "__in__"
+          }
+        },
+        "Sye5E8Thq": {
+          "id": "Sye5E8Thq",
+          "output": {
+            "nodeId": "SJFQELp3q",
+            "pinKey": "BJo4l86h5"
+          },
+          "input": {
+            "nodeId": "H143z4IT29",
+            "pinKey": "__in__"
+          }
+        },
+        "HJkaBY0nc": {
+          "id": "HJkaBY0nc",
+          "output": {
+            "nodeId": "rJgj2SYC39",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ryeNNIa2c",
+            "pinKey": "ByKDh_C3c"
+          }
+        },
+        "SybpBK03q": {
+          "id": "SybpBK03q",
+          "output": {
+            "nodeId": "r1inHYCnc",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ryeNNIa2c",
+            "pinKey": "S1qLhdC2c"
+          }
+        },
+        "BJoZaK02c": {
+          "id": "BJoZaK02c",
+          "output": {
+            "nodeId": "rJ3JaKR2q",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJ-ZTtC39",
+            "pinKey": "rJlyqoF0nq"
+          }
+        },
+        "H11z6YAhq": {
+          "id": "H11z6YAhq",
+          "output": {
+            "nodeId": "ryeNNIa2c",
+            "pinKey": "HkLUTHpnc"
+          },
+          "input": {
+            "nodeId": "rJ-ZTtC39",
+            "pinKey": "HyVJ9ot0n5"
+          }
+        },
+        "HJWEV6YR25": {
+          "id": "HJWEV6YR25",
+          "input": {
+            "nodeId": "rylN4aFA3q",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJVVat0h5",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "BkMFvTtR39": {
+          "id": "BkMFvTtR39",
+          "input": {
+            "nodeId": "SJgFwpKA2c",
+            "pinKey": "SJ-1mZPTz"
+          },
+          "output": {
+            "nodeId": "SytPTt029",
+            "pinKey": "__out__"
+          }
+        },
+        "rk7Fv6FC3c": {
+          "id": "rk7Fv6FC3c",
+          "input": {
+            "nodeId": "SJgFwpKA2c",
+            "pinKey": "B1P1nFwaM"
+          },
+          "output": {
+            "nodeId": "SyWYwpt035",
+            "pinKey": "__out__"
+          }
+        },
+        "Bkb5aKC39": {
+          "id": "Bkb5aKC39",
+          "output": {
+            "nodeId": "ryeNNIa2c",
+            "pinKey": "HkLUTHpnc"
+          },
+          "input": {
+            "nodeId": "SJ3Y6FA29",
+            "pinKey": "__in__"
+          }
+        },
+        "rJIspFChq": {
+          "id": "rJIspFChq",
+          "output": {
+            "nodeId": "SkT5Tt039",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "SJFQELp3q",
+            "pinKey": "H10dNUT35"
+          }
+        },
+        "B1qCptCnq": {
+          "id": "B1qCptCnq",
+          "output": {
+            "nodeId": "SJgFwpKA2c",
+            "pinKey": "OkPg7GDaW"
+          },
+          "input": {
+            "nodeId": "SJFQELp3q",
+            "pinKey": "rkkQl8T3q"
+          }
+        },
+        "By0lRY0hq": {
+          "id": "By0lRY0hq",
+          "output": {
+            "nodeId": "rJ-ZTtC39",
+            "pinKey": "BJ7kcjKAnq"
+          },
+          "input": {
+            "nodeId": "Hy7eCYC35",
+            "pinKey": "BkedL2F0h9"
+          }
+        },
+        "H1MWCYA2q": {
+          "id": "H1MWCYA2q",
+          "output": {
+            "nodeId": "Hy7eCYC35",
+            "pinKey": "Syb_UnYRhq"
+          },
+          "input": {
+            "nodeId": "rJVVat0h5",
+            "pinKey": "Bkh8A_Sv1-"
+          }
+        },
+        "HkzG0YAnc": {
+          "id": "HkzG0YAnc",
+          "output": {
+            "nodeId": "ryeNNIa2c",
+            "pinKey": "HkLUTHpnc"
+          },
+          "input": {
+            "nodeId": "Hy7eCYC35",
+            "pinKey": "r1zuUhKAhq"
+          }
+        }
+      },
+      "nodes": {
+        "Syg3M48a25": {
+          "label": "I2C",
+          "id": "Syg3M48a25",
+          "type": "xod/i2c/input-i2c",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "Hkf3GNIa3c": {
+          "label": "Temp",
+          "id": "Hkf3GNIa3c",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 9,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "SkX2GVUpnq": {
+          "label": "Hum",
+          "id": "SkX2GVUpnq",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 10,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "H143z4IT29": {
+          "label": "Done",
+          "id": "H143z4IT29",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 11,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "SJFQELp3q": {
+          "id": "SJFQELp3q",
+          "type": "@/read-sht3x",
+          "position": {
+            "x": 9,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "ryeNNIa2c": {
+          "id": "ryeNNIa2c",
+          "type": "@/sht3x-device",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "r1inHYCnc": {
+          "boundLiterals": {
+            "__out__": "D4"
+          },
+          "description": "Reset pin.",
+          "label": "Reset",
+          "id": "r1inHYCnc",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "rJgj2SYC39": {
+          "boundLiterals": {
+            "__out__": "45h"
+          },
+          "description": "I²C address.",
+          "label": "ADDR",
+          "id": "rJgj2SYC39",
+          "type": "xod/patch-nodes/input-byte",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "rJ3JaKR2q": {
+          "label": "INIT",
+          "id": "rJ3JaKR2q",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "rJ-ZTtC39": {
+          "id": "rJ-ZTtC39",
+          "type": "@/init",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rJVVat0h5": {
+          "id": "rJVVat0h5",
+          "position": {
+            "x": 5,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "rylN4aFA3q": {
+          "label": "INTD",
+          "id": "rylN4aFA3q",
+          "position": {
+            "x": 5,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "SytPTt029": {
+          "description": "Update. Trigger read of temperature and pressure.",
+          "label": "UPD",
+          "id": "SytPTt029",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJgFwpKA2c": {
+          "id": "SJgFwpKA2c",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/gate"
+        },
+        "SyWYwpt035": {
+          "label": "INTD",
+          "id": "SyWYwpt035",
+          "position": {
+            "x": 11,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJ3Y6FA29": {
+          "label": "DEV",
+          "id": "SJ3Y6FA29",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "SkT5Tt039": {
+          "label": "DEV",
+          "id": "SkT5Tt039",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "Hy7eCYC35": {
+          "id": "Hy7eCYC35",
+          "type": "@/soft-reset",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/sht3x-hygrometer"
+    },
+    "@/example": {
+      "description": "Patch for testing sensor. Run in debug mode.",
+      "links": {
+        "Sk9c4I6h5": {
+          "id": "Sk9c4I6h5",
+          "output": {
+            "nodeId": "Skd54Lan9",
+            "pinKey": "Hkf3GNIa3c"
+          },
+          "input": {
+            "nodeId": "rJEHm8phc",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "Syn9EL6nq": {
+          "id": "Syn9EL6nq",
+          "output": {
+            "nodeId": "Skd54Lan9",
+            "pinKey": "SkX2GVUpnq"
+          },
+          "input": {
+            "nodeId": "ByUrQUThq",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "rJR0IWgpc": {
+          "id": "rJR0IWgpc",
+          "output": {
+            "nodeId": "Skd54Lan9",
+            "pinKey": "H143z4IT29"
+          },
+          "input": {
+            "nodeId": "BysALWep9",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "B14yvbea5": {
+          "id": "B14yvbea5",
+          "output": {
+            "nodeId": "BysALWep9",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "B1MJDWx65",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "S1cQwbl69": {
+          "id": "S1cQwbl69",
+          "output": {
+            "nodeId": "SJO7wWx6c",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "Skd54Lan9",
+            "pinKey": "SytPTt029"
+          }
+        }
+      },
+      "nodes": {
+        "rJEHm8phc": {
+          "id": "rJEHm8phc",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "ByUrQUThq": {
+          "id": "ByUrQUThq",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "Skd54Lan9": {
+          "boundLiterals": {
+            "rJ3JaKR2q": "On Boot"
+          },
+          "id": "Skd54Lan9",
+          "type": "@/sht3x-hygrometer",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BysALWep9": {
+          "id": "BysALWep9",
+          "type": "xod/core/count",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "B1MJDWx65": {
+          "id": "B1MJDWx65",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SJO7wWx6c": {
+          "id": "SJO7wWx6c",
+          "type": "xod/core/clock",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example"
+    },
+    "@/init": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {    \n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sht3x = getValue<input_DEV>(ctx);\n\n        if (sht3x->begin() != 0) {\n            raiseError(ctx);\n            return;\n        }\n        \n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "description": "Initialises the sensor.",
+      "nodes": {
+        "H1y5sK0h5": {
+          "id": "H1y5sK0h5",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rJlyqoF0nq": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "label": "UPD",
+          "id": "rJlyqoF0nq",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "BJ7kcjKAnq": {
+          "label": "Done",
+          "id": "BJ7kcjKAnq",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "HyVJ9ot0n5": {
+          "label": "DEV",
+          "id": "HyVJ9ot0n5",
+          "type": "@/input-sht3x-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/init"
+    },
+    "@/soft-reset": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {    \n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sht3x = getValue<input_DEV>(ctx);\n\n        if(!sht3x->softReset()) {\n            raiseError(ctx);\n            return;\n        }\n        \n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "description": "Resets the sensor.",
+      "nodes": {
+        "rk_8ntA3c": {
+          "id": "rk_8ntA3c",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BkedL2F0h9": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "label": "UPD",
+          "id": "BkedL2F0h9",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "Syb_UnYRhq": {
+          "label": "Done",
+          "id": "Syb_UnYRhq",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "r1zuUhKAhq": {
+          "label": "DEV",
+          "id": "r1zuUhKAhq",
+          "type": "@/input-sht3x-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/soft-reset"
+    }
+  },
+  "description": "A basic library for sht3x class temperature sensors.",
+  "apiKey": "419732ad-9740-4cf9-a6f7-0ef3da08e484",
+  "name": "sht3x-temp-hum-sensor"
+}

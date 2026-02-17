@@ -1,0 +1,132 @@
+{
+  "description": "This is a library for the MLX90614 Non-Contact IR temperature sensor.",
+  "license": "GPL",
+  "version": "0.1.0",
+  "patches": {
+    "@/mlx90614": {
+      "nodes": {
+        "B1C8RkXVE": {
+          "id": "B1C8RkXVE",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "label": "AmbientTempC"
+        },
+        "B11PA1mNN": {
+          "id": "B11PA1mNN",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "label": "ObjectTempC"
+        },
+        "BywAAJm4V": {
+          "id": "BywAAJm4V",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rkf3glQNV": {
+          "description": "Get Reading",
+          "label": "INIT",
+          "id": "rkf3glQNV",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/mlx90614",
+      "description": "This is a library example for the MLX90614 i2c Temp Sensor.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/adafruit/Adafruit-MLX90614-Library\"\n{{#global}}\n#include <Adafruit_MLX90614.h>\n{{/global}}\n\n\nstruct State {\n    uint8_t mem[sizeof(Adafruit_MLX90614)];\n};\n\n// Define our custom type as a pointer on the class instance.\nusing Type = Adafruit_MLX90614*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // It should be evaluated only once on the first (setup) transaction\n    if (isSettingUp()){\n    auto state = getState(ctx);\n    Type MLX90614 = new (state->mem) Adafruit_MLX90614();\n    MLX90614->begin();\n    delay(100);\n    }\n\n    if (isInputDirty<input_INIT>(ctx)){\n    auto state = getState(ctx);\n    auto MLX90614 = reinterpret_cast<Adafruit_MLX90614*>(state->mem);\n    emitValue<output_AmbientTempC>(ctx, MLX90614->readAmbientTempC());\n    emitValue<output_ObjectTempC>(ctx, MLX90614->readObjectTempC());\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example": {
+      "nodes": {
+        "rkPU-eXE4": {
+          "id": "rkPU-eXE4",
+          "type": "@/mlx90614",
+          "position": {
+            "x": 34,
+            "y": 102
+          }
+        },
+        "HkpLZgQVN": {
+          "id": "HkpLZgQVN",
+          "type": "xod/core/clock",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "boundLiterals": {
+            "B13SCNhl-": "0.5"
+          }
+        },
+        "H1vqbl7E4": {
+          "id": "H1vqbl7E4",
+          "type": "xod/core/watch",
+          "position": {
+            "x": 34,
+            "y": 204
+          }
+        },
+        "SkicZlQNV": {
+          "id": "SkicZlQNV",
+          "type": "xod/core/watch",
+          "position": {
+            "x": 68,
+            "y": 204
+          }
+        }
+      },
+      "links": {
+        "B11wbeXVV": {
+          "id": "B11wbeXVV",
+          "output": {
+            "nodeId": "HkpLZgQVN",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "rkPU-eXE4",
+            "pinKey": "rkf3glQNV"
+          }
+        },
+        "Syaq-gXE4": {
+          "id": "Syaq-gXE4",
+          "output": {
+            "nodeId": "rkPU-eXE4",
+            "pinKey": "B1C8RkXVE"
+          },
+          "input": {
+            "nodeId": "H1vqbl7E4",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "HkA5-l74N": {
+          "id": "HkA5-l74N",
+          "output": {
+            "nodeId": "rkPU-eXE4",
+            "pinKey": "B11PA1mNN"
+          },
+          "input": {
+            "nodeId": "SkicZlQNV",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/example"
+    }
+  },
+  "name": "mlx90614-ir-temp-sensor"
+}

@@ -1,0 +1,106 @@
+{
+  "name": "mai-path",
+  "patches": {
+    "@/main": {
+      "path": "@/main"
+    },
+    "@/taime-f-r": {
+      "attachments": [
+        {
+          "content": "struct State {\n    TimeMs lastUpdateTime;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    bool enabled = getValue<input_EN>(ctx);\n    bool update = isInputDirty<input_UPD>(ctx);\n    bool reset = isInputDirty<input_RST>(ctx);\n    Number f = getValue<input_F>(ctx);\n    Number r = getValue<input_rew>(ctx);\n\n    TimeMs t = transactionTime();\n    if (reset)\n        emitValue<output_OUT>(ctx, 0);\n    else if (enabled && update) {\n        Number dtSeconds = (t - state->lastUpdateTime)* r / f;\n        Number oldSeconds = getValue<output_OUT>(ctx);\n        emitValue<output_OUT> (ctx, oldSeconds + dtSeconds);\n    }\n\n    state->lastUpdateTime = t ;\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJmiw6uQuL": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers the time value update.",
+          "id": "BJmiw6uQuL",
+          "label": "UPD",
+          "position": {
+            "x": 6,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkfovT_m_L": {
+          "id": "BkfovT_m_L",
+          "position": {
+            "x": 2,
+            "y": 0.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ByiPT_7_U": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "An interval between wave peaks, i.e. the period of the signal",
+          "id": "ByiPT_7_U",
+          "label": "F",
+          "position": {
+            "x": 0,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Hy-sw6u7_L": {
+          "description": "The current time value in seconds.",
+          "id": "Hy-sw6u7_L",
+          "position": {
+            "x": 2,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "S1HiwaOQ_8": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "An interval between wave peaks, i.e. the period of the signal",
+          "id": "S1HiwaOQ_8",
+          "label": "rew",
+          "position": {
+            "x": 1,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJNiPaOXuU": {
+          "description": "Resets the current time value to zero.",
+          "id": "rJNiPaOXuU",
+          "label": "RST",
+          "position": {
+            "x": 4,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryxsPaO7dU": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Enabled or not. If set to `false` pulses on `UPD` do not change the output value. Effictively that means the timer is paused. Set to `true` again to continue time counting.",
+          "id": "ryxsPaO7dU",
+          "label": "EN",
+          "position": {
+            "x": 2,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        }
+      },
+      "path": "@/taime-f-r"
+    }
+  }
+}

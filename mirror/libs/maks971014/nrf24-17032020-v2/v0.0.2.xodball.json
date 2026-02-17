@@ -1,0 +1,722 @@
+{
+  "description": "попытался собрать хотя бы как то рабочий инструмент",
+  "version": "0.0.2",
+  "patches": {
+    "@/nrf24-transmitter": {
+      "nodes": {
+        "rkWn2upr8": {
+          "id": "rkWn2upr8",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 14,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "r1J2CuTHI": {
+          "id": "r1J2CuTHI",
+          "label": "_cepin",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BygkhAu6B8": {
+          "id": "BygkhAu6B8",
+          "label": "_cspin",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SykplFTBU": {
+          "description": "режим подтверждения приёма, true вкл false выкл",
+          "id": "SykplFTBU",
+          "label": "AutoAck",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rJiDWtTSI": {
+          "description": "число попыток",
+          "id": "rJiDWtTSI",
+          "label": "count",
+          "position": {
+            "x": 14,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJgsv-KTBU": {
+          "description": "время между попыткой достучаться",
+          "id": "SJgsv-KTBU",
+          "label": "delay",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkCa-K6S8": {
+          "description": "размер пакета, в байтах",
+          "id": "SkCa-K6S8",
+          "label": "size",
+          "position": {
+            "x": 16,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJUZ7tpB8": {
+          "description": "адрес тунелей всего их шесть начиная от 0 до 5",
+          "id": "rJUZ7tpB8",
+          "label": "address_number",
+          "position": {
+            "x": 18,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryI-VYTHI": {
+          "description": "скорость передачи всего их 3\n0-1MBPS\n1-2MBPS\n2-250KBPS",
+          "id": "ryI-VYTHI",
+          "label": "speed_number",
+          "position": {
+            "x": 20,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BypCHYarL": {
+          "description": "мощность сигнала\n0-RF24_PA_MIN\n1-RF24_PA_LOW\n2-RF24_PA_HIGH\n3-RF24_PA_MAX\n4-RF24_PA_ERROR",
+          "id": "BypCHYarL",
+          "label": "signal_strength_number",
+          "position": {
+            "x": 22,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJI3y5TBU": {
+          "id": "HJI3y5TBU",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 24,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "CONN",
+          "boundLiterals": {
+            "__out__": "On Boot"
+          }
+        },
+        "HJRyl56rU": {
+          "id": "HJRyl56rU",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 14,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE"
+        }
+      },
+      "path": "@/nrf24-transmitter",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/nRF24/RF24\"\n\n// Include C++ library:\n{{#global}}\n#include <RF24.h>\n#include <SPI.h>\nRF24 radio( 7, 8 );\nint msg[3]={0};\n{{/global}}\n\n// Our namespace should be: rf24_ll__rf24\n// Reserve the space for the object.\nstruct State {\n // uint8_t mem[sizeof(RF24)];\n  };\n//using Type = RF24*; // 'Type' is assumed by xod code-generator\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n  // It should be evaluated only once on the first (setup) transaction\n  if (!isInputDirty<input_CONN>(ctx))\n        return;\n  byte address[][6] = {\"1Node\", \"2Node\", \"3Node\", \"4Node\", \"5Node\", \"6Node\"};\n  byte speed[][3] ={\"RF24_1MBPS\",\"RF24_2MBPS\",\"RF24_250KBPS\"};\n  byte signal_strength[][5] ={\"RF24_PA_MIN\",\"RF24_PA_LOW\",\"RF24_PA_HIGH\",\"RF24_PA_MAX\",\"RF24_PA_ERROR\"};\n  auto state = getState(ctx);\n\n  // var names are valid c++ because we got them from the arglist of the c++ constructor\n  //auto _cepin = static_cast<int> (getValue<input__cepin>(ctx)); // int\n  //auto _cspin = static_cast<int> (getValue<input__cspin>(ctx)); // int\n  auto AutoAck = static_cast<bool> (getValue<input_AutoAck>(ctx)); // bool\n  auto delay = static_cast<int> (getValue<input_delay>(ctx)); // int\n  auto count = static_cast<int> (getValue<input_count>(ctx)); // int\n  auto size = static_cast<int> (getValue<input_size>(ctx)); // int\n  auto number_address = static_cast<int> (getValue<input_address_number>(ctx)); // int\n  auto signal = static_cast<int> (getValue<input_signal_strength_number>(ctx)); // int\n  auto number_speed = static_cast<int> (getValue<input_speed_number>(ctx)); // int\n\n\n  Serial.println(\"begin\");\n  radio.begin(); //активировать модуль\n  Serial.println(\"setAutoAck\");\n  radio.setAutoAck(AutoAck);         //режим подтверждения приёма, 1 вкл 0 выкл\n  Serial.println(\"setRetries\");\n  radio.setRetries(delay, count);    //(время между попыткой достучаться, число попыток)\n  Serial.println(\"enableAckPayload\");\n  radio.enableAckPayload();    //разрешить отсылку данных в ответ на входящий сигнал\n  Serial.println(\"setPayloadSize\");\n  radio.setPayloadSize(size);     //размер пакета, в байтах\n\n  radio.openWritingPipe(address[number_address]);   //мы - труба 0, открываем канал для передачи данных\n  radio.setChannel(0x60);  //выбираем канал (в котором нет шумов!)\n\n  radio.setPALevel (signal_strength[signal]); //уровень мощности передатчика. На выбор RF24_PA_MIN, RF24_PA_LOW, RF24_PA_HIGH, RF24_PA_MAX\n  radio.setDataRate (RF24_1MBPS); //скорость обмена. На выбор RF24_2MBPS, RF24_1MBPS, RF24_250KBPS\n  //должна быть одинакова на приёмнике и передатчике!\n  //при самой низкой скорости имеем самую высокую чувствительность и дальность!!\n  radio.powerUp(); //начать работу\n  radio.stopListening();  //не слушаем радиоэфир, мы передатчик\n  emitValue<output_DONE>(ctx, 1);\n}"
+        }
+      ]
+    },
+    "@/int-array": {
+      "nodes": {
+        "B1GCc5TrU": {
+          "id": "B1GCc5TrU",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "ryoAcqpB8": {
+          "id": "ryoAcqpB8",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "CONN",
+          "boundLiterals": {
+            "__out__": "On Boot"
+          }
+        },
+        "HykJs5aSI": {
+          "id": "HykJs5aSI",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "size"
+        },
+        "Hkw1acpHI": {
+          "id": "Hkw1acpHI",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE"
+        }
+      },
+      "path": "@/int-array",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_CONN>(ctx))return;\n    auto size = static_cast<int> (getValue<input_size>(ctx));\n    \n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/broadcasting": {
+      "nodes": {
+        "rJEg8iaSI": {
+          "id": "rJEg8iaSI",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "SJCQLoTBL": {
+          "id": "SJCQLoTBL",
+          "type": "xod/patch-nodes/input-boolean",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "H11N8iaHI": {
+          "id": "H11N8iaHI",
+          "type": "xod/patch-nodes/input-boolean",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HkBN8iaSI": {
+          "id": "HkBN8iaSI",
+          "type": "xod/patch-nodes/input-boolean",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "ByFE8j6HL": {
+          "id": "ByFE8j6HL",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 12,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "CONN",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        },
+        "HyAx9spSL": {
+          "id": "HyAx9spSL",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "DONE"
+        }
+      },
+      "path": "@/broadcasting",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n   if (!isInputDirty<input_CONN>(ctx)) return;\n    msg[0]=static_cast<int>(getValue<input_IN1>(ctx));\n    msg[1]=static_cast<int>(getValue<input_IN2>(ctx));\n    msg[2]=static_cast<int>(getValue<input_IN3>(ctx));\n    radio.write(&msg, sizeof(msg));\n    for (int k;k<3;k++){\n    Serial.println(msg[k]);\n    msg[k]={0};}\n     }\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/exampli-transmitter": {
+      "nodes": {
+        "BJapAO6SL": {
+          "id": "BJapAO6SL",
+          "type": "@/nrf24-transmitter",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "r1J2CuTHI": "7",
+            "BygkhAu6B8": "8",
+            "rJiDWtTSI": "15",
+            "SkCa-K6S8": "6",
+            "HJI3y5TBU": "On Boot",
+            "SykplFTBU": "True"
+          }
+        },
+        "SJmdDiTHI": {
+          "id": "SJmdDiTHI",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": -7,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "BktOviTr8": {
+          "id": "BktOviTr8",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 0,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "B1QVujTrI": {
+          "id": "B1QVujTrI",
+          "type": "@/broadcasting",
+          "position": {
+            "x": -5,
+            "y": 5,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ByFE8j6HL": "Continuously"
+          }
+        },
+        "S1bnynaH8": {
+          "id": "S1bnynaH8",
+          "type": "xod/gpio/digital-read",
+          "position": {
+            "x": -5,
+            "y": 3,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B143qAq1Q": "D4"
+          }
+        },
+        "rJNhyh6BL": {
+          "id": "rJNhyh6BL",
+          "type": "xod/gpio/digital-read",
+          "position": {
+            "x": -2,
+            "y": 3,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B143qAq1Q": "D5"
+          }
+        }
+      },
+      "links": {
+        "r1o3khaHL": {
+          "id": "r1o3khaHL",
+          "output": {
+            "nodeId": "rJNhyh6BL",
+            "pinKey": "B1gI0urv1W"
+          },
+          "input": {
+            "nodeId": "B1QVujTrI",
+            "pinKey": "H11N8iaHI"
+          }
+        },
+        "By22k2pHU": {
+          "id": "By22k2pHU",
+          "output": {
+            "nodeId": "S1bnynaH8",
+            "pinKey": "B1gI0urv1W"
+          },
+          "input": {
+            "nodeId": "B1QVujTrI",
+            "pinKey": "SJCQLoTBL"
+          }
+        },
+        "r1Ea1h6r8": {
+          "id": "r1Ea1h6r8",
+          "output": {
+            "nodeId": "S1bnynaH8",
+            "pinKey": "B1gI0urv1W"
+          },
+          "input": {
+            "nodeId": "SJmdDiTHI",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "ryBTk2prL": {
+          "id": "ryBTk2prL",
+          "output": {
+            "nodeId": "rJNhyh6BL",
+            "pinKey": "B1gI0urv1W"
+          },
+          "input": {
+            "nodeId": "BktOviTr8",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/exampli-transmitter"
+    },
+    "@/exampli-reception": {
+      "nodes": {
+        "Hyycc6prI": {
+          "id": "Hyycc6prI",
+          "type": "@/nrf24-reception",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "rkgWBYapHL": "7",
+            "B1--SFT6HL": "8",
+            "BkGWHYTpBL": "True"
+          }
+        },
+        "r1w3p66rU": {
+          "id": "r1w3p66rU",
+          "type": "@/reception",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "HJu82T6rL": "Continuously"
+          }
+        },
+        "ByL1AapB8": {
+          "id": "ByL1AapB8",
+          "type": "xod/gpio/digital-write",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "rJjXFA9JQ": "D4"
+          }
+        },
+        "r1ug06TBI": {
+          "id": "r1ug06TBI",
+          "type": "xod/gpio/digital-write",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "rJjXFA9JQ": "D5"
+          }
+        },
+        "HJDbC6pH8": {
+          "id": "HJDbC6pH8",
+          "type": "xod/gpio/digital-write",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "rJjXFA9JQ": "D6"
+          }
+        }
+      },
+      "links": {
+        "BJukC6TrI": {
+          "id": "BJukC6TrI",
+          "output": {
+            "nodeId": "r1w3p66rU",
+            "pinKey": "By1_366HU"
+          },
+          "input": {
+            "nodeId": "ByL1AapB8",
+            "pinKey": "HJ6HsEngZ"
+          }
+        },
+        "SJaxCapr8": {
+          "id": "SJaxCapr8",
+          "output": {
+            "nodeId": "r1w3p66rU",
+            "pinKey": "SJxF3pTB8"
+          },
+          "input": {
+            "nodeId": "r1ug06TBI",
+            "pinKey": "HJ6HsEngZ"
+          }
+        },
+        "SyYZRTpHI": {
+          "id": "SyYZRTpHI",
+          "output": {
+            "nodeId": "r1w3p66rU",
+            "pinKey": "B1WtnpTHI"
+          },
+          "input": {
+            "nodeId": "HJDbC6pH8",
+            "pinKey": "HJ6HsEngZ"
+          }
+        }
+      },
+      "path": "@/exampli-reception"
+    },
+    "@/nrf24-reception": {
+      "nodes": {
+        "HJZHtp6rL": {
+          "id": "HJZHtp6rL",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rkgWBYapHL": {
+          "boundLiterals": {
+            "__out__": "7"
+          },
+          "id": "rkgWBYapHL",
+          "label": "_cepin",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "B1--SFT6HL": {
+          "boundLiterals": {
+            "__out__": "8"
+          },
+          "id": "B1--SFT6HL",
+          "label": "_cspin",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BkGWHYTpBL": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "режим подтверждения приёма, true вкл false выкл",
+          "id": "BkGWHYTpBL",
+          "label": "AutoAck",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rym-SYT6rI": {
+          "boundLiterals": {
+            "__out__": "15"
+          },
+          "description": "число попыток",
+          "id": "rym-SYT6rI",
+          "label": "count",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HyVbHta6BL": {
+          "description": "время между попыткой достучаться",
+          "id": "HyVbHta6BL",
+          "label": "delay",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkS-BFa6BU": {
+          "boundLiterals": {
+            "__out__": "6"
+          },
+          "description": "размер пакета, в байтах",
+          "id": "rkS-BFa6BU",
+          "label": "size",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJIWrKpprI": {
+          "description": "адрес тунелей всего их шесть начиная от 0 до 5",
+          "id": "HJIWrKpprI",
+          "label": "address_number",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HyDWrKpTSI": {
+          "description": "скорость передачи всего их 3\n0-1MBPS\n1-2MBPS\n2-250KBPS",
+          "id": "HyDWrKpTSI",
+          "label": "speed_number",
+          "position": {
+            "x": 14,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJObSFaaBL": {
+          "description": "мощность сигнала\n0-RF24_PA_MIN\n1-RF24_PA_LOW\n2-RF24_PA_HIGH\n3-RF24_PA_MAX\n4-RF24_PA_ERROR",
+          "id": "BJObSFaaBL",
+          "label": "signal_strength_number",
+          "position": {
+            "x": 16,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkK-BtTprL": {
+          "id": "SkK-BtTprL",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 18,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "CONN",
+          "boundLiterals": {
+            "__out__": "On Boot"
+          }
+        },
+        "rycbSK66HU": {
+          "id": "rycbSK66HU",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE"
+        }
+      },
+      "path": "@/nrf24-reception",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/nRF24/RF24\"\n\n// Include C++ library:\n{{#global}}\n#include <RF24.h>\n#include <SPI.h>\nRF24 radio( 7, 8 );\nint msg[3]={0};\nbyte pipeNo;\n{{/global}}\n\n// Our namespace should be: rf24_ll__rf24\n// Reserve the space for the object.\nstruct State {\n // uint8_t mem[sizeof(RF24)];\n  };\n//using Type = RF24*; // 'Type' is assumed by xod code-generator\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n  // It should be evaluated only once on the first (setup) transaction\n  if (!isInputDirty<input_CONN>(ctx))\n        return;\n  byte address[][6] = {\"1Node\", \"2Node\", \"3Node\", \"4Node\", \"5Node\", \"6Node\"};\n  byte speed[][3] ={\"RF24_1MBPS\",\"RF24_2MBPS\",\"RF24_250KBPS\"};\n  byte signal_strength[][5] ={\"RF24_PA_MIN\",\"RF24_PA_LOW\",\"RF24_PA_HIGH\",\"RF24_PA_MAX\",\"RF24_PA_ERROR\"};\n  auto state = getState(ctx);\n\n  // var names are valid c++ because we got them from the arglist of the c++ constructor\n  //auto _cepin = static_cast<int> (getValue<input__cepin>(ctx)); // int\n  //auto _cspin = static_cast<int> (getValue<input__cspin>(ctx)); // int\n  auto AutoAck = static_cast<bool> (getValue<input_AutoAck>(ctx)); // bool\n  auto delay = static_cast<int> (getValue<input_delay>(ctx)); // int\n  auto count = static_cast<int> (getValue<input_count>(ctx)); // int\n  auto size = static_cast<int> (getValue<input_size>(ctx)); // int\n  auto number_address = static_cast<int> (getValue<input_address_number>(ctx)); // int\n  auto signal = static_cast<int> (getValue<input_signal_strength_number>(ctx)); // int\n  auto number_speed = static_cast<int> (getValue<input_speed_number>(ctx)); // int\n\n\n  Serial.println(\"begin\");\n  radio.begin(); //активировать модуль\n  Serial.println(\"setAutoAck\");\n  radio.setAutoAck(AutoAck);         //режим подтверждения приёма, 1 вкл 0 выкл\n  Serial.println(\"setRetries\");\n  radio.setRetries(delay, count);    //(время между попыткой достучаться, число попыток)\n  Serial.println(\"enableAckPayload\");\n  radio.enableAckPayload();    //разрешить отсылку данных в ответ на входящий сигнал\n  Serial.println(\"setPayloadSize\");\n  radio.setPayloadSize(size);     //размер пакета, в байтах\n\n  radio.openReadingPipe(1,address[number_address]);   ////хотим слушать трубу 0\n  radio.setChannel(0x60);  //выбираем канал (в котором нет шумов!)\n\n  radio.setPALevel (signal_strength[signal]); //уровень мощности передатчика. На выбор RF24_PA_MIN, RF24_PA_LOW, RF24_PA_HIGH, RF24_PA_MAX\n  radio.setDataRate (RF24_1MBPS); //скорость обмена. На выбор RF24_2MBPS, RF24_1MBPS, RF24_250KBPS\n  //должна быть одинакова на приёмнике и передатчике!\n  //при самой низкой скорости имеем самую высокую чувствительность и дальность!!\n  radio.powerUp(); //начать работу\n  radio.startListening();  //не слушаем радиоэфир, мы приемник\n  emitValue<output_DONE>(ctx, 1);\n}"
+        }
+      ]
+    },
+    "@/reception": {
+      "nodes": {
+        "SJfU36TBU": {
+          "id": "SJfU36TBU",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HJu82T6rL": {
+          "id": "HJu82T6rL",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "CONN"
+        },
+        "By1_366HU": {
+          "id": "By1_366HU",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "SJxF3pTB8": {
+          "id": "SJxF3pTB8",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "B1WtnpTHI": {
+          "id": "B1WtnpTHI",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "S1cV0aarI": {
+          "id": "S1cV0aarI",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 11,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE"
+        }
+      },
+      "path": "@/reception",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n   if (!isInputDirty<input_CONN>(ctx)) return;\n     if ( radio.available(&pipeNo)) {             // слушаем эфир со всех труб\n        radio.read( &msg, sizeof(msg) );\n     }\n    emitValue<output_OUT1>(ctx, msg[0]);\n    emitValue<output_OUT2>(ctx, msg[1]);\n    emitValue<output_OUT3>(ctx, msg[3]);\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    }
+  },
+  "name": "nrf24-17032020-v2",
+  "apiKey": "ca72ec15-2ba5-4395-83cb-2f0555ecc68a"
+}

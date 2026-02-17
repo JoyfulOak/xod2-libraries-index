@@ -1,0 +1,277 @@
+{
+  "patches": {
+    "@/main": {
+      "links": {
+        "rJBWUuCvp": {
+          "id": "rJBWUuCvp",
+          "output": {
+            "nodeId": "SJH9pPRPT",
+            "pinKey": "B1UbjDAwT"
+          },
+          "input": {
+            "nodeId": "HJ7fN_ADT",
+            "pinKey": "r1uzJuAvp"
+          }
+        },
+        "rJDZ8d0wa": {
+          "id": "rJDZ8d0wa",
+          "output": {
+            "nodeId": "SJH9pPRPT",
+            "pinKey": "B1UbjDAwT"
+          },
+          "input": {
+            "nodeId": "Hk41IO0wa",
+            "pinKey": "SkTDHdCD6"
+          }
+        },
+        "SkPGIuADp": {
+          "id": "SkPGIuADp",
+          "output": {
+            "nodeId": "HJ7fN_ADT",
+            "pinKey": "SyByE_0Pa"
+          },
+          "input": {
+            "nodeId": "Hk41IO0wa",
+            "pinKey": "BygjH_AwT"
+          }
+        }
+      },
+      "nodes": {
+        "SJH9pPRPT": {
+          "id": "SJH9pPRPT",
+          "type": "@/grafik",
+          "position": {
+            "x": -5,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HJ7fN_ADT": {
+          "boundLiterals": {
+            "HJAaQdRw6": "Never"
+          },
+          "id": "HJ7fN_ADT",
+          "type": "@/add-bar",
+          "position": {
+            "x": -3,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "Hk41IO0wa": {
+          "id": "Hk41IO0wa",
+          "type": "@/show1",
+          "position": {
+            "x": -6,
+            "y": 3,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/main"
+    },
+    "@/grafik": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/Seeed-Studio/Seeed_Arduino_Histogram\"\n\n//#include <SPI.h>\n#include\"Histogram.h\"\n\nnode {\n    meta {\n        using Type = TFT_Histogram*;\n    }\n\n    TFT_Histogram barchart = TFT_Histogram();\n    \n    void evaluate(Context ctx) {\n        if (!isSettingUp())\n            return;\n\n        auto tft = getValue<input_DEV>(ctx);\n        barchart.initHistogram(tft);\n\n        emitValue<output_BChart>(ctx, &barchart);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "rkDqtD0vp": {
+          "id": "rkDqtD0vp",
+          "position": {
+            "x": 0,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "B1UbjDAwT": {
+          "label": "BChart",
+          "id": "B1UbjDAwT",
+          "type": "xod/patch-nodes/output-self",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "H1NGoDRvp": {
+          "label": "DEV",
+          "id": "H1NGoDRvp",
+          "type": "@/input-grafik",
+          "position": {
+            "x": 0,
+            "y": -2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/grafik"
+    },
+    "@/add-bar": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\n#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        // Get a pointer to the `TFT_eSPI tft` class instance\n        auto barchart = getValue<input_BChart>(ctx);\n\n        auto xString = getValue<input_Label>(ctx);\n        int N=length(xString) + 1;\n        char cString[N];\n        for(int i=0;i<N;i++)\n            cString[i]=0;\n        dump(xString, cString);\n\n        uint8_t idx = getValue<input_Index>(ctx);\n        float value = getValue<input_Value>(ctx);\n        uint32_t width = getValue<input_Width>(ctx);\n\n        XColor color24 = getValue<input_Color>(ctx);\n        uint16_t color16 = ((color24.r & 0xF8) << 8) | ((color24.g & 0xFC) << 3) | (color24.b >> 3);\n\n        barchart -> formHistogram(cString, idx, value, width, color16);\n\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "By1SRvCPp": {
+          "id": "By1SRvCPp",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "r1uzJuAvp": {
+          "label": "BChart",
+          "id": "r1uzJuAvp",
+          "type": "@/input-grafik",
+          "position": {
+            "x": 0,
+            "y": -1,
+            "units": "slots"
+          }
+        },
+        "HJAaQdRw6": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "HJAaQdRw6",
+          "position": {
+            "x": 6,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "B1eCpm_0DT": {
+          "description": "Color of bar.",
+          "label": "Color",
+          "id": "B1eCpm_0DT",
+          "position": {
+            "x": 5,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/color/input-color"
+        },
+        "H1WCaXdRDp": {
+          "description": "Label for bar.",
+          "label": "Label",
+          "id": "H1WCaXdRDp",
+          "position": {
+            "x": 2,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "BJM0amdRP6": {
+          "description": "Index of bar (first bar is indexed as 1).",
+          "label": "Index",
+          "id": "BJM0amdRP6",
+          "position": {
+            "x": 1,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "S1m0p7u0DT": {
+          "description": "Value to display.",
+          "label": "Value",
+          "id": "S1m0p7u0DT",
+          "position": {
+            "x": 3,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BkV06XuCDT": {
+          "description": "Relative width of bar.",
+          "label": "Width",
+          "id": "BkV06XuCDT",
+          "position": {
+            "x": 4,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SyByE_0Pa": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "SyByE_0Pa",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/add-bar"
+    },
+    "@/show1": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\n\n#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        // Get a pointer to the `TFT_eSPI tft` class instance\n        auto barchart = getValue<input_BChart>(ctx);\n\n        barchart -> showHistogram();\n\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "rJ-rBuRPa": {
+          "id": "rJ-rBuRPa",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SkTDHdCD6": {
+          "label": "BChart",
+          "id": "SkTDHdCD6",
+          "type": "@/input-grafik",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "BygjH_AwT": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "BygjH_AwT",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1lxsS_AvT": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "H1lxsS_AvT",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/show1"
+    }
+  },
+  "name": "grafik"
+}

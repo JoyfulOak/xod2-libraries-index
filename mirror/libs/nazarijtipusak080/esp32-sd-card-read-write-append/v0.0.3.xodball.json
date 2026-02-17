@@ -1,0 +1,1314 @@
+{
+  "patches": {
+    "@/parse-tabular-copy": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "class SplitCStringView : public ListView<char> {\n  public:\n      class Cursor : public detail::Cursor<char> {\n      public:\n        Cursor(Iterator<char>&& ptr, char del, int n)\n            : _ptr(std::move(ptr))\n\t    , _del(del)\n\t    , _n(n)\n\t    , _curn(0)\n        {\n            while (_curn < _n && isValid()) next();\n        }\n\n        bool isValid() const override {\n\t\t    return _curn <= _n && (bool)_ptr;\n        }\n\n        bool value(char* out) const override {\n            if (_curn > _n) return false;\n\t        return _ptr.value(out);\n\t    }\n\n        void next() override {\n \t\t    ++_ptr;\n            char c;\n            while (_ptr.value(&c) && c == _del) {\n                ++_curn;\n                ++_ptr;\n            }\n\t    }\n\n      private:\n        Iterator<char> _ptr;\n\tchar _del;\n\tint _n;\n\tint _curn;\n    };\n\n  public:\n    SplitCStringView() { }\n\n    SplitCStringView(List<char> str, char del, int n)\n        : _str(str)\n\t, _del(del)\n\t, _n(n)\n    { }\n\n    SplitCStringView& operator=(const SplitCStringView& rhs) {\n        _str = rhs._str;\n\t_del = rhs._del;\n\t_n = rhs._n;\n        return *this;\n    }\n\n    virtual Iterator<char> iterate() const override {\n        return Iterator<char>(new Cursor(_str.iterate(), _del, _n));\n    }\n\n  private:\n    friend class Cursor;\n    List<char> _str;\n    char _del;\n    int _n;\n};\n\nstruct State {\n    SplitCStringView view;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto state = getState(ctx);\n    auto str = getValue<input_STR>(ctx);\n    auto num = getValue<input_IDX>(ctx);\n    auto del = getValue<input_D>(ctx);\n    state->view = SplitCStringView(str,del,num);\n    emitValue<output_OUT>(ctx,XString(&state->view));\n}\n"
+        }
+      ],
+      "description": "Splits the incoming string line into parts depending on delimiter character. Outputs the specified part of string line",
+      "nodes": {
+        "Bk7V1R9FIm": {
+          "description": "Delimiter character",
+          "label": "D",
+          "id": "Bk7V1R9FIm",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "BkEJR5F87": {
+          "description": "A number of the string line part  to output. The numbering of the parts starts with 0",
+          "label": "IDX",
+          "id": "BkEJR5F87",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Skf4JC5K87": {
+          "id": "Skf4JC5K87",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1eE109KLm": {
+          "description": "A string line to be split",
+          "label": "STR",
+          "id": "r1eE109KLm",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "rJ-N1C5K87": {
+          "description": "A part of a splitted string line",
+          "id": "rJ-N1C5K87",
+          "position": {
+            "x": -0.05,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        }
+      },
+      "path": "@/parse-tabular-copy"
+    },
+    "@/parse-tabular-byte": {
+      "links": {
+        "HkcZcvIfyx": {
+          "id": "HkcZcvIfyx",
+          "output": {
+            "nodeId": "S1uZ5wIGyg",
+            "pinKey": "rJ-N1C5K87"
+          },
+          "input": {
+            "nodeId": "Hkrb5wUf1e",
+            "pinKey": "HJJjH2MLQ"
+          }
+        },
+        "HJOzqPUGye": {
+          "id": "HJOzqPUGye",
+          "output": {
+            "nodeId": "Hkrb5wUf1e",
+            "pinKey": "S14OKv8Mkg"
+          },
+          "input": {
+            "nodeId": "rk4MqDLzye",
+            "pinKey": "__in__"
+          }
+        },
+        "Sk4E5P8Gyx": {
+          "id": "Sk4E5P8Gyx",
+          "output": {
+            "nodeId": "r1ZkN5vLfJe",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "S1uZ5wIGyg",
+            "pinKey": "r1eE109KLm"
+          }
+        },
+        "B1r45wUzyx": {
+          "id": "B1r45wUzyx",
+          "output": {
+            "nodeId": "r1JN5vIMkg",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "S1uZ5wIGyg",
+            "pinKey": "Bk7V1R9FIm"
+          }
+        },
+        "H1L4cvUzkl": {
+          "id": "H1L4cvUzkl",
+          "output": {
+            "nodeId": "HkeJ4qP8fkg",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "S1uZ5wIGyg",
+            "pinKey": "BkEJR5F87"
+          }
+        }
+      },
+      "nodes": {
+        "Hkrb5wUf1e": {
+          "id": "Hkrb5wUf1e",
+          "type": "@/string-namber-to-byte",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "S1uZ5wIGyg": {
+          "id": "S1uZ5wIGyg",
+          "type": "@/parse-tabular-copy",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "rk4MqDLzye": {
+          "id": "rk4MqDLzye",
+          "type": "xod/patch-nodes/output-byte",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "r1JN5vIMkg": {
+          "description": "Delimiter character",
+          "label": "D",
+          "id": "r1JN5vIMkg",
+          "position": {
+            "x": 3,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HkeJ4qP8fkg": {
+          "description": "A number of the string line part  to output. The numbering of the parts starts with 0",
+          "label": "IDX",
+          "id": "HkeJ4qP8fkg",
+          "position": {
+            "x": 4,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1ZkN5vLfJe": {
+          "description": "A string line to be split",
+          "label": "STR",
+          "id": "r1ZkN5vLfJe",
+          "position": {
+            "x": 2,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        }
+      },
+      "path": "@/parse-tabular-byte"
+    },
+    "@/string-namber-to-byte": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto state = getState(ctx);\n    auto str = getValue<input_IN>(ctx);\n    char _str[16];\n    dump(str,_str);\n    emitValue<output_OUT>(ctx, atof(_str));\n}\n\n"
+        }
+      ],
+      "description": "Transforms a string into a number",
+      "nodes": {
+        "HJ-ysr2zI7": {
+          "id": "HJ-ysr2zI7",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJJjH2MLQ": {
+          "id": "HJJjH2MLQ",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "S14OKv8Mkg": {
+          "id": "S14OKv8Mkg",
+          "type": "xod/patch-nodes/output-byte",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/string-namber-to-byte"
+    },
+    "@/string-number-to-number": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto state = getState(ctx);\n    auto str = getValue<input_IN>(ctx);\n    char _str[16];\n    dump(str,_str);\n    emitValue<output_OUT>(ctx, atof(_str));\n}\n\n"
+        }
+      ],
+      "description": "Transforms a string into a number",
+      "nodes": {
+        "HJ-ysr2zI7": {
+          "id": "HJ-ysr2zI7",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJJjH2MLQ": {
+          "id": "HJJjH2MLQ",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "HkxkiS3f8Q": {
+          "id": "HkxkiS3f8Q",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/string-number-to-number"
+    },
+    "@/parse-tabular-number": {
+      "links": {
+        "Sk4E5P8Gyx": {
+          "id": "Sk4E5P8Gyx",
+          "output": {
+            "nodeId": "r1ZkN5vLfJe",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "S1uZ5wIGyg",
+            "pinKey": "r1eE109KLm"
+          }
+        },
+        "B1r45wUzyx": {
+          "id": "B1r45wUzyx",
+          "output": {
+            "nodeId": "r1JN5vIMkg",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "S1uZ5wIGyg",
+            "pinKey": "Bk7V1R9FIm"
+          }
+        },
+        "H1L4cvUzkl": {
+          "id": "H1L4cvUzkl",
+          "output": {
+            "nodeId": "HkeJ4qP8fkg",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "S1uZ5wIGyg",
+            "pinKey": "BkEJR5F87"
+          }
+        },
+        "H1PHTwIM1x": {
+          "id": "H1PHTwIM1x",
+          "output": {
+            "nodeId": "S1uZ5wIGyg",
+            "pinKey": "rJ-N1C5K87"
+          },
+          "input": {
+            "nodeId": "Hy8STD8fJx",
+            "pinKey": "HJJjH2MLQ"
+          }
+        },
+        "r1Y8av8M1g": {
+          "id": "r1Y8av8M1g",
+          "output": {
+            "nodeId": "Hy8STD8fJx",
+            "pinKey": "HkxkiS3f8Q"
+          },
+          "input": {
+            "nodeId": "S1fL6DLMyg",
+            "pinKey": "__in__"
+          }
+        }
+      },
+      "nodes": {
+        "S1uZ5wIGyg": {
+          "id": "S1uZ5wIGyg",
+          "type": "@/parse-tabular-copy",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "r1JN5vIMkg": {
+          "description": "Delimiter character",
+          "label": "D",
+          "id": "r1JN5vIMkg",
+          "position": {
+            "x": 3,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HkeJ4qP8fkg": {
+          "description": "A number of the string line part  to output. The numbering of the parts starts with 0",
+          "label": "IDX",
+          "id": "HkeJ4qP8fkg",
+          "position": {
+            "x": 4,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1ZkN5vLfJe": {
+          "description": "A string line to be split",
+          "label": "STR",
+          "id": "r1ZkN5vLfJe",
+          "position": {
+            "x": 2,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Hy8STD8fJx": {
+          "id": "Hy8STD8fJx",
+          "type": "@/string-number-to-number",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "S1fL6DLMyg": {
+          "id": "S1fL6DLMyg",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/parse-tabular-number"
+    },
+    "@/sd-write-esp32": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_W\n#pragma XOD error_raise enable\n\n//{{#global}}\n#include <FS.h>\n#include <SD.h>\n#include <SPI.h>\n//{{/global}}\n\nnode {\n    bool begun;\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_W>(ctx))\n            return;\n\n        if (!begun) {\n            // Ініціалізація SPI та SD\n            auto csPin = getValue<input_CS>(ctx);\n            SPI.begin(18, 19, 23, csPin); // SCK, MISO, MOSI, CS\n            begun = SD.begin(csPin);\n        }\n\n      if (!begun) {\n            // Помилка ініціалізації\n            raiseError(ctx);\n            return;\n        }\n\n        // Отримання імені файлу\n        char filename[16] = { 0 };\n        dump(getValue<input_FILE>(ctx), filename);\n\n        // Спроба відкрити файл для запису\n        File file = SD.open(filename, FILE_WRITE);\n        if (!file) {\n            // Помилка відкриття файлу\n           begun = false;\n            raiseError(ctx);\n            return;\n        }\n\n        // Запис рядка у файл\n        XString line = getValue<input_LINE>(ctx);\n        size_t lastWriteSize;\n        for (auto it = line.iterate(); it; ++it) {\n            lastWriteSize = file.print(*it);\n            if (lastWriteSize == 0) {\n                 //Помилка запису\n               begun = false;\n                raiseError(ctx);\n                return;\n            }\n        }\n\n        // Додати новий рядок та завершити\n        file.print('\\n');\n        file.flush();\n        file.close();\n\n        // Передати сигнал про завершення\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "description": "The node allows the ESP32 controller to write files to the SD card. Data is written at the beginning of the file. IT IS IMPORTANT THAT THE FILE NAME MUST BEGIN WITH A \"/\" CHARACTER. OTHERWISE OPENING OR CREATING THE FILE WILL BE A NODE ERROR.",
+      "nodes": {
+        "S1d1hgGkK": {
+          "description": "Write data to a file on the SD-Card. Will create the file if it does not exist.",
+          "id": "S1d1hgGkK",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJxq2xGyY": {
+          "boundLiterals": {
+            "__out__": "D53"
+          },
+          "description": "CS (chip select) pin the SD card reader is connected to. Also known as SS (slave select).",
+          "label": "CS",
+          "id": "rJxq2xGyY",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rylg93gMyF": {
+          "description": "Perform file open, write, flush, close cycle",
+          "label": "W",
+          "id": "rylg93gMyF",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Bkbg93efJt": {
+          "description": "Line to append",
+          "label": "LINE",
+          "id": "Bkbg93efJt",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "rkGg5ngzJK": {
+          "description": "File name to append to",
+          "label": "FILE",
+          "id": "rkGg5ngzJK",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Sycinlz1Y": {
+          "description": "Fires when write is done",
+          "label": "DONE",
+          "id": "Sycinlz1Y",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/sd-write-esp32"
+    },
+    "@/example-sd-card-esp32": {
+      "links": {
+        "HkZvcv8M1l": {
+          "id": "HkZvcv8M1l",
+          "output": {
+            "nodeId": "By_8cPLz1e",
+            "pinKey": "Sk43MO-Jm"
+          },
+          "input": {
+            "nodeId": "By3xGwLMkg",
+            "pinKey": "HynENHNOz"
+          }
+        },
+        "HkXwcP8zJl": {
+          "id": "HkXwcP8zJl",
+          "output": {
+            "nodeId": "rkpL9D8M1x",
+            "pinKey": "Sk43MO-Jm"
+          },
+          "input": {
+            "nodeId": "By3xGwLMkg",
+            "pinKey": "rJJHNrVuM"
+          }
+        },
+        "SyED5w8fkl": {
+          "id": "SyED5w8fkl",
+          "output": {
+            "nodeId": "HkAUcDLzke",
+            "pinKey": "Sk43MO-Jm"
+          },
+          "input": {
+            "nodeId": "By3xGwLMkg",
+            "pinKey": "rJJHNrVuM-$1"
+          }
+        },
+        "SkrP9PUzJg": {
+          "id": "SkrP9PUzJg",
+          "output": {
+            "nodeId": "BJkD5wLM1x",
+            "pinKey": "Sk43MO-Jm"
+          },
+          "input": {
+            "nodeId": "By3xGwLMkg",
+            "pinKey": "rJJHNrVuM-$2"
+          }
+        },
+        "r1Cv9P8z1x": {
+          "id": "r1Cv9P8z1x",
+          "output": {
+            "nodeId": "Bkiw9DUfyg",
+            "pinKey": "SykJ8wjXN"
+          },
+          "input": {
+            "nodeId": "By_8cPLz1e",
+            "pinKey": "S113G_ZJm"
+          }
+        },
+        "Byfd5PLMkl": {
+          "id": "Byfd5PLMkl",
+          "output": {
+            "nodeId": "SJxd9v8zyg",
+            "pinKey": "SykJ8wjXN"
+          },
+          "input": {
+            "nodeId": "rkpL9D8M1x",
+            "pinKey": "S113G_ZJm"
+          }
+        },
+        "S1w_5PUfJe": {
+          "id": "S1w_5PUfJe",
+          "output": {
+            "nodeId": "BkSdqvIfkx",
+            "pinKey": "SykJ8wjXN"
+          },
+          "input": {
+            "nodeId": "HkAUcDLzke",
+            "pinKey": "S113G_ZJm"
+          }
+        },
+        "HkoO5DIf1l": {
+          "id": "HkoO5DIf1l",
+          "output": {
+            "nodeId": "rJYO9DIMJe",
+            "pinKey": "SykJ8wjXN"
+          },
+          "input": {
+            "nodeId": "BJkD5wLM1x",
+            "pinKey": "S113G_ZJm"
+          }
+        },
+        "ry0i9v8z1x": {
+          "id": "ry0i9v8z1x",
+          "output": {
+            "nodeId": "ryZj9PUMkl",
+            "pinKey": "rk4MqDLzye"
+          },
+          "input": {
+            "nodeId": "H1KjqPIGyx",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "rk169vIG1l": {
+          "id": "rk169vIG1l",
+          "output": {
+            "nodeId": "Ski25wLfye",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "ryZj9PUMkl",
+            "pinKey": "HkeJ4qP8fkg"
+          }
+        },
+        "B1OATwUMyg": {
+          "id": "B1OATwUMyg",
+          "output": {
+            "nodeId": "SkBiTw8zye",
+            "pinKey": "B23RV3eJq"
+          },
+          "input": {
+            "nodeId": "HktwpvLMkg",
+            "pinKey": "r1JN5vIMkg"
+          }
+        },
+        "H1qCavUMyg": {
+          "id": "H1qCavUMyg",
+          "output": {
+            "nodeId": "SkBiTw8zye",
+            "pinKey": "B23RV3eJq"
+          },
+          "input": {
+            "nodeId": "ryZj9PUMkl",
+            "pinKey": "r1JN5vIMkg"
+          }
+        },
+        "rJ6RaDLG1l": {
+          "id": "rJ6RaDLG1l",
+          "output": {
+            "nodeId": "HktwpvLMkg",
+            "pinKey": "S1fL6DLMyg"
+          },
+          "input": {
+            "nodeId": "H1x9DwUG1l",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "rkCv0v8z1l": {
+          "id": "rkCv0v8z1l",
+          "output": {
+            "nodeId": "BkTcvDIGye",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "HktwpvLMkg",
+            "pinKey": "HkeJ4qP8fkg"
+          }
+        },
+        "Hk2MTRtfke": {
+          "id": "Hk2MTRtfke",
+          "output": {
+            "nodeId": "SJBCGv8Gyg",
+            "pinKey": "B1x2RV3eZ"
+          },
+          "input": {
+            "nodeId": "S19x6RYMkl",
+            "pinKey": "rJxq2xGyY"
+          }
+        },
+        "rJ0M6AFMyg": {
+          "id": "rJ0M6AFMyg",
+          "output": {
+            "nodeId": "By3xGwLMkg",
+            "pinKey": "HJrBNr4dG"
+          },
+          "input": {
+            "nodeId": "S19x6RYMkl",
+            "pinKey": "Bkbg93efJt"
+          }
+        },
+        "S1b7pCtMke": {
+          "id": "S1b7pCtMke",
+          "output": {
+            "nodeId": "S15DMvUzyg",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "S19x6RYMkl",
+            "pinKey": "rylg93gMyF"
+          }
+        },
+        "B1pST0Kf1x": {
+          "id": "B1pST0Kf1x",
+          "output": {
+            "nodeId": "rk3MpzDIMkl",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "HktWaAYz1e",
+            "pinKey": "ryroAU71F"
+          }
+        },
+        "Hk1UaAKzkg": {
+          "id": "Hk1UaAKzkg",
+          "output": {
+            "nodeId": "r1zaMPIMJg",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "HktWaAYz1e",
+            "pinKey": "H1Wj0U7yt"
+          }
+        },
+        "BkQLpRYzye": {
+          "id": "BkQLpRYzye",
+          "output": {
+            "nodeId": "SJBCGv8Gyg",
+            "pinKey": "B1x2RV3eZ"
+          },
+          "input": {
+            "nodeId": "HktWaAYz1e",
+            "pinKey": "rJxq2xGyY"
+          }
+        },
+        "S1HLpAYfyl": {
+          "id": "S1HLpAYfyl",
+          "output": {
+            "nodeId": "BkxOzD8zJx",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "HktWaAYz1e",
+            "pinKey": "rylg93gMyF"
+          }
+        },
+        "Sy_UT0Yf1e": {
+          "id": "Sy_UT0Yf1e",
+          "output": {
+            "nodeId": "HktWaAYz1e",
+            "pinKey": "B1aN1WzJF"
+          },
+          "input": {
+            "nodeId": "SynuGv8Mkx",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "Bk9LTAFMkl": {
+          "id": "Bk9LTAFMkl",
+          "output": {
+            "nodeId": "HktWaAYz1e",
+            "pinKey": "B1aN1WzJF"
+          },
+          "input": {
+            "nodeId": "ryZj9PUMkl",
+            "pinKey": "r1ZkN5vLfJe"
+          }
+        },
+        "SkaUTRYGyl": {
+          "id": "SkaUTRYGyl",
+          "output": {
+            "nodeId": "HktWaAYz1e",
+            "pinKey": "B1aN1WzJF"
+          },
+          "input": {
+            "nodeId": "HktwpvLMkg",
+            "pinKey": "r1ZkN5vLfJe"
+          }
+        },
+        "By4OpRtzkg": {
+          "id": "By4OpRtzkg",
+          "output": {
+            "nodeId": "By3xGwLMkg",
+            "pinKey": "HJrBNr4dG"
+          },
+          "input": {
+            "nodeId": "rJV-aAFfyx",
+            "pinKey": "Bkbg93efJt"
+          }
+        },
+        "Bk1Fp0Ff1g": {
+          "id": "Bk1Fp0Ff1g",
+          "output": {
+            "nodeId": "HyqOaAYGJl",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "rJV-aAFfyx",
+            "pinKey": "rylg93gMyF"
+          }
+        },
+        "HyGyiTAKzkg": {
+          "id": "HyGyiTAKzkg",
+          "output": {
+            "nodeId": "rJbJiTCFfyl",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJV-aAFfyx",
+            "pinKey": "rJxq2xGyY"
+          }
+        },
+        "HyeyipAYfyx": {
+          "id": "HyeyipAYfyx",
+          "output": {
+            "nodeId": "SJBCGv8Gyg",
+            "pinKey": "B1x2RV3eZ"
+          },
+          "input": {
+            "nodeId": "SJyoTRtM1g",
+            "pinKey": "__in__"
+          }
+        }
+      },
+      "nodes": {
+        "By3xGwLMkg": {
+          "boundLiterals": {
+            "rJGQNB4df": "\",\""
+          },
+          "arityLevel": 3,
+          "id": "By3xGwLMkg",
+          "type": "xod/core/join",
+          "position": {
+            "x": 6,
+            "y": -2,
+            "units": "slots"
+          }
+        },
+        "S15DMvUzyg": {
+          "id": "S15DMvUzyg",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 12,
+            "y": -1,
+            "units": "slots"
+          }
+        },
+        "BkxOzD8zJx": {
+          "id": "BkxOzD8zJx",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SynuGv8Mkx": {
+          "size": {
+            "width": 12,
+            "height": 2,
+            "units": "slots"
+          },
+          "id": "SynuGv8Mkx",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 11,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "r1zaMPIMJg": {
+          "id": "r1zaMPIMJg",
+          "type": "xod/debug/tweak-number",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rk3MpzDIMkl": {
+          "boundLiterals": {
+            "ByfGSDjQE": "100"
+          },
+          "id": "rk3MpzDIMkl",
+          "type": "xod/debug/tweak-number",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SJBCGv8Gyg": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "D13"
+          },
+          "id": "SJBCGv8Gyg",
+          "type": "xod/core/constant-port",
+          "position": {
+            "x": -1,
+            "y": -3,
+            "units": "slots"
+          }
+        },
+        "H1x9DwUG1l": {
+          "size": {
+            "width": 10,
+            "height": 1,
+            "units": "slots"
+          },
+          "id": "H1x9DwUG1l",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 2,
+            "y": 8,
+            "units": "slots"
+          }
+        },
+        "BkTcvDIGye": {
+          "boundLiterals": {
+            "ByfGSDjQE": "0"
+          },
+          "id": "BkTcvDIGye",
+          "type": "xod/debug/tweak-number",
+          "position": {
+            "x": 4,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "By_8cPLz1e": {
+          "id": "By_8cPLz1e",
+          "type": "xod/bits/u8-to-number",
+          "position": {
+            "x": 7,
+            "y": -3,
+            "units": "slots"
+          }
+        },
+        "rkpL9D8M1x": {
+          "id": "rkpL9D8M1x",
+          "type": "xod/bits/u8-to-number",
+          "position": {
+            "x": 8,
+            "y": -3,
+            "units": "slots"
+          }
+        },
+        "HkAUcDLzke": {
+          "id": "HkAUcDLzke",
+          "type": "xod/bits/u8-to-number",
+          "position": {
+            "x": 9,
+            "y": -3,
+            "units": "slots"
+          }
+        },
+        "BJkD5wLM1x": {
+          "id": "BJkD5wLM1x",
+          "type": "xod/bits/u8-to-number",
+          "position": {
+            "x": 10,
+            "y": -3,
+            "units": "slots"
+          }
+        },
+        "Bkiw9DUfyg": {
+          "boundLiterals": {
+            "SykJ8wjXN": "FFh"
+          },
+          "id": "Bkiw9DUfyg",
+          "type": "xod/debug/tweak-byte",
+          "position": {
+            "x": 7,
+            "y": -5,
+            "units": "slots"
+          }
+        },
+        "SJxd9v8zyg": {
+          "boundLiterals": {
+            "SykJ8wjXN": "FFh"
+          },
+          "id": "SJxd9v8zyg",
+          "type": "xod/debug/tweak-byte",
+          "position": {
+            "x": 8,
+            "y": -5,
+            "units": "slots"
+          }
+        },
+        "BkSdqvIfkx": {
+          "boundLiterals": {
+            "SykJ8wjXN": "FFh"
+          },
+          "id": "BkSdqvIfkx",
+          "type": "xod/debug/tweak-byte",
+          "position": {
+            "x": 9,
+            "y": -5,
+            "units": "slots"
+          }
+        },
+        "rJYO9DIMJe": {
+          "boundLiterals": {
+            "SykJ8wjXN": "CDh"
+          },
+          "id": "rJYO9DIMJe",
+          "type": "xod/debug/tweak-byte",
+          "position": {
+            "x": 10,
+            "y": -5,
+            "units": "slots"
+          }
+        },
+        "ryZj9PUMkl": {
+          "boundLiterals": {
+            "r1JN5vIMkg": "2Ch"
+          },
+          "id": "ryZj9PUMkl",
+          "type": "@/parse-tabular-byte",
+          "position": {
+            "x": 6,
+            "y": 6,
+            "units": "slots"
+          }
+        },
+        "H1KjqPIGyx": {
+          "size": {
+            "width": 10,
+            "height": 1,
+            "units": "slots"
+          },
+          "id": "H1KjqPIGyx",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 6,
+            "y": 7,
+            "units": "slots"
+          }
+        },
+        "Ski25wLfye": {
+          "boundLiterals": {
+            "ByfGSDjQE": "0"
+          },
+          "id": "Ski25wLfye",
+          "type": "xod/debug/tweak-number",
+          "position": {
+            "x": 8,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "HktwpvLMkg": {
+          "boundLiterals": {
+            "r1JN5vIMkg": "2Ch"
+          },
+          "id": "HktwpvLMkg",
+          "type": "@/parse-tabular-number",
+          "position": {
+            "x": 1,
+            "y": 6,
+            "units": "slots"
+          }
+        },
+        "SkBiTw8zye": {
+          "boundLiterals": {
+            "B23RV3eJq": "2Ch"
+          },
+          "label": "\" , \"",
+          "id": "SkBiTw8zye",
+          "type": "xod/core/constant-byte",
+          "position": {
+            "x": 4,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "S19x6RYMkl": {
+          "id": "S19x6RYMkl",
+          "type": "@/sd-write-esp32",
+          "position": {
+            "x": 2,
+            "y": -1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "rkGg5ngzJK": "\"/test.txt\""
+          }
+        },
+        "rJV-aAFfyx": {
+          "id": "rJV-aAFfyx",
+          "type": "@/sd-append-esp32",
+          "position": {
+            "x": 15,
+            "y": -1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "rkGg5ngzJK": "\"/test.txt\""
+          }
+        },
+        "HktWaAYz1e": {
+          "id": "HktWaAYz1e",
+          "type": "@/sd-read-esp32",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "rkGg5ngzJK": "\"/test.txt\""
+          }
+        },
+        "HyqOaAYGJl": {
+          "id": "HyqOaAYGJl",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 18,
+            "y": -2,
+            "units": "slots"
+          }
+        },
+        "rJbJiTCFfyl": {
+          "id": "rJbJiTCFfyl",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 15,
+            "y": -2,
+            "units": "slots"
+          },
+          "label": "VAL"
+        },
+        "SJyoTRtM1g": {
+          "id": "SJyoTRtM1g",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": -1,
+            "y": -2,
+            "units": "slots"
+          },
+          "label": "VAL"
+        }
+      },
+      "comments": {
+        "HkqjBy5M1l": {
+          "id": "HkqjBy5M1l",
+          "position": {
+            "x": 15,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "width": 10,
+            "height": 2,
+            "units": "slots"
+          },
+          "content": "IT IS IMPORTANT THAT THE FILE NAME MUST BEGIN WITH \"/\". OTHERWISE OPENING OR CREATING THE FILE WILL BE A NODE ERROR. The example is tested on a regular ESP32. SPI PINS (MOSI - GPIO23, MISO - GPIO19, SCK - GPIO18) ARE SPECIFIED IN THE CODE. ON OTHER ESP32 MODELS NEED CLARIFICATION!!!"
+        }
+      },
+      "path": "@/example-sd-card-esp32"
+    },
+    "@/sd-read-esp32": {
+      "nodes": {
+        "S1d1hgGkK": {
+          "id": "S1d1hgGkK",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJxq2xGyY": {
+          "boundLiterals": {
+            "__out__": "D53"
+          },
+          "description": "CS (chip select) pin the SD card reader is connected to. Also known as SS (slave select).",
+          "label": "CS",
+          "id": "rJxq2xGyY",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rylg93gMyF": {
+          "description": "Perform file open, read, close cycle",
+          "label": "R",
+          "id": "rylg93gMyF",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkGg5ngzJK": {
+          "description": "File name to append to",
+          "label": "FILE",
+          "id": "rkGg5ngzJK",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Sycinlz1Y": {
+          "description": "Fires when write is done",
+          "label": "DONE",
+          "id": "Sycinlz1Y",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "B1aN1WzJF": {
+          "label": "STR",
+          "id": "B1aN1WzJF",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "Hy2VvBQkK": {
+          "label": "POS",
+          "id": "Hy2VvBQkK",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "H1Wj0U7yt": {
+          "label": "START",
+          "id": "H1Wj0U7yt",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryroAU71F": {
+          "label": "CAP",
+          "id": "ryroAU71F",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/sd-read-esp32",
+      "description": "The node allows the ESP32 controller to read data from the SD card.  IT IS IMPORTANT THAT THE FILE NAME MUST BEGIN WITH \"/\". OTHERWISE OPENING OR CREATING THE FILE WILL BE A NODE ERROR.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "// This is the old sd-log patch migrated to the new v0.35 syntax method according to https://xod.io/docs/guide/migrating-to-v035/\n\n#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_R\n#pragma XOD error_raise enable\n\n\n\n#include <SPI.h>\n#include <SD.h>\nsize_t strlcpy(char *dst, const char *src, size_t size)\n// Thanks to Adam Rosenfield for this funcion, strlcpy\n{\n    size_t len = 0;\n    while(size > 1 && *src)\n    {\n        *dst++ = *src++;\n        size--;\n        len++;\n    }\n    if(size > 0)\n        *dst = 0;\n    return len + strlen(src);    \n}\n\n\nnode {\n    \n    bool begun;\n    char str[64] ;\n \n    CStringView view = CStringView(str);\n    \nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_R>(ctx))\n        return;\n\n\n    if (!begun) {\n        // First time use, initialize\n        auto csPin = getValue<input_CS>(ctx);\n        SPI.begin(18, 19, 23, csPin); // SCK, MISO, MOSI, CS\n        begun = SD.begin(csPin);\n    }\n\n    if (!begun) {\n        // Initialization failed (wrong connection, no SD card)\n        raiseError(ctx);\n        return;\n    }\n    char filename[16] = { 0 };\n    dump(getValue<input_FILE>(ctx), filename);\n    File myFile = SD.open(filename, FILE_READ);\n    if (!myFile) {\n        // Failed to open the file. Maybe, SD card gone,\n        // try to reinit next time\n        begun = false;\n        raiseError(ctx); // Can't open file\n        return;\n    }\n\n    uint8_t START = getValue<input_START>(ctx);\n    uint8_t CAP = getValue<input_CAP>(ctx);\n    \n    myFile.seek(START);\n\n    uint8_t index = 0;\n    //char ch[CAP+1];\n   while (myFile.available() && index < CAP){\n       char someChar = myFile.read();\n      \n       str[index] =someChar;\n     \n        index++;\n       str[index] = '\\0';\n   }\n  \n    int pos = myFile.position();\n    \n    //strlcpy(str, ch, sizeof(str));\n    \n    myFile.close();\n    \n   emitValue<output_STR>(ctx, XString(&view));\n   emitValue<output_DONE>(ctx, 1);\n   emitValue<output_POS>(ctx, pos);\n\n\n}\n}\n\n"
+        }
+      ]
+    },
+    "@/sd-append-esp32": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_W\n#pragma XOD error_raise enable\n\n//{{#global}}\n#include <FS.h>\n#include <SD.h>\n#include <SPI.h>\n//{{/global}}\n\nnode {\n    bool begun;\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_W>(ctx))\n            return;\n\n        if (!begun) {\n            // Ініціалізація SPI та SD\n            auto csPin = getValue<input_CS>(ctx);\n            SPI.begin(18, 19, 23, csPin); // SCK, MISO, MOSI, CS\n            begun = SD.begin(csPin);\n        }\n\n       if (!begun) {\n            // Помилка ініціалізації\n            raiseError(ctx);\n            return;\n        }\n\n        // Отримання імені файлу\n        char filename[16] = { 0 };\n        dump(getValue<input_FILE>(ctx), filename);\n\n        // Спроба відкрити файл для запису\n        File file = SD.open(filename, FILE_APPEND);\n        if (!file) {\n            // Помилка відкриття файлу\n           begun = false;\n            raiseError(ctx);\n            return;\n        }\n\n        // Запис рядка у файл\n        XString line = getValue<input_LINE>(ctx);\n        size_t lastWriteSize;\n        for (auto it = line.iterate(); it; ++it) {\n            lastWriteSize = file.print(*it);\n            if (lastWriteSize == 0) {\n                // Помилка запису\n               begun = false;\n                raiseError(ctx);\n                return;\n            }\n        }\n\n        // Додати новий рядок та завершити\n        file.print('\\n');\n        file.flush();\n        file.close();\n\n        // Передати сигнал про завершення\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "description": "The node allows the ESP32 controller to write files to the SD card. Data is added to existing content. IT IS IMPORTANT THAT THE FILE NAME MUST BEGIN WITH A \"/\" CHARACTER. OTHERWISE OPENING OR CREATING THE FILE WILL BE A NODE ERROR.",
+      "nodes": {
+        "S1d1hgGkK": {
+          "id": "S1d1hgGkK",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJxq2xGyY": {
+          "boundLiterals": {
+            "__out__": "D53"
+          },
+          "description": "CS (chip select) pin the SD card reader is connected to. Also known as SS (slave select).",
+          "label": "CS",
+          "id": "rJxq2xGyY",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rylg93gMyF": {
+          "description": "Perform file open, write, flush, close cycle",
+          "label": "W",
+          "id": "rylg93gMyF",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Bkbg93efJt": {
+          "description": "Line to append",
+          "label": "LINE",
+          "id": "Bkbg93efJt",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "rkGg5ngzJK": {
+          "description": "File name to append to",
+          "label": "FILE",
+          "id": "rkGg5ngzJK",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Sycinlz1Y": {
+          "description": "Fires when write is done",
+          "label": "DONE",
+          "id": "Sycinlz1Y",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/sd-append-esp32"
+    }
+  },
+  "version": "0.0.3",
+  "description": "Contains nodes for working with an SD card on ESP32, also for the example I added nodes for working with a string.\nIn order for the SD card to be initialized and opened, it must be formatted as FAT16 or FAT32 (if it works with arduino, then everything is fine). IT IS IMPORTANT THAT THE FILE NAME MUST BEGIN WITH \"/\". OTHERWISE OPENING OR CREATING A FILE WILL BE A NODE ERROR. The example was tested on a regular ESP32. SPI PINS (MOSI -GPIO23, MISO - GPIO19, SCK - GPIO18) ARE INDICATED IN THE CODE. ESP32 MODELS OF DIFFERENT TYPES NEED TO BE SPECIFIED WITH THE DOCUMENTATION!!!",
+  "apiKey": "927bfc62-36f9-4a52-ba2d-2c76f2b23164",
+  "name": "esp32-sd-card-read-write-append"
+}

@@ -1,0 +1,202 @@
+{
+  "patches": {
+    "@/main": {
+      "links": {
+        "BJqOPhBpY": {
+          "id": "BJqOPhBpY",
+          "output": {
+            "nodeId": "HyY_w2rTF",
+            "pinKey": "B1SPA9rpt"
+          },
+          "input": {
+            "nodeId": "HJfzFirat",
+            "pinKey": "BJLa1iBat"
+          }
+        }
+      },
+      "nodes": {
+        "HJfzFirat": {
+          "id": "HJfzFirat",
+          "type": "@/potentiostat-mcp4725",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "HyijMjBTt": "Continuously"
+          }
+        },
+        "HyY_w2rTF": {
+          "id": "HyY_w2rTF",
+          "type": "@/potentiostat-mcp4725-device",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/main"
+    },
+    "@/potentiostat-mcp4725-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\n\n#pragma XOD require https://github.com/adafruit/Adafruit_MCP4725\n\n#include <Wire.h>\n#include <Adafruit_MCP4725.h>\n\nnode {\n\n    meta {\n    // Define our custom type as a pointer on the class instance.\n    using Type = Adafruit_MCP4725*;\n    }\n\n    // Create an object of class Adafruit_TSL2591\n    Adafruit_MCP4725 dac = Adafruit_MCP4725();\n\n        \n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n\n        \n        auto ADDR = getValue<input_ADDR>(ctx);\n        \n        dac.begin(ADDR);\n        \n        \n        emitValue<output_OUT>(ctx, &dac);\n        \n        \n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "HkEiIwr6t": {
+          "id": "HkEiIwr6t",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SJpBmFS6t": {
+          "boundLiterals": {
+            "__out__": "62h"
+          },
+          "description": "Indicate the address of the MCP4725 device (set to 0x62 by default).",
+          "label": "ADDR",
+          "id": "SJpBmFS6t",
+          "type": "xod/patch-nodes/input-byte",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "B1SPA9rpt": {
+          "id": "B1SPA9rpt",
+          "type": "xod/patch-nodes/output-self",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/potentiostat-mcp4725-device"
+    },
+    "@/potentiostat-mcp4725": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\n\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n\n\n        int x;\n        uint16_t counter;\n\n        \n        \n        static_assert(isValidAnalogPort(constant_input_PORT), \"must be a valid analog port\");\n\n        if (!isInputDirty<input_UPD>(ctx))\n        return;\n        Number y;\n        ::pinMode(constant_input_PORT, INPUT);\n\n    int rate2;\n    float rate;\n    float Vmax;\n    float Vlow;\n    int cycle;\n    int NCycles;\n\n    auto dac = getValue<input_IN>(ctx);\n    NCycles = getValue<input_NCycles>(ctx);\n    rate = getValue<input_Rate>(ctx);\n    Vlow = getValue<input_Vlow>(ctx);\n    Vmax = getValue<input_Vmax>(ctx);\n        \n    rate2 = (rate/1.22) * 1000;\n    Vlow = Vlow/0.00122;\n    Vmax = Vmax/0.00122;\n    \n    \n        \n    for (cycle=0; cycle<NCycles; cycle++){\n       \n    for (counter = Vlow; counter < Vmax; counter++)\n    {\n    \n    dac->setVoltage(counter, false);\n\n    x = analogRead(constant_input_PORT);\n    emitValue<output_Current>(ctx, x);\n    delay (rate2);\n    }\n   \n    for (counter = Vmax; counter > Vlow; counter--)\n    {\n    \n   dac->setVoltage(counter, false);\n        \n    x = analogRead(constant_input_PORT);\n    emitValue<output_Current>(ctx, x);\n    delay (rate2);\n    \n    }\n\n    }\n\n\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "HJCQJsHaK": {
+          "id": "HJCQJsHaK",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "BJLa1iBat": {
+          "id": "BJLa1iBat",
+          "type": "@/input-potentiostat-mcp4725-device",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HJRSMjrpK": {
+          "description": "Set the port where the current measurements will be taken.",
+          "label": "PORT",
+          "id": "HJRSMjrpK",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HyijMjBTt": {
+          "label": "UPD",
+          "id": "HyijMjBTt",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rk1bb2STF": {
+          "id": "rk1bb2STF",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "NCycles",
+          "description": "Indicate the number of Cycles that the program will run",
+          "boundLiterals": {
+            "__out__": "1"
+          }
+        },
+        "r1vdb2SaK": {
+          "id": "r1vdb2SaK",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "Rate",
+          "description": "Indicate the  rate at which the experiment will be performed (in mV/s).",
+          "boundLiterals": {
+            "__out__": "1"
+          }
+        },
+        "H1fBI3STF": {
+          "id": "H1fBI3STF",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "Current"
+        },
+        "HJxdI3BaK": {
+          "id": "HJxdI3BaK",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "Vmax",
+          "description": "Set the maximum voltage (in Volts) for the cyclic voltammetry experiment, up to a maximum of 5 V.",
+          "boundLiterals": {
+            "__out__": "5"
+          }
+        },
+        "S1NOU2HaY": {
+          "id": "S1NOU2HaY",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "Vlow",
+          "description": "Set the minimum voltage (in Volts) for the cyclic voltammetry experiment, up to a minimum of 0 V."
+        }
+      },
+      "path": "@/potentiostat-mcp4725"
+    }
+  },
+  "name": "program-potentiostat"
+}

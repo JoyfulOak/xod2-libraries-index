@@ -1,0 +1,58 @@
+{
+  "description": "calculates the dew point temperature from the Temperature and rel.humidity",
+  "name": "dew-point-temperature",
+  "patches": {
+    "@/dew-point-temperature1": {
+      "nodes": {
+        "ry61iPF1B": {
+          "id": "ry61iPF1B",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "HkqQjDYkH": {
+          "id": "HkqQjDYkH",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "Temp"
+        },
+        "B1kVowtkr": {
+          "id": "B1kVowtkr",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "RH"
+        },
+        "SkJrsDFJS": {
+          "id": "SkJrsDFJS",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "dew point"
+        }
+      },
+      "path": "@/dew-point-temperature1",
+      "description": "calculates the dew point temperature \n     from the Temperature and \n                 rel.humidity",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto t = getValue<input_Temp>(ctx);\n    auto h = getValue<input_RH>(ctx);\n   float z = (17.271 * t) / (237.7 + t) + log(h / 100);\n             emitValue<output_dew_point>(ctx, ( 237.7 * z) / ( 17.271 - z) );\n\n}\n"
+        }
+      ]
+    }
+  }
+}

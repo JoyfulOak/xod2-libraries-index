@@ -1,0 +1,340 @@
+{
+  "patches": {
+    "@/main": {
+      "nodes": {
+        "HJ9yEYgId": {
+          "id": "HJ9yEYgId",
+          "type": "@/sim28-gps",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/main"
+    },
+    "@/sim28-gps-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/PaulStoffregen/SoftwareSerial\"\n#pragma XOD require \"https://github.com/mikalhart/TinyGPS\"\n\n#include <SoftwareSerial.h>\n#include <TinyGPS.h>\n\nnode {\n\n        meta {\n        using Type = SoftwareSerial*;\n    }\n    \n    static_assert(isValidDigitalPort(constant_input_RX), \"must be a valid digital port\");\n    static_assert(isValidDigitalPort(constant_input_TX), \"must be a valid digital port\");\n\n    SoftwareSerial ss = SoftwareSerial(constant_input_RX, constant_input_TX);\n\n    \n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n\n       if (!isInputDirty<input_UPD>(ctx))\n       return;\n        \n     ss.begin(9600);                 // the SoftSerial baud rate\n        \n        \n        emitValue<output_OUT>(ctx, &ss);\n        \n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "BJ6oH45rd": {
+          "id": "BJ6oH45rd",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "HJwuux9r_": {
+          "boundLiterals": {
+            "__out__": "D2"
+          },
+          "label": "RX",
+          "id": "HJwuux9r_",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SJ67Kx9rd": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "label": "UPD",
+          "id": "SJ67Kx9rd",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJQg0y9SO": {
+          "id": "SJQg0y9SO",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SygPOdxcrO": {
+          "boundLiterals": {
+            "__out__": "D3"
+          },
+          "label": "TX",
+          "id": "SygPOdxcrO",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        }
+      },
+      "path": "@/sim28-gps-device"
+    },
+    "@/gps-node-sensor": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#include <SoftwareSerial.h>\n\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    \n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n\n               if (!isInputDirty<input_UPD>(ctx))\n       return;\n\nauto SoftSerial = getValue<input_IN>(ctx);\n        \nuint8_t Cut = 78;\nchar Data [64];\nchar Message;\nchar buffer[64];                   // buffer array for data receive over serial port\nint count=0;                                // counter for buffer array\nint i, j;\ndouble Val1, Val2;\nfloat Buff;\nint count2, count4, count5;\nint count3 = 0;\nint m = 0;\nint y;\n\ny = getValue<input_Mode>(ctx);\n\n        \nif (y == 0){\n        while(SoftSerial->available())               // reading data into char array\n        {\n            Message=SoftSerial->read();\n            if (Message == 71){ \n            m = 1;\n            }\n            if (m == 1){\n            Data[count] = Message;\n            count++;\n            }\n            if(count == 64)break;\n        }\n\nm = 0;\nfor (i=0; i<64; i++){\nMessage = Data [i];\n\nSerial.print (\"\");\n\nif (Message == Cut){\n  count2 = 3;\n  count3 = 0;\n  count4 = 2;\n  count5 = 0;\n  Val1 = 0;\n  Val2 = 0;\n  while (count2<12){\nif (count2 == 7){\n  count2++;\n}\nif (count4 == 6){\n  count4++;\n}\nBuff = Data [i+count2];\nVal1 = Val1 + (Buff-48)*(pow(10, 3 - count3));\nBuff = Data [i-count4];\nVal2 = Val2 + (Buff-48)*(pow(10, -4 + count5));\ncount2++;\ncount3++;\ncount4++;\ncount5++;\n  }\nemitValue<output_Latitude>(ctx, (Val2/100));\nemitValue<output_Longitude>(ctx, Val1);\n\n}\n}\n    // if no data transmission ends, write buffer to hardware serial port\n     //Serial.println ();\n     for (int i=0; i<64;i++)\n    {\n      \n        Data[i]=NULL;\n    }                            // call clearBufferArray function to clear the stored data from the array\n        count = 0;                                  // set counter of while loop to zero \n}\n\nif (y == 1){\n\n        while(SoftSerial->available())               // reading data into char array\n        {\n            Message=SoftSerial->read();\n            Data[count] = Message;\n            count++;\n            if(count == 64)break;\n        }\n\nm = 0;\nfor (i=0; i<64; i++){\nMessage = Data [i];\nSerial.print (Message);\n\n\n}\n    // if no data transmission ends, write buffer to hardware serial port\n     //Serial.println ();\n     for (int i=0; i<64;i++)\n    {\n      \n        Data[i]=NULL;\n    }                            // call clearBufferArray function to clear the stored data from the array\n        count = 0;  \n\n}\n\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "SJaxuVqBu": {
+          "id": "SJaxuVqBu",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1_tV2oBO": {
+          "description": "Triggers the node",
+          "label": "UPD",
+          "id": "r1_tV2oBO",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "Hy52N3iSO": {
+          "description": "Shows the Latitute of your current position (in degrees units o)",
+          "label": "Latitude",
+          "id": "Hy52N3iSO",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "r12h4nird": {
+          "description": "Shows the Longitude of your current position (in degrees units o)",
+          "label": "Longitude",
+          "id": "r12h4nird",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "Hkq60nor_": {
+          "label": "Mode",
+          "id": "Hkq60nor_",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SkB8gFgLO": {
+          "id": "SkB8gFgLO",
+          "type": "@/input-sim28-gps-device",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/gps-node-sensor"
+    },
+    "@/sim28-gps": {
+      "nodes": {
+        "SJUgfKeLd": {
+          "id": "SJUgfKeLd",
+          "type": "@/gps-node-sensor",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SyM-ftxIO": {
+          "id": "SyM-ftxIO",
+          "type": "@/sim28-gps-device",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "rJHfGYgI_": {
+          "id": "rJHfGYgI_",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Mode",
+          "description": "Define the mode at which the node is operating:\n\n- If Mode = 0,  the Latitude and Longitude of your current position are displayed on the output pins of the mode.\n\n-If Mode = 1, the incoming data from the GPS is shown on the Serial monitor at 115200 baud rate in a format that allows interfacing with other software. "
+        },
+        "Syv7MteUu": {
+          "id": "Syv7MteUu",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Updates the node",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        },
+        "SynVMteU_": {
+          "id": "SynVMteU_",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "Latitude",
+          "description": "Shows the Latitude of your current position (in degrees units o)"
+        },
+        "S1CNfYxId": {
+          "id": "S1CNfYxId",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "Longitude",
+          "description": "Shows the Longitude of your current position (in degrees units o)"
+        },
+        "ByVvfYl8d": {
+          "id": "ByVvfYl8d",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 3,
+            "y": -1,
+            "units": "slots"
+          },
+          "label": "TX",
+          "description": "Defines the position of the TX port",
+          "boundLiterals": {
+            "__out__": "D3"
+          }
+        },
+        "rkDvMtxLO": {
+          "id": "rkDvMtxLO",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 4,
+            "y": -1,
+            "units": "slots"
+          },
+          "label": "RX",
+          "description": "Defines the position of the TX port",
+          "boundLiterals": {
+            "__out__": "D2"
+          }
+        }
+      },
+      "links": {
+        "BJUbfYxLd": {
+          "id": "BJUbfYxLd",
+          "output": {
+            "nodeId": "SyM-ftxIO",
+            "pinKey": "BJ6oH45rd"
+          },
+          "input": {
+            "nodeId": "SJUgfKeLd",
+            "pinKey": "SkB8gFgLO"
+          }
+        },
+        "rJOGzKeLu": {
+          "id": "rJOGzKeLu",
+          "output": {
+            "nodeId": "rJHfGYgI_",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "SJUgfKeLd",
+            "pinKey": "Hkq60nor_"
+          }
+        },
+        "S1cQMYxLO": {
+          "id": "S1cQMYxLO",
+          "output": {
+            "nodeId": "Syv7MteUu",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "SJUgfKeLd",
+            "pinKey": "r1_tV2oBO"
+          }
+        },
+        "ByjSGFe8u": {
+          "id": "ByjSGFe8u",
+          "output": {
+            "nodeId": "SJUgfKeLd",
+            "pinKey": "Hy52N3iSO"
+          },
+          "input": {
+            "nodeId": "SynVMteU_",
+            "pinKey": "__in__"
+          }
+        },
+        "BJ3SMFxLd": {
+          "id": "BJ3SMFxLd",
+          "output": {
+            "nodeId": "SJUgfKeLd",
+            "pinKey": "r12h4nird"
+          },
+          "input": {
+            "nodeId": "S1CNfYxId",
+            "pinKey": "__in__"
+          }
+        },
+        "H1tPzKlU_": {
+          "id": "H1tPzKlU_",
+          "output": {
+            "nodeId": "rkDvMtxLO",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "SyM-ftxIO",
+            "pinKey": "HJwuux9r_"
+          }
+        },
+        "rJqwGFeUd": {
+          "id": "rJqwGFeUd",
+          "output": {
+            "nodeId": "ByVvfYl8d",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "SyM-ftxIO",
+            "pinKey": "SygPOdxcrO"
+          }
+        }
+      },
+      "path": "@/sim28-gps"
+    }
+  },
+  "description": "Node for using the sim28-GPS device. It can either show the current Latitude and Longitude, or display all the incoming information from the device on the serial monitor for tracking your position using other software.",
+  "apiKey": "abb45e76-2bf7-43cf-945f-9c874ab77697",
+  "name": "sim28-gps-module"
+}

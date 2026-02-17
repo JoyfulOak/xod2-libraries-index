@@ -1,0 +1,3688 @@
+{
+  "patches": {
+    "@/add-accelerometer": {
+      "nodes": {
+        "SysiRUdSc": {
+          "id": "SysiRUdSc",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Bk93R8OBc": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "Bk93R8OBc",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "B16RQYdSq": {
+          "description": "Acceleration in X-axis.",
+          "label": "X",
+          "id": "B16RQYdSq",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJM1Et_S5": {
+          "description": "Acceleration in Y-axis.",
+          "label": "Y",
+          "id": "SJM1Et_S5",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJmJEK_H5": {
+          "description": "Acceleration in Z-axis.",
+          "label": "Z",
+          "id": "BJmJEK_H5",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ByAJ4FdH5": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "ByAJ4FdH5",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HyiONFdHq": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "HyiONFdHq",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJDHSFur5": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "HJDHSFur5",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-accelerometer",
+      "description": "Add accelerometer data to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addAccelerometer(\n            getValue<input_CHL>(ctx),\n            getValue<input_X>(ctx),\n            getValue<input_Y>(ctx),\n            getValue<input_Z>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-barometric-pressure": {
+      "nodes": {
+        "BJwccYdBq": {
+          "id": "BJwccYdBq",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJeP5cYOHc": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "SJeP5cYOHc",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "H1bP55F_Sq": {
+          "description": "Barometric pressure.",
+          "label": "BP",
+          "id": "H1bP55F_Sq",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SyGv55K_Bq": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "SyGv55K_Bq",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkQwccFOr5": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "BkQwccFOr5",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BkND9cY_Sc": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "BkND9cY_Sc",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-barometric-pressure",
+      "description": "Add barometric pressure to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addBarometricPressure(\n            getValue<input_CHL>(ctx),\n            getValue<input_BP>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-analog-input": {
+      "nodes": {
+        "rJr6FKdHc": {
+          "id": "rJr6FKdHc",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJxBpFtOH9": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "SJxBpFtOH9",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "BJWBTYtdBc": {
+          "description": "Analog input.",
+          "label": "AI",
+          "id": "BJWBTYtdBc",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJfH6KFur9": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "HJfH6KFur9",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HyQBaKYdBc": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "HyQBaKYdBc",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Sk4Satt_rq": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "Sk4Satt_rq",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-analog-input",
+      "description": "Add analog input to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addAnalogInput(\n            getValue<input_CHL>(ctx),\n            getValue<input_AI>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-concentration": {
+      "nodes": {
+        "H1Mz0mYSc": {
+          "id": "H1Mz0mYSc",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJxfGRQKH9": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "rJxfGRQKH9",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "ByWfzCmtHq": {
+          "description": "Concentration",
+          "label": "Conc",
+          "id": "ByWfzCmtHq",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H1zzGRQKHc": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "H1zzGRQKHc",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rk7fGA7FS5": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "rk7fGA7FS5",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Bk4zM0XYHc": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "Bk4zM0XYHc",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-concentration",
+      "description": "Add concentration to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addConcentration(\n            getValue<input_CHL>(ctx),\n            getValue<input_Conc>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-analog-output": {
+      "nodes": {
+        "r1vPqYdH5": {
+          "id": "r1vPqYdH5",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1gDvqY_Hq": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "H1gDvqY_Hq",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "Hy-Dv9FOB5": {
+          "description": "Analog output.",
+          "label": "AO",
+          "id": "Hy-Dv9FOB5",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "B1zDv5Yurq": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "B1zDv5Yurq",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BJQPvqtOS5": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "BJQPvqtOS5",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJ4vP5YOHc": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "HJ4vP5YOHc",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-analog-output",
+      "description": "Add analog output to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addAnalogOutput(\n            getValue<input_CHL>(ctx),\n            getValue<input_AO>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-color": {
+      "nodes": {
+        "ryDDcXtH9": {
+          "id": "ryDDcXtH9",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJevPc7YSq": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "SJevPc7YSq",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "rkzDwcQFS5": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "rkzDwcQFS5",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkQvv9XKBc": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "rkQvv9XKBc",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r1VPDcmtBq": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "r1VPDcmtBq",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HJH_57tr9": {
+          "description": "Color",
+          "label": "Color",
+          "id": "HJH_57tr9",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/color/input-color"
+        }
+      },
+      "path": "@/add-color",
+      "description": "Add color to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        auto color = getValue<input_Color>(ctx);\n        lpp->addColour(\n            getValue<input_CHL>(ctx),\n            color.r, color.g, color.b);\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-distance": {
+      "nodes": {
+        "BJ6i3VKr9": {
+          "id": "BJ6i3VKr9",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Skxpi2VKBc": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "Skxpi2VKBc",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "ry-TjnVtS9": {
+          "description": "Distance.",
+          "label": "Dist",
+          "id": "ry-TjnVtS9",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "B1z6onNtrq": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "B1z6onNtrq",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HJQaj2Etr5": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "HJQaj2Etr5",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "H1E6oh4tr5": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "H1E6oh4tr5",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-distance",
+      "description": "Add distance to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addDistance(\n            getValue<input_CHL>(ctx),\n            getValue<input_Dist>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-digital-output": {
+      "nodes": {
+        "SykYiVtS9": {
+          "id": "SykYiVtS9",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ryeytsEKH5": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "ryeytsEKH5",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "H1Zktj4YHc": {
+          "description": "Digital output.",
+          "label": "DO",
+          "id": "H1Zktj4YHc",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryz1toNYBq": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "ryz1toNYBq",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJ7JYs4tBc": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "rJ7JYs4tBc",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ByVJtj4KBq": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "ByVJtj4KBq",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-digital-output",
+      "description": "Add digital output to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addDigitalOutput(\n            getValue<input_CHL>(ctx),\n            getValue<input_DO>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-energy": {
+      "nodes": {
+        "rkOmKHYrc": {
+          "id": "rkOmKHYrc",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rkldXYHtr5": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "rkldXYHtr5",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "SyZ_XtrtH9": {
+          "description": "Energy.",
+          "label": "Energy",
+          "id": "SyZ_XtrtH9",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryzOQYHYSc": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "ryzOQYHYSc",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Sym_mKrKHq": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "Sym_mKrKHq",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Sk4d7KBYBc": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "Sk4d7KBYBc",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-energy",
+      "description": "Add energy to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addEnergy(\n            getValue<input_CHL>(ctx),\n            getValue<input_Energy>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-generic-sensor": {
+      "nodes": {
+        "ByHFl8FH5": {
+          "id": "ByHFl8FH5",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SklBYl8tH5": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "SklBYl8tH5",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "ByWHFl8FB5": {
+          "description": "Input from generic sensor.",
+          "label": "IN",
+          "id": "ByWHFl8FB5",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SyMHYlLtSq": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "SyMHYlLtSq",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJmSKlUtBq": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "SJmSKlUtBq",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HyNrtx8Fr9": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "HyNrtx8Fr9",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-generic-sensor",
+      "description": "Add generic sensor to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addGenericSensor(\n            getValue<input_CHL>(ctx),\n            getValue<input_IN>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-gps": {
+      "nodes": {
+        "ByZnb8FS5": {
+          "id": "ByZnb8FS5",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SkeW3-IYH9": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "SkeW3-IYH9",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "Hy-Z2ZLtBq": {
+          "description": "Latitude",
+          "label": "Lat",
+          "id": "Hy-Z2ZLtBq",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HyGbhWUFr5": {
+          "description": "Longitude",
+          "label": "Long",
+          "id": "HyGbhWUFr5",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SyX-nbLFS5": {
+          "description": "Altitude",
+          "label": "Alt",
+          "id": "SyX-nbLFS5",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkVW2bUFr5": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "rkVW2bUFr5",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BySWnWItS5": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "BySWnWItS5",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Bk8-3ZLFHc": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "Bk8-3ZLFHc",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-gps",
+      "description": "Add GPS data (latitude, longitude and altitude) to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addGPS(\n            getValue<input_CHL>(ctx),\n            getValue<input_Lat>(ctx),\n            getValue<input_Long>(ctx),\n            getValue<input_Alt>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-gyrometer": {
+      "nodes": {
+        "r1U3WLYS9": {
+          "id": "r1U3WLYS9",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Bye82b8FS5": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "Bye82b8FS5",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "ryW8hbLYr9": {
+          "description": "Rotation in X-axis.",
+          "label": "X",
+          "id": "ryW8hbLYr9",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1z82-IFr5": {
+          "description": "Rotation in Y-axis.",
+          "label": "Y",
+          "id": "S1z82-IFr5",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ByQ83b8FH9": {
+          "description": "Rotation in Z-axis.",
+          "label": "Z",
+          "id": "ByQ83b8FH9",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "By4L3bIKB9": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "By4L3bIKB9",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkB8hWUYr9": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "HkB8hWUYr9",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r18UnZUKBq": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "r18UnZUKBq",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-gyrometer",
+      "description": "Add gyrometer data to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addGyrometer(\n            getValue<input_CHL>(ctx),\n            getValue<input_X>(ctx),\n            getValue<input_Y>(ctx),\n            getValue<input_Z>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-percentage": {
+      "nodes": {
+        "SJo4U8tS5": {
+          "id": "SJo4U8tS5",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1giEU8KB9": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "r1giEU8KB9",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "H1-oEIIYrc": {
+          "description": "Percentage",
+          "label": "%",
+          "id": "H1-oEIIYrc",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJfoN8UtH5": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "BJfoN8UtH5",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJmsNULKrq": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "rJmsNULKrq",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ryVjE88KBq": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "ryVjE88KBq",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-percentage",
+      "description": "Add percentage to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addPercentage(\n            getValue<input_CHL>(ctx),\n            getValue<input_U0025>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-frequency": {
+      "nodes": {
+        "ryDGCHFHq": {
+          "id": "ryDGCHFHq",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1gPfRStB5": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "S1gPfRStB5",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "rkWvfCSKr9": {
+          "description": "Frequency.",
+          "label": "Freq",
+          "id": "rkWvfCSKr9",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "B1zwfAHFS5": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "B1zwfAHFS5",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkQDG0rFSq": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "SkQDG0rFSq",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ryVwzABYSq": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "ryVwzABYSq",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-frequency",
+      "description": "Add frequency to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addFrequency(\n            getValue<input_CHL>(ctx),\n            getValue<input_Freq>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-power": {
+      "nodes": {
+        "ryeUDRFBc": {
+          "id": "ryeUDRFBc",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJxgLPAtB9": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "SJxgLPAtB9",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "BJblIw0Frq": {
+          "description": "Power",
+          "label": "Power",
+          "id": "BJblIw0Frq",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1feLwRtB5": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "S1feLwRtB5",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkXlLvAYSq": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "BkXlLvAYSq",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BJVeLw0KHc": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "BJVeLw0KHc",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-power",
+      "description": "Add power to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addPower(\n            getValue<input_CHL>(ctx),\n            getValue<input_Power>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-presence": {
+      "nodes": {
+        "ByQ2PRFSq": {
+          "id": "ByQ2PRFSq",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJe7hDCtrq": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "rJe7hDCtrq",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "Hy-7nPCFH5": {
+          "description": "Presence",
+          "label": "Pres",
+          "id": "Hy-7nPCFH5",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJGm2PAtB9": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "rJGm2PAtB9",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkX73wAYr9": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "HkX73wAYr9",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rk4Q3w0Frq": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "rk4Q3w0Frq",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-presence",
+      "description": "Add presence to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addPresence(\n            getValue<input_CHL>(ctx),\n            getValue<input_Pres>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-relative-humidity": {
+      "nodes": {
+        "BJAZuCKrq": {
+          "id": "BJAZuCKrq",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1gR-ORtSc": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "S1gR-ORtSc",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "B1ZAZdRFB5": {
+          "description": "Relative humidity.",
+          "label": "RH",
+          "id": "B1ZAZdRFB5",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Hkz0-uCKr9": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "Hkz0-uCKr9",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BJXCW_AFr9": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "BJXCW_AFr9",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ByVA-_AFH9": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "ByVA-_AFH9",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-relative-humidity",
+      "description": "Add relative humidity to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addRelativeHumidity(\n            getValue<input_CHL>(ctx),\n            getValue<input_RH>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-switch": {
+      "nodes": {
+        "BJyoF0KBq": {
+          "id": "BJyoF0KBq",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJg1jFAYrc": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "rJg1jFAYrc",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "SkW1oK0YB9": {
+          "description": "Switch",
+          "label": "Switch",
+          "id": "SkW1oK0YB9",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJMystRFB9": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "BJMystRFB9",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Bkm1jFAYrq": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "Bkm1jFAYrq",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BJ4yjY0tS9": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "BJ4yjY0tS9",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-switch",
+      "description": "Add switch to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addSwitch(\n            getValue<input_CHL>(ctx),\n            getValue<input_Switch>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-temperature": {
+      "nodes": {
+        "r1-CFRtr5": {
+          "id": "r1-CFRtr5",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ryxb0FAYrq": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "ryxb0FAYrq",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "rJb-0KAFH5": {
+          "description": "Temperature",
+          "label": "Temp",
+          "id": "rJb-0KAFH5",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkG-RY0Frq": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "SkG-RY0Frq",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "B1XZCKAFBq": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "B1XZCKAFBq",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SyVWAtCFS5": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "SyVWAtCFS5",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-temperature",
+      "description": "Add temperature to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addTemperature(\n            getValue<input_CHL>(ctx),\n            getValue<input_Temp>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-voltage": {
+      "nodes": {
+        "rJPqjCtS9": {
+          "id": "rJPqjCtS9",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Skewqj0YH5": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "Skewqj0YH5",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "Sk-DciCKrq": {
+          "description": "Voltage",
+          "label": "Volt",
+          "id": "Sk-DciCKrq",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJMw9iCFBq": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "HJMw9iCFBq",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryQP9oRtSc": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "ryQP9oRtSc",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SkNP9sRtH9": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "SkNP9sRtH9",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-voltage",
+      "description": "Add voltage to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addVoltage(\n            getValue<input_CHL>(ctx),\n            getValue<input_Volt>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-digital-input": {
+      "nodes": {
+        "HJp4jNFH9": {
+          "id": "HJp4jNFH9",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SkxaNjNYSq": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "SkxaNjNYSq",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "Syb64i4FHc": {
+          "description": "Digital input.",
+          "label": "DI",
+          "id": "Syb64i4FHc",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "B1z6VsNtH5": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "B1z6VsNtH5",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1Qa4j4Krq": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "H1Qa4j4Krq",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HkEpNsNFB5": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "HkEpNsNFB5",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-digital-input",
+      "description": "Add digital input to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addDigitalInput(\n            getValue<input_CHL>(ctx),\n            getValue<input_DI>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-error": {
+      "nodes": {
+        "Hyum7_t8q": {
+          "id": "Hyum7_t8q",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HkguQ7uK89": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "HkguQ7uK89",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "HkZ_7QdY8c": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "HkZ_7QdY8c",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkMumQdtU9": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "BkMumQdtU9",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJgkY6iwc": {
+          "id": "HJgkY6iwc",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "Error",
+          "description": "Error code: 0=OK; 1=overflow; 2=unknown error."
+        }
+      },
+      "path": "@/get-error",
+      "description": "Get error code.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        emitValue<output_Error>(ctx, lpp->getError());\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/lpp": {
+      "nodes": {
+        "S1CLdMdSq": {
+          "id": "S1CLdMdSq",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Bk6wOfdSq": {
+          "description": "A low power payload (LPP).",
+          "label": "LPP",
+          "id": "Bk6wOfdSq",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "rydDt05vc": {
+          "id": "rydDt05vc",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Size",
+          "description": "Maximum size of payload (number of bytes). Must be a constant value. Any changes during program execution will be ignored."
+        }
+      },
+      "path": "@/lpp",
+      "description": "Create a low power payload (LPP).",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD require \"https://github.com/ElectronicCats/CayenneLPP\"\n#pragma XOD require \"https://github.com/bblanchon/ArduinoJson\"\n\n#include <CayenneLPP.h>\n\nnode {\n    meta {\n        using Type = CayenneLPP*;\n    }\n\n    uint8_t mem[sizeof(CayenneLPP)];\n\n    void evaluate(Context ctx) {\n        if (!isSettingUp()) return;\n        uint8_t size = getValue<input_Size>(ctx);\n        Type lpp = new (mem) CayenneLPP(size);\n        emitValue<output_LPP>(ctx, lpp);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-altitude": {
+      "nodes": {
+        "S1ocwKOrq": {
+          "id": "S1ocwKOrq",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "B1gocwY_Bq": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "B1gocwY_Bq",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "Hkbi9PYOBq": {
+          "description": "Altitude.",
+          "label": "Alt",
+          "id": "Hkbi9PYOBq",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Bk4i5wK_Hc": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "Bk4i5wK_Hc",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "B1BoqvKuSc": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "B1BoqvKuSc",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rk8scwK_Hq": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "rk8scwK_Hq",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-altitude",
+      "description": "Add altitude to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addAltitude(\n            getValue<input_CHL>(ctx),\n            getValue<input_Alt>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-datetime": {
+      "nodes": {
+        "SJ5O5CFSc": {
+          "id": "SJ5O5CFSc",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Sklq_qRFB9": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "Sklq_qRFB9",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "S1M9O5AtB5": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "S1M9O5AtB5",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkX5dcAFHq": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "BkX5dcAFHq",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r145OqCFS9": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "r145OqCFS9",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "BkoK5AYH5": {
+          "description": "Datetime (Unix time).",
+          "label": "DT",
+          "id": "BkoK5AYH5",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/datetime/input-datetime"
+        }
+      },
+      "path": "@/add-datetime",
+      "description": "Add datetime (Unix time) to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addUnixTime(\n            getValue<input_CHL>(ctx),\n            getValue<input_DT>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-size": {
+      "nodes": {
+        "S1yM3PKU5": {
+          "id": "S1yM3PKU5",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJl1G2DKI9": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "HJl1G2DKI9",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "HkGyGnDYI5": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "HkGyGnDYI5",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "B1Qyz2DF89": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "B1Qyz2DF89",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJCb_9jPq": {
+          "id": "HJCb_9jPq",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "Size",
+          "description": "Size of payload (number of bytes)."
+        }
+      },
+      "path": "@/get-size",
+      "description": "Get size of payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        emitValue<output_Size>(ctx, lpp->getSize());\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-direction": {
+      "nodes": {
+        "H1bd2NKB5": {
+          "id": "H1bd2NKB5",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJxbO3EFHc": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "SJxbO3EFHc",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "S1bWdnEFH5": {
+          "description": "Direction.",
+          "label": "Dir",
+          "id": "S1bWdnEFH5",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJG-unNtH9": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "rJG-unNtH9",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Sy7Z_nNFr9": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "Sy7Z_nNFr9",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "H1N-d3EYr5": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "H1N-d3EYr5",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-direction",
+      "description": "Add direction to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addDirection(\n            getValue<input_CHL>(ctx),\n            getValue<input_Dir>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/reset": {
+      "nodes": {
+        "Hy43buY8c": {
+          "id": "Hy43buY8c",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJlEnb_KU9": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "rJlEnb_KU9",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "H1ZEhWOt8q": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "H1ZEhWOt8q",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkGE2Z_tL9": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "HkGE2Z_tL9",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/reset",
+      "description": "Reset (empty) the LPP buffer.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->reset();\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-current": {
+      "nodes": {
+        "rymzq4KH5": {
+          "id": "rymzq4KH5",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJxXM5Vtr5": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "SJxXM5Vtr5",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "BJZ7McNKB9": {
+          "description": "Current",
+          "label": "Curr",
+          "id": "BJZ7McNKB9",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryGQzc4Yrq": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "ryGQzc4Yrq",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkQmz5NtBq": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "SkQmz5NtBq",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SJNmM9VYrq": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "SJNmM9VYrq",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-current",
+      "description": "Add current to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addCurrent(\n            getValue<input_CHL>(ctx),\n            getValue<input_Curr>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add-luminosity": {
+      "nodes": {
+        "HkExULYSc": {
+          "id": "HkExULYSc",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1e4g88KH5": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "S1e4g88KH5",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "SJb4g88tS9": {
+          "description": "Luminosity",
+          "label": "Lum",
+          "id": "SJb4g88tS9",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJfVxILKr5": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "rJfVxILKr5",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BJ7NxL8FSc": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "BJ7NxL8FSc",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HkVVlI8FSq": {
+          "description": "Channel. Uniquely identifies each sensor in the device across frames.",
+          "label": "CHL",
+          "id": "HkVVlI8FSq",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/add-luminosity",
+      "description": "Add luminosity to payload.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto lpp = getValue<input_LPP>(ctx);\n        lpp->addLuminosity(\n            getValue<input_CHL>(ctx),\n            getValue<input_Lum>(ctx));\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-payload": {
+      "nodes": {
+        "BJifBF9P5": {
+          "id": "BJifBF9P5",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1lozBKcvq": {
+          "description": "A low power payload.",
+          "label": "LPP",
+          "id": "H1lozBKcvq",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lpp"
+        },
+        "rJbizBY9Dc": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "rJbizBY9Dc",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S1zoMHtcv9": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "S1zoMHtcv9",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJXErK5wc": {
+          "id": "rJXErK5wc",
+          "type": "xod/patch-nodes/output-string",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "PYLD",
+          "description": "Encoded payload. String of hex characters."
+        },
+        "B1f9yRqD5": {
+          "id": "B1f9yRqD5",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Size",
+          "description": "Maximum size of payload (number of bytes). Must be a constant value. Any changes during program execution will be ignored."
+        }
+      },
+      "path": "@/get-payload",
+      "description": "Get payload as a string of hex characters. ",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    CStringView view;\n    char* payload;\n    size_t cap;\n\n    void evaluate(Context ctx) {\n        if (isSettingUp()) {\n            cap = getValue<input_Size>(ctx) * 2 + 1;\n            payload = new char[cap];\n            view = CStringView(payload);\n        }\n\n        if (isInputDirty<input_UPD>(ctx)) {\n            auto lpp = getValue<input_LPP>(ctx);\n            uint8_t* buff = lpp->getBuffer();\n            uint8_t N = lpp->getSize();\n            memset(payload, '\\0', cap);\n            for (uint8_t i=0;i<N;i++) {\n                payload[i * 2] = \"0123456789ABCDEF\"[*(buff+i) / 16];\n                payload[i * 2 + 1] = \"0123456789ABCDEF\"[*(buff+i) % 16];\n            }\n            emitValue<output_PYLD>(ctx, XString(&view));\n            emitValue<output_Done>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/01-example": {
+      "nodes": {
+        "HJpVJccP5": {
+          "id": "HJpVJccP5",
+          "type": "@/add-temperature",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "SyVWAtCFS5": "05h",
+            "rJb-0KAFH5": "-4.7",
+            "SkG-RY0Frq": "Continuously"
+          }
+        },
+        "rkzrJcqvq": {
+          "id": "rkzrJcqvq",
+          "type": "@/lpp",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "Hy8yEvdS9": "20d",
+            "rydDt05vc": "11"
+          }
+        },
+        "S1gw15qwc": {
+          "id": "S1gw15qwc",
+          "type": "@/get-payload",
+          "position": {
+            "x": 4,
+            "y": 4,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B1f9yRqD5": "11"
+          }
+        },
+        "Hypw195w5": {
+          "id": "Hypw195w5",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 4,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "width": 4,
+            "height": 1,
+            "units": "slots"
+          }
+        },
+        "Sko__5cwq": {
+          "id": "Sko__5cwq",
+          "type": "@/reset",
+          "position": {
+            "x": 0,
+            "y": 6,
+            "units": "slots"
+          }
+        },
+        "HJ8TwFsD9": {
+          "id": "HJ8TwFsD9",
+          "type": "@/add-relative-humidity",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ByVA-_AFH9": "02h",
+            "B1ZAZdRFB5": "54"
+          }
+        },
+        "BJTluKjD9": {
+          "id": "BJTluKjD9",
+          "type": "@/add-generic-sensor",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "HyNrtx8Fr9": "01h",
+            "ByWHFl8FB5": "998"
+          }
+        },
+        "H1rz_Kowq": {
+          "id": "H1rz_Kowq",
+          "type": "@/add-voltage",
+          "position": {
+            "x": 20,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "SkNP9sRtH9": "03h",
+            "Sk-DciCKrq": "224.56"
+          }
+        },
+        "rJ6GdYsw5": {
+          "id": "rJ6GdYsw5",
+          "type": "@/add-current",
+          "position": {
+            "x": 24,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "SJNmM9VYrq": "01h",
+            "BJZ7McNKB9": "0.237"
+          }
+        },
+        "BJbOdtiDq": {
+          "id": "BJbOdtiDq",
+          "type": "@/add-gps",
+          "position": {
+            "x": 28,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "Bk8-3ZLFHc": "01h",
+            "Hy-Z2ZLtBq": "42.3519",
+            "HyGbhWUFr5": "-87.9094",
+            "SyX-nbLFS5": "10"
+          }
+        },
+        "SklcuYoD5": {
+          "id": "SklcuYoD5",
+          "type": "@/add-accelerometer",
+          "position": {
+            "x": 14,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "HJDHSFur5": "06h",
+            "B16RQYdSq": "1.234",
+            "SJM1Et_S5": "-1.234"
+          }
+        },
+        "HkvRuKjD5": {
+          "id": "HkvRuKjD5",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 13,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HJpCdtivc": {
+          "id": "HJpCdtivc",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "r17JKFsw9": {
+          "id": "r17JKFsw9",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "r1FkYFsPc": {
+          "id": "r1FkYFsPc",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 19,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BJkxKtjwq": {
+          "id": "BJkxKtjwq",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 23,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HJEeKtsvq": {
+          "id": "HJEeKtsvq",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 27,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SyRxtYivc": {
+          "id": "SyRxtYivc",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 33,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rkCWtKiw9": {
+          "id": "rkCWtKiw9",
+          "type": "xod/core/any",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "arityLevel": 7
+        },
+        "r1XSKYiDc": {
+          "id": "r1XSKYiDc",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "LPP"
+        },
+        "HyTdFFsv5": {
+          "id": "HyTdFFsv5",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "LPP"
+        },
+        "SJ5YYYjDc": {
+          "id": "SJ5YYYjDc",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "LPP"
+        },
+        "BJ15ttiD5": {
+          "id": "BJ15ttiD5",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 14,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "LPP"
+        },
+        "ByV9KKjw5": {
+          "id": "ByV9KKjw5",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 20,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "LPP"
+        },
+        "Hy_cFKiD9": {
+          "id": "Hy_cFKiD9",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 24,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "LPP"
+        },
+        "SkGiFFiD9": {
+          "id": "SkGiFFiD9",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 28,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "LPP"
+        },
+        "BkvtCtiv5": {
+          "id": "BkvtCtiv5",
+          "type": "xod/core/constant-number",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B1x2RV3eZ": "11"
+          }
+        },
+        "Hy3nRYjv9": {
+          "id": "Hy3nRYjv9",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "Size"
+        },
+        "S1vRCFjDq": {
+          "id": "S1vRCFjDq",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "Size"
+        },
+        "rkckf9iv5": {
+          "id": "rkckf9iv5",
+          "type": "@/add-color",
+          "position": {
+            "x": 34,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "HJH_57tr9": "#18EF0F",
+            "r1VPDcmtBq": "07h"
+          }
+        },
+        "SkYrzcoPq": {
+          "id": "SkYrzcoPq",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 37,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "H1EwM5sP5": {
+          "id": "H1EwM5sP5",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 34,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "LPP"
+        },
+        "BJPfv9jw5": {
+          "id": "BJPfv9jw5",
+          "type": "@/get-size",
+          "position": {
+            "x": 1,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "BJ_DP5jD5": {
+          "id": "BJ_DP5jD5",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 1,
+            "y": 5,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "H1Swkc5v5": {
+          "id": "H1Swkc5v5",
+          "output": {
+            "nodeId": "rkzrJcqvq",
+            "pinKey": "Bk6wOfdSq"
+          },
+          "input": {
+            "nodeId": "S1gw15qwc",
+            "pinKey": "H1lozBKcvq"
+          }
+        },
+        "ryWOy9cw5": {
+          "id": "ryWOy9cw5",
+          "output": {
+            "nodeId": "S1gw15qwc",
+            "pinKey": "rJXErK5wc"
+          },
+          "input": {
+            "nodeId": "Hypw195w5",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "SkkKdqqP9": {
+          "id": "SkkKdqqP9",
+          "output": {
+            "nodeId": "rkzrJcqvq",
+            "pinKey": "Bk6wOfdSq"
+          },
+          "input": {
+            "nodeId": "Sko__5cwq",
+            "pinKey": "rJlEnb_KU9"
+          }
+        },
+        "rkWt_q9Dq": {
+          "id": "rkWt_q9Dq",
+          "output": {
+            "nodeId": "S1gw15qwc",
+            "pinKey": "S1zoMHtcv9"
+          },
+          "input": {
+            "nodeId": "Sko__5cwq",
+            "pinKey": "H1ZEhWOt8q"
+          }
+        },
+        "r1iRuFsw5": {
+          "id": "r1iRuFsw5",
+          "output": {
+            "nodeId": "HkvRuKjD5",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "HJpVJccP5",
+            "pinKey": "SkG-RY0Frq"
+          }
+        },
+        "BJGJFKoP5": {
+          "id": "BJGJFKoP5",
+          "output": {
+            "nodeId": "HJpCdtivc",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "HJ8TwFsD9",
+            "pinKey": "Hkz0-uCKr9"
+          }
+        },
+        "SkD1tYiw9": {
+          "id": "SkD1tYiw9",
+          "output": {
+            "nodeId": "r17JKFsw9",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "BJTluKjD9",
+            "pinKey": "SyMHYlLtSq"
+          }
+        },
+        "S1p1ttiD9": {
+          "id": "S1p1ttiD9",
+          "output": {
+            "nodeId": "r1FkYFsPc",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "SklcuYoD5",
+            "pinKey": "ByAJ4FdH5"
+          }
+        },
+        "SkGlFKjv5": {
+          "id": "SkGlFKjv5",
+          "output": {
+            "nodeId": "BJkxKtjwq",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "H1rz_Kowq",
+            "pinKey": "HJMw9iCFBq"
+          }
+        },
+        "Sk_gYtiwc": {
+          "id": "Sk_gYtiwc",
+          "output": {
+            "nodeId": "HJEeKtsvq",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "rJ6GdYsw5",
+            "pinKey": "ryGQzc4Yrq"
+          }
+        },
+        "S1VbFKoPq": {
+          "id": "S1VbFKoPq",
+          "output": {
+            "nodeId": "SyRxtYivc",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "BJbOdtiDq",
+            "pinKey": "rkVW2bUFr5"
+          }
+        },
+        "SkifKKjv9": {
+          "id": "SkifKKjv9",
+          "output": {
+            "nodeId": "HJ8TwFsD9",
+            "pinKey": "BJXCW_AFr9"
+          },
+          "input": {
+            "nodeId": "rkCWtKiw9",
+            "pinKey": "ByU7LRuSPkW"
+          }
+        },
+        "S1J7YYoD9": {
+          "id": "S1J7YYoD9",
+          "output": {
+            "nodeId": "SklcuYoD5",
+            "pinKey": "HyiONFdHq"
+          },
+          "input": {
+            "nodeId": "rkCWtKiw9",
+            "pinKey": "ByU7LRuSPkW-$2"
+          }
+        },
+        "SJsBtKiwc": {
+          "id": "SJsBtKiwc",
+          "output": {
+            "nodeId": "rkzrJcqvq",
+            "pinKey": "Bk6wOfdSq"
+          },
+          "input": {
+            "nodeId": "r1XSKYiDc",
+            "pinKey": "__in__"
+          }
+        },
+        "B1wKYYjw9": {
+          "id": "B1wKYYjw9",
+          "output": {
+            "nodeId": "HyTdFFsv5",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJ8TwFsD9",
+            "pinKey": "S1gR-ORtSc"
+          }
+        },
+        "SJMqYKsvq": {
+          "id": "SJMqYKsvq",
+          "output": {
+            "nodeId": "BJ15ttiD5",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "SklcuYoD5",
+            "pinKey": "Bk93R8OBc"
+          }
+        },
+        "SkvcFtsDq": {
+          "id": "SkvcFtsDq",
+          "output": {
+            "nodeId": "ByV9KKjw5",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "H1rz_Kowq",
+            "pinKey": "Skewqj0YH5"
+          }
+        },
+        "By29tKiP5": {
+          "id": "By29tKiP5",
+          "output": {
+            "nodeId": "Hy_cFKiD9",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJ6GdYsw5",
+            "pinKey": "SJxXM5Vtr5"
+          }
+        },
+        "SyvjFFiDc": {
+          "id": "SyvjFFiDc",
+          "output": {
+            "nodeId": "SkGiFFiD9",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BJbOdtiDq",
+            "pinKey": "SkeW3-IYH9"
+          }
+        },
+        "ByZhKtiDq": {
+          "id": "ByZhKtiDq",
+          "output": {
+            "nodeId": "H1rz_Kowq",
+            "pinKey": "ryQP9oRtSc"
+          },
+          "input": {
+            "nodeId": "rkCWtKiw9",
+            "pinKey": "ByU7LRuSPkW-$3"
+          }
+        },
+        "H1V3YtjPq": {
+          "id": "H1V3YtjPq",
+          "output": {
+            "nodeId": "rJ6GdYsw5",
+            "pinKey": "SkQmz5NtBq"
+          },
+          "input": {
+            "nodeId": "rkCWtKiw9",
+            "pinKey": "ByU7LRuSPkW-$4"
+          }
+        },
+        "BJD2ttsv9": {
+          "id": "BJD2ttsv9",
+          "output": {
+            "nodeId": "BJbOdtiDq",
+            "pinKey": "BySWnWItS5"
+          },
+          "input": {
+            "nodeId": "rkCWtKiw9",
+            "pinKey": "ByU7LRuSPkW-$5"
+          }
+        },
+        "ryDJ2Yjv5": {
+          "id": "ryDJ2Yjv5",
+          "output": {
+            "nodeId": "HJpVJccP5",
+            "pinKey": "B1XZCKAFBq"
+          },
+          "input": {
+            "nodeId": "rkCWtKiw9",
+            "pinKey": "ByU7LRuSPkW-$1"
+          }
+        },
+        "SkQe3Kiwq": {
+          "id": "SkQe3Kiwq",
+          "output": {
+            "nodeId": "rkzrJcqvq",
+            "pinKey": "Bk6wOfdSq"
+          },
+          "input": {
+            "nodeId": "BJTluKjD9",
+            "pinKey": "SklBYl8tH5"
+          }
+        },
+        "SyOg2YiDq": {
+          "id": "SyOg2YiDq",
+          "output": {
+            "nodeId": "SJ5YYYjDc",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJpVJccP5",
+            "pinKey": "ryxb0FAYrq"
+          }
+        },
+        "BksZntjvq": {
+          "id": "BksZntjvq",
+          "output": {
+            "nodeId": "BJTluKjD9",
+            "pinKey": "SJmSKlUtBq"
+          },
+          "input": {
+            "nodeId": "rkCWtKiw9",
+            "pinKey": "ryv7IRdSP1b"
+          }
+        },
+        "H1HcAKsw9": {
+          "id": "H1HcAKsw9",
+          "output": {
+            "nodeId": "BkvtCtiv5",
+            "pinKey": "B1x2RV3eZ"
+          },
+          "input": {
+            "nodeId": "rkzrJcqvq",
+            "pinKey": "rydDt05vc"
+          }
+        },
+        "HJ-0RKjwq": {
+          "id": "HJ-0RKjwq",
+          "output": {
+            "nodeId": "BkvtCtiv5",
+            "pinKey": "B1x2RV3eZ"
+          },
+          "input": {
+            "nodeId": "Hy3nRYjv9",
+            "pinKey": "__in__"
+          }
+        },
+        "BJhCRFsvc": {
+          "id": "BJhCRFsvc",
+          "output": {
+            "nodeId": "S1vRCFjDq",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "S1gw15qwc",
+            "pinKey": "B1f9yRqD5"
+          }
+        },
+        "Sk6rGcoPq": {
+          "id": "Sk6rGcoPq",
+          "output": {
+            "nodeId": "SkYrzcoPq",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "rkckf9iv5",
+            "pinKey": "rkzDwcQFS5"
+          }
+        },
+        "BkpDzqsP9": {
+          "id": "BkpDzqsP9",
+          "output": {
+            "nodeId": "H1EwM5sP5",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rkckf9iv5",
+            "pinKey": "SJevPc7YSq"
+          }
+        },
+        "SyinzqsPq": {
+          "id": "SyinzqsPq",
+          "output": {
+            "nodeId": "rkckf9iv5",
+            "pinKey": "rkQvv9XKBc"
+          },
+          "input": {
+            "nodeId": "rkCWtKiw9",
+            "pinKey": "ByU7LRuSPkW-$6"
+          }
+        },
+        "r1eLPcoP5": {
+          "id": "r1eLPcoP5",
+          "output": {
+            "nodeId": "rkzrJcqvq",
+            "pinKey": "Bk6wOfdSq"
+          },
+          "input": {
+            "nodeId": "BJPfv9jw5",
+            "pinKey": "HJl1G2DKI9"
+          }
+        },
+        "rygvDcsw9": {
+          "id": "rygvDcsw9",
+          "output": {
+            "nodeId": "rkCWtKiw9",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "input": {
+            "nodeId": "BJPfv9jw5",
+            "pinKey": "HkGyGnDYI5"
+          }
+        },
+        "ByZvv9jPq": {
+          "id": "ByZvv9jPq",
+          "output": {
+            "nodeId": "BJPfv9jw5",
+            "pinKey": "B1Qyz2DF89"
+          },
+          "input": {
+            "nodeId": "S1gw15qwc",
+            "pinKey": "rJbizBY9Dc"
+          }
+        },
+        "SkX4dcjw9": {
+          "id": "SkX4dcjw9",
+          "output": {
+            "nodeId": "BJPfv9jw5",
+            "pinKey": "HJCb_9jPq"
+          },
+          "input": {
+            "nodeId": "BJ_DP5jD5",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "comments": {
+        "ryS5fcqw5": {
+          "id": "ryS5fcqw5",
+          "position": {
+            "x": 15,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "width": 3,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "Expected string: *067104D2FB2E0000*"
+        },
+        "SylN9KsD5": {
+          "id": "SylN9KsD5",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "Expected string: *05067FFD1*"
+        },
+        "HJ9O5tjP5": {
+          "id": "HJ9O5tjP5",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "Expected string: *02686C*"
+        },
+        "r1KoqtiPq": {
+          "id": "r1KoqtiPq",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "width": 3,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "Expected string: *0164000003E6*"
+        },
+        "HJ8Ostsw9": {
+          "id": "HJ8Ostsw9",
+          "position": {
+            "x": 21,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "Expected string: *037457B8*"
+        },
+        "SkListoD9": {
+          "id": "SkListoD9",
+          "position": {
+            "x": 25,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "Expected string: *017500ED*"
+        },
+        "HyknsKjDq": {
+          "id": "HyknsKjDq",
+          "position": {
+            "x": 29,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "width": 4,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "Expected string: *018806765ef2960a0003e8*"
+        },
+        "Bk_Sg9sP5": {
+          "id": "Bk_Sg9sP5",
+          "position": {
+            "x": 8,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "width": 4,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "**Should match the expected string above.**"
+        },
+        "HylVPG9jwc": {
+          "id": "HylVPG9jwc",
+          "position": {
+            "x": 35,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "Expected string: *078718EF0F*"
+        }
+      },
+      "path": "@/01-example",
+      "description": "Patch for testing some of the nodes in the library. Run in debugger. Watch node should display the expected string for each input."
+    },
+    "@/02-example": {
+      "nodes": {
+        "rkICasiv9": {
+          "id": "rkICasiv9",
+          "type": "@/lpp",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "Hy8yEvdS9": "20d",
+            "rydDt05vc": "11"
+          }
+        },
+        "S1gIApsivq": {
+          "id": "S1gIApsivq",
+          "type": "xod/core/constant-number",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B1x2RV3eZ": "4"
+          }
+        },
+        "H1S10jiD9": {
+          "id": "H1S10jiD9",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "LPP"
+        },
+        "ByX-Cojwc": {
+          "id": "ByX-Cojwc",
+          "type": "@/add-gps",
+          "position": {
+            "x": 13,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "Bk8-3ZLFHc": "01h",
+            "Hy-Z2ZLtBq": "42.3519",
+            "HyGbhWUFr5": "-87.9094",
+            "SyX-nbLFS5": "10"
+          }
+        },
+        "BJl7WRssD5": {
+          "id": "BJl7WRssD5",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 19,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "Bk-Q-Ciovc": {
+          "id": "Bk-Q-Ciovc",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 16,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "LPP"
+        },
+        "H1jGRjov9": {
+          "id": "H1jGRjov9",
+          "type": "@/add-voltage",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "SkNP9sRtH9": "03h",
+            "Sk-DciCKrq": "224.56"
+          }
+        },
+        "Hkejf0jjP9": {
+          "id": "Hkejf0jjP9",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "HkWozAisw9": {
+          "id": "HkWozAisw9",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "LPP"
+        },
+        "HkMO7hsv9": {
+          "id": "HkMO7hsv9",
+          "type": "@/get-error",
+          "position": {
+            "x": 9,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "B1vamhjD9": {
+          "id": "B1vamhjD9",
+          "type": "xod/core/any",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "rJ6UNhiv5": {
+          "id": "rJ6UNhiv5",
+          "type": "@/reset",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "r1vdV2sP9": {
+          "id": "r1vdV2sP9",
+          "type": "@/reset",
+          "position": {
+            "x": 18,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SyO3Vnsw5": {
+          "id": "SyO3Vnsw5",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "LPP"
+        },
+        "S1QUYpjPc": {
+          "id": "S1QUYpjPc",
+          "type": "xod/core/nth-input",
+          "position": {
+            "x": 9,
+            "y": 5,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "BkrwKrGhG": "\"OK\"",
+            "HypuFHG3z": "\"Overflow\"",
+            "HypuFHG3z-$1": "\"Unknown\""
+          },
+          "arityLevel": 2
+        },
+        "r15jKTsvq": {
+          "id": "r15jKTsvq",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 10,
+            "y": 6,
+            "units": "slots"
+          },
+          "size": {
+            "width": 3,
+            "height": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "SkG8Rpjivq": {
+          "id": "SkG8Rpjivq",
+          "output": {
+            "nodeId": "S1gIApsivq",
+            "pinKey": "B1x2RV3eZ"
+          },
+          "input": {
+            "nodeId": "rkICasiv9",
+            "pinKey": "rydDt05vc"
+          }
+        },
+        "rkKJ0jjP5": {
+          "id": "rkKJ0jjP5",
+          "output": {
+            "nodeId": "rkICasiv9",
+            "pinKey": "Bk6wOfdSq"
+          },
+          "input": {
+            "nodeId": "H1S10jiD9",
+            "pinKey": "__in__"
+          }
+        },
+        "SJX7WAjiwc": {
+          "id": "SJX7WAjiwc",
+          "output": {
+            "nodeId": "Bk-Q-Ciovc",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ByX-Cojwc",
+            "pinKey": "SkeW3-IYH9"
+          }
+        },
+        "rkspX2ovq": {
+          "id": "rkspX2ovq",
+          "output": {
+            "nodeId": "H1jGRjov9",
+            "pinKey": "ryQP9oRtSc"
+          },
+          "input": {
+            "nodeId": "B1vamhjD9",
+            "pinKey": "ryv7IRdSP1b"
+          }
+        },
+        "SJTp72oP5": {
+          "id": "SJTp72oP5",
+          "output": {
+            "nodeId": "ByX-Cojwc",
+            "pinKey": "BySWnWItS5"
+          },
+          "input": {
+            "nodeId": "B1vamhjD9",
+            "pinKey": "ByU7LRuSPkW"
+          }
+        },
+        "ry1kV2ovc": {
+          "id": "ry1kV2ovc",
+          "output": {
+            "nodeId": "B1vamhjD9",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "input": {
+            "nodeId": "HkMO7hsv9",
+            "pinKey": "HkZ_7QdY8c"
+          }
+        },
+        "HksvVnjv9": {
+          "id": "HksvVnjv9",
+          "output": {
+            "nodeId": "Hkejf0jjP9",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "rJ6UNhiv5",
+            "pinKey": "H1ZEhWOt8q"
+          }
+        },
+        "HyAvEnsv9": {
+          "id": "HyAvEnsv9",
+          "output": {
+            "nodeId": "rJ6UNhiv5",
+            "pinKey": "HkGE2Z_tL9"
+          },
+          "input": {
+            "nodeId": "H1jGRjov9",
+            "pinKey": "HJMw9iCFBq"
+          }
+        },
+        "Hkn_42iPq": {
+          "id": "Hkn_42iPq",
+          "output": {
+            "nodeId": "BJl7WRssD5",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "r1vdV2sP9",
+            "pinKey": "H1ZEhWOt8q"
+          }
+        },
+        "Sya_NhsPq": {
+          "id": "Sya_NhsPq",
+          "output": {
+            "nodeId": "r1vdV2sP9",
+            "pinKey": "HkGE2Z_tL9"
+          },
+          "input": {
+            "nodeId": "ByX-Cojwc",
+            "pinKey": "rkVW2bUFr5"
+          }
+        },
+        "B1KcN2iD9": {
+          "id": "B1KcN2iD9",
+          "output": {
+            "nodeId": "HkWozAisw9",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HkMO7hsv9",
+            "pinKey": "HkguQ7uK89"
+          }
+        },
+        "ryAh42sDq": {
+          "id": "ryAh42sDq",
+          "output": {
+            "nodeId": "SyO3Vnsw5",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJ6UNhiv5",
+            "pinKey": "rJlEnb_KU9"
+          }
+        },
+        "S1GaNniDc": {
+          "id": "S1GaNniDc",
+          "output": {
+            "nodeId": "Bk-Q-Ciovc",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "r1vdV2sP9",
+            "pinKey": "rJlEnb_KU9"
+          }
+        },
+        "BJvW86sPc": {
+          "id": "BJvW86sPc",
+          "output": {
+            "nodeId": "SyO3Vnsw5",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "H1jGRjov9",
+            "pinKey": "Skewqj0YH5"
+          }
+        },
+        "B1FIY6jvq": {
+          "id": "B1FIY6jvq",
+          "output": {
+            "nodeId": "HkMO7hsv9",
+            "pinKey": "HJgkY6iwc"
+          },
+          "input": {
+            "nodeId": "S1QUYpjPc",
+            "pinKey": "SJ-BNy8s2G"
+          }
+        },
+        "SkS2t6oD5": {
+          "id": "SkS2t6oD5",
+          "output": {
+            "nodeId": "S1QUYpjPc",
+            "pinKey": "r1ctYrM3G"
+          },
+          "input": {
+            "nodeId": "r15jKTsvq",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "comments": {
+        "r1hWspsv9": {
+          "id": "r1hWspsv9",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "width": 1,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "\n# **A**"
+        },
+        "S1xEjajP5": {
+          "id": "S1xEjajP5",
+          "position": {
+            "x": 18,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "width": 1,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "\n# **B**"
+        },
+        "BkCinasw9": {
+          "id": "BkCinasw9",
+          "position": {
+            "x": 14,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 9,
+            "height": 3,
+            "units": "slots"
+          },
+          "content": "# Detection of LPP buffer overload.\n\n* A low power payload (LPP) is created with a size of 4 bytes.\n\n* Firing tweak-pulse **A** empties the LPP before adding a voltage measurement. A voltage measurement occupies 4 bytes, so fits inside the LPP buffer.\n\n* Firing tweak-pulse **B** empties the LPP, then attempts to add a GPS measurement. This GPS measurement occupies 11 bytes and do can't fit inside the LPP buffer. The get-error node reports an \"overflow\" error.\n\n"
+        }
+      },
+      "path": "@/02-example",
+      "description": "Patch to show how overflow of the payload buffer can be detected using the get-error node. Run in debugger."
+    }
+  },
+  "license": "MIT",
+  "version": "0.0.4",
+  "description": "Cayenne Low Power Payload with Extended Data Types. CayenneLPP format is an efficient way to send sensor data over low bit rate connection, like LoRa. Wraps https://github.com/ElectronicCats/CayenneLPP. ",
+  "name": "cayenne-lpp"
+}

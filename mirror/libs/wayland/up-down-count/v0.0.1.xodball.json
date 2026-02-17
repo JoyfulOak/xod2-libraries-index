@@ -1,0 +1,367 @@
+{
+  "description": "Count up or down in steps. Based on https://xod.io/libs/ivanmason/lcd16x2x5button/updowncount/",
+  "license": "GPLv3",
+  "version": "0.0.1",
+  "patches": {
+    "@/up-down-count": {
+      "nodes": {
+        "SJiSaNdR9": {
+          "id": "SJiSaNdR9",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SJADaN_Ac": {
+          "id": "SJADaN_Ac",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Add",
+          "description": "On pulse, add step size to current count."
+        },
+        "r1bupNOA9": {
+          "id": "r1bupNOA9",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Subtract",
+          "description": "On pulse, subtract step size from current count."
+        },
+        "S1fuaE_Cq": {
+          "id": "S1fuaE_Cq",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Reset",
+          "description": "On pulse, reset count to Start value."
+        },
+        "ryU6TVuCc": {
+          "id": "ryU6TVuCc",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Start",
+          "description": "Starting number"
+        },
+        "B1RpaNORc": {
+          "id": "B1RpaNORc",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Step",
+          "description": "Step size. Add/subtract this number."
+        },
+        "rJ9C6V_0q": {
+          "id": "rJ9C6V_0q",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Min",
+          "description": "Minimum. Lower limit for output."
+        },
+        "HJjAa4_0c": {
+          "id": "HJjAa4_0c",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Max",
+          "description": "Maximum. Upper limit for output."
+        },
+        "BkHlRV_0q": {
+          "id": "BkHlRV_0q",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "Count",
+          "description": "Current count."
+        },
+        "SyrWAEu0q": {
+          "id": "SyrWAEu0q",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "Done",
+          "description": "Pulse on completion."
+        }
+      },
+      "path": "@/up-down-count",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "// based on https://xod.io/libs/ivanmason/lcd16x2x5button/updowncount/\n\n#pragma XOD dirtieness disable\n\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number count;\n\n    void evaluate(Context ctx) {\n        if(isInputDirty<input_Reset>(ctx)) {\n            count = getValue<input_Start>(ctx);\n        }\n        \n        if(isInputDirty<input_Add>(ctx)){\n            count += getValue<input_Step>(ctx);\n        }\n\n        if(isInputDirty<input_Subtract>(ctx)){\n            count -= getValue<input_Step>(ctx);\n        }\n\n        if (count > getValue<input_Max>(ctx)) {\n            count = getValue<input_Max>(ctx);\n        }\n\n        if (count < getValue<input_Min>(ctx)) {\n            count = getValue<input_Min>(ctx);\n        }\n\n        emitValue<output_Count>(ctx, count);\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example": {
+      "nodes": {
+        "HyW7CB_R9": {
+          "id": "HyW7CB_R9",
+          "type": "@/up-down-count",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SkYm0rOR9": {
+          "id": "SkYm0rOR9",
+          "type": "xod/debug/tweak-number",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ByfGSDjQE": "1.50"
+          }
+        },
+        "H1TmRr_Rq": {
+          "id": "H1TmRr_Rq",
+          "type": "xod/debug/tweak-number",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ByfGSDjQE": "5"
+          }
+        },
+        "SJ0XAH_09": {
+          "id": "SJ0XAH_09",
+          "type": "xod/debug/tweak-number",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ByfGSDjQE": "-30"
+          }
+        },
+        "rye07AHdA5": {
+          "id": "rye07AHdA5",
+          "type": "xod/debug/tweak-number",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ByfGSDjQE": "20"
+          }
+        },
+        "B1lBAHOAq": {
+          "id": "B1lBAHOAq",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "HJ7BRruAq": {
+          "id": "HJ7BRruAq",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "HkErAHd0c": {
+          "id": "HkErAHd0c",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "description": "Test of up-down-count node. Run in debugger."
+        },
+        "HkePCr_05": {
+          "id": "HkePCr_05",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        },
+        "HJLdRBuA9": {
+          "id": "HJLdRBuA9",
+          "type": "xod/core/count",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "BJGKASOA9": {
+          "id": "BJGKASOA9",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "BJQ4Aru09": {
+          "id": "BJQ4Aru09",
+          "output": {
+            "nodeId": "SkYm0rOR9",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "HyW7CB_R9",
+            "pinKey": "ryU6TVuCc"
+          }
+        },
+        "SkSVArdCq": {
+          "id": "SkSVArdCq",
+          "output": {
+            "nodeId": "H1TmRr_Rq",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "HyW7CB_R9",
+            "pinKey": "B1RpaNORc"
+          }
+        },
+        "BJLEASd05": {
+          "id": "BJLEASd05",
+          "output": {
+            "nodeId": "SJ0XAH_09",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "HyW7CB_R9",
+            "pinKey": "rJ9C6V_0q"
+          }
+        },
+        "SJ_E0r_Cq": {
+          "id": "SJ_E0r_Cq",
+          "output": {
+            "nodeId": "rye07AHdA5",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "HyW7CB_R9",
+            "pinKey": "HJjAa4_0c"
+          }
+        },
+        "B1IH0HOAq": {
+          "id": "B1IH0HOAq",
+          "output": {
+            "nodeId": "B1lBAHOAq",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "HyW7CB_R9",
+            "pinKey": "SJADaN_Ac"
+          }
+        },
+        "r1wB0B_Rq": {
+          "id": "r1wB0B_Rq",
+          "output": {
+            "nodeId": "HJ7BRruAq",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "HyW7CB_R9",
+            "pinKey": "r1bupNOA9"
+          }
+        },
+        "SkKBAHuR5": {
+          "id": "SkKBAHuR5",
+          "output": {
+            "nodeId": "HkErAHd0c",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "HyW7CB_R9",
+            "pinKey": "S1fuaE_Cq"
+          }
+        },
+        "SyHP0ruRc": {
+          "id": "SyHP0ruRc",
+          "output": {
+            "nodeId": "HyW7CB_R9",
+            "pinKey": "BkHlRV_0q"
+          },
+          "input": {
+            "nodeId": "HkePCr_05",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "HJouASOA5": {
+          "id": "HJouASOA5",
+          "output": {
+            "nodeId": "HyW7CB_R9",
+            "pinKey": "SyrWAEu0q"
+          },
+          "input": {
+            "nodeId": "HJLdRBuA9",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "HJAFRBuA9": {
+          "id": "HJAFRBuA9",
+          "output": {
+            "nodeId": "HJLdRBuA9",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "BJGKASOA9",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/example"
+    }
+  },
+  "name": "up-down-count"
+}

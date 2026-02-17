@@ -1,0 +1,642 @@
+{
+  "patches": {
+    "@/fhx711-getunit": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n     bool    flag = 0;\n{{ GENERATED_CODE }}\n\n//#include <Arduino.h>\n//#include <HX711.h>\n\n// TEENSYDUINO has a port of Dean Camera's ATOMIC_BLOCK macros for AVR to ARM Cortex M3.\n#define HAS_ATOMIC_BLOCK (defined(ARDUINO_ARCH_AVR) || defined(TEENSYDUINO))\n\n// Whether we are running on either the ESP8266 or the ESP32.\n#define ARCH_ESPRESSIF (defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32))\n\n// Whether we are actually running on FreeRTOS.\n#define IS_FREE_RTOS defined(ARDUINO_ARCH_ESP32)\n\n// Define macro designating whether we're running on a reasonable\n// fast CPU and so should slow down sampling from GPIO.\n#define FAST_CPU \\\n    ( \\\n    ARCH_ESPRESSIF || \\\n    defined(ARDUINO_ARCH_SAM)     || defined(ARDUINO_ARCH_SAMD) || \\\n    defined(ARDUINO_ARCH_STM32)   || defined(TEENSYDUINO) \\\n    )\n\n#if HAS_ATOMIC_BLOCK\n// Acquire AVR-specific ATOMIC_BLOCK(ATOMIC_RESTORESTATE) macro.\n#include <util/atomic.h>\n#endif\n\n#if FAST_CPU\n// Make shiftIn() be aware of clockspeed for\n// faster CPUs like ESP32, Teensy 3.x and friends.\n// See also:\n// - https://github.com/bogde/HX711/issues/75\n// - https://github.com/arduino/Arduino/issues/6561\n// - https://community.hiveeyes.org/t/using-bogdans-canonical-hx711-library-on-the-esp32/539\n\n\n\n\n    \n\n\n\n\n\nuint8_t shiftInSlow(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder) {\n    uint8_t value = 0;\n    uint8_t i;\n\n    for(i = 0; i < 8; ++i) {\n        digitalWrite(clockPin, HIGH);\n        delayMicroseconds(1);\n        if(bitOrder == LSBFIRST)\n            value |= digitalRead(dataPin) << i;\n        else\n            value |= digitalRead(dataPin) << (7 - i);\n        digitalWrite(clockPin, LOW);\n        delayMicroseconds(1);\n    }\n    return value;\n}\n#define SHIFTIN_WITH_SPEED_SUPPORT(data,clock,order) shiftInSlow(data,clock,order)\n#else\n#define SHIFTIN_WITH_SPEED_SUPPORT(data,clock,order) shiftIn(data,clock,order)\n#endif\n\n\n     ////////////////////////////////////////////////////////\n//////////////////////////////////////////////////////////////\n\n    bool  is_ready(uint8_t DOUT) {\n        // const uint8_t DOUT = getValue<input_dout>(ctx);\n\treturn digitalRead(DOUT) == LOW;\n    }\n///////////////////////////////////////////////////////////\n    void  wait_ready(unsigned long delay_ms  ,  uint8_t DOUT) {\n\t    while (!is_ready( DOUT)) {\n\t\t// Probably will do no harm on AVR but will feed the Watchdog Timer (WDT) on ESP.\n\t\t// https://github.com/bogde/HX711/issues/73\n\t\tdelay(delay_ms);\n\t         }\n       }\n\n\n\n   //////////////////////////////////////////////////////////\n    long read(unsigned long delay_ms  , uint8_t  DOUT , uint8_t PD_SCK , uint8_t GAIN ) {\n \n\n     /* //////// global variable  ///////////////////\n    const uint8_t PD_SCK = getValue<input_pd_sck>(ctx);\n    const uint8_t DOUT = getValue<input_dout>(ctx);\n    const uint8_t GAIN = getValue<input_gain>(ctx);\n    const uint8_t OFFSET = getValue<input_offset>(ctx);\n    const uint8_t SCALE = getValue<input_scale>(ctx);\n \n    ////////////////////////////////////////////\n    \n    const uint8_t time = getValue<input_TIME>(ctx);\n    \n    if ( (!isValidDigitalPort(PD_SCK)) || (!isValidDigitalPort(DOUT)) )\n    {\n        emitValue<output_ERR>(ctx, 1);\n        return; \n    }  */\n\n\t// Wait for the chip to become ready.\n\twait_ready( delay_ms  ,  DOUT);\n\n\t// Define structures for reading data into.\n\tunsigned long value = 0;\n\tuint8_t data[3] = { 0 };\n\tuint8_t filler = 0x00;\n\n\t#if HAS_ATOMIC_BLOCK\n\tATOMIC_BLOCK(ATOMIC_RESTORESTATE) {\n\n\t#elif IS_FREE_RTOS\n\t\n\tportMUX_TYPE mux = portMUX_INITIALIZER_UNLOCKED;\n\tportENTER_CRITICAL(&mux);\n\n\t#else\n\t// Disable interrupts.\n\tnoInterrupts();\n\t#endif\n\n\t// Pulse the clock pin 24 times to read the data.\n\tdata[2] = SHIFTIN_WITH_SPEED_SUPPORT(DOUT, PD_SCK, MSBFIRST);\n\tdata[1] = SHIFTIN_WITH_SPEED_SUPPORT(DOUT, PD_SCK, MSBFIRST);\n\tdata[0] = SHIFTIN_WITH_SPEED_SUPPORT(DOUT, PD_SCK, MSBFIRST);\n\n\t// Set the channel and the gain factor for the next reading using the clock pin.\n\t    for (unsigned int i = 0; i < GAIN; i++) {\n\t\t       digitalWrite(PD_SCK, HIGH);\n\t\t     #if ARCH_ESPRESSIF\n\t\t        delayMicroseconds(1);\n\t\t      #endif\n\t\t       digitalWrite(PD_SCK, LOW);\n\t\t     #if ARCH_ESPRESSIF\n\t\t        delayMicroseconds(1);\n\t\t      #endif\n\t     }\n\n\t     #if IS_FREE_RTOS\n\t    // End of critical section.\n\t     portEXIT_CRITICAL(&mux);\n\n\t     #elif HAS_ATOMIC_BLOCK\n\t     }\n\n\t     #else\n\t     // Enable interrupts again.\n\t     interrupts();\n\t     #endif\n\n\t         // Replicate the most significant bit to pad out a 32-bit signed integer\n\t     if (data[2] & 0x80) {\n\t\t      filler = 0xFF;\n\t     } else {\n\t\t       filler = 0x00;\n\t     }\n\n\t       // Construct a 32-bit signed integer\n\t    value = ( static_cast<unsigned long>(filler) << 24\n\t\t\t    | static_cast<unsigned long>(data[2]) << 16\n\t\t\t    | static_cast<unsigned long>(data[1]) << 8\n\t\t\t    | static_cast<unsigned long>(data[0]) );\n\n\t     return static_cast<long>(value);\n    }\n\n\n\n\n\n    //////////////////////////////////////\n    long read_average(uint8_t time  , unsigned long delay_ms  , uint8_t  DOUT , uint8_t  PD_SCK , uint8_t GAIN) {\n\tlong sum = 0;\n\tfor (byte i = 0; i < time; i++) {\n\t\tsum += read(  delay_ms  ,  DOUT ,    PD_SCK ,  GAIN);\n\t\t// Probably will do no harm on AVR but will feed the Watchdog Timer (WDT) on ESP.\n\t\t// https://github.com/bogde/HX711/issues/73\n\t\tdelay(0);\n\t    }\n\t     return sum / time;\n     }\n    ////////////////////////////////////\n    double get_value(uint8_t time  , unsigned long delay_ms  , uint8_t  DOUT ,  uint8_t  PD_SCK , uint8_t GAIN , uint8_t OFFSET) {\n\n        //////// global variable  ///////////////////\n              //const uint8_t OFFSET = getValue<input_offset>(ctx);\n             return read_average( time  , delay_ms  ,  DOUT ,    PD_SCK ,  GAIN ) - OFFSET;\n      }\n    ///////////////////////////////////\n     float get_units(uint8_t time  , unsigned long delay_ms  , uint8_t  DOUT ,  uint8_t  PD_SCK , uint8_t GAIN , uint8_t OFFSET , uint8_t SCALE) {\n          //const uint8_t SCALE = getValue<input_scale>(ctx);\n\t        return get_value( time  , delay_ms  ,   DOUT ,   PD_SCK ,  GAIN , OFFSET) / SCALE;\n      }\n\n\n\nvoid evaluate(Context ctx) { \n    //auto inValue = getValue<input_IN>(ctx);\n    //emitValue<output_OUT>(ctx, inValue);\n   // State    beg\n    if (!isInputDirty<input_UPD>(ctx))\n       return;\n    \n    //////// global variable  ///////////////////\n    const uint8_t PD_SCK = getValue<input_pd_sck>(ctx);\n    const uint8_t DOUT = getValue<input_dout>(ctx);\n          uint8_t GAIN = getValue<input_gain>(ctx);\n    const uint8_t OFFSET = getValue<input_offset>(ctx);\n    const uint8_t SCALE = getValue<input_scale>(ctx);\n\n    ////////////////////////////////////////////\n    \n    const uint8_t time = getValue<input_TIME>(ctx);\n    \n    if ( (!isValidDigitalPort(PD_SCK)) || (!isValidDigitalPort(DOUT)) )\n    {\n        emitValue<output_ERR>(ctx, 1);\n        return; \n    }\n    \n    if (GAIN >3)   GAIN=3;\n    else if (GAIN<1) GAIN=1;\n\n    emitValue<output_OUT>(ctx, get_units(time  ,  0,   DOUT ,   PD_SCK ,  GAIN ,  OFFSET ,  SCALE)); \n    emitValue<output_END_PROCESS_1>(ctx, 1);\n    emitValue<output_END_PROCESS_2>(ctx, 1);\n\n\n    \n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJVb6AkkB": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "label": "scale",
+          "id": "BJVb6AkkB",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "By3oHCk1B": {
+          "label": "END_PROCESS_2",
+          "id": "By3oHCk1B",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "ByIg8AJ1r": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "label": "UPD",
+          "id": "ByIg8AJ1r",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H16J3AJJS": {
+          "label": "gain",
+          "id": "H16J3AJJS",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "H1tcE01JS": {
+          "id": "H1tcE01JS",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Hyef_01yS": {
+          "boundLiterals": {
+            "__out__": "0"
+          },
+          "label": "offset",
+          "id": "Hyef_01yS",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJ6OLCJJH": {
+          "label": "pd_sck",
+          "id": "SJ6OLCJJH",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SkF_PAyJr": {
+          "label": "OUT",
+          "id": "SkF_PAyJr",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SkrZH0kyr": {
+          "boundLiterals": {
+            "__out__": "10"
+          },
+          "label": "TIME",
+          "id": "SkrZH0kyr",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SyQewR1kH": {
+          "boundLiterals": {
+            "__out__": "D1"
+          },
+          "label": "dout",
+          "id": "SyQewR1kH",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rJVOHRkkB": {
+          "label": "END_PROCESS_1",
+          "id": "rJVOHRkkB",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ry3qtR1yr": {
+          "label": "ERR",
+          "id": "ry3qtR1yr",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/fhx711-getunit"
+    },
+    "@/hx711-begin": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\n\nvoid evaluate(Context ctx) {\n    //auto inValue = getValue<input_IN>(ctx);\n    //emitValue<output_OUT>(ctx, inValue);\n    \n       \n       \n    if (!isInputDirty<input_UPD>(ctx))\n    {   \n        \n       return;\n    }\n    \n    const uint8_t PD_SCK = getValue<input_pd_sck>(ctx);\n    const uint8_t DOUT = getValue<input_dout>(ctx);\n    \n    \n    if ( (!isValidDigitalPort(PD_SCK)) || (!isValidDigitalPort(DOUT)) )\n    {\n        emitValue<output_ERR>(ctx, 1);\n         \n        return; \n    }\n\n    pinMode(PD_SCK, OUTPUT);\n\tpinMode(DOUT, INPUT);\n   \n   emitValue<output_END_PROCESS_1>(ctx, 1);\n\n    \n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1Ox-qJlyS": {
+          "label": "ERR",
+          "id": "B1Ox-qJlyS",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJmgZq1l1H": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "label": "UPD",
+          "id": "HJmgZq1l1H",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Hy4l-5yg1B": {
+          "label": "pd_sck",
+          "id": "Hy4l-5yg1B",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rJ-eW5keyH": {
+          "label": "END_PROCESS_1",
+          "id": "rJ-eW5keyH",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJBxZ51lJr": {
+          "boundLiterals": {
+            "__out__": "D1"
+          },
+          "label": "dout",
+          "id": "rJBxZ51lJr",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rkebc1lkH": {
+          "id": "rkebc1lkH",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/hx711-begin"
+    },
+    "@/hx711-getunit": {
+      "links": {
+        "B12yaBbl1B": {
+          "id": "B12yaBbl1B",
+          "input": {
+            "nodeId": "By16rZx1r",
+            "pinKey": "rJBxZ51lJr"
+          },
+          "output": {
+            "nodeId": "B1EJTS-lJB",
+            "pinKey": "__out__"
+          }
+        },
+        "BkckpSZl1H": {
+          "id": "BkckpSZl1H",
+          "input": {
+            "nodeId": "By16rZx1r",
+            "pinKey": "Hy4l-5yg1B"
+          },
+          "output": {
+            "nodeId": "SyXJTrbl1S",
+            "pinKey": "__out__"
+          }
+        },
+        "BkuTqblyB": {
+          "id": "BkuTqblyB",
+          "input": {
+            "nodeId": "ByQacbe1H",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ryly6SWlJH",
+            "pinKey": "By3oHCk1B"
+          }
+        },
+        "BySksWekB": {
+          "id": "BySksWekB",
+          "input": {
+            "nodeId": "BJkkiZgyr",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ryly6SWlJH",
+            "pinKey": "SkF_PAyJr"
+          }
+        },
+        "HJ7--3WZD": {
+          "id": "HJ7--3WZD",
+          "input": {
+            "nodeId": "By16rZx1r",
+            "pinKey": "HJmgZq1l1H"
+          },
+          "output": {
+            "nodeId": "ByvBvZlJS",
+            "pinKey": "__out__"
+          }
+        },
+        "HkMPIWekH": {
+          "id": "HkMPIWekH",
+          "input": {
+            "nodeId": "ryly6SWlJH",
+            "pinKey": "SkrZH0kyr"
+          },
+          "output": {
+            "nodeId": "S1hIIbxkH",
+            "pinKey": "__out__"
+          }
+        },
+        "HkRyLWl1S": {
+          "id": "HkRyLWl1S",
+          "input": {
+            "nodeId": "ryly6SWlJH",
+            "pinKey": "Hyef_01yS"
+          },
+          "output": {
+            "nodeId": "rkq1L-lyB",
+            "pinKey": "__out__"
+          }
+        },
+        "Hkik6SbgkH": {
+          "id": "Hkik6SbgkH",
+          "input": {
+            "nodeId": "ryly6SWlJH",
+            "pinKey": "SJ6OLCJJH"
+          },
+          "output": {
+            "nodeId": "SyXJTrbl1S",
+            "pinKey": "__out__"
+          }
+        },
+        "HkpJ6Sbl1H": {
+          "id": "HkpJ6Sbl1H",
+          "input": {
+            "nodeId": "ryly6SWlJH",
+            "pinKey": "SyQewR1kH"
+          },
+          "output": {
+            "nodeId": "B1EJTS-lJB",
+            "pinKey": "__out__"
+          }
+        },
+        "Hkw3cWekS": {
+          "id": "Hkw3cWekS",
+          "input": {
+            "nodeId": "r1_5qZg1S",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ryly6SWlJH",
+            "pinKey": "rJVOHRkkB"
+          }
+        },
+        "SJAk6rZe1B": {
+          "id": "SJAk6rZe1B",
+          "input": {
+            "nodeId": "ryly6SWlJH",
+            "pinKey": "H16J3AJJS"
+          },
+          "output": {
+            "nodeId": "SyryTS-xkB",
+            "pinKey": "__out__"
+          }
+        },
+        "SJYHIZlJr": {
+          "id": "SJYHIZlJr",
+          "input": {
+            "nodeId": "ryly6SWlJH",
+            "pinKey": "BJVb6AkkB"
+          },
+          "output": {
+            "nodeId": "S1iEI-eyr",
+            "pinKey": "__out__"
+          }
+        },
+        "Sys2PWgJr": {
+          "id": "Sys2PWgJr",
+          "input": {
+            "nodeId": "ryly6SWlJH",
+            "pinKey": "ByIg8AJ1r"
+          },
+          "output": {
+            "nodeId": "By16rZx1r",
+            "pinKey": "rJ-eW5keyH"
+          }
+        },
+        "Syv4ZnZbD": {
+          "id": "Syv4ZnZbD",
+          "input": {
+            "nodeId": "Hkyvt-eyH",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ryly6SWlJH",
+            "pinKey": "ry3qtR1yr"
+          }
+        }
+      },
+      "nodes": {
+        "B1EJTS-lJB": {
+          "label": "dout",
+          "id": "B1EJTS-lJB",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "BJkkiZgyr": {
+          "label": "OUT",
+          "id": "BJkkiZgyr",
+          "position": {
+            "x": 5,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "By16rZx1r": {
+          "id": "By16rZx1r",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/hx711-begin"
+        },
+        "ByQacbe1H": {
+          "label": "DOWN_2",
+          "id": "ByQacbe1H",
+          "position": {
+            "x": 7,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "ByvBvZlJS": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "label": "UPD",
+          "id": "ByvBvZlJS",
+          "position": {
+            "x": 7,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Hkyvt-eyH": {
+          "label": "ERR",
+          "id": "Hkyvt-eyH",
+          "position": {
+            "x": 9,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "S1hIIbxkH": {
+          "boundLiterals": {
+            "__out__": "10"
+          },
+          "label": "time",
+          "id": "S1hIIbxkH",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1iEI-eyr": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "label": "scale",
+          "id": "S1iEI-eyr",
+          "position": {
+            "x": 11,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SyXJTrbl1S": {
+          "boundLiterals": {
+            "__out__": "D1"
+          },
+          "label": "pd_sck",
+          "id": "SyXJTrbl1S",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SyryTS-xkB": {
+          "boundLiterals": {
+            "__out__": "02h"
+          },
+          "label": "gain",
+          "id": "SyryTS-xkB",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "r1_5qZg1S": {
+          "label": "DONE_1",
+          "id": "r1_5qZg1S",
+          "position": {
+            "x": 6,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rkq1L-lyB": {
+          "label": "offset",
+          "id": "rkq1L-lyB",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryly6SWlJH": {
+          "id": "ryly6SWlJH",
+          "position": {
+            "x": 5,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/fhx711-getunit"
+        }
+      },
+      "path": "@/hx711-getunit"
+    },
+    "@/main": {
+      "links": {
+        "SkmnSTGbP": {
+          "id": "SkmnSTGbP",
+          "input": {
+            "nodeId": "HkasSazZP",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "HJDDmebyr",
+            "pinKey": "BJkkiZgyr"
+          }
+        },
+        "SyOKrpMbD": {
+          "id": "SyOKrpMbD",
+          "input": {
+            "nodeId": "ByzFB6G-w",
+            "pinKey": "BJ3DAE1QS"
+          },
+          "output": {
+            "nodeId": "HJDDmebyr",
+            "pinKey": "BJkkiZgyr"
+          }
+        }
+      },
+      "nodes": {
+        "ByzFB6G-w": {
+          "id": "ByzFB6G-w",
+          "position": {
+            "x": 13,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod-dev/text-lcd/text-lcd-i2c-16x2"
+        },
+        "HJDDmebyr": {
+          "boundLiterals": {
+            "B1EJTS-lJB": "D2",
+            "SyXJTrbl1S": "D3",
+            "SyryTS-xkB": "80h",
+            "rkq1L-lyB": "1"
+          },
+          "id": "HJDDmebyr",
+          "position": {
+            "x": 12,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/hx711-getunit"
+        },
+        "HkasSazZP": {
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "id": "HkasSazZP",
+          "position": {
+            "x": 17,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        }
+      },
+      "path": "@/main"
+    },
+    "@/pulsetobool": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto inValue = getValue<input_IN>(ctx);\n    emitValue<output_OUT>(ctx, inValue);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1snk21kS": {
+          "id": "B1snk21kS",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H17yxhyJB": {
+          "id": "H17yxhyJB",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "rkolenJkB": {
+          "id": "rkolenJkB",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/pulsetobool"
+    }
+  },
+  "license": "IDF_Hero",
+  "version": "1.0.0",
+  "description": "unique 24-bit high accuracy hx-711 to measure every thing more accurate with XOD IDE  time number of sample, gain is equal 80h and chose your pins for Dout and SCk connected to your module and UPD on loop or what ever you want",
+  "apiKey": "ce484e65-9958-4d26-8871-7f33be79c98a",
+  "name": "stm32avr-hx711"
+}

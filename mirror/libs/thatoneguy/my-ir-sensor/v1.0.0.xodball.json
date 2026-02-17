@@ -1,0 +1,88 @@
+{
+  "patches": {
+    "@/main": {
+      "nodes": {
+        "ryyWJaJVyx": {
+          "id": "ryyWJaJVyx",
+          "type": "@/ir-receiver",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "B1S8M5xNJx": {
+          "id": "B1S8M5xNJx",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "BkGtv5xNJe": {
+          "id": "BkGtv5xNJe",
+          "output": {
+            "nodeId": "ryyWJaJVyx",
+            "pinKey": "rk__Pqe4yl"
+          },
+          "input": {
+            "nodeId": "B1S8M5xNJx",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/main"
+    },
+    "@/ir-receiver": {
+      "nodes": {
+        "Sk3CA3JNJx": {
+          "id": "Sk3CA3JNJx",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rkkne61NJe": {
+          "id": "rkkne61NJe",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "rk__Pqe4yl": {
+          "id": "rk__Pqe4yl",
+          "type": "xod/patch-nodes/output-byte",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/ir-receiver",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#include <IRremote.hpp>\n\n\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            auto pin = getValue<input_IN>(ctx);\n            foo = (Number)(bar + 1);\n            Serial.begin(115200);\n            #define IR_RECEIVE_PIN pin\n            //Serial.begin(115200); // // Establish serial communication\n            IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);\n        }\n\n        if (IrReceiver.decode()) {\n          Serial.println(IrReceiver.decodedIRData.decodedRawData, HEX); // Print \"old\" raw data\n          IrReceiver.printIRResultShort(&Serial); // Print complete received data in one line\n          IrReceiver.printIRSendUsage(&Serial);   // Print the statement required to send this data\n\n          IrReceiver.resume(); // Enable receiving of the next value\n        emitValue<output_OUT>(ctx, IrReceiver.decodedIRData.decodedRawData);\n        }\n    }\n}"
+        }
+      ]
+    }
+  },
+  "version": "1.0.0",
+  "description": "Just a simple IR sensor\nNOTE: you do have to put this library https://github.com/Arduino-IRremote/Arduino-IRremote?tab=readme-ov-file#3tutorials into the XOD lib file for it to work ",
+  "apiKey": "c23fd248-b873-494e-a96e-675852d69711",
+  "name": "my-ir-sensor"
+}

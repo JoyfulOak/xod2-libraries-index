@@ -1,0 +1,727 @@
+{
+  "patches": {
+    "@/sdp6x-device": {
+      "nodes": {
+        "rJ4ZjBlco": {
+          "id": "rJ4ZjBlco",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Bk42E_l9o": {
+          "id": "Bk42E_l9o",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "SF",
+          "description": "SCALE FACTOR. N.B. you need to set the scale factor to the appropriate value for your sensor: SDP6xx-500Pa and SDP5xx=60.0; SDP6x0-125Pa=240.0; SDP6x0-25Pa=1200.0.\n",
+          "boundLiterals": {
+            "__out__": "60.0"
+          }
+        },
+        "Hy_xLOg5i": {
+          "id": "Hy_xLOg5i",
+          "type": "xod/i2c/input-i2c",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "I2C",
+          "description": "I²C bus"
+        },
+        "r1AMIOl9s": {
+          "id": "r1AMIOl9s",
+          "type": "xod/patch-nodes/output-self",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An SDP6x device."
+        }
+      },
+      "path": "@/sdp6x-device",
+      "description": "Create an SDP6x device.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/WaylandM/Sensirion_SDP6x_pressure_sens\"\n\n#include <Wire.h>\n#include <SDP6x.h>\n\nnode {\n    meta {\n        using Type = SDP6xClass*;\n    }\n\n    uint8_t mem[sizeof(SDP6xClass)];\n    \n    void evaluate(Context ctx) {\n        if (!isSettingUp()) return;\n\n        auto wire = getValue<input_I2C>(ctx);\n        auto sf = getValue<input_SF>(ctx);\n\n        Type sensor = new (mem) SDP6xClass(*wire, sf);\n\n        emitValue<output_DEV>(ctx, sensor);\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/set-resolution": {
+      "nodes": {
+        "S1lsece5s": {
+          "id": "S1lsece5s",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "Sksox9g5s": {
+          "id": "Sksox9g5s",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "RES",
+          "description": "Resolution (bits). Options: 9, 10, 11, 12, 13, 14, 15 and 16.  For most applications, Sensirion recommends 12 bit resolution (default setting) in order to combine excellent accuracy with fast response time. After each hard reset or soft reset of the sensor, the default resolution is restored.",
+          "boundLiterals": {
+            "__out__": "12"
+          }
+        },
+        "r1YjZce5s": {
+          "id": "r1YjZce5s",
+          "type": "@/input-sdp6x-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An SDP6x device."
+        },
+        "r1LTZqe5j": {
+          "id": "r1LTZqe5j",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update."
+        },
+        "S1cA-cl5s": {
+          "id": "S1cA-cl5s",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulse on completion."
+        }
+      },
+      "path": "@/set-resolution",
+      "description": "Set resolution of SDP6x sensor. For further information on the resolution of SDP600 series sensors, please see: https://sensirion.com/media/documents/1BA19F23/6166C545/Sensirion_Differential_Pressure_AppNotes_SDP600Series_Changing_Measu.pdf",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n       // The node responds only if there is an input pulse\n       if (!isInputDirty<input_UPD>(ctx))\n           return;\n\n        auto sensor = getValue<input_DEV>(ctx);\n        auto res = getValue<input_RES>(ctx);\n\n        if (res==9) {\n            sensor->SetSensorResolution(RESOLUTION_9BIT);\n            emitValue<output_DONE>(ctx, 1);\n        }\n\n        if (res==10) {\n            sensor->SetSensorResolution(RESOLUTION_10BIT);\n            emitValue<output_DONE>(ctx, 1);\n        }\n\n        if (res==11) {\n            sensor->SetSensorResolution(RESOLUTION_11BIT);\n            emitValue<output_DONE>(ctx, 1);\n        }\n\n        if (res==12) {\n            sensor->SetSensorResolution(RESOLUTION_12BIT);\n            emitValue<output_DONE>(ctx, 1);\n        }\n\n        if (res==13) {\n            sensor->SetSensorResolution(RESOLUTION_13BIT);\n            emitValue<output_DONE>(ctx, 1);\n        }\n\n        if (res==14) {\n            sensor->SetSensorResolution(RESOLUTION_14BIT);\n            emitValue<output_DONE>(ctx, 1);\n        }\n\n        if (res==15) {\n            sensor->SetSensorResolution(RESOLUTION_15BIT);\n            emitValue<output_DONE>(ctx, 1);\n        }\n\n        if (res==16) {\n            sensor->SetSensorResolution(RESOLUTION_16BIT);\n            emitValue<output_DONE>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-pressure-difference": {
+      "nodes": {
+        "S1TJU9eqj": {
+          "id": "S1TJU9eqj",
+          "type": "@/input-sdp6x-device",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An SDP6x device."
+        },
+        "B10e89e9s": {
+          "id": "B10e89e9s",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "SJmfLceqs": {
+          "id": "SJmfLceqs",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update."
+        },
+        "HkhMI9g5i": {
+          "id": "HkhMI9g5i",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulse on read."
+        },
+        "rkJpU5l9o": {
+          "id": "rkJpU5l9o",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "Pa",
+          "description": "Differential pressure in pascal."
+        }
+      },
+      "path": "@/get-pressure-difference",
+      "description": "Read pressure difference.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto sensor = getValue<input_DEV>(ctx);\n        emitValue<output_Pa>(ctx, sensor->GetPressureDiff());\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/differential-pressure-sensor": {
+      "nodes": {
+        "r1Cw3ieqs": {
+          "id": "r1Cw3ieqs",
+          "type": "@/sdp6x-device",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HJIR3sl9i": {
+          "id": "HJIR3sl9i",
+          "type": "@/get-pressure-difference",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rkTI6slqj": {
+          "id": "rkTI6slqj",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "SF",
+          "description": "SCALE FACTOR. N.B. you need to set the scale factor to the appropriate value for your sensor: SDP6xx-500Pa and SDP5xx=60.0; SDP6x0-125Pa=240.0; SDP6x0-25Pa=1200.0.\n",
+          "boundLiterals": {
+            "__out__": "60.0"
+          }
+        },
+        "H1rR0ol9s": {
+          "id": "H1rR0ol9s",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "Pa",
+          "description": "Differential pressure in pascal."
+        },
+        "BkHJJneqi": {
+          "id": "BkHJJneqi",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulse on read."
+        },
+        "B1Er12e9i": {
+          "id": "B1Er12e9i",
+          "type": "xod/i2c/input-i2c",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "I2C",
+          "description": "I²C bus"
+        },
+        "BJQNgAe9i": {
+          "id": "BJQNgAe9i",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update."
+        }
+      },
+      "links": {
+        "HkGwasgcj": {
+          "id": "HkGwasgcj",
+          "output": {
+            "nodeId": "rkTI6slqj",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "r1Cw3ieqs",
+            "pinKey": "Bk42E_l9o"
+          }
+        },
+        "S1pRAjg5o": {
+          "id": "S1pRAjg5o",
+          "output": {
+            "nodeId": "HJIR3sl9i",
+            "pinKey": "rkJpU5l9o"
+          },
+          "input": {
+            "nodeId": "H1rR0ol9s",
+            "pinKey": "__in__"
+          }
+        },
+        "SyFy13g9s": {
+          "id": "SyFy13g9s",
+          "output": {
+            "nodeId": "HJIR3sl9i",
+            "pinKey": "HkhMI9g5i"
+          },
+          "input": {
+            "nodeId": "BkHJJneqi",
+            "pinKey": "__in__"
+          }
+        },
+        "rJDrJheco": {
+          "id": "rJDrJheco",
+          "output": {
+            "nodeId": "B1Er12e9i",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "r1Cw3ieqs",
+            "pinKey": "Hy_xLOg5i"
+          }
+        },
+        "H1KGl0x9s": {
+          "id": "H1KGl0x9s",
+          "output": {
+            "nodeId": "r1Cw3ieqs",
+            "pinKey": "r1AMIOl9s"
+          },
+          "input": {
+            "nodeId": "HJIR3sl9i",
+            "pinKey": "S1TJU9eqj"
+          }
+        },
+        "By5ElRe5s": {
+          "id": "By5ElRe5s",
+          "output": {
+            "nodeId": "BJQNgAe9i",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJIR3sl9i",
+            "pinKey": "SJmfLceqs"
+          }
+        }
+      },
+      "path": "@/differential-pressure-sensor",
+      "description": "Combines low level nodes to create a simple differential pressure sensor."
+    },
+    "@/01-example-quick-start": {
+      "nodes": {
+        "HJT7J2e5s": {
+          "id": "HJT7J2e5s",
+          "type": "@/differential-pressure-sensor",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "ryc8y2g5o": {
+          "id": "ryc8y2g5o",
+          "type": "xod/core/clock",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B13SCNhl-": "0.1"
+          }
+        },
+        "ry8P13ecs": {
+          "id": "ry8P13ecs",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        },
+        "ByS_12x5i": {
+          "id": "ByS_12x5i",
+          "type": "xod/core/count",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "BJLKy2e9j": {
+          "id": "BJLKy2e9j",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "S1tDJnl5o": {
+          "id": "S1tDJnl5o",
+          "output": {
+            "nodeId": "HJT7J2e5s",
+            "pinKey": "H1rR0ol9s"
+          },
+          "input": {
+            "nodeId": "ry8P13ecs",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "HJ5uy3xcj": {
+          "id": "HJ5uy3xcj",
+          "output": {
+            "nodeId": "HJT7J2e5s",
+            "pinKey": "BkHJJneqi"
+          },
+          "input": {
+            "nodeId": "ByS_12x5i",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "Sk5Fy2g9s": {
+          "id": "Sk5Fy2g9s",
+          "output": {
+            "nodeId": "ByS_12x5i",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "BJLKy2e9j",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "HJQDl0gqo": {
+          "id": "HJQDl0gqo",
+          "output": {
+            "nodeId": "ryc8y2g5o",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "HJT7J2e5s",
+            "pinKey": "BJQNgAe9i"
+          }
+        }
+      },
+      "path": "@/01-example-quick-start",
+      "description": "Patch to demonstrate basic usage of differential pressure sensor. Run in debugger."
+    },
+    "@/02-example-change-resolution": {
+      "nodes": {
+        "rJn-Z0l9j": {
+          "id": "rJn-Z0l9j",
+          "type": "@/sdp6x-device",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SJaf-Re5j": {
+          "id": "SJaf-Re5j",
+          "type": "@/set-resolution",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BJbmZ0g9j": {
+          "id": "BJbmZ0g9j",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "S18E-Cl9j": {
+          "id": "S18E-Cl9j",
+          "type": "@/get-pressure-difference",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "S1QHb0gqo": {
+          "id": "S1QHb0gqo",
+          "type": "xod/debug/tweak-number",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ByfGSDjQE": "16"
+          }
+        },
+        "rJD8-Rg9j": {
+          "id": "rJD8-Rg9j",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SyzwZ0xqi": {
+          "id": "SyzwZ0xqi",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "B11F-Ax9j": {
+          "id": "B11F-Ax9j",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "rJ0YWRl9s": {
+          "id": "rJ0YWRl9s",
+          "type": "xod/core/count",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "BkI5WCl5o": {
+          "id": "BkI5WCl5o",
+          "type": "xod/core/count",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "Sy-jWRgco": {
+          "id": "Sy-jWRgco",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        },
+        "rkcob0x5i": {
+          "id": "rkcob0x5i",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        },
+        "BJ5hbAgqj": {
+          "id": "BJ5hbAgqj",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "B1iQbRecj": {
+          "id": "B1iQbRecj",
+          "output": {
+            "nodeId": "rJn-Z0l9j",
+            "pinKey": "r1AMIOl9s"
+          },
+          "input": {
+            "nodeId": "BJbmZ0g9j",
+            "pinKey": "__in__"
+          }
+        },
+        "B1oVWCg5o": {
+          "id": "B1oVWCg5o",
+          "output": {
+            "nodeId": "rJn-Z0l9j",
+            "pinKey": "r1AMIOl9s"
+          },
+          "input": {
+            "nodeId": "SJaf-Re5j",
+            "pinKey": "r1YjZce5s"
+          }
+        },
+        "BJbLW0e5s": {
+          "id": "BJbLW0e5s",
+          "output": {
+            "nodeId": "S1QHb0gqo",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "SJaf-Re5j",
+            "pinKey": "Sksox9g5s"
+          }
+        },
+        "Sya8bCl9s": {
+          "id": "Sya8bCl9s",
+          "output": {
+            "nodeId": "rJD8-Rg9j",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "SJaf-Re5j",
+            "pinKey": "r1LTZqe5j"
+          }
+        },
+        "rJuDWAeci": {
+          "id": "rJuDWAeci",
+          "output": {
+            "nodeId": "SyzwZ0xqi",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "S18E-Cl9j",
+            "pinKey": "SJmfLceqs"
+          }
+        },
+        "BycF-Ag5j": {
+          "id": "BycF-Ag5j",
+          "output": {
+            "nodeId": "B11F-Ax9j",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "S18E-Cl9j",
+            "pinKey": "S1TJU9eqj"
+          }
+        },
+        "rJQqbCg9j": {
+          "id": "rJQqbCg9j",
+          "output": {
+            "nodeId": "SJaf-Re5j",
+            "pinKey": "S1cA-cl5s"
+          },
+          "input": {
+            "nodeId": "rJ0YWRl9s",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "Hy2cWAx5o": {
+          "id": "Hy2cWAx5o",
+          "output": {
+            "nodeId": "S18E-Cl9j",
+            "pinKey": "HkhMI9g5i"
+          },
+          "input": {
+            "nodeId": "BkI5WCl5o",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "S1UsbRx5s": {
+          "id": "S1UsbRx5s",
+          "output": {
+            "nodeId": "rJ0YWRl9s",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "Sy-jWRgco",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "S1y3WAxqj": {
+          "id": "S1y3WAxqj",
+          "output": {
+            "nodeId": "S18E-Cl9j",
+            "pinKey": "rkJpU5l9o"
+          },
+          "input": {
+            "nodeId": "rkcob0x5i",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "SJ6nZ0g9j": {
+          "id": "SJ6nZ0g9j",
+          "output": {
+            "nodeId": "BkI5WCl5o",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "BJ5hbAgqj",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/02-example-change-resolution",
+      "description": "Patch to demonstrate how to set the resolution of the sensor. For more information on the resolution of SDP600 series sensors, please see: https://sensirion.com/media/documents/1BA19F23/6166C545/Sensirion_Differential_Pressure_AppNotes_SDP600Series_Changing_Measu.pdf"
+    }
+  },
+  "license": "GNU General Public License v3.0",
+  "version": "0.0.2",
+  "description": "Library for Sensirion SDP6x differential pressure sensors, including the SDP610. Wraps a modified version of https://github.com/EngineerTony/Sensirion_SDP6x_pressure_sens. Data sheet: https://sensirion.com/media/documents/63859DD0/6166CF0E/Sensirion_Differential_Pressure_Datasheet_SDP600Series.pdf",
+  "name": "sdp6x-pressure-sensor"
+}

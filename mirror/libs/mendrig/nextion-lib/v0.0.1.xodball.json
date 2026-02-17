@@ -1,0 +1,926 @@
+{
+  "description": "use \"Nextion-Displays\" with XoD and Serial an Arduino-Mega\n",
+  "license": "Testing Library",
+  "name": "nextion-lib",
+  "patches": {
+    "@/nextion-read": {
+      "attachments": [
+        {
+          "content": "\nstruct State \n{\n     bool begun;\n     ConcatListView<char> view;\n   };\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_DUMP>(ctx))\n        return;\n  \n    State* state = getState(ctx);\n    if (!state->begun) \n    {\n        Serial2.begin(9600);\n        state->begun = true;\n    }\n    \n     auto inValue = getValue<input_INSTR>(ctx);\n    \n    \n     Number zaehler;\n     Number byte;\n      \n        ;\n    \n     // while (Serial2.available()) // bleibt hängen wenn nicht ausgelesen\n    if (Serial2.available())  \n    {\n        zaehler += 1;\n        byte = Serial2.read();\n     }   \n    \n     \n         // get the new byte:\n        //auto inChar = (char)Serial2.read();\n        // add it to the inputString:\n         \n        //state->view = ConcatListView<char>(inputString, inChar);\n        // if the incoming character is a newline, set a flag so the main loop can\n        // do something about it:\n        /*\n         if (inChar == '\\n') \n        {\n        stringComplete = true;\n        }\n       //\n      inputString = \"Kommt was an \\n\"; \n       }\n       */\n    \n     state->view = ConcatListView<char>(inValue, inValue);\n    inValue = XString(&state->view);  // Zusammengebauten String in Variable schreiben\n    \n    \n    emitValue<output_RECIEVED>(ctx, inValue);\n    emitValue<output_ANZ>(ctx, zaehler);\n    emitValue<output_BIT>(ctx, byte);\n    emitValue<output_DONE>(ctx, true);\n    \n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "H1dUNtCQM": {
+          "boundValues": {
+            "__in__": false
+          },
+          "description": "Pulses once the delay is over",
+          "id": "H1dUNtCQM",
+          "label": "DONE",
+          "position": {
+            "x": 408,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HkEAcHR7f": {
+          "id": "HkEAcHR7f",
+          "label": "DUMP",
+          "position": {
+            "x": 340,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkfbiHA7G": {
+          "id": "HkfbiHA7G",
+          "label": "RECIEVED",
+          "position": {
+            "x": 340,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "Hkvnr2yEG": {
+          "id": "Hkvnr2yEG",
+          "label": "BIT",
+          "position": {
+            "x": 510,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HkxdmYA7f": {
+          "boundValues": {
+            "__out__": "Leer"
+          },
+          "id": "HkxdmYA7f",
+          "label": "INSTR",
+          "position": {
+            "x": 510,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "S1qAO5JVG": {
+          "id": "S1qAO5JVG",
+          "label": "ANZ",
+          "position": {
+            "x": 476,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rk67iH0QG": {
+          "id": "rk67iH0QG",
+          "position": {
+            "x": 340,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/nextion-read"
+    },
+    "@/nextion-read-byte": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    //auto inValue = getValue<input_IN>(ctx);\n    Number Check = 254;\n    Number byte;\n    if (getValue<input_DATA>(ctx))\n    {\n        Check = 1;\n    } \n    \n    if (Serial2.available())  \n    {\n        byte = Serial2.read();\n    }  \n    \n       \n    \n    emitValue<output_CHECK>(ctx, Check);\n    emitValue<output_BYTE>(ctx, byte);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "HyzObC1NG": {
+          "id": "HyzObC1NG",
+          "label": "DATA",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "Sy4FW0k4M": {
+          "id": "Sy4FW0k4M",
+          "label": "CHECK",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rJqWACJ4M": {
+          "id": "rJqWACJ4M",
+          "label": "BYTE",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rkaFZCJEG": {
+          "id": "rkaFZCJEG",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/nextion-read-byte"
+    },
+    "@/nextion-read-wait": {
+      "attachments": [
+        {
+          "content": "\nstruct State \n{\n    bool begun;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    //auto inValue = getValue<input_IN>(ctx);\n    \n    \n    \n    if (!isInputDirty<input_DUMP>(ctx))\n        return;\n  \n    State* state = getState(ctx);\n    if (!state->begun) \n    {\n        Serial2.begin(9600);\n        state->begun = true;\n    }\n    \n    Number Check = 255;\n    \n    if (Serial2.available())  \n    {\n        Check = 1;\n        emitValue<output_DATA>(ctx, true);\n    }\n    else\n    {\n        Check = 0;\n         emitValue<output_DATA>(ctx, false);\n    }    \n\n    //emitValue<output_OUT>(ctx, inValue);\n    emitValue<output_CHECK>(ctx, Check);\n    emitValue<output_DONE>(ctx, true);\n\n}\n\n\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1Bgj6JNM": {
+          "description": "Check for data on Serial2",
+          "id": "B1Bgj6JNM",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJTIkR1VM": {
+          "description": "true if data avaliable",
+          "id": "SJTIkR1VM",
+          "label": "DATA",
+          "position": {
+            "x": 170,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "SyBw3akNz": {
+          "description": "Data @ Serial2 ?   1 = Yes   0 = No 255 = Error",
+          "id": "SyBw3akNz",
+          "label": "CHECK",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ryGbopk4M": {
+          "boundValues": {
+            "__in__": false
+          },
+          "description": "Pulses once ...is over",
+          "id": "ryGbopk4M",
+          "label": "DONE",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ryaysaJVz": {
+          "id": "ryaysaJVz",
+          "label": "DUMP",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/nextion-read-wait"
+    },
+    "@/nextion-event-touch-core": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto EventArt = getValue<input_ART>(ctx);\n    auto byte = getValue<input_BYTE>(ctx);\n    Number page = 255;\n    Number component = 255 ;\n    Number pressed = 255;\n    Number end = 254;\n    \n    \n    if ( byte == 101) //Touch-Event\n    {\n       page = Serial2.read();\n       component = Serial2.read();\n       pressed = Serial2.read();\n    }\n     end = Serial2.read();\n     end = Serial2.read();\n     end = Serial2.read();\n    \n   emitValue<output_EVENT>(ctx, EventArt);\n   emitValue<output_PAGE>(ctx, page);\n   emitValue<output_COMP>(ctx, component);\n   emitValue<output_PRESS>(ctx, pressed);\n}\n"
+        }
+      ],
+      "nodes": {
+        "BJDvMJxNM": {
+          "description": "Core script for \"nextion-event\"",
+          "id": "BJDvMJxNM",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Bkc1pkeEz": {
+          "id": "Bkc1pkeEz",
+          "label": "COMP",
+          "position": {
+            "x": 170,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "H12czJeNG": {
+          "id": "H12czJeNG",
+          "label": "PRESS",
+          "position": {
+            "x": 238,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HyYtMkx4M": {
+          "id": "HyYtMkx4M",
+          "label": "PAGE",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SJqHzJeEf": {
+          "id": "SJqHzJeEf",
+          "label": "BYTE",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJD_MJgNf": {
+          "id": "rJD_MJgNf",
+          "label": "EVENT",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "rJFNxxl4M": {
+          "boundValues": {
+            "__out__": ""
+          },
+          "id": "rJFNxxl4M",
+          "label": "ART",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string"
+        }
+      },
+      "path": "@/nextion-event-touch-core"
+    },
+    "@/nextion-event": {
+      "nodes": {
+        "SJJM-GeNG": {
+          "id": "SJJM-GeNG",
+          "position": {
+            "x": 136,
+            "y": 510
+          },
+          "type": "xod/core/watch"
+        },
+        "HklJM-MgVf": {
+          "id": "HklJM-MgVf",
+          "position": {
+            "x": 34,
+            "y": 510
+          },
+          "type": "xod/core/watch"
+        },
+        "rkWyM-MlNf": {
+          "boundValues": {
+            "BkXgEyeNG": "Touch",
+            "Hk64legEM": "wait",
+            "rJFNxxl4M": "Touch"
+          },
+          "id": "rkWyM-MlNf",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "@/nextion-event-touch-core"
+        },
+        "SyMkMWMl4G": {
+          "id": "SyMkMWMl4G",
+          "position": {
+            "x": 102,
+            "y": 510
+          },
+          "type": "xod/core/watch"
+        },
+        "BkQyz-zgVM": {
+          "id": "BkQyz-zgVM",
+          "position": {
+            "x": 68,
+            "y": 510
+          },
+          "type": "xod/core/watch"
+        },
+        "HyN1GbflVz": {
+          "id": "HyN1GbflVz",
+          "type": "xod/core/if-else-string",
+          "position": {
+            "x": 170,
+            "y": 102
+          },
+          "boundValues": {
+            "H1k6ksgA-": "Touch",
+            "S151eoeAW": "warte"
+          }
+        },
+        "B1rJz-fxNM": {
+          "id": "B1rJz-fxNM",
+          "type": "xod/core/equal",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "description": "Read an command from the Nextion display , and checks \"Touch-Event\"\n\n\nCommand will end with \n0xff 0xff 0xff\n\nSerial2 is used!!!",
+          "boundValues": {
+            "HJG8C_SPkb": 101
+          }
+        },
+        "ryIyMZzlVf": {
+          "id": "ryIyMZzlVf",
+          "type": "xod/core/equal",
+          "position": {
+            "x": 306,
+            "y": 306
+          },
+          "boundValues": {
+            "HJG8C_SPkb": 0
+          }
+        },
+        "S1v1zWzxEz": {
+          "id": "S1v1zWzxEz",
+          "type": "xod/core/if-else-string",
+          "position": {
+            "x": 306,
+            "y": 408
+          },
+          "boundValues": {
+            "H1k6ksgA-": "release",
+            "S151eoeAW": ""
+          }
+        },
+        "r1OJMWzeNz": {
+          "id": "r1OJMWzeNz",
+          "type": "xod/core/equal",
+          "position": {
+            "x": 408,
+            "y": 306
+          },
+          "boundValues": {
+            "HJG8C_SPkb": 1
+          }
+        },
+        "r1tyz-fe4G": {
+          "id": "r1tyz-fe4G",
+          "type": "xod/core/if-else-string",
+          "position": {
+            "x": 408,
+            "y": 408
+          },
+          "boundValues": {
+            "H1k6ksgA-": "press",
+            "S151eoeAW": ""
+          }
+        },
+        "HyqyzbGgNG": {
+          "id": "HyqyzbGgNG",
+          "type": "xod/core/concat",
+          "position": {
+            "x": 204,
+            "y": 510
+          }
+        },
+        "BkPNWzxNM": {
+          "id": "BkPNWzxNM",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "label": "BYTE"
+        },
+        "SyEdZMx4z": {
+          "id": "SyEdZMx4z",
+          "type": "xod/patch-nodes/output-string",
+          "position": {
+            "x": 68,
+            "y": 612
+          },
+          "label": "EVENT"
+        },
+        "r1puZMlEf": {
+          "id": "r1puZMlEf",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 102,
+            "y": 612
+          },
+          "label": "PAGE"
+        },
+        "r1FFZGgVM": {
+          "id": "r1FFZGgVM",
+          "type": "xod/patch-nodes/output-string",
+          "position": {
+            "x": 170,
+            "y": 612
+          },
+          "label": "PRESS"
+        },
+        "HkgYYbzgEf": {
+          "id": "HkgYYbzgEf",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 136,
+            "y": 612
+          },
+          "label": "COMP"
+        }
+      },
+      "links": {
+        "HkokM-MlNM": {
+          "id": "HkokM-MlNM",
+          "input": {
+            "nodeId": "SyMkMWMl4G",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rkWyM-MlNf",
+            "pinKey": "Bkc1pkeEz"
+          }
+        },
+        "B13JzZzlNf": {
+          "id": "B13JzZzlNf",
+          "input": {
+            "nodeId": "BkQyz-zgVM",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rkWyM-MlNf",
+            "pinKey": "HyYtMkx4M"
+          }
+        },
+        "BkakMbMgVM": {
+          "id": "BkakMbMgVM",
+          "input": {
+            "nodeId": "HklJM-MgVf",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rkWyM-MlNf",
+            "pinKey": "rJD_MJgNf"
+          }
+        },
+        "HkAyGWGlNz": {
+          "id": "HkAyGWGlNz",
+          "output": {
+            "nodeId": "HyN1GbflVz",
+            "pinKey": "rkPlxjg0W"
+          },
+          "input": {
+            "nodeId": "rkWyM-MlNf",
+            "pinKey": "rJFNxxl4M"
+          }
+        },
+        "H1kxkzWMg4G": {
+          "id": "H1kxkzWMg4G",
+          "output": {
+            "nodeId": "B1rJz-fxNM",
+            "pinKey": "H1E8AuSPkZ"
+          },
+          "input": {
+            "nodeId": "HyN1GbflVz",
+            "pinKey": "H1SnkoxC-"
+          }
+        },
+        "HyglkGWfg4G": {
+          "id": "HyglkGWfg4G",
+          "output": {
+            "nodeId": "rkWyM-MlNf",
+            "pinKey": "H12czJeNG"
+          },
+          "input": {
+            "nodeId": "ryIyMZzlVf",
+            "pinKey": "rJXICuSwyW"
+          }
+        },
+        "BJWgyzbGxEz": {
+          "id": "BJWgyzbGxEz",
+          "output": {
+            "nodeId": "rkWyM-MlNf",
+            "pinKey": "H12czJeNG"
+          },
+          "input": {
+            "nodeId": "r1OJMWzeNz",
+            "pinKey": "rJXICuSwyW"
+          }
+        },
+        "Skzg1zWzeEf": {
+          "id": "Skzg1zWzeEf",
+          "output": {
+            "nodeId": "ryIyMZzlVf",
+            "pinKey": "H1E8AuSPkZ"
+          },
+          "input": {
+            "nodeId": "S1v1zWzxEz",
+            "pinKey": "H1SnkoxC-"
+          }
+        },
+        "B1Qe1GWMxEG": {
+          "id": "B1Qe1GWMxEG",
+          "output": {
+            "nodeId": "r1OJMWzeNz",
+            "pinKey": "H1E8AuSPkZ"
+          },
+          "input": {
+            "nodeId": "r1tyz-fe4G",
+            "pinKey": "H1SnkoxC-"
+          }
+        },
+        "BkExkGbGlVM": {
+          "id": "BkExkGbGlVM",
+          "output": {
+            "nodeId": "S1v1zWzxEz",
+            "pinKey": "rkPlxjg0W"
+          },
+          "input": {
+            "nodeId": "HyqyzbGgNG",
+            "pinKey": "Hkqu9oaWb"
+          }
+        },
+        "H1rgJGZGxEf": {
+          "id": "H1rgJGZGxEf",
+          "output": {
+            "nodeId": "r1tyz-fe4G",
+            "pinKey": "rkPlxjg0W"
+          },
+          "input": {
+            "nodeId": "HyqyzbGgNG",
+            "pinKey": "BkeKcj6ZZ"
+          }
+        },
+        "SyUlJM-MlVG": {
+          "id": "SyUlJM-MlVG",
+          "output": {
+            "nodeId": "HyqyzbGgNG",
+            "pinKey": "rksccsp-W"
+          },
+          "input": {
+            "nodeId": "SJJM-GeNG",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "H1_SWGgEG": {
+          "id": "H1_SWGgEG",
+          "output": {
+            "nodeId": "BkPNWzxNM",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rkWyM-MlNf",
+            "pinKey": "SJqHzJeEf"
+          }
+        },
+        "Sk5p-GxVM": {
+          "id": "Sk5p-GxVM",
+          "output": {
+            "nodeId": "rkWyM-MlNf",
+            "pinKey": "rJD_MJgNf"
+          },
+          "input": {
+            "nodeId": "SyEdZMx4z",
+            "pinKey": "__in__"
+          }
+        },
+        "Sk0a-fxVf": {
+          "id": "Sk0a-fxVf",
+          "output": {
+            "nodeId": "rkWyM-MlNf",
+            "pinKey": "HyYtMkx4M"
+          },
+          "input": {
+            "nodeId": "r1puZMlEf",
+            "pinKey": "__in__"
+          }
+        },
+        "HyQA-fe4z": {
+          "id": "HyQA-fe4z",
+          "output": {
+            "nodeId": "rkWyM-MlNf",
+            "pinKey": "Bkc1pkeEz"
+          },
+          "input": {
+            "nodeId": "HkgYYbzgEf",
+            "pinKey": "__in__"
+          }
+        },
+        "SyuA-MxEf": {
+          "id": "SyuA-MxEf",
+          "output": {
+            "nodeId": "HyqyzbGgNG",
+            "pinKey": "rksccsp-W"
+          },
+          "input": {
+            "nodeId": "r1FFZGgVM",
+            "pinKey": "__in__"
+          }
+        },
+        "rJozMzlNM": {
+          "id": "rJozMzlNM",
+          "output": {
+            "nodeId": "BkPNWzxNM",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "B1rJz-fxNM",
+            "pinKey": "rJXICuSwyW"
+          }
+        }
+      },
+      "path": "@/nextion-event"
+    },
+    "@/nextion-serial-write": {
+      "attachments": [
+        {
+          "content": "struct State {\n    bool begun;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_DUMP>(ctx))\n        return;\n\n    State* state = getState(ctx);\n    if (!state->begun) {\n        Serial2.begin(9600);\n        state->begun = true;\n    }\n\n    auto line = getValue<input_LINE>(ctx);\n\n    for (auto it = line->iterate(); it; ++it)\n        Serial2.write((char)*it);\n    Serial2.write(0xff);\n    Serial2.write(0xff);\n    Serial2.write(0xff);\n    Serial2.flush();  // programm waits until all data is written to serial\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Outputs an command to the Nextion display .\n\n\nCommand will end with \n0xff 0xff 0xff\n\nSerial2 is used!!!",
+      "nodes": {
+        "SJlpkG7n7M": {
+          "id": "SJlpkG7n7M",
+          "label": "DUMP",
+          "position": {
+            "x": 238,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SypZfX27G": {
+          "id": "SypZfX27G",
+          "position": {
+            "x": 170,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJakM7nmM": {
+          "description": "Command for the Nextion display",
+          "id": "rJakM7nmM",
+          "label": "LINE",
+          "position": {
+            "x": 102,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-string"
+        }
+      },
+      "path": "@/nextion-serial-write"
+    },
+    "@/nextion-all-examples": {
+      "nodes": {
+        "SJxPYOzEG": {
+          "id": "SJxPYOzEG",
+          "position": {
+            "x": 204,
+            "y": 102
+          },
+          "type": "@/nextion-read-wait"
+        },
+        "ryllPY_zNf": {
+          "id": "ryllPY_zNf",
+          "position": {
+            "x": 306,
+            "y": 306
+          },
+          "type": "xod/core/watch"
+        },
+        "BJfgDFOz4G": {
+          "id": "BJfgDFOz4G",
+          "position": {
+            "x": 272,
+            "y": 204
+          },
+          "type": "@/nextion-read-byte"
+        },
+        "B1XevtOzNG": {
+          "id": "B1XevtOzNG",
+          "position": {
+            "x": 272,
+            "y": 306
+          },
+          "type": "xod/core/watch"
+        },
+        "SyNevF_GNM": {
+          "id": "SyNevF_GNM",
+          "position": {
+            "x": 238,
+            "y": 204
+          },
+          "type": "xod/core/watch"
+        },
+        "HJrxwFOM4z": {
+          "id": "HJrxwFOM4z",
+          "type": "@/nextion-event",
+          "position": {
+            "x": 374,
+            "y": 306
+          }
+        },
+        "HkLewFOMEf": {
+          "id": "HkLewFOMEf",
+          "position": {
+            "x": 476,
+            "y": 408
+          },
+          "type": "xod/core/watch"
+        },
+        "r1PlPY_fNM": {
+          "id": "r1PlPY_fNM",
+          "position": {
+            "x": 374,
+            "y": 408
+          },
+          "type": "xod/core/watch"
+        },
+        "BJdgvK_MEz": {
+          "id": "BJdgvK_MEz",
+          "position": {
+            "x": 442,
+            "y": 408
+          },
+          "type": "xod/core/watch"
+        },
+        "SkFgDKuM4f": {
+          "id": "SkFgDKuM4f",
+          "position": {
+            "x": 408,
+            "y": 408
+          },
+          "type": "xod/core/watch"
+        },
+        "Bka7quGEz": {
+          "boundValues": {
+            "rJakM7nmM": "dim=20"
+          },
+          "description": "\n",
+          "id": "Bka7quGEz",
+          "position": {
+            "x": 0,
+            "y": 102
+          },
+          "type": "@/nextion-serial-write"
+        }
+      },
+      "links": {
+        "HyclwYdfVM": {
+          "id": "HyclwYdfVM",
+          "input": {
+            "nodeId": "B1XevtOzNG",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BJfgDFOz4G",
+            "pinKey": "Sy4FW0k4M"
+          }
+        },
+        "rkilDFdGEf": {
+          "id": "rkilDFdGEf",
+          "input": {
+            "nodeId": "BJfgDFOz4G",
+            "pinKey": "HyzObC1NG"
+          },
+          "output": {
+            "nodeId": "SJxPYOzEG",
+            "pinKey": "SJTIkR1VM"
+          }
+        },
+        "SJnewFuM4M": {
+          "id": "SJnewFuM4M",
+          "input": {
+            "nodeId": "SyNevF_GNM",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "SJxPYOzEG",
+            "pinKey": "SyBw3akNz"
+          }
+        },
+        "B1Tewtdf4f": {
+          "id": "B1Tewtdf4f",
+          "input": {
+            "nodeId": "ryllPY_zNf",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BJfgDFOz4G",
+            "pinKey": "rJqWACJ4M"
+          }
+        },
+        "HyCgDY_zVz": {
+          "id": "HyCgDY_zVz",
+          "output": {
+            "nodeId": "HJrxwFOM4z",
+            "pinKey": "SyEdZMx4z"
+          },
+          "input": {
+            "nodeId": "r1PlPY_fNM",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "S1yllPYuGVG": {
+          "id": "S1yllPYuGVG",
+          "output": {
+            "nodeId": "HJrxwFOM4z",
+            "pinKey": "r1puZMlEf"
+          },
+          "input": {
+            "nodeId": "SkFgDKuM4f",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "SylgevFuGNM": {
+          "id": "SylgevFuGNM",
+          "output": {
+            "nodeId": "HJrxwFOM4z",
+            "pinKey": "HkgYYbzgEf"
+          },
+          "input": {
+            "nodeId": "BJdgvK_MEz",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "Sy-gxPK_M4z": {
+          "id": "Sy-gxPK_M4z",
+          "output": {
+            "nodeId": "HJrxwFOM4z",
+            "pinKey": "r1FFZGgVM"
+          },
+          "input": {
+            "nodeId": "HkLewFOMEf",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "rJGxevtOzEf": {
+          "id": "rJGxevtOzEf",
+          "output": {
+            "nodeId": "BJfgDFOz4G",
+            "pinKey": "rJqWACJ4M"
+          },
+          "input": {
+            "nodeId": "HJrxwFOM4z",
+            "pinKey": "BkPNWzxNM"
+          }
+        }
+      },
+      "comments": {
+        "HyZdiuG4f": {
+          "id": "HyZdiuG4f",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "size": {
+            "width": 136,
+            "height": 51
+          },
+          "content": "Sending a command to the display"
+        },
+        "HJB9sOGNf": {
+          "id": "HJB9sOGNf",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "size": {
+            "width": 136,
+            "height": 51
+          },
+          "content": "Check a touch-event from the display"
+        },
+        "SkoCo_M4M": {
+          "id": "SkoCo_M4M",
+          "position": {
+            "x": 102,
+            "y": 306
+          },
+          "size": {
+            "width": 136,
+            "height": 153
+          },
+          "content": "Use the debug mode to see changes in \"watch\""
+        }
+      },
+      "path": "@/nextion-all-examples"
+    }
+  },
+  "version": "0.0.1"
+}

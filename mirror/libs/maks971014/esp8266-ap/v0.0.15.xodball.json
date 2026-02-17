@@ -1,0 +1,820 @@
+{
+  "apiKey": "6e72187b-7392-4728-9d9f-1fe386ae9cd2",
+  "description": "нестабильно работает udp  для сервера, но клиент уже в порядке, правда тоже через раз, буду решать проблемы с подлючением, все же xod имеет много багов и не может полностью убрать разного рода проблемы",
+  "license": "Russun",
+  "name": "esp8266-ap",
+  "patches": {
+    "@/esp-ap": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD error_raise enable\n\n// clang-format off\n{{#global}}\n#include <ESP8266WiFi.h>\n#include <WiFiUdp.h>\nWiFiUDP udp;\nunsigned int localPort = 2000;\nIPAddress ServerIP(192, 168, 4, 1);//задали IP адрес для AP\nIPAddress ClientIP(192, 168, 4, 2);//задали IP адрес для STA\n{{/global}}\n// clang-format on\n\n\n\nstruct State {\n    uint16_t rechecksLeft;\n};\n\n// clang-format off\n{{ GENERATED_CODE }}\n// clang-format on\n\nvoid evaluate(Context ctx) {\n    auto device = getValue<input_DEV>(ctx);\n    auto state = getState(ctx);\n\n    if (isInputDirty<input_CONN>(ctx)) {\n        auto ssid = getValue<input_SSID>(ctx);\n        auto ssidLength = length(ssid);\n        char _ssid[ssidLength + 1];\n        dump(ssid, _ssid);\n        _ssid[ssidLength] = '\\0';\n\n        auto password = getValue<input_PWD>(ctx);\n        auto passwordLength = length(password);\n        char _password[passwordLength + 1];\n        dump(password, _password);\n        _password[passwordLength] = '\\0';\n        auto channel = getValue<input_channel>(ctx);\n        Serial.println(\"Start Wi-fi\");\n        /* Explicitly set the ESP8266 to be a WiFi-client, otherwise, it by default,\n           would try to act as both a client and an access-point and could cause\n           network-issues with your other WiFi-devices on your WiFi-network. */\n        WiFi.mode(WIFI_AP);\n        WiFi.begin(_ssid, _password);\n        Serial.println(\"Start UDP\");\n        udp.begin(localPort);\n        delay(10000);\n        } else {\n            emitValue<output_DONE>(ctx, true);\n            // DEV and INET are both actually just a pointer to WiFi from ESP8266WiFi.h\n            emitValue<output_INET>(ctx, (ValueType<output_INET>::T)device);\n        }\n    }\n\n"
+        }
+      ],
+      "nodes": {
+        "BJ7Eaa76GI": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Establish the connection",
+          "id": "BJ7Eaa76GI",
+          "label": "CONN",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1xEapmafU": {
+          "description": "Name of the Wi-Fi network",
+          "id": "H1xEapmafU",
+          "label": "SSID",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Hk-NT6QTG8": {
+          "description": "An ESP8266-based MCU",
+          "id": "Hk-NT6QTG8",
+          "label": "DEV",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod-dev/esp8266-mcu/input-esp8266-mcu-device"
+        },
+        "HkW0pQ6f8": {
+          "description": "An internet connection",
+          "id": "HkW0pQ6f8",
+          "label": "INET",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod-dev/esp8266-mcu/output-esp8266-mcu-inet"
+        },
+        "Hkl-AaQpf8": {
+          "description": "Pulses on a successful connection\n",
+          "id": "Hkl-AaQpf8",
+          "label": "DONE",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HyNapm6fL": {
+          "description": "Wi-Fi network password",
+          "id": "HyNapm6fL",
+          "label": "PWD",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "S1GiaQaM8": {
+          "id": "S1GiaQaM8",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJhJJVTML": {
+          "description": "канал связи",
+          "id": "SJhJJVTML",
+          "label": "channel",
+          "position": {
+            "x": 13,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/esp-ap"
+    },
+    "@/esp-sta": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD error_raise enable\n\n// clang-format off\n{{#global}}\n#include <ESP8266WiFi.h>\n#include <WiFiUdp.h>\n\nunsigned int localPort = 2000; // local port to listen for UDP packets\nIPAddress ServerIP(192, 168, 4, 1);\nIPAddress ClientIP(192, 168, 4, 2);\nWiFiUDP udp;\n\n{{/global}}\n// clang-format on\n\n//const uint8_t RECEHCK_DURATION_MS = 1000;\n\nstruct State {\n //  uint16_t rechecksLeft;\n};\n\n// clang-format off\n{{ GENERATED_CODE }}\n// clang-format on\n\nvoid evaluate(Context ctx) {\n    \n    \n    auto device = getValue<input_DEV>(ctx);\n   // auto state = getState(ctx);\n    Serial.println(\"Start wi-fi\");\n    if (isInputDirty<input_CONN>(ctx)) {\n        //udp.begin(localPort);\n        auto ssid = getValue<input_SSID>(ctx);\n        auto ssidLength = length(ssid);\n        char _ssid[ssidLength + 1];\n        dump(ssid, _ssid);\n        _ssid[ssidLength] = '\\0';\n\n        auto password = getValue<input_PWD>(ctx);\n        auto passwordLength = length(password);\n        char _password[passwordLength + 1];\n        dump(password, _password);\n        _password[passwordLength] = '\\0';\n\n        /* Explicitly set the ESP8266 to be a WiFi-client, otherwise, it by default,\n           would try to act as both a client and an access-point and could cause\n           network-issues with your other WiFi-devices on your WiFi-network. \n        device->mode(WIFI_STA);\n        device->begin(_ssid, _password);*/\n        WiFi.mode(WIFI_STA);\n        WiFi.begin(_ssid, _password);\n    }\n    while(WiFi.status() != WL_CONNECTED){Serial.println(\".\");delay(500);}\n    emitValue<output_DONE>(ctx, true);\n    \n    Serial.print(\"SSID \");\n    Serial.print(\"PASSWORD \");}\n    /*\n        auto timeout = getValue<input_TO>(ctx);\n        state->rechecksLeft = ceil(timeout * 1000.0 / RECEHCK_DURATION_MS);\n        setTimeout(ctx, RECEHCK_DURATION_MS);\n    }\n\n    if (isTimedOut(ctx)) {\n        if (device->status() != WL_CONNECTED) {\n            state->rechecksLeft -= 1;\n            Serial.println(\".\");\n\n            if (state->rechecksLeft == 0) {\n                raiseError(ctx); // Connection failed\n            } else {\n                setTimeout(ctx, RECEHCK_DURATION_MS);\n            }\n        } else {\n            emitValue<output_DONE>(ctx, true);\n            // DEV and INET are both actually just a pointer to WiFi from ESP8266WiFi.h\n            emitValue<output_INET>(ctx, (ValueType<output_INET>::T)device); \n\n            Serial.print(\"SSID \");\n            Serial.print(\"PASSWORD \");\n\n        }\n    }\n}\n*/"
+        }
+      ],
+      "nodes": {
+        "B17neP_6G8": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Establish the connection",
+          "id": "B17neP_6G8",
+          "label": "CONN",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "B1oTea6zI": {
+          "description": "An internet connection",
+          "id": "B1oTea6zI",
+          "label": "INET",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod-dev/esp8266-mcu/output-esp8266-mcu-inet"
+        },
+        "ByVmzspz8": {
+          "boundLiterals": {
+            "__out__": "10"
+          },
+          "description": "Connection timeout (in seconds)",
+          "id": "ByVmzspz8",
+          "label": "TO",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BynxvdazU": {
+          "description": "Wi-Fi network password",
+          "id": "BynxvdazU",
+          "label": "PWD",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Hy6KAVTMI": {
+          "id": "Hy6KAVTMI",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Hyl2ewd6GU": {
+          "description": "Name of the Wi-Fi network",
+          "id": "Hyl2ewd6GU",
+          "label": "SSID",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SJeoaeaTG8": {
+          "description": "Pulses on a successful connection\n",
+          "id": "SJeoaeaTG8",
+          "label": "DONE",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rkbnlw_pf8": {
+          "description": "An ESP8266-based MCU",
+          "id": "rkbnlw_pf8",
+          "label": "DEV",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod-dev/esp8266-mcu/input-esp8266-mcu-device"
+        }
+      },
+      "path": "@/esp-sta"
+    },
+    "@/esp-sta-v2": {
+      "attachments": [
+        {
+          "content": "#pragma XOD error_raise enable\n\n// clang-format off\n{{#global}}\n#include <ESP8266WiFi.h>\n#include <WiFiUdp.h>\nWiFiUDP udp;\nunsigned int localPort = 2000; // local port to listen for UDP packets\nIPAddress ServerIP(192, 168, 4, 1);\nIPAddress ClientIP(192, 168, 4, 2);\n{{/global}}\n// clang-format on\n\nstruct State {\n};\n\n// clang-format off\n{{ GENERATED_CODE }}\n// clang-format on\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_CONN>(ctx))\n        return;\n\n    auto device = getValue<input_DEV>(ctx);\n\n    auto ssid = getValue<input_SSID>(ctx);\n    char _ssid[length(ssid) + 1] = { 0 };\n    dump(ssid, _ssid);\n\n    auto password = getValue<input_PWD>(ctx);\n    char _password[length(password) + 1] = { 0 };\n    dump(password, _password);\n    WiFi.connect(_ssid, _password);\n\n    if (done) {\n        emitValue<output_DONE>(ctx, 1);\n    } else {\n        raiseError(ctx); // Connection failed\n    }\n}\n\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJZF-j0pz8": {
+          "description": "Wi-Fi network password",
+          "id": "BJZF-j0pz8",
+          "label": "PWD",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "BktZoCTzI": {
+          "description": "Establish the connection",
+          "id": "BktZoCTzI",
+          "label": "CONN",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S1LJqAafI": {
+          "id": "S1LJqAafI",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1fYZo06GU": {
+          "description": "An ESP8266 device connected as internet provider",
+          "id": "S1fYZo06GU",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod-dev/esp8266/input-esp8266-device"
+        },
+        "rylt-sRTf8": {
+          "description": "Name of the Wi-Fi network",
+          "id": "rylt-sRTf8",
+          "label": "SSID",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        }
+      },
+      "path": "@/esp-sta-v2"
+    },
+    "@/example-sta-client-udp": {
+      "links": {
+        "B1qLSYMmU": {
+          "id": "B1qLSYMmU",
+          "input": {
+            "nodeId": "SywUHFGmL",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BJfweh6zU",
+            "pinKey": "rkvEC3bXL"
+          }
+        },
+        "BkJDrFGQ8": {
+          "id": "BkJDrFGQ8",
+          "input": {
+            "nodeId": "rknIBKf7L",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BJfweh6zU",
+            "pinKey": "B1P9-HaGL"
+          }
+        },
+        "BkcPUJAzU": {
+          "id": "BkcPUJAzU",
+          "input": {
+            "nodeId": "BJfweh6zU",
+            "pinKey": "HJJDU1AfI"
+          },
+          "output": {
+            "nodeId": "S1nB-1CGL",
+            "pinKey": "SJeoaeaTG8"
+          }
+        },
+        "HkVyfjWmI": {
+          "id": "HkVyfjWmI",
+          "input": {
+            "nodeId": "S1nB-1CGL",
+            "pinKey": "rkbnlw_pf8"
+          },
+          "output": {
+            "nodeId": "HyZJzoWQU",
+            "pinKey": "HkUZ-iLYm"
+          }
+        },
+        "SJHmgJGm8": {
+          "id": "SJHmgJGm8",
+          "input": {
+            "nodeId": "ByV7gyzQL",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BJfweh6zU",
+            "pinKey": "BkZcAR-QU"
+          }
+        },
+        "SkTD_CbmI": {
+          "id": "SkTD_CbmI",
+          "input": {
+            "nodeId": "BJ_ohn-7I",
+            "pinKey": "Bk5lexBtE"
+          },
+          "output": {
+            "nodeId": "BJfweh6zU",
+            "pinKey": "rkvEC3bXL"
+          }
+        },
+        "rJhPuAZmU": {
+          "id": "rJhPuAZmU",
+          "input": {
+            "nodeId": "S1ddxjW7I",
+            "pinKey": "Bk5lexBtE"
+          },
+          "output": {
+            "nodeId": "BJfweh6zU",
+            "pinKey": "B1P9-HaGL"
+          }
+        }
+      },
+      "nodes": {
+        "BJ_ohn-7I": {
+          "boundLiterals": {
+            "BkXK1eBYV": "D4"
+          },
+          "description": "ESP-XOD\nd2-d4",
+          "id": "BJ_ohn-7I",
+          "position": {
+            "x": 15,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod-dev/servo/servo"
+        },
+        "BJfweh6zU": {
+          "boundLiterals": {
+            "rJBYZHpz8": "Continuously"
+          },
+          "id": "BJfweh6zU",
+          "position": {
+            "x": 17,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "@/udp-client-reciv"
+        },
+        "ByV7gyzQL": {
+          "id": "ByV7gyzQL",
+          "position": {
+            "x": 21,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "HyZJzoWQU": {
+          "id": "HyZJzoWQU",
+          "position": {
+            "x": 17,
+            "y": -5,
+            "units": "slots"
+          },
+          "type": "xod-dev/esp8266-mcu/esp8266-mcu-device"
+        },
+        "S1ddxjW7I": {
+          "boundLiterals": {
+            "BkXK1eBYV": "D5"
+          },
+          "description": "ESP-XOD\nd1-d5",
+          "id": "S1ddxjW7I",
+          "position": {
+            "x": 11,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod-dev/servo/servo"
+        },
+        "S1nB-1CGL": {
+          "boundLiterals": {
+            "ByVmzspz8": "30",
+            "BynxvdazU": "\"password\"",
+            "Hyl2ewd6GU": "\"server\""
+          },
+          "id": "S1nB-1CGL",
+          "position": {
+            "x": 17,
+            "y": -4,
+            "units": "slots"
+          },
+          "type": "@/esp-sta"
+        },
+        "SywUHFGmL": {
+          "id": "SywUHFGmL",
+          "position": {
+            "x": 23,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "rknIBKf7L": {
+          "id": "rknIBKf7L",
+          "position": {
+            "x": 25,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        }
+      },
+      "path": "@/example-sta-client-udp"
+    },
+    "@/main": {
+      "links": {
+        "BktLtjWQU": {
+          "id": "BktLtjWQU",
+          "input": {
+            "nodeId": "Syd8Yj-m8",
+            "pinKey": "Bk5lexBtE"
+          },
+          "output": {
+            "nodeId": "BJwpbS6fL",
+            "pinKey": "SyBtREhlW"
+          }
+        }
+      },
+      "nodes": {
+        "BJwpbS6fL": {
+          "id": "BJwpbS6fL",
+          "position": {
+            "x": 7,
+            "y": -25,
+            "units": "slots"
+          },
+          "type": "xod/gpio/analog-read"
+        },
+        "Syd8Yj-m8": {
+          "boundLiterals": {
+            "BkXK1eBYV": "D5"
+          },
+          "id": "Syd8Yj-m8",
+          "position": {
+            "x": 7,
+            "y": -24,
+            "units": "slots"
+          },
+          "type": "xod-dev/servo/servo"
+        }
+      },
+      "path": "@/main"
+    },
+    "@/udp-client-reciv": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n        char packetBuffer[8] = { 0 };\n        char Servo[100]={0};\n        char Button[100]={0};\n        if (isInputDirty<input_CONN2>(ctx)){udp.begin(localPort);}\n        if (isInputDirty<input_CONN>(ctx)){\n        if(WiFi.status() == WL_CONNECTED){\n        int cb = udp.parsePacket();\n            if (cb) {\n                int len=udp.read(packetBuffer, 255); // read the packet into the buffer, we are reading only one byte\n                 if (len > 0)\n                    {\n                     packetBuffer[len] = 0;\n                    }\n                Serial.println(len);\n                sscanf(packetBuffer, \"%[^','],%[^',']\", &Servo, &Button);\n               // Serial.println(Servo);\n                //Serial.println(Button);\n               // Serial.println(packetBuffer);\n                auto servo1 = atoi(Servo);\n                auto servo=servo1/1024.;\n                auto button = false;\n                button = atoi(Button);\n                emitValue<output_servo>(ctx, servo);\n                emitValue<output_servo1>(ctx,1-servo);\n                emitValue<output_button>(ctx, button);\n                packetBuffer[8] = { 0 };\n                Servo[100]={0};\n                Button[100]={0};\n                \n            }\n        }else if(WiFi.status() != WL_CONNECTED){Serial.println(\"disconect\");}}}"
+        }
+      ],
+      "nodes": {
+        "B1P9-HaGL": {
+          "id": "B1P9-HaGL",
+          "label": "servo",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BkZcAR-QU": {
+          "id": "BkZcAR-QU",
+          "label": "button",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "HJJDU1AfI": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Establish the connection",
+          "id": "HJJDU1AfI",
+          "label": "CONN2",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SyaIlrpGU": {
+          "id": "SyaIlrpGU",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJBYZHpz8": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Establish the connection",
+          "id": "rJBYZHpz8",
+          "label": "CONN",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkvEC3bXL": {
+          "id": "rkvEC3bXL",
+          "label": "servo1",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/udp-client-reciv"
+    },
+    "@/udp-server-trancmit": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (isInputDirty<input_CONN>(ctx)) {\n        int servo = getValue<input_servo>(ctx);\n        int ledmod = getValue<input_ledmod>(ctx);\n        char b[8]={0};\n        String data;\n        data=String(servo)+\",\"+String(ledmod)+\",\";\n        data.toCharArray(b,8);\n        Serial.println(b);\n        delay(5);\n        int cb = udp.parsePacket();\n            if (!cb)\n            {\n             udp.beginPacket(ClientIP,localPort);//Создаем пакет данных\n             udp.write(b, 8); //Отравляем пакет данных\n             udp.endPacket();//Завершаем передачу пакета данных\n             }\n    }\n}"
+        }
+      ],
+      "nodes": {
+        "S1ANm4pzU": {
+          "description": "режим фонаря",
+          "id": "S1ANm4pzU",
+          "label": "ledmod",
+          "position": {
+            "x": 13,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJ3N7EaG8": {
+          "description": "управления сервоприводом\n",
+          "id": "SJ3N7EaG8",
+          "label": "servo",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJKIX46M8": {
+          "description": "установка цикла работы\n",
+          "id": "SJKIX46M8",
+          "label": "CONN",
+          "position": {
+            "x": 15,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkqwCQ6zU": {
+          "id": "rkqwCQ6zU",
+          "position": {
+            "x": 13,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/udp-server-trancmit"
+    },
+    "@/udp-start": {
+      "attachments": [
+        {
+          "content": "{{#global}}\n#include <WiFiUdp.h>\nWiFiUDP udp;\nunsigned int localPort = 2000; // local port to listen for UDP packets\nIPAddress ServerIP(192, 168, 4, 1);\nIPAddress ClientIP(192, 168, 4, 2);\n{{/global}}\n\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if(isInputDirty<input_IN>(ctx)){\n    udp.begin(localPort);\n    Serial.print(\"Start UDP\");\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "HkXb8j6fL": {
+          "id": "HkXb8j6fL",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1rc8i6fL": {
+          "id": "S1rc8i6fL",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/udp-start"
+    },
+    "@/examle-ap-server-udp": {
+      "nodes": {
+        "SywIx77X8": {
+          "id": "SywIx77X8",
+          "type": "@/esp-ap",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "SJhJJVTML": "12",
+            "H1xEapmafU": "\"server\"",
+            "HyNapm6fL": "\"password\""
+          }
+        },
+        "SycKg7mmI": {
+          "id": "SycKg7mmI",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod-dev/esp8266-mcu/esp8266-mcu-device"
+        },
+        "H1IM-XQmU": {
+          "id": "H1IM-XQmU",
+          "type": "@/udp-server-trancmit",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "SJKIX46M8": "Continuously"
+          }
+        },
+        "S1akGm7mI": {
+          "id": "S1akGm7mI",
+          "type": "@/analog-read",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "ryvn7QQmL": {
+          "id": "ryvn7QQmL",
+          "type": "xod/gpio/digital-read",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B143qAq1Q": "D4"
+          }
+        }
+      },
+      "links": {
+        "rk6YlXQQU": {
+          "id": "rk6YlXQQU",
+          "output": {
+            "nodeId": "SycKg7mmI",
+            "pinKey": "HkUZ-iLYm"
+          },
+          "input": {
+            "nodeId": "SywIx77X8",
+            "pinKey": "Hk-NT6QTG8"
+          }
+        },
+        "S11ezQXXL": {
+          "id": "S11ezQXXL",
+          "output": {
+            "nodeId": "S1akGm7mI",
+            "pinKey": "S1MHAWm7QL"
+          },
+          "input": {
+            "nodeId": "H1IM-XQmU",
+            "pinKey": "SJ3N7EaG8"
+          }
+        },
+        "B1Kn7XmQL": {
+          "id": "B1Kn7XmQL",
+          "output": {
+            "nodeId": "ryvn7QQmL",
+            "pinKey": "B1gI0urv1W"
+          },
+          "input": {
+            "nodeId": "H1IM-XQmU",
+            "pinKey": "S1ANm4pzU"
+          }
+        }
+      },
+      "path": "@/examle-ap-server-udp"
+    },
+    "@/analog-read": {
+      "nodes": {
+        "HyBAZmmQI": {
+          "description": "Fires on reading complete",
+          "id": "HyBAZmmQI",
+          "label": "DONE",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HyeHAW77mI": {
+          "id": "HyeHAW77mI",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SybSAWmXmU": {
+          "boundLiterals": {
+            "__out__": "A0"
+          },
+          "description": "Analog port to read from. Should start with `A` to succeed.\n",
+          "id": "SybSAWmXmU",
+          "label": "PORT",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "S1MHAWm7QL": {
+          "description": "The latest read value in range 0.0 … 1.0",
+          "id": "S1MHAWm7QL",
+          "label": "VAL",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "By7H0bmQm8": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers new read",
+          "id": "By7H0bmQm8",
+          "label": "UPD",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/analog-read",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD error_raise enable\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    const uint8_t port = getValue<input_PORT>(ctx);\n\n    if (!isValidAnalogPort(port)) {\n        raiseError(ctx);\n        return;\n    }\n\n    ::pinMode(port, INPUT);\n    emitValue<output_VAL>(ctx, ::analogRead(port));\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    }
+  },
+  "version": "0.0.15"
+}
