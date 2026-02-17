@@ -1,0 +1,82 @@
+{
+  "description": "(beta) Libreria hardware dedicata alle espansioni per Arduino come pcf8574",
+  "name": "tsl2561",
+  "patches": {
+    "@/main": {
+      "description": "per sensori BMP280 BME280",
+      "path": "@/main"
+    },
+    "@/tsl2561": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/adafruit/Adafruit_TSL2561\"\n\n/* This driver uses the Adafruit unified sensor library (Adafruit_Sensor),\n   which provides a common 'type' for sensor data and some helper functions.\n   \n   To use this driver you will also need to download the Adafruit_Sensor\n   library and include it in your libraries folder.\n\n   You should also assign a unique ID to this sensor for use with\n   the Adafruit Sensor API so that you can identify this particular\n   sensor in any data logs, etc.  To assign a unique ID, simply\n   provide an appropriate value in the constructor below (12345\n   is used by default in this example).\n   \n   Connections\n   ===========\n   Connect SCL to I2C SCL Clock\n   Connect SDA to I2C SDA Data\n   Connect VDD to 3.3V or 5V (whatever your logic level is)\n   Connect GROUND to common ground\n\n   I2C Address\n   ===========\n   The address will be different depending on whether you leave\n   the ADDR pin floating (addr 0x39), or tie it to ground or vcc. \n   The default addess is 0x39, which assumes the ADDR pin is floating\n   (not connected to anything).  If you set the ADDR pin high\n   or low, use TSL2561_ADDR_HIGH (0x49) or TSL2561_ADDR_LOW\n   (0x29) respectively.\n\n*/\n\n\n{{#global}}\n#include \"Wire.h\"\n#include \"Adafruit_Sensor.h\"\n#include \"Adafruit_TSL2561_U.h\"\n\n{{/global}}\n\n\nstruct State {\n};\n\n        \n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\nauto state = getState(ctx);\n\n\n\n    if (isInputDirty<input_UPD>(ctx)) {\n\n  Adafruit_TSL2561_Unified tsl = Adafruit_TSL2561_Unified(TSL2561_ADDR_FLOAT, 12345);\n        \n        \n  sensor_t sensor;\n  tsl.getSensor(&sensor);\n  Serial.println(\"------------------------------------\");\n  Serial.print  (\"Sensor:       \"); Serial.println(sensor.name);\n  Serial.print  (\"Driver Ver:   \"); Serial.println(sensor.version);\n  Serial.print  (\"Unique ID:    \"); Serial.println(sensor.sensor_id);\n  Serial.print  (\"Max Value:    \"); Serial.print(sensor.max_value); Serial.println(\" lux\");\n  Serial.print  (\"Min Value:    \"); Serial.print(sensor.min_value); Serial.println(\" lux\");\n  Serial.print  (\"Resolution:   \"); Serial.print(sensor.resolution); Serial.println(\" lux\");  \n  Serial.println(\"------------------------------------\");\n  Serial.println(\"\");\n\n\n//* Setup the sensor gain and integration time */\n//**************************************************************************/\n//   Configures the gain and integration time for the TSL2561\n//**************************************************************************/\n\n  /* You can also manually set the gain or enable auto-gain support */\n  // tsl.setGain(TSL2561_GAIN_1X);      /* No gain ... use in bright light to avoid sensor saturation */\n  // tsl.setGain(TSL2561_GAIN_16X);     /* 16x gain ... use in low light to boost sensitivity */\n  tsl.enableAutoRange(true);            /* Auto-gain ... switches automatically between 1x and 16x */\n  \n  /* Changing the integration time gives you better sensor resolution (402ms = 16-bit data) */\n  tsl.setIntegrationTime(TSL2561_INTEGRATIONTIME_13MS);      /* fast but low resolution */\n  // tsl.setIntegrationTime(TSL2561_INTEGRATIONTIME_101MS);  /* medium resolution and speed   */\n  // tsl.setIntegrationTime(TSL2561_INTEGRATIONTIME_402MS);  /* 16-bit data but slowest conversions */\n\n  /* Update these values depending on what you've set above! */  \n  Serial.println(\"------------------------------------\");\n  Serial.print  (\"Gain:         \"); Serial.println(\"Auto\");\n  Serial.print  (\"Timing:       \"); Serial.println(\"13 ms\");\n  Serial.println(\"------------------------------------\");\n\n  \n  /* We're ready to go! */\n  Serial.println(\"\");\n\n        \n        \n        \n        \n\n        \n        /* Get a new sensor event */ \n  sensors_event_t event;\n  tsl.getEvent(&event);\n \n  /* Display the results (light is measured in lux) */\n  if (event.light)\n  {\n      auto LUX = event.light;\n     emitValue<output_LUX>(ctx, LUX);\n      Serial.print(event.light); Serial.println(\" lux\");\n  }\n  else\n  {\n    /* If event.light = 0 lux the sensor is probably saturated\n       and no reliable data could be generated! */\n    Serial.println(\"Sensor overload\");\n  }\n\n\n    }\nemitValue<output_DONE>(ctx, 1);\n}\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "ByxUmshhBV": {
+          "id": "ByxUmshhBV",
+          "position": {
+            "x": -0.05,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H187i32r4": {
+          "id": "H187i32r4",
+          "label": "ADDR",
+          "position": {
+            "x": 4,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HkdLda3B4": {
+          "id": "HkdLda3B4",
+          "label": "ERR",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "HymLQo2hSV": {
+          "id": "HymLQo2hSV",
+          "label": "DONE",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "S1V8Qj32rE": {
+          "id": "S1V8Qj32rE",
+          "label": "LUX",
+          "position": {
+            "x": -0.05,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rJHLQjhnBV": {
+          "id": "rJHLQjhnBV",
+          "label": "UPD",
+          "position": {
+            "x": -0.05,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/tsl2561"
+    }
+  },
+  "version": "0.0.30"
+}

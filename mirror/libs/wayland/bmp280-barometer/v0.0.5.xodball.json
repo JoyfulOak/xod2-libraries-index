@@ -1,0 +1,1496 @@
+{
+  "patches": {
+    "@/bmp280-device": {
+      "nodes": {
+        "HJrGxGPcI": {
+          "description": "A BMP280 device.",
+          "label": "DEV",
+          "id": "HJrGxGPcI",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "Hy2ZeMw5U": {
+          "id": "Hy2ZeMw5U",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rk03oofvF": {
+          "description": "I²C bus.",
+          "label": "I2C",
+          "id": "rk03oofvF",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/i2c/input-i2c"
+        }
+      },
+      "path": "@/bmp280-device",
+      "description": "Create BMP280 device. See datasheet (https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BMP280-DS001.pdf) for recommended oversampling and filter settings for specific use cases.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/adafruit/Adafruit_Sensor\"\n#pragma XOD require \"https://github.com/adafruit/Adafruit_BMP280_Library\"\n#pragma XOD require \"https://github.com/adafruit/Adafruit_BusIO\"\n\n//Include C++ libraries\n#include <Adafruit_Sensor.h>\n#include <Adafruit_BMP280.h>\n\nnode {\n    meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = Adafruit_BMP280*;\n    }\n\n    uint8_t mem[sizeof(Adafruit_BMP280)];\n    \n    void evaluate(Context ctx) {\n        // It should be evaluated only once on the first (setup) transaction\n        if (!isSettingUp())\n            return;\n\n        auto wire = getValue<input_I2C>(ctx);\n        \n        // Create an object of the class Adafruit_BMP280.\n        //Adafruit_BMP280 sensor = Adafruit_BMP280(wire);\n        Type sensor = new (mem) Adafruit_BMP280(wire);\n        emitValue<output_DEV>(ctx, sensor);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example-oled-altimeter": {
+      "nodes": {
+        "B1LdKnF5I": {
+          "id": "B1LdKnF5I",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/bmp280-device"
+        },
+        "BJ9vYit9I": {
+          "boundLiterals": {
+            "Bkw-6yqI4": "4",
+            "ByW_2k9IN": "02h",
+            "Hypl61qUE": "8",
+            "S1gH6CKIN": "\"Alt. (m)\""
+          },
+          "id": "BJ9vYit9I",
+          "position": {
+            "x": 11,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "wayland/ssd1306-oled-i2c/draw-text"
+        },
+        "BkwcY2YcU": {
+          "boundLiterals": {
+            "Sk3QnVv98": "101325"
+          },
+          "id": "BkwcY2YcU",
+          "position": {
+            "x": 7,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/calculate-altitude"
+        },
+        "ByGYK3K5U": {
+          "id": "ByGYK3K5U",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/read-pressure"
+        },
+        "ByPtmhK5L": {
+          "label": "DEV",
+          "id": "ByPtmhK5L",
+          "position": {
+            "x": 10,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJegtLhK9L": {
+          "label": "DEV",
+          "id": "HJegtLhK9L",
+          "position": {
+            "x": 3,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HketL3KqI": {
+          "boundLiterals": {
+            "Bkw-6yqI4": "32",
+            "ByW_2k9IN": "03h",
+            "Hypl61qUE": "8"
+          },
+          "id": "HketL3KqI",
+          "position": {
+            "x": 4,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "wayland/ssd1306-oled-i2c/draw-text"
+        },
+        "HyP6jhF9U": {
+          "boundLiterals": {
+            "BJ7urnUq8": "02h",
+            "rJg4RN3I9I": "On Boot"
+          },
+          "id": "HyP6jhF9U",
+          "position": {
+            "x": 3,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "wayland/ssd1306-oled-i2c/rotate-display"
+        },
+        "Hyb3tsFqL": {
+          "label": "DEV",
+          "id": "Hyb3tsFqL",
+          "position": {
+            "x": 10,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1Usqht9I": {
+          "boundLiterals": {
+            "HJTIija-W": "0"
+          },
+          "id": "S1Usqht9I",
+          "position": {
+            "x": 7,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/format-number"
+        },
+        "S1YBtjF5U": {
+          "id": "S1YBtjF5U",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "wayland/ssd1306-oled-i2c/ssd1306-oled-i2c-device"
+        },
+        "SkXtFjF98": {
+          "label": "DEV",
+          "id": "SkXtFjF98",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "SkzJ32Y5I": {
+          "label": "DEV",
+          "id": "SkzJ32Y5I",
+          "position": {
+            "x": 2,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "Sy0IYiYqU": {
+          "id": "Sy0IYiYqU",
+          "position": {
+            "x": 3,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "wayland/ssd1306-oled-i2c/send-buffer-to-display"
+        },
+        "rkMntotcL": {
+          "label": "DEV",
+          "id": "rkMntotcL",
+          "position": {
+            "x": 2,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "ry1RvhFqI": {
+          "boundLiterals": {
+            "B13SCNhl-": "0.5"
+          },
+          "id": "ry1RvhFqI",
+          "position": {
+            "x": 14,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "rySSKiKqU": {
+          "id": "rySSKiKqU",
+          "position": {
+            "x": 11,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "wayland/ssd1306-oled-i2c/clear-display"
+        },
+        "ry40mOS1c": {
+          "boundLiterals": {
+            "rJDbSnvBkc": "77h"
+          },
+          "id": "ry40mOS1c",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/init"
+        },
+        "Byf-EOB1q": {
+          "id": "Byf-EOB1q",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "S1d4E_ryq": {
+          "label": "INTD",
+          "id": "S1d4E_ryq",
+          "position": {
+            "x": 5,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "SyiBNuByq": {
+          "label": "INTD",
+          "id": "SyiBNuByq",
+          "position": {
+            "x": 14,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        }
+      },
+      "links": {
+        "B1WeFLht9L": {
+          "id": "B1WeFLht9L",
+          "input": {
+            "nodeId": "HketL3KqI",
+            "pinKey": "HJIQ6AY8E"
+          },
+          "output": {
+            "nodeId": "HJegtLhK9L",
+            "pinKey": "__out__"
+          }
+        },
+        "BkF9K3K5I": {
+          "id": "BkF9K3K5I",
+          "input": {
+            "nodeId": "BkwcY2YcU",
+            "pinKey": "r1Jzn4D9I"
+          },
+          "output": {
+            "nodeId": "ByGYK3K5U",
+            "pinKey": "SJ89UNvq8"
+          }
+        },
+        "H1QKK3K5U": {
+          "id": "H1QKK3K5U",
+          "input": {
+            "nodeId": "ByGYK3K5U",
+            "pinKey": "SkY_U4D5I"
+          },
+          "output": {
+            "nodeId": "B1LdKnF5I",
+            "pinKey": "HJrGxGPcI"
+          }
+        },
+        "HJZac2YqI": {
+          "id": "HJZac2YqI",
+          "input": {
+            "nodeId": "S1Usqht9I",
+            "pinKey": "BJlHojaWZ"
+          },
+          "output": {
+            "nodeId": "BkwcY2YcU",
+            "pinKey": "HJyl3VPc8"
+          }
+        },
+        "S19Gj3K5I": {
+          "id": "S19Gj3K5I",
+          "input": {
+            "nodeId": "HketL3KqI",
+            "pinKey": "S1gH6CKIN"
+          },
+          "output": {
+            "nodeId": "S1Usqht9I",
+            "pinKey": "r1H_oipZb"
+          }
+        },
+        "S1F9YjFq8": {
+          "id": "S1F9YjFq8",
+          "input": {
+            "nodeId": "SkXtFjF98",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "S1YBtjF5U",
+            "pinKey": "ryH6tSt8N"
+          }
+        },
+        "S1Xyq3F5L": {
+          "id": "S1Xyq3F5L",
+          "input": {
+            "nodeId": "rySSKiKqU",
+            "pinKey": "r1H7MwK8E"
+          },
+          "output": {
+            "nodeId": "ByGYK3K5U",
+            "pinKey": "BJ5uO4w9U"
+          }
+        },
+        "S1qi83F9I": {
+          "id": "S1qi83F9I",
+          "input": {
+            "nodeId": "Sy0IYiYqU",
+            "pinKey": "SJDbf_YUV"
+          },
+          "output": {
+            "nodeId": "HketL3KqI",
+            "pinKey": "r1DL6CFU4"
+          }
+        },
+        "SkhF72YcL": {
+          "id": "SkhF72YcL",
+          "input": {
+            "nodeId": "rySSKiKqU",
+            "pinKey": "S1mxGvKUN"
+          },
+          "output": {
+            "nodeId": "ByPtmhK5L",
+            "pinKey": "__out__"
+          }
+        },
+        "r1FNrAF9L": {
+          "id": "r1FNrAF9L",
+          "input": {
+            "nodeId": "BJ9vYit9I",
+            "pinKey": "B11QT1qLN"
+          },
+          "output": {
+            "nodeId": "rySSKiKqU",
+            "pinKey": "rylSGPt8E"
+          }
+        },
+        "r1I1n2t9I": {
+          "id": "r1I1n2t9I",
+          "input": {
+            "nodeId": "HyP6jhF9U",
+            "pinKey": "rJV0NhU5U"
+          },
+          "output": {
+            "nodeId": "SkzJ32Y5I",
+            "pinKey": "__out__"
+          }
+        },
+        "rJInKjKcL": {
+          "id": "rJInKjKcL",
+          "input": {
+            "nodeId": "Sy0IYiYqU",
+            "pinKey": "Sy6LZuYIE"
+          },
+          "output": {
+            "nodeId": "rkMntotcL",
+            "pinKey": "__out__"
+          }
+        },
+        "rJtFt3t5U": {
+          "id": "rJtFt3t5U",
+          "input": {
+            "nodeId": "ByGYK3K5U",
+            "pinKey": "HJywIVwq8"
+          },
+          "output": {
+            "nodeId": "ry1RvhFqI",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "ryujU2t58": {
+          "id": "ryujU2t58",
+          "input": {
+            "nodeId": "HketL3KqI",
+            "pinKey": "B11QT1qLN"
+          },
+          "output": {
+            "nodeId": "BJ9vYit9I",
+            "pinKey": "r1DL6CFU4"
+          }
+        },
+        "ryvatit5I": {
+          "id": "ryvatit5I",
+          "input": {
+            "nodeId": "BJ9vYit9I",
+            "pinKey": "HJIQ6AY8E"
+          },
+          "output": {
+            "nodeId": "Hyb3tsFqL",
+            "pinKey": "__out__"
+          }
+        },
+        "SJdgVuB1q": {
+          "id": "SJdgVuB1q",
+          "input": {
+            "nodeId": "ry40mOS1c",
+            "pinKey": "Bkcu0DSJ5"
+          },
+          "output": {
+            "nodeId": "B1LdKnF5I",
+            "pinKey": "HJrGxGPcI"
+          }
+        },
+        "SJdZVuBk5": {
+          "id": "SJdZVuBk5",
+          "input": {
+            "nodeId": "Byf-EOB1q",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "ry40mOS1c",
+            "pinKey": "ByF-HnDByq"
+          }
+        },
+        "BJelHrVOrJ9": {
+          "id": "BJelHrVOrJ9",
+          "input": {
+            "nodeId": "S1d4E_ryq",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Byf-EOB1q",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "rJxUNuByc": {
+          "id": "rJxUNuByc",
+          "input": {
+            "nodeId": "ry1RvhFqI",
+            "pinKey": "r1jzp_DTZ"
+          },
+          "output": {
+            "nodeId": "SyiBNuByq",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "comments": {
+        "Hk7fFhc5L": {
+          "content": "Set SeaLev (atmospheric pressure at sea level) according to current local weather conditions.",
+          "id": "Hk7fFhc5L",
+          "position": {
+            "x": 1,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 6,
+            "units": "slots"
+          }
+        },
+        "rJYwuncc8": {
+          "content": "The rotate-display node is optional. I'm running this on the Grove Beginner Kit, so I've set the rotation to 02h, to get the correct orientation of the screen.",
+          "id": "rJYwuncc8",
+          "position": {
+            "x": -2,
+            "y": 6,
+            "units": "slots"
+          },
+          "size": {
+            "height": 2,
+            "width": 4,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example-oled-altimeter",
+      "description": "Uses bmp280 as an altimeter and displays altitude on an OLED screen."
+    },
+    "@/read-pressure": {
+      "nodes": {
+        "BJ5uO4w9U": {
+          "description": "Pulse on read.",
+          "label": "DONE",
+          "id": "BJ5uO4w9U",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJywIVwq8": {
+          "description": "Update. Trigger read.",
+          "label": "UPD",
+          "id": "HJywIVwq8",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJ89UNvq8": {
+          "description": "Atmospheric pressure in Pascal.",
+          "label": "PRESS",
+          "id": "SJ89UNvq8",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SkY_U4D5I": {
+          "description": "A BMP280 device.",
+          "label": "DEV",
+          "id": "SkY_U4D5I",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-bmp280-device"
+        },
+        "r1XL8VDcI": {
+          "id": "r1XL8VDcI",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/read-pressure",
+      "description": "Read pressure in Pascal.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        // Get a pointer to the `Adafruit_BMP280` class instance\n        auto sensor = getValue<input_DEV>(ctx);\n        emitValue<output_PRESS>(ctx, sensor->readPressure());\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n\n\n"
+        }
+      ]
+    },
+    "@/read-temperature": {
+      "nodes": {
+        "ByfeNFNwqU": {
+          "description": "Temperature in degrees Celsius.",
+          "label": "TEMP",
+          "id": "ByfeNFNwqU",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HJbgVtNvcL": {
+          "description": "A BMP280 device.",
+          "label": "DEV",
+          "id": "HJbgVtNvcL",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-bmp280-device"
+        },
+        "SklVFVwqL": {
+          "id": "SklVFVwqL",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Syee4FVw98": {
+          "description": "Update. Trigger read.",
+          "label": "UPD",
+          "id": "Syee4FVw98",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkmeNFVv98": {
+          "description": "Pulse on read.",
+          "label": "DONE",
+          "id": "rkmeNFVv98",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/read-temperature",
+      "description": "Read temperature in degrees Celsius. ",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        // Get a pointer to the `Adafruit_BMP280` class instance\n        auto sensor = getValue<input_DEV>(ctx);\n        emitValue<output_TEMP>(ctx, sensor->readTemperature());\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n\n"
+        }
+      ]
+    },
+    "@/init": {
+      "nodes": {
+        "BkWS3DB15": {
+          "boundLiterals": {
+            "__out__": "04h"
+          },
+          "description": "Standby duration in milliseconds. Options: 1 ms = 00h, 62.5 ms = 01h, 125 ms = 02h, 250 ms = 03h, 500 ms = 04h, 1000 ms = 05h, 2000 ms = 06h, 4000 ms = 07h.",
+          "label": "STDBY",
+          "id": "BkWS3DB15",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "Syg-BnDByq": {
+          "boundLiterals": {
+            "__out__": "02h"
+          },
+          "description": "Oversampling rate for temperature sensor. Options: no over-sampling = 00h, 1x over-sampling = 01h, 2x over-sampling = 02h, 4x over-sampling = 03h, 8x over-sampling = 04h, 16x over-sampling = 05h.",
+          "label": "OST",
+          "id": "Syg-BnDByq",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "BJGZS3DSk9": {
+          "boundLiterals": {
+            "__out__": "05h"
+          },
+          "description": "Oversampling rate for pressure sensor. Options: no over-sampling = 00h, 1x over-sampling = 01h, 2x over-sampling = 02h, 4x over-sampling = 03h, 8x over-sampling = 04h, 16x over-sampling = 05h.",
+          "label": "OSP",
+          "id": "BJGZS3DSk9",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "rkXWHnDH19": {
+          "id": "rkXWHnDH19",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Sk4ZBhvHk5": {
+          "boundLiterals": {
+            "__out__": "04h"
+          },
+          "description": "Filtering level for sensor data. Options: no filtering = 00h, 2x filtering = 01h, 4x filtering = 02h, 8x filtering = 03h, 16x filtering = 04h.",
+          "label": "FILT",
+          "id": "Sk4ZBhvHk5",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "ryHWS2DSyq": {
+          "boundLiterals": {
+            "__out__": "03h"
+          },
+          "description": "Operating mode for the sensor. Options: forced mode = 01h, normal mode = 03h.",
+          "label": "MODE",
+          "id": "ryHWS2DSyq",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "rJDbSnvBkc": {
+          "boundLiterals": {
+            "__out__": "77h"
+          },
+          "description": "I²C address (default = 77h).",
+          "label": "ADDR",
+          "id": "rJDbSnvBkc",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "H1_brnPBJ9": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Initialize sensor.",
+          "label": "INIT",
+          "id": "H1_brnPBJ9",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ByF-HnDByq": {
+          "description": "Pulse on successful initialization.",
+          "label": "OK",
+          "id": "ByF-HnDByq",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Bkcu0DSJ5": {
+          "description": "A bmp280-device.",
+          "label": "DEV",
+          "id": "Bkcu0DSJ5",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-bmp280-device"
+        }
+      },
+      "path": "@/init",
+      "description": "Initialize bmp280-device.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_INIT\n\nnode {\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_INIT>(ctx))\n            return;\n\n        auto sensor = getValue<input_DEV>(ctx);\n        uint8_t i2c_addr = getValue<input_ADDR>(ctx);\n        \n        if (!sensor->begin(i2c_addr, BMP280_CHIPID)) {\n            raiseError(ctx);\n            return;\n        }\n        uint8_t mode = getValue<input_MODE>(ctx);\n        uint8_t temp = getValue<input_OST>(ctx);\n        uint8_t pressure = getValue<input_OSP>(ctx);\n        uint8_t filter = getValue<input_FILT>(ctx);\n        uint8_t standby = getValue<input_STDBY>(ctx);\n        sensor -> setSampling(mode, temp, pressure, filter, standby);\n        emitValue<output_OK>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example-test-barometer-thermometer": {
+      "nodes": {
+        "ByYDpnt98": {
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "id": "ByYDpnt98",
+          "position": {
+            "x": -10,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "H10rp2KqL": {
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "id": "H10rp2KqL",
+          "position": {
+            "x": -12,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "HJ8Ha2K98": {
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "id": "HJ8Ha2K98",
+          "position": {
+            "x": -14,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "Hy-vp3FcU": {
+          "id": "Hy-vp3FcU",
+          "position": {
+            "x": -11,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "r1R4ThY98": {
+          "boundLiterals": {
+            "HkMVG_Hk5": "On Boot",
+            "SJWRjyNvF": "77h"
+          },
+          "id": "r1R4ThY98",
+          "position": {
+            "x": -13,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "@/barometer-thermometer"
+        },
+        "r1rmrsY5I": {
+          "boundLiterals": {
+            "B13SCNhl-": "0.5"
+          },
+          "id": "r1rmrsY5I",
+          "position": {
+            "x": -5,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        }
+      },
+      "links": {
+        "HyWdT2F9I": {
+          "id": "HyWdT2F9I",
+          "input": {
+            "nodeId": "HJ8Ha2K98",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "r1R4ThY98",
+            "pinKey": "S1i8fst98"
+          }
+        },
+        "S1ZSTnY9L": {
+          "id": "S1ZSTnY9L",
+          "input": {
+            "nodeId": "r1R4ThY98",
+            "pinKey": "BJ5ZVjFq8"
+          },
+          "output": {
+            "nodeId": "r1rmrsY5I",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "SyIv62Yc8": {
+          "id": "SyIv62Yc8",
+          "input": {
+            "nodeId": "Hy-vp3FcU",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "r1R4ThY98",
+            "pinKey": "SJusMiKqL"
+          }
+        },
+        "r1tuT2FqI": {
+          "id": "r1tuT2FqI",
+          "input": {
+            "nodeId": "ByYDpnt98",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "Hy-vp3FcU",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "rkzdTht58": {
+          "id": "rkzdTht58",
+          "input": {
+            "nodeId": "H10rp2KqL",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "r1R4ThY98",
+            "pinKey": "S1XUziFqU"
+          }
+        }
+      },
+      "comments": {
+        "rkcJihq9U": {
+          "content": "The count node records the number of readings.",
+          "id": "rkcJihq9U",
+          "position": {
+            "x": -8,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example-test-barometer-thermometer",
+      "description": "Patch to test barometer-thermometer node.  Run in debugger."
+    },
+    "@/calculate-altitude": {
+      "nodes": {
+        "HJyl3VPc8": {
+          "description": "Altitude in metres.",
+          "label": "ALT",
+          "id": "HJyl3VPc8",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "Sk3QnVv98": {
+          "boundLiterals": {
+            "__out__": "101325"
+          },
+          "description": "Atmospheric pressure at sea level in Pascal.",
+          "label": "SeaLev",
+          "id": "Sk3QnVv98",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SktAo4wqL": {
+          "id": "SktAo4wqL",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1Jzn4D9I": {
+          "description": "Ambient atmospheric pressure in Pascal.",
+          "label": "PRESS",
+          "id": "r1Jzn4D9I",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/calculate-altitude",
+      "description": "Calculate altitude from atmospheric pressure.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD dirtieness disable\n\nnode {\n    void evaluate(Context ctx) {\n        float altitude;\n        float pressure = getValue<input_PRESS>(ctx);\n        float seaLevelhPa = getValue<input_SeaLev>(ctx);\n        //pressure /= 100;\n        altitude = 44330 * (1.0 - pow(pressure / seaLevelhPa, 0.1903));\n        emitValue<output_ALT>(ctx, altitude);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/barometer-thermometer": {
+      "nodes": {
+        "BJ5ZVjFq8": {
+          "description": "Update. Trigger read of temperature and pressure.",
+          "label": "UPD",
+          "id": "BJ5ZVjFq8",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Byr0zsYqU": {
+          "boundLiterals": {
+            "__out__": "03h"
+          },
+          "description": "Operating mode for the sensor. Options: forced mode = 01h, normal mode = 03h.",
+          "label": "MODE",
+          "id": "Byr0zsYqU",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HJt0fotcI": {
+          "boundLiterals": {
+            "__out__": "02h"
+          },
+          "description": "Oversampling rate for temperature sensor. Options: no over-sampling = 00h, 1x over-sampling = 01h, 2x over-sampling = 02h, 4x over-sampling = 03h, 8x over-sampling = 04h, 16x over-sampling = 05h.",
+          "label": "OST",
+          "id": "HJt0fotcI",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HyF-foF5U": {
+          "id": "HyF-foF5U",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/read-pressure"
+        },
+        "Hyx9AMjtqI": {
+          "boundLiterals": {
+            "__out__": "04h"
+          },
+          "description": "Filtering level for sensor data. Options: no filtering = 00h, 2x filtering = 01h, 4x filtering = 02h, 8x filtering = 03h, 16x filtering = 04h.",
+          "label": "FILT",
+          "id": "Hyx9AMjtqI",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "S1XUziFqU": {
+          "description": "Atmospheric pressure in Pascal.",
+          "label": "PRESS",
+          "id": "S1XUziFqU",
+          "position": {
+            "x": 4,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "S1i8fst98": {
+          "description": "Temperature in degrees Celsius.",
+          "label": "TEMP",
+          "id": "S1i8fst98",
+          "position": {
+            "x": 2,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SJusMiKqL": {
+          "description": "Pulse on read.",
+          "label": "DONE",
+          "id": "SJusMiKqL",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SkcCMoK9L": {
+          "boundLiterals": {
+            "__out__": "05h"
+          },
+          "description": "Oversampling rate for pressure sensor. Options: no over-sampling = 00h, 1x over-sampling = 01h, 2x over-sampling = 02h, 4x over-sampling = 03h, 8x over-sampling = 04h, 16x over-sampling = 05h.",
+          "label": "OSP",
+          "id": "SkcCMoK9L",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "rJW50foK9L": {
+          "boundLiterals": {
+            "__out__": "04h"
+          },
+          "description": "Standby duration in milliseconds. Options: 1 ms = 00h, 62.5 ms = 01h, 125 ms = 02h, 250 ms = 03h, 500 ms = 04h, 1000 ms = 05h, 2000 ms = 06h, 4000 ms = 07h.",
+          "label": "STDBY",
+          "id": "rJW50foK9L",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "rkh-MoF9U": {
+          "id": "rkh-MoF9U",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/read-temperature"
+        },
+        "S1R3qy4wY": {
+          "description": "I²C bus.",
+          "label": "I2C",
+          "id": "S1R3qy4wY",
+          "position": {
+            "x": -3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/i2c/input-i2c"
+        },
+        "SJWRjyNvF": {
+          "boundLiterals": {
+            "__out__": "77h"
+          },
+          "description": "I²C address (default = 77h)",
+          "label": "ADDR",
+          "id": "SJWRjyNvF",
+          "position": {
+            "x": -1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "rkWi-OH1c": {
+          "id": "rkWi-OH1c",
+          "position": {
+            "x": -2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/init"
+        },
+        "HJNCWdrk9": {
+          "id": "HJNCWdrk9",
+          "position": {
+            "x": -3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/bmp280-device"
+        },
+        "HkMVG_Hk5": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Initialize sensor.",
+          "label": "INIT",
+          "id": "HkMVG_Hk5",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Bk7wzOrkc": {
+          "label": "DEV",
+          "id": "Bk7wzOrkc",
+          "position": {
+            "x": -3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "SJldzury9": {
+          "label": "DEV",
+          "id": "SJldzury9",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S10tGOrkc": {
+          "id": "S10tGOrkc",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/gate"
+        },
+        "rJUsMuBy9": {
+          "id": "rJUsMuBy9",
+          "position": {
+            "x": -2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "H1naMuB15": {
+          "label": "INTD",
+          "id": "H1naMuB15",
+          "position": {
+            "x": -2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "ryRRfdry5": {
+          "label": "INTD",
+          "id": "ryRRfdry5",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        }
+      },
+      "links": {
+        "BkBFfiFc8": {
+          "id": "BkBFfiFc8",
+          "input": {
+            "nodeId": "S1XUziFqU",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HyF-foF5U",
+            "pinKey": "SJ89UNvq8"
+          }
+        },
+        "HksSVoFqI": {
+          "id": "HksSVoFqI",
+          "input": {
+            "nodeId": "HyF-foF5U",
+            "pinKey": "HJywIVwq8"
+          },
+          "output": {
+            "nodeId": "rkh-MoF9U",
+            "pinKey": "rkmeNFVv98"
+          }
+        },
+        "S1qEEot5U": {
+          "id": "S1qEEot5U",
+          "input": {
+            "nodeId": "SJusMiKqL",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HyF-foF5U",
+            "pinKey": "BJ5uO4w9U"
+          }
+        },
+        "SJXKMoK5I": {
+          "id": "SJXKMoK5I",
+          "input": {
+            "nodeId": "S1i8fst98",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkh-MoF9U",
+            "pinKey": "ByfeNFNwqU"
+          }
+        },
+        "r1t3Z_Hy9": {
+          "id": "r1t3Z_Hy9",
+          "input": {
+            "nodeId": "rkWi-OH1c",
+            "pinKey": "rJDbSnvBkc"
+          },
+          "output": {
+            "nodeId": "SJWRjyNvF",
+            "pinKey": "__out__"
+          }
+        },
+        "rkjhb_Sk9": {
+          "id": "rkjhb_Sk9",
+          "input": {
+            "nodeId": "rkWi-OH1c",
+            "pinKey": "ryHWS2DSyq"
+          },
+          "output": {
+            "nodeId": "Byr0zsYqU",
+            "pinKey": "__out__"
+          }
+        },
+        "B1l6WOB19": {
+          "id": "B1l6WOB19",
+          "input": {
+            "nodeId": "rkWi-OH1c",
+            "pinKey": "Syg-BnDByq"
+          },
+          "output": {
+            "nodeId": "HJt0fotcI",
+            "pinKey": "__out__"
+          }
+        },
+        "rJNpb_SJc": {
+          "id": "rJNpb_SJc",
+          "input": {
+            "nodeId": "rkWi-OH1c",
+            "pinKey": "BJGZS3DSk9"
+          },
+          "output": {
+            "nodeId": "SkcCMoK9L",
+            "pinKey": "__out__"
+          }
+        },
+        "HJwaZOH1c": {
+          "id": "HJwaZOH1c",
+          "input": {
+            "nodeId": "rkWi-OH1c",
+            "pinKey": "Sk4ZBhvHk5"
+          },
+          "output": {
+            "nodeId": "Hyx9AMjtqI",
+            "pinKey": "__out__"
+          }
+        },
+        "H19TZuSJ5": {
+          "id": "H19TZuSJ5",
+          "input": {
+            "nodeId": "rkWi-OH1c",
+            "pinKey": "BkWS3DB15"
+          },
+          "output": {
+            "nodeId": "rJW50foK9L",
+            "pinKey": "__out__"
+          }
+        },
+        "ryv0-drJ9": {
+          "id": "ryv0-drJ9",
+          "input": {
+            "nodeId": "HJNCWdrk9",
+            "pinKey": "rk03oofvF"
+          },
+          "output": {
+            "nodeId": "S1R3qy4wY",
+            "pinKey": "__out__"
+          }
+        },
+        "rJm1zuBJc": {
+          "id": "rJm1zuBJc",
+          "input": {
+            "nodeId": "rkWi-OH1c",
+            "pinKey": "Bkcu0DSJ5"
+          },
+          "output": {
+            "nodeId": "HJNCWdrk9",
+            "pinKey": "HJrGxGPcI"
+          }
+        },
+        "HyvNG_BJ9": {
+          "id": "HyvNG_BJ9",
+          "input": {
+            "nodeId": "rkWi-OH1c",
+            "pinKey": "H1_brnPBJ9"
+          },
+          "output": {
+            "nodeId": "HkMVG_Hk5",
+            "pinKey": "__out__"
+          }
+        },
+        "Sk3vM_H1c": {
+          "id": "Sk3vM_H1c",
+          "input": {
+            "nodeId": "Bk7wzOrkc",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HJNCWdrk9",
+            "pinKey": "HJrGxGPcI"
+          }
+        },
+        "r15OGdHyc": {
+          "id": "r15OGdHyc",
+          "input": {
+            "nodeId": "rkh-MoF9U",
+            "pinKey": "HJbgVtNvcL"
+          },
+          "output": {
+            "nodeId": "SJldzury9",
+            "pinKey": "__out__"
+          }
+        },
+        "rJhdfuHJc": {
+          "id": "rJhdfuHJc",
+          "input": {
+            "nodeId": "HyF-foF5U",
+            "pinKey": "SkY_U4D5I"
+          },
+          "output": {
+            "nodeId": "SJldzury9",
+            "pinKey": "__out__"
+          }
+        },
+        "SyQ9zOS15": {
+          "id": "SyQ9zOS15",
+          "input": {
+            "nodeId": "S10tGOrkc",
+            "pinKey": "SJ-1mZPTz"
+          },
+          "output": {
+            "nodeId": "BJ5ZVjFq8",
+            "pinKey": "__out__"
+          }
+        },
+        "ByHqGdS19": {
+          "id": "ByHqGdS19",
+          "input": {
+            "nodeId": "rkh-MoF9U",
+            "pinKey": "Syee4FVw98"
+          },
+          "output": {
+            "nodeId": "S10tGOrkc",
+            "pinKey": "OkPg7GDaW"
+          }
+        },
+        "Hyv3fdr15": {
+          "id": "Hyv3fdr15",
+          "input": {
+            "nodeId": "rJUsMuBy9",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "rkWi-OH1c",
+            "pinKey": "ByF-HnDByq"
+          }
+        },
+        "ryc0MdBy9": {
+          "id": "ryc0MdBy9",
+          "input": {
+            "nodeId": "H1naMuB15",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJUsMuBy9",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "BkF1m_H1q": {
+          "id": "BkF1m_H1q",
+          "input": {
+            "nodeId": "S10tGOrkc",
+            "pinKey": "B1P1nFwaM"
+          },
+          "output": {
+            "nodeId": "ryRRfdry5",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "path": "@/barometer-thermometer",
+      "description": "Combines low level nodes to create a simple to use barometer and thermometer."
+    }
+  },
+  "license": "BSD-3-Clause",
+  "version": "0.0.5",
+  "description": "BMP280 barometric pressure and temperature sensor. Wraps https://github.com/adafruit/Adafruit_BMP280_Library.  Datasheet: https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BMP280-DS001.pdf",
+  "name": "bmp280-barometer"
+}

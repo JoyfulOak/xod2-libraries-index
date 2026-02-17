@@ -1,0 +1,309 @@
+{
+  "description": "test",
+  "license": "gpl",
+  "name": "time",
+  "patches": {
+    "@/format-iso": {
+      "links": {
+        "B1JfEiMhN": {
+          "id": "B1JfEiMhN",
+          "input": {
+            "nodeId": "S1taXsz2N",
+            "pinKey": "rke7n9zhE"
+          },
+          "output": {
+            "nodeId": "rk1a7jfhV",
+            "pinKey": "__out__"
+          }
+        },
+        "HkqZNif3V": {
+          "id": "HkqZNif3V",
+          "input": {
+            "nodeId": "rkfAXifhN",
+            "pinKey": "B1Lf7jMn4"
+          },
+          "output": {
+            "nodeId": "S1taXsz2N",
+            "pinKey": "HJE429GnE"
+          }
+        },
+        "Sy3-NsMhV": {
+          "id": "Sy3-NsMhV",
+          "input": {
+            "nodeId": "rJHCmjMhE",
+            "pinKey": "B1Lf7jMn4"
+          },
+          "output": {
+            "nodeId": "S1taXsz2N",
+            "pinKey": "SkBV2cM34"
+          }
+        },
+        "r1ZbNiMh4": {
+          "id": "r1ZbNiMh4",
+          "input": {
+            "nodeId": "SJag4iznE",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BkgkNofhE",
+            "pinKey": "HJrBNr4dG"
+          }
+        },
+        "rJdZEof3E": {
+          "id": "rJdZEof3E",
+          "input": {
+            "nodeId": "SyxCXoz24",
+            "pinKey": "B1Lf7jMn4"
+          },
+          "output": {
+            "nodeId": "S1taXsz2N",
+            "pinKey": "Sk07n5GnN"
+          }
+        },
+        "SkxRBjz3N": {
+          "id": "SkxRBjz3N",
+          "output": {
+            "nodeId": "rJHCmjMhE",
+            "pinKey": "HkqXXjfn4"
+          },
+          "input": {
+            "nodeId": "BkgkNofhE",
+            "pinKey": "rJJHNrVuM-$1"
+          }
+        },
+        "ryMASoGhE": {
+          "id": "ryMASoGhE",
+          "output": {
+            "nodeId": "rkfAXifhN",
+            "pinKey": "HkqXXjfn4"
+          },
+          "input": {
+            "nodeId": "BkgkNofhE",
+            "pinKey": "rJJHNrVuM"
+          }
+        },
+        "HkEAHjfnV": {
+          "id": "HkEAHjfnV",
+          "output": {
+            "nodeId": "SyxCXoz24",
+            "pinKey": "HkqXXjfn4"
+          },
+          "input": {
+            "nodeId": "BkgkNofhE",
+            "pinKey": "HynENHNOz"
+          }
+        }
+      },
+      "nodes": {
+        "BkgkNofhE": {
+          "arityLevel": 2,
+          "boundLiterals": {
+            "rJGQNB4df": "\":\""
+          },
+          "id": "BkgkNofhE",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/join"
+        },
+        "S1taXsz2N": {
+          "id": "S1taXsz2N",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/unpack"
+        },
+        "SJag4iznE": {
+          "id": "SJag4iznE",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "SyxCXoz24": {
+          "id": "SyxCXoz24",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/format-two-digits"
+        },
+        "rJHCmjMhE": {
+          "id": "rJHCmjMhE",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/format-two-digits"
+        },
+        "rk1a7jfhV": {
+          "id": "rk1a7jfhV",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-time"
+        },
+        "rkfAXifhN": {
+          "id": "rkfAXifhN",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/format-two-digits"
+        }
+      },
+      "path": "@/format-iso"
+    },
+    "@/format-two-digits": {
+      "attachments": [
+        {
+          "content": "struct State {\n    char buff[3];\n    CStringView view;\n\n    State() : view(buff) {}\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto state = getState(ctx);\n    auto n = getValue<input_IN>(ctx);\n\n    // convert to an integer in range 0-99\n    uint8_t ndec =\n        (n < 0) ? 0 :\n        (n > 99) ? 99 :\n        (uint8_t)n;\n\n    // convert to characters, leave the last\n    // char intact as it always \\x00\n    state->buff[0] = '0' + ndec / 10;\n    state->buff[1] = '0' + ndec % 10;\n\n    emitValue<output_OUT>(ctx, XString(&state->view));\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1Lf7jMn4": {
+          "id": "B1Lf7jMn4",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HkqXXjfn4": {
+          "id": "HkqXXjfn4",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "ry74QiznV": {
+          "id": "ry74QiznV",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/format-two-digits"
+    },
+    "@/time": {
+      "attachments": [
+        {
+          "content": "// When defining a custom type you must declare a C++ type with name `Type`.\n// It will be used by the system to store and pass values of the new custom\n// type in C++ land.\n// In our case the Type is a simple alias for a single number. However, you\n// might use a complex struct or class for this role.\nusing Type = Number;\n\nstruct State { };\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto sec = getValue<input_SEC>(ctx);\n    auto secsInDay = 24 * 60 * 60;\n\n    // Use the `Type` type to define a new variable that will be\n    // later output as the result. We use `fmod` to perform day-wrap\n    // and be sure the value is in valid range\n    Type out = fmod(sec, secsInDay);\n\n    // Then we can output the new type value like a regular one\n    emitValue<output_OUT>(ctx, out);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "Bk8Q0Kf2E": {
+          "id": "Bk8Q0Kf2E",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "HJ310Kz2V": {
+          "id": "HJ310Kz2V",
+          "label": "SEC",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJtVRtM3E": {
+          "id": "rJtVRtM3E",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/time"
+    },
+    "@/unpack": {
+      "attachments": [
+        {
+          "content": "struct State { };\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // We use `auto` C++ keyword because the `Type` we defined earlier is in\n    // another namespace. The `auto` type instructs the C++ compiler to infer\n    // the actual type from a right-hand side expression and it will always\n    // match the custom type, be it an alias, struct, or class.\n    auto t = getValue<input_IN>(ctx);\n\n    // Now we can use the fetched value as usual. Perform some truncations\n    // and modulo divisions to convert seconds to hours, minutes, and seconds\n    emitValue<output_SEC>(ctx, fmod(t, 60));\n    emitValue<output_MIN>(ctx, fmod(trunc(t / 60), 60));\n    emitValue<output_HOUR>(ctx, trunc(t / 3600));\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "HJE429GnE": {
+          "id": "HJE429GnE",
+          "label": "MIN",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "Sk07n5GnN": {
+          "id": "Sk07n5GnN",
+          "label": "HOUR",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SkBV2cM34": {
+          "id": "SkBV2cM34",
+          "label": "SEC",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SkaUnqf2N": {
+          "id": "SkaUnqf2N",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rke7n9zhE": {
+          "id": "rke7n9zhE",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-time"
+        }
+      },
+      "path": "@/unpack"
+    }
+  },
+  "version": "0.0.4"
+}

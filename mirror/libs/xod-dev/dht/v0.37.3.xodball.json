@@ -1,0 +1,2155 @@
+{
+  "patches": {
+    "@/dht11-device": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJJxJGFUH": {
+          "boundLiterals": {},
+          "description": "Board port number the hygrometer is connected to.",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJJxJGFUH",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "BJjgyGF8B": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJjgyGF8B",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "rJPekGtLB": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJPekGtLB",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-self",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/dht11-device",
+      "description": "Represents a DHT11 sensor. Also named RHT01.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    meta {\n      struct Type {\n         static constexpr typeof_PORT port = constant_input_PORT;\n      };\n    }\n\n    void evaluate(Context ctx) {\n        static_assert(isValidDigitalPort(constant_input_PORT), \"must be a valid digital port\");\n\n        // just to trigger downstream nodes\n        emitValue<output_DEV>(ctx, {});\n    }\n}\n"
+        }
+      ]
+    },
+    "@/dht11-hygrometer": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B145XQFLr": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B145XQFLr",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "@/dht11-device",
+          "@@type": "xod-project/Node"
+        },
+        "BJj5mmtUH": {
+          "boundLiterals": {},
+          "description": "Board port number the hygrometer is connected to.",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJj5mmtUH",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "Bkbs7mtUr": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bkbs7mtUr",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "H1SiQQK8B": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1SiQQK8B",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/read",
+          "@@type": "xod-project/Node"
+        },
+        "HybttEF8r": {
+          "boundLiterals": {},
+          "description": "Last read temperature in °C.",
+          "label": "Tc",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HybttEF8r",
+          "position": {
+            "x": 0,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "SJAjQXFUB": {
+          "boundLiterals": {
+            "ByYWULHUr": "0.2"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJAjQXFUB",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/core/throttle",
+          "@@type": "xod-project/Node"
+        },
+        "SkeWYtEY8S": {
+          "boundLiterals": {},
+          "description": "Relative humidity in ragne [0.0, 1.0]",
+          "label": "RH",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkeWYtEY8S",
+          "position": {
+            "x": 1,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "rJWWFFVFIB": {
+          "boundLiterals": {},
+          "description": "Fires on reading complete",
+          "label": "OK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJWWFFVFIB",
+          "position": {
+            "x": 2,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B1wFFEYIS": {
+          "id": "B1wFFEYIS",
+          "input": {
+            "nodeId": "rJWWFFVFIB",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "H1SiQQK8B",
+            "pinKey": "ryGjKuMYIS"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJLi7XK8B": {
+          "id": "BJLi7XK8B",
+          "input": {
+            "nodeId": "H1SiQQK8B",
+            "pinKey": "H1OcufFUB"
+          },
+          "output": {
+            "nodeId": "B145XQFLr",
+            "pinKey": "rJPekGtLB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJg3XmYIB": {
+          "id": "HJg3XmYIB",
+          "input": {
+            "nodeId": "SJAjQXFUB",
+            "pinKey": "rkzZUUHLB"
+          },
+          "output": {
+            "nodeId": "Bkbs7mtUr",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkncQQYUH": {
+          "id": "HkncQQYUH",
+          "input": {
+            "nodeId": "B145XQFLr",
+            "pinKey": "BJJxJGFUH"
+          },
+          "output": {
+            "nodeId": "BJj5mmtUH",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SytttEY8r": {
+          "id": "SytttEY8r",
+          "input": {
+            "nodeId": "HybttEF8r",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "H1SiQQK8B",
+            "pinKey": "B1-sKdMt8H"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJ_YFEF8S": {
+          "id": "rJ_YFEF8S",
+          "input": {
+            "nodeId": "SkeWYtEY8S",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "H1SiQQK8B",
+            "pinKey": "ryloF_GF8H"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryWnQ7KLB": {
+          "id": "ryWnQ7KLB",
+          "input": {
+            "nodeId": "H1SiQQK8B",
+            "pinKey": "rkiYdzt8H"
+          },
+          "output": {
+            "nodeId": "SJAjQXFUB",
+            "pinKey": "H1H-LLHUr"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/dht11-hygrometer",
+      "description": "Read the temperature and humidity by the DHT11 (RHT01) hygrometer sensor.",
+      "attachments": []
+    },
+    "@/dht2x-device": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1laoyMYIH": {
+          "boundLiterals": {},
+          "description": "Board port number the hygrometer is connected to.",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1laoyMYIH",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "H1faiyzKIr": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1faiyzKIr",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "r1-6ikMF8H": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1-6ikMF8H",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-self",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/dht2x-device",
+      "description": "Represents a DHT21 or compatible sensor: DHT21, DHT22, DHT33, DHT44, AM2301, HM2301, AM2302, AM2303, RHT02, RHT03, RHT04, RHT05.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    meta {\n      struct Type {\n         static constexpr typeof_PORT port = constant_input_PORT;\n      };\n    }\n\n    void evaluate(Context ctx) {\n        static_assert(isValidDigitalPort(constant_input_PORT), \"must be a valid digital port\");\n\n        // just to trigger downstream nodes\n        emitValue<output_DEV>(ctx, {});\n    }\n}\n"
+        }
+      ]
+    },
+    "@/dht2x-hygrometer": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJzNaYNYLB": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJzNaYNYLB",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/read",
+          "@@type": "xod-project/Node"
+        },
+        "BkQEatEKIB": {
+          "boundLiterals": {
+            "ByYWULHUr": "0.3"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkQEatEKIB",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/core/throttle",
+          "@@type": "xod-project/Node"
+        },
+        "ByrVatEK8H": {
+          "boundLiterals": {},
+          "description": "Relative humidity in ragne [0.0, 1.0]",
+          "label": "RH",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByrVatEK8H",
+          "position": {
+            "x": 1,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "HycTtVtIB": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HycTtVtIB",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "@/dht2x-device",
+          "@@type": "xod-project/Node"
+        },
+        "HyeVpKVtIB": {
+          "boundLiterals": {},
+          "description": "Board port number the hygrometer is connected to.",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyeVpKVtIB",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "SJ4V6t4YLr": {
+          "boundLiterals": {},
+          "description": "Last read temperature in °C.",
+          "label": "Tc",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJ4V6t4YLr",
+          "position": {
+            "x": 0,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "SkIETtVY8S": {
+          "boundLiterals": {},
+          "description": "Fires on reading complete",
+          "label": "OK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkIETtVY8S",
+          "position": {
+            "x": 2,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "ryWE6FEK8H": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryWE6FEK8H",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "BJ3N6tEF8H": {
+          "id": "BJ3N6tEF8H",
+          "input": {
+            "nodeId": "ByrVatEK8H",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJzNaYNYLB",
+            "pinKey": "ryloF_GF8H"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJTNaKNtLr": {
+          "id": "BJTNaKNtLr",
+          "input": {
+            "nodeId": "SJ4V6t4YLr",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJzNaYNYLB",
+            "pinKey": "B1-sKdMt8H"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJcEaFVtIH": {
+          "id": "BJcEaFVtIH",
+          "input": {
+            "nodeId": "BJzNaYNYLB",
+            "pinKey": "rkiYdzt8H"
+          },
+          "output": {
+            "nodeId": "BkQEatEKIB",
+            "pinKey": "H1H-LLHUr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJo46FNFLS": {
+          "id": "BJo46FNFLS",
+          "input": {
+            "nodeId": "SkIETtVY8S",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJzNaYNYLB",
+            "pinKey": "ryGjKuMYIS"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1KNpKVF8B": {
+          "id": "H1KNpKVF8B",
+          "input": {
+            "nodeId": "BkQEatEKIB",
+            "pinKey": "rkzZUUHLB"
+          },
+          "output": {
+            "nodeId": "ryWE6FEK8H",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJAatEKLH": {
+          "id": "rJAatEKLH",
+          "input": {
+            "nodeId": "BJzNaYNYLB",
+            "pinKey": "H1OcufFUB"
+          },
+          "output": {
+            "nodeId": "HycTtVtIB",
+            "pinKey": "r1-6ikMF8H"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkh6FNYLS": {
+          "id": "rkh6FNYLS",
+          "input": {
+            "nodeId": "HycTtVtIB",
+            "pinKey": "B1laoyMYIH"
+          },
+          "output": {
+            "nodeId": "HyeVpKVtIB",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/dht2x-hygrometer",
+      "description": "Read the temperature and humidity by the DHT21 or compatible (DHT21, DHT22, DHT33, DHT44, AM2301, HM2301, AM2302, AM2303, RHT02, RHT03, RHT04, RHT05) hygrometer sensor.",
+      "attachments": []
+    },
+    "@/dht2x-pack": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1JY0go1G": {
+          "boundLiterals": {
+            "HJbACN3gb": "127"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1JY0go1G",
+          "position": {
+            "x": 7,
+            "y": 6
+          },
+          "type": "xod/core/greater",
+          "@@type": "xod-project/Node"
+        },
+        "BJky1bsJz": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJky1bsJz",
+          "position": {
+            "x": 14,
+            "y": 4
+          },
+          "type": "xod/core/word-to-number",
+          "@@type": "xod-project/Node"
+        },
+        "Bkl-lClskG": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "D3",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bkl-lClskG",
+          "position": {
+            "x": 15,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "Byqq0ljkz": {
+          "boundLiterals": {
+            "rkJ4URuHDJ-": "127"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Byqq0ljkz",
+          "position": {
+            "x": 10,
+            "y": 4
+          },
+          "type": "xod/core/subtract",
+          "@@type": "xod-project/Node"
+        },
+        "HJEIAxs1z": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "RH",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJEIAxs1z",
+          "position": {
+            "x": 2,
+            "y": 8
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "HJeXkWjJM": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJeXkWjJM",
+          "position": {
+            "x": 9,
+            "y": 6
+          },
+          "type": "xod/core/subtract",
+          "@@type": "xod-project/Node"
+        },
+        "S1MLPjz9M": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1MLPjz9M",
+          "position": {
+            "x": 17,
+            "y": 4
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "S1qS1ZjkG": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "Tc",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1qS1ZjkG",
+          "position": {
+            "x": 8,
+            "y": 9
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "SkY7RxsJM": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkY7RxsJM",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/core/word-to-number",
+          "@@type": "xod-project/Node"
+        },
+        "Sku1Rls1G": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "D0",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sku1Rls1G",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "Sy8v7bikf": {
+          "boundLiterals": {
+            "BytUCdHD1-": "10"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sy8v7bikf",
+          "position": {
+            "x": 8,
+            "y": 8
+          },
+          "type": "xod/core/divide",
+          "@@type": "xod-project/Node"
+        },
+        "SyZlAxsJf": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "D2",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyZlAxsJf",
+          "position": {
+            "x": 7,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "SynxkbsJz": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SynxkbsJz",
+          "position": {
+            "x": 10,
+            "y": 5
+          },
+          "type": "xod/core/word-to-number",
+          "@@type": "xod-project/Node"
+        },
+        "r1EHReikf": {
+          "boundLiterals": {
+            "BytUCdHD1-": "1000"
+          },
+          "description": "Divide by 10 to calculate percents. Divide by 100 to convert to [0, 1] range",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1EHReikf",
+          "position": {
+            "x": 2,
+            "y": 3
+          },
+          "type": "xod/core/divide",
+          "@@type": "xod-project/Node"
+        },
+        "r1xx0xjkM": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "D1",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1xx0xjkM",
+          "position": {
+            "x": 3,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "rJO11bj1z": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJO11bj1z",
+          "position": {
+            "x": 8,
+            "y": 7
+          },
+          "type": "xod/core/if-else",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "HJOmJZiyf": {
+          "id": "HJOmJZiyf",
+          "input": {
+            "nodeId": "HJeXkWjJM",
+            "pinKey": "rkJ4URuHDJ-"
+          },
+          "output": {
+            "nodeId": "SynxkbsJz",
+            "pinKey": "rySsCNowW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkTcAlj1f": {
+          "id": "HkTcAlj1f",
+          "input": {
+            "nodeId": "Byqq0ljkz",
+            "pinKey": "BypX80uSD1Z"
+          },
+          "output": {
+            "nodeId": "SyZlAxsJf",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkfOmbjJG": {
+          "id": "HkfOmbjJG",
+          "input": {
+            "nodeId": "S1qS1ZjkG",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Sy8v7bikf",
+            "pinKey": "BkqLCOSw1W"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hy-OXZskz": {
+          "id": "Hy-OXZskz",
+          "input": {
+            "nodeId": "Sy8v7bikf",
+            "pinKey": "SkdIRuBD1b"
+          },
+          "output": {
+            "nodeId": "rJO11bj1z",
+            "pinKey": "S13xLCuHvkW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1oLRxjyz": {
+          "id": "S1oLRxjyz",
+          "input": {
+            "nodeId": "HJEIAxs1z",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1EHReikf",
+            "pinKey": "BkqLCOSw1W"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJUG1Wjkz": {
+          "id": "SJUG1Wjkz",
+          "input": {
+            "nodeId": "SynxkbsJz",
+            "pinKey": "rJhKCEovZ"
+          },
+          "output": {
+            "nodeId": "Byqq0ljkz",
+            "pinKey": "HyRmUCdBDkZ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJbtRxjkf": {
+          "id": "SJbtRxjkf",
+          "input": {
+            "nodeId": "B1JY0go1G",
+            "pinKey": "rJg00Nhe-"
+          },
+          "output": {
+            "nodeId": "SyZlAxsJf",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkCJ1-s1G": {
+          "id": "SkCJ1-s1G",
+          "input": {
+            "nodeId": "rJO11bj1z",
+            "pinKey": "S1yZIA_rDJZ"
+          },
+          "output": {
+            "nodeId": "B1JY0go1G",
+            "pinKey": "B19RYS3lW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkGG1Wsyz": {
+          "id": "SkGG1Wsyz",
+          "input": {
+            "nodeId": "SynxkbsJz",
+            "pinKey": "ryv504owW"
+          },
+          "output": {
+            "nodeId": "Bkl-lClskG",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkmyyWs1f": {
+          "id": "SkmyyWs1f",
+          "input": {
+            "nodeId": "BJky1bsJz",
+            "pinKey": "rJhKCEovZ"
+          },
+          "output": {
+            "nodeId": "SyZlAxsJf",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyhBRgo1z": {
+          "id": "SyhBRgo1z",
+          "input": {
+            "nodeId": "r1EHReikf",
+            "pinKey": "SkdIRuBD1b"
+          },
+          "output": {
+            "nodeId": "SkY7RxsJM",
+            "pinKey": "rySsCNowW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1rJyWoyM": {
+          "id": "r1rJyWoyM",
+          "input": {
+            "nodeId": "BJky1bsJz",
+            "pinKey": "ryv504owW"
+          },
+          "output": {
+            "nodeId": "Bkl-lClskG",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJKmJZjJG": {
+          "id": "rJKmJZjJG",
+          "input": {
+            "nodeId": "rJO11bj1z",
+            "pinKey": "ryTeUROHD1b"
+          },
+          "output": {
+            "nodeId": "HJeXkWjJM",
+            "pinKey": "HyRmUCdBDkZ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJcJyWoJM": {
+          "id": "rJcJyWoJM",
+          "input": {
+            "nodeId": "rJO11bj1z",
+            "pinKey": "r1AgIROHDJW"
+          },
+          "output": {
+            "nodeId": "BJky1bsJz",
+            "pinKey": "rySsCNowW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryhVAxjJf": {
+          "id": "ryhVAxjJf",
+          "input": {
+            "nodeId": "SkY7RxsJM",
+            "pinKey": "ryv504owW"
+          },
+          "output": {
+            "nodeId": "r1xx0xjkM",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryt40ljkM": {
+          "id": "ryt40ljkM",
+          "input": {
+            "nodeId": "SkY7RxsJM",
+            "pinKey": "rJhKCEovZ"
+          },
+          "output": {
+            "nodeId": "Sku1Rls1G",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {
+        "Hk8tJZokG": {
+          "content": "The MSB in D2 stores temperature sign",
+          "id": "Hk8tJZokG",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "size": {
+            "height": 1,
+            "width": 4
+          }
+        }
+      },
+      "path": "@/dht2x-pack",
+      "description": "Utility. Packs raw data from a DHT21 or higher thermometer into meaningful humidity and temperature.",
+      "attachments": []
+    },
+    "@/dhtxx-read-raw": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkevC3xokz": {
+          "boundLiterals": {},
+          "description": "2-nd byte (temperature high) of the reading",
+          "label": "D2",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkevC3xokz",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "BklSohxsyz": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BklSohxsyz",
+          "position": {
+            "x": -0.05,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "BkwC2ljkz": {
+          "boundLiterals": {},
+          "description": "1-st byte (humidity low) of the reading",
+          "label": "D1",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkwC2ljkz",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "H1Sh3gsyG": {
+          "boundLiterals": {},
+          "description": "0-th byte (humidity high) of the reading",
+          "label": "D0",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1Sh3gsyG",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "H1uC2ejkz": {
+          "boundLiterals": {},
+          "description": "3-rd byte (temperature low) of the reading",
+          "label": "D3",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1uC2ejkz",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "HJMBihlj1G": {
+          "boundLiterals": {},
+          "description": "Board port number the thermometer is connected to.",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJMBihlj1G",
+          "position": {
+            "x": -0.05,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "S1Dd1qSgQ": {
+          "boundLiterals": {},
+          "description": "Fires on reading complete",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1Dd1qSgQ",
+          "position": {
+            "x": 5,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SyQSohgjJz": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers reading values again.",
+          "label": "DO",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyQSohgjJz",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "ry9LPiG5z": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ry9LPiG5z",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/dhtxx-read-raw",
+      "description": "Utility. Reads raw data bytes from a DHTxx thermometer with one-wire interface.\n\nPossible errors:\n— Checksum failure\n— Read timeout\n— Initialization error\n— Invalid port",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    bool reading;\n\n    enum DhtStatus\n    {\n        DHT_OK = 0,\n        DHT_START_FAILED_1 = 1,\n        DHT_START_FAILED_2 = 2,\n        DHT_READ_TIMEOUT = 3,\n        DHT_CHECKSUM_FAILURE = 4,\n    };\n\n    unsigned long pulseInLength(uint8_t pin, bool state, unsigned long timeout) {\n        unsigned long startMicros = micros();\n        while (digitalRead(pin) == state) {\n            if (micros() - startMicros > timeout)\n                return 0;\n        }\n        return micros() - startMicros;\n    }\n\n    bool readByte(uint8_t port, uint8_t* out) {\n        // Collect 8 bits from datastream, return them interpreted\n        // as a byte. I.e. if 0000.0101 is sent, return decimal 5.\n\n        unsigned long pulseLength = 0;\n        uint8_t result = 0;\n        for (uint8_t i = 8; i--; ) {\n            // We enter this during the first start bit (low for 50uS) of the byte\n\n            if (pulseInLength(port, LOW, 70) == 0)\n                return false;\n\n            // Dataline will now stay high for 27 or 70 uS, depending on\n            // whether a 0 or a 1 is being sent, respectively.\n\n            pulseLength = pulseInLength(port, HIGH, 80);\n\n            if (pulseLength == 0)\n                return false;\n\n            if (pulseLength > 45)\n                result |= 1 << i; // set subsequent bit\n        }\n\n        *out = result;\n        return true;\n    }\n\n    DhtStatus readValues(uint8_t port, uint8_t* outData) {\n        // Stop reading request\n        digitalWrite(port, HIGH);\n\n        // DHT datasheet says host should keep line high 20-40us, then watch for\n        // sensor taking line low.  That low should last 80us. Acknowledges \"start\n        // read and report\" command.\n        delayMicroseconds(30);\n\n        // Change Arduino pin to an input, to watch for the 80us low explained a\n        // moment ago.\n        pinMode(port, INPUT_PULLUP);\n\n        if (pulseInLength(port, LOW, 90) == 0)\n            return DHT_START_FAILED_1;\n\n        // After 80us low, the line should be taken high for 80us by the sensor.\n        // The low following that high is the start of the first bit of the forty\n        // to come. The method readByte() expects to be called with the system\n        // already into this low.\n        if (pulseInLength(port, HIGH, 90) == 0)\n            return DHT_START_FAILED_2;\n\n        // now ready for data reception... pick up the 5 bytes coming from\n        // the sensor\n        for (uint8_t i = 0; i < 5; i++)\n            if (!readByte(port, outData + i))\n                return DHT_READ_TIMEOUT;\n\n        // Restore pin to output duties\n        pinMode(port, OUTPUT);\n        digitalWrite(port, HIGH);\n\n        // See if data received consistent with checksum received\n        uint8_t checkSum = outData[0] + outData[1] + outData[2] + outData[3];\n        if (outData[4] != checkSum)\n            return DHT_CHECKSUM_FAILURE;\n\n        return DHT_OK;\n    }\n\n    void enterIdleState(uint8_t port) {\n        // Restore pin to output duties\n        pinMode(port, OUTPUT);\n        digitalWrite(port, HIGH);\n    }\n\n    void evaluate(Context ctx) {\n        static_assert(isValidDigitalPort(constant_input_PORT), \"must be a valid digital port\");\n\n        uint8_t port = constant_input_PORT;\n\n        if (reading) {\n            uint8_t data[5];\n            auto status = readValues(port, data);\n\n            if (status == DHT_OK) {\n                emitValue<output_D0>(ctx, data[0]);\n                emitValue<output_D1>(ctx, data[1]);\n                emitValue<output_D2>(ctx, data[2]);\n                emitValue<output_D3>(ctx, data[3]);\n                emitValue<output_DONE>(ctx, 1);\n            } else {\n                raiseError(ctx);\n            }\n\n            enterIdleState(port);\n            reading = false;\n        } else if (isInputDirty<input_DO>(ctx)) {\n            // initiate request for data\n            pinMode(port, OUTPUT);\n            digitalWrite(port, LOW);\n            // for request we should keep the line low for 18+ ms\n            setTimeout(ctx, 18);\n            reading = true;\n        } else {\n            enterIdleState(port);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example-dht11": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJLidrFUH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJLidrFUH",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/debug/watch",
+          "@@type": "xod-project/Node"
+        },
+        "H1hcdrKLB": {
+          "boundLiterals": {
+            "BJj5mmtUH": "D8"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1hcdrKLB",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "@/dht11-hygrometer",
+          "@@type": "xod-project/Node"
+        },
+        "r1diOBK8H": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1diOBK8H",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/debug/watch",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "H1Yj_HYIB": {
+          "id": "H1Yj_HYIB",
+          "input": {
+            "nodeId": "BJLidrFUH",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H1hcdrKLB",
+            "pinKey": "HybttEF8r"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJ5j_HYUB": {
+          "id": "SJ5j_HYUB",
+          "input": {
+            "nodeId": "r1diOBK8H",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H1hcdrKLB",
+            "pinKey": "SkeWYtEY8S"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/example-dht11",
+      "description": "",
+      "attachments": []
+    },
+    "@/read": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1-sKdMt8H": {
+          "boundLiterals": {},
+          "description": "Last read temperature in °C.",
+          "label": "Tc",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1-sKdMt8H",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "H1OcufFUB": {
+          "boundLiterals": {},
+          "description": "A DHT11 or DHT2x sensor or analog",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1OcufFUB",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-t1",
+          "@@type": "xod-project/Node"
+        },
+        "HJmq_MtUr": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJmq_MtUr",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/abstract",
+          "@@type": "xod-project/Node"
+        },
+        "rkiYdzt8H": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers new read",
+          "label": "DO",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkiYdzt8H",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "ryGjKuMYIS": {
+          "boundLiterals": {},
+          "description": "Fires on reading complete",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryGjKuMYIS",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "ryloF_GF8H": {
+          "boundLiterals": {},
+          "description": "Relative humidity in ragne [0.0, 1.0]",
+          "label": "RH",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryloF_GF8H",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/read",
+      "description": "Reads the temperature and humidity.",
+      "attachments": []
+    },
+    "@/read(dht11-device)": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1xRDDzKUH": {
+          "boundLiterals": {
+            "BytUCdHD1-": "100"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1xRDDzKUH",
+          "position": {
+            "x": 2,
+            "y": 4
+          },
+          "type": "xod/core/divide",
+          "@@type": "xod-project/Node"
+        },
+        "H1l14GK8S": {
+          "boundLiterals": {},
+          "description": "A DHT11 sensor or analog",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1l14GK8S",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-dht11-device",
+          "@@type": "xod-project/Node"
+        },
+        "HJCvwftLS": {
+          "boundLiterals": {},
+          "description": "Last read temperature in °C.",
+          "label": "Tc",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJCvwftLS",
+          "position": {
+            "x": 0,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "HkQ0wvfKLH": {
+          "boundLiterals": {},
+          "description": "Fires on reading complete",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkQ0wvfKLH",
+          "position": {
+            "x": 4,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "S1zy_fKUH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1zy_fKUH",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "@/unpack-dht11-device",
+          "@@type": "xod-project/Node"
+        },
+        "SJEEufKIB": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJEEufKIB",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/dhtxx-read-raw",
+          "@@type": "xod-project/Node"
+        },
+        "SyUwDGKLB": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers new read",
+          "label": "DO",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyUwDGKLB",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SyWRDvzFIr": {
+          "boundLiterals": {},
+          "description": "Relative humidity in ragne [0.0, 1.0]",
+          "label": "RH",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyWRDvzFIr",
+          "position": {
+            "x": 2,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B1QHdftIS": {
+          "id": "B1QHdftIS",
+          "input": {
+            "nodeId": "B1xRDDzKUH",
+            "pinKey": "SkdIRuBD1b"
+          },
+          "output": {
+            "nodeId": "SJEEufKIB",
+            "pinKey": "H1Sh3gsyG"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJrRPvzKIB": {
+          "id": "HJrRPvzKIB",
+          "input": {
+            "nodeId": "SyWRDvzFIr",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "B1xRDDzKUH",
+            "pinKey": "BkqLCOSw1W"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HyX1_zYLS": {
+          "id": "HyX1_zYLS",
+          "input": {
+            "nodeId": "S1zy_fKUH",
+            "pinKey": "r14iDMFIH"
+          },
+          "output": {
+            "nodeId": "H1l14GK8S",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJESdftIS": {
+          "id": "SJESdftIS",
+          "input": {
+            "nodeId": "HkQ0wvfKLH",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJEEufKIB",
+            "pinKey": "S1Dd1qSgQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJcVOGKLS": {
+          "id": "SJcVOGKLS",
+          "input": {
+            "nodeId": "SJEEufKIB",
+            "pinKey": "HJMBihlj1G"
+          },
+          "output": {
+            "nodeId": "S1zy_fKUH",
+            "pinKey": "HkKoDGFLH"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkiVuztLS": {
+          "id": "SkiVuztLS",
+          "input": {
+            "nodeId": "SJEEufKIB",
+            "pinKey": "SyQSohgjJz"
+          },
+          "output": {
+            "nodeId": "SyUwDGKLB",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Sy-HuMKIH": {
+          "id": "Sy-HuMKIH",
+          "input": {
+            "nodeId": "HJCvwftLS",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJEEufKIB",
+            "pinKey": "BkevC3xokz"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/read(dht11-device)",
+      "description": "Reads the temperature and humidity.",
+      "attachments": []
+    },
+    "@/read(dht2x-device)": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1YU_zt8S": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1YU_zt8S",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "@/unpack-dht2x-device",
+          "@@type": "xod-project/Node"
+        },
+        "HkJr62O_B": {
+          "boundLiterals": {},
+          "description": "A DHT2X sensor or analog",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkJr62O_B",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-dht2x-device",
+          "@@type": "xod-project/Node"
+        },
+        "HyeNUdMFUH": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers new read",
+          "label": "DO",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyeNUdMFUH",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "S1b4UOzFUH": {
+          "boundLiterals": {},
+          "description": "Last read temperature in °C.",
+          "label": "Tc",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1b4UOzFUH",
+          "position": {
+            "x": 0,
+            "y": 4
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "SJU4LOftIS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJU4LOftIS",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/dhtxx-read-raw",
+          "@@type": "xod-project/Node"
+        },
+        "SkENLuzFLH": {
+          "boundLiterals": {},
+          "description": "Fires on reading complete",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkENLuzFLH",
+          "position": {
+            "x": 4,
+            "y": 4
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SkXELdztUr": {
+          "boundLiterals": {},
+          "description": "Relative humidity in ragne [0.0, 1.0]",
+          "label": "RH",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkXELdztUr",
+          "position": {
+            "x": 1,
+            "y": 4
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "r1QvOft8B": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1QvOft8B",
+          "position": {
+            "x": 0,
+            "y": 3
+          },
+          "type": "@/dht2x-pack",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B1livuGY8r": {
+          "id": "B1livuGY8r",
+          "input": {
+            "nodeId": "r1QvOft8B",
+            "pinKey": "SyZlAxsJf"
+          },
+          "output": {
+            "nodeId": "SJU4LOftIS",
+            "pinKey": "BkevC3xokz"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkDduztIS": {
+          "id": "BkDduztIS",
+          "input": {
+            "nodeId": "SkXELdztUr",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1QvOft8B",
+            "pinKey": "HJEIAxs1z"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "By5Ip2ddB": {
+          "id": "By5Ip2ddB",
+          "input": {
+            "nodeId": "B1YU_zt8S",
+            "pinKey": "HkELTndOH"
+          },
+          "output": {
+            "nodeId": "HkJr62O_B",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Bya4IdGFIH": {
+          "id": "Bya4IdGFIH",
+          "input": {
+            "nodeId": "SkENLuzFLH",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJU4LOftIS",
+            "pinKey": "S1Dd1qSgQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJhwuGKUB": {
+          "id": "HJhwuGKUB",
+          "input": {
+            "nodeId": "r1QvOft8B",
+            "pinKey": "r1xx0xjkM"
+          },
+          "output": {
+            "nodeId": "SJU4LOftIS",
+            "pinKey": "BkwC2ljkz"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJiPdGtUr": {
+          "id": "HJiPdGtUr",
+          "input": {
+            "nodeId": "r1QvOft8B",
+            "pinKey": "Bkl-lClskG"
+          },
+          "output": {
+            "nodeId": "SJU4LOftIS",
+            "pinKey": "H1uC2ejkz"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkTDuzYLS": {
+          "id": "HkTDuzYLS",
+          "input": {
+            "nodeId": "r1QvOft8B",
+            "pinKey": "Sku1Rls1G"
+          },
+          "output": {
+            "nodeId": "SJU4LOftIS",
+            "pinKey": "H1Sh3gsyG"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r15NU_MKIr": {
+          "id": "r15NU_MKIr",
+          "input": {
+            "nodeId": "SJU4LOftIS",
+            "pinKey": "SyQSohgjJz"
+          },
+          "output": {
+            "nodeId": "HyeNUdMFUH",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1SOdzKLB": {
+          "id": "r1SOdzKLB",
+          "input": {
+            "nodeId": "S1b4UOzFUH",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1QvOft8B",
+            "pinKey": "S1qS1ZjkG"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkoI_zKLr": {
+          "id": "rkoI_zKLr",
+          "input": {
+            "nodeId": "SJU4LOftIS",
+            "pinKey": "HJMBihlj1G"
+          },
+          "output": {
+            "nodeId": "B1YU_zt8S",
+            "pinKey": "rJln6vMKLH"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/read(dht2x-device)",
+      "description": "Reads the temperature and humidity.",
+      "attachments": []
+    },
+    "@/unpack-dht11-device": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJ8RPzYLB": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJ8RPzYLB",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "HkKoDGFLH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkKoDGFLH",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-port",
+          "@@type": "xod-project/Node"
+        },
+        "HkRjwfF8H": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkRjwfF8H",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "r14iDMFIH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r14iDMFIH",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-dht11-device",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/unpack-dht11-device",
+      "description": "",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    static constexpr uint8_t constant_output_OUT = typeof_DEV::port;\n\n    void evaluate(Context ctx) {\n        // We don't need to worry about emitting from constant outputs.\n        // Outputs will be always dirty on boot, and then the value will never change anyway.\n    }\n}\n"
+        }
+      ]
+    },
+    "@/unpack-dht2x-device": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "HJO0PfFUB": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJO0PfFUB",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "HkELTndOH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkELTndOH",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-dht2x-device",
+          "@@type": "xod-project/Node"
+        },
+        "rJln6vMKLH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJln6vMKLH",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-port",
+          "@@type": "xod-project/Node"
+        },
+        "ryZ2pPfK8B": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryZ2pPfK8B",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/unpack-dht2x-device",
+      "description": "",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    static constexpr uint8_t constant_output_OUT = typeof_DEV::port;\n\n    void evaluate(Context ctx) {\n        // We don't need to worry about emitting from constant outputs.\n        // Outputs will be always dirty on boot, and then the value will never change anyway.\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "authors": [],
+  "license": "AGPL-3.0",
+  "version": "0.37.3",
+  "description": "Nodes to work with DHT11 or DHT21 sensors, or compatible sensors: RHT01, DHT22, DHT33, DHT44, AM2301, HM2301, AM2302, AM2303, RHT02, RHT03, RHT04, RHT05.",
+  "apiKey": "",
+  "name": "dht"
+}

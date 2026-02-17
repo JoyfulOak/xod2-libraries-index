@@ -1,0 +1,270 @@
+{
+  "patches": {
+    "@/countupdown": {
+      "nodes": {
+        "BJ1VhA3Ed": {
+          "id": "BJ1VhA3Ed",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "r1ZP2ChVO": {
+          "id": "r1ZP2ChVO",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "INC"
+        },
+        "Bkrv30n4_": {
+          "id": "Bkrv30n4_",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DEC"
+        },
+        "SkKwhRnNd": {
+          "id": "SkKwhRnNd",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 11,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "RST"
+        },
+        "S14O2C3E_": {
+          "id": "S14O2C3E_",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "r1c_2AnVO": {
+          "id": "r1c_2AnVO",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "STEP"
+        },
+        "HkT9JJTEO": {
+          "id": "HkT9JJTEO",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 15,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "PRESET"
+        },
+        "SymhJkTNu": {
+          "id": "SymhJkTNu",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 13,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "OFFSET"
+        }
+      },
+      "path": "@/countupdown",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    void evaluate(Context ctx) {\n        Number count = getValue<output_OUT>(ctx);\n\n        if (isInputDirty<input_RST>(ctx))\n            count = 0;\n        else if (isInputDirty<input_PRESET>(ctx))\n            count = getValue<input_OFFSET>(ctx);\n        \n        \n        else if (isInputDirty<input_INC>(ctx))\n            count += getValue<input_STEP>(ctx);\n        else if ( isInputDirty<input_DEC>(ctx))\n            count -= getValue<input_STEP>(ctx);\n        emitValue<output_OUT>(ctx, count);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/test": {
+      "nodes": {
+        "S1LWpC3VO": {
+          "id": "S1LWpC3VO",
+          "type": "@/countupdown",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "r1c_2AnVO": "1",
+            "SymhJkTNu": "22"
+          }
+        },
+        "HkH_Z1p4d": {
+          "id": "HkH_Z1p4d",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        },
+        "HJPKbJaNd": {
+          "id": "HJPKbJaNd",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BkcYZkTEd": {
+          "id": "BkcYZkTEd",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "r1CKZkTEu": {
+          "id": "r1CKZkTEu",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "ryzqZJTE_": {
+          "id": "ryzqZJTE_",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "S1ksZJaVu": {
+          "id": "S1ksZJaVu",
+          "type": "xod/debug/tweak-number",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ByfGSDjQE": "123"
+          }
+        },
+        "SyznzJpVO": {
+          "id": "SyznzJpVO",
+          "type": "xod/debug/tweak-number",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ByfGSDjQE": "1"
+          }
+        }
+      },
+      "links": {
+        "Hyud-k6VO": {
+          "id": "Hyud-k6VO",
+          "output": {
+            "nodeId": "S1LWpC3VO",
+            "pinKey": "S14O2C3E_"
+          },
+          "input": {
+            "nodeId": "HkH_Z1p4d",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "ry9j-k64u": {
+          "id": "ry9j-k64u",
+          "output": {
+            "nodeId": "S1ksZJaVu",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "S1LWpC3VO",
+            "pinKey": "SymhJkTNu"
+          }
+        },
+        "B1n3bkpV_": {
+          "id": "B1n3bkpV_",
+          "output": {
+            "nodeId": "HJPKbJaNd",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "S1LWpC3VO",
+            "pinKey": "r1ZP2ChVO"
+          }
+        },
+        "rkJaWk6Eu": {
+          "id": "rkJaWk6Eu",
+          "output": {
+            "nodeId": "BkcYZkTEd",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "S1LWpC3VO",
+            "pinKey": "Bkrv30n4_"
+          }
+        },
+        "BJ-pZy64u": {
+          "id": "BJ-pZy64u",
+          "output": {
+            "nodeId": "r1CKZkTEu",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "S1LWpC3VO",
+            "pinKey": "SkKwhRnNd"
+          }
+        },
+        "By76Z1pVO": {
+          "id": "By76Z1pVO",
+          "output": {
+            "nodeId": "ryzqZJTE_",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "S1LWpC3VO",
+            "pinKey": "HkT9JJTEO"
+          }
+        },
+        "HJU2zJ6Vu": {
+          "id": "HJU2zJ6Vu",
+          "output": {
+            "nodeId": "SyznzJpVO",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "S1LWpC3VO",
+            "pinKey": "r1c_2AnVO"
+          }
+        }
+      },
+      "path": "@/test"
+    }
+  },
+  "license": "MIT",
+  "version": "1.0.0",
+  "description": "increments and  decrements a number ,  the output can  presettet with the  offset  input",
+  "apiKey": "41bca3de-bf30-410a-a8ac-52c7c1c08f9d",
+  "name": "countupdown"
+}

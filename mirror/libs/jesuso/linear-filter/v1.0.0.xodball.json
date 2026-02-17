@@ -1,0 +1,169 @@
+{
+  "description": "Simple implementation of a Linear Mean Filter, its purpose is to provide an average of the last N entries of a given signal (sensor), resulting in smooth readings.",
+  "license": "GPL",
+  "name": "linear-filter",
+  "patches": {
+    "@/linear-filter": {
+      "attachments": [
+        {
+          "content": "const int size = 5;\n\nclass LinearFilter {\n  Number stack[size];\n\n  public:\n    LinearFilter() {\n      for (int i = 0; i < size; i++) {\n        stack[i] = -1;\n      }\n    }\n\n    void add(Number val) {\n      // Displace elements to the \"right\"\n      for (int i = size - 1; i > 0; i--) {\n        stack[i] = stack[i - 1];\n      }\n      // And insert the new element\n      stack[0] = val;\n    }\n\n    Number average() {\n      Number total = 0;\n      int elements = 0;\n\n      for (int i = 0; i < size; i++) {\n        const Number val = stack[i];\n\n        // Ignore empty values (-1)\n        if (val == -1) {\n          continue;\n        }\n\n        total += val;\n        elements++;\n      }\n\n      return total / elements;\n    }\n};\n\nstruct State {\n    LinearFilter linearFilter;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n\n    if (!isInputDirty<input_ADD>(ctx)) {\n        return;\n    }\n\n    Number val = getValue<input_VAL>(ctx);\n    state->linearFilter.add(val);\n\n    Number average = state->linearFilter.average();\n    emitValue<output_AVG>(ctx, average);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1WzoW3dI": {
+          "id": "B1WzoW3dI",
+          "label": "AVG",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BJJXiZhuI": {
+          "id": "BJJXiZhuI",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SyQZob2uU": {
+          "id": "SyQZob2uU",
+          "label": "VAL",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryleoW2uL": {
+          "id": "ryleoW2uL",
+          "label": "ADD",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/linear-filter"
+    },
+    "@/linear-filter-example": {
+      "nodes": {
+        "Skp3KTCdU": {
+          "boundLiterals": {
+            "B13SCNhl-": "2"
+          },
+          "id": "Skp3KTCdU",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "HyeThFa0OL": {
+          "id": "HyeThFa0OL",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "BkZa3YpR_U": {
+          "id": "BkZa3YpR_U",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "BkMa2tTCdL": {
+          "id": "BkMa2tTCdL",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "SJmpnKaC_U": {
+          "id": "SJmpnKaC_U",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/linear-filter"
+        }
+      },
+      "links": {
+        "BJVa2YaA_I": {
+          "id": "BJVa2YaA_I",
+          "input": {
+            "nodeId": "BkMa2tTCdL",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "HyeThFa0OL",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "HJHahtTCOL": {
+          "id": "HJHahtTCOL",
+          "input": {
+            "nodeId": "SJmpnKaC_U",
+            "pinKey": "SyQZob2uU"
+          },
+          "output": {
+            "nodeId": "HyeThFa0OL",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "r1Up2F6R_8": {
+          "id": "r1Up2F6R_8",
+          "input": {
+            "nodeId": "BkZa3YpR_U",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "SJmpnKaC_U",
+            "pinKey": "B1WzoW3dI"
+          }
+        },
+        "H1w6htTAO8": {
+          "id": "H1w6htTAO8",
+          "input": {
+            "nodeId": "HyeThFa0OL",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "Skp3KTCdU",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "rJ_phKa0OL": {
+          "id": "rJ_phKa0OL",
+          "input": {
+            "nodeId": "SJmpnKaC_U",
+            "pinKey": "ryleoW2uL"
+          },
+          "output": {
+            "nodeId": "Skp3KTCdU",
+            "pinKey": "HJU8CE2lW"
+          }
+        }
+      },
+      "path": "@/linear-filter-example"
+    }
+  },
+  "version": "1.0.0"
+}

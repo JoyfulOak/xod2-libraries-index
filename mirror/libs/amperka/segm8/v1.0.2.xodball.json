@@ -1,0 +1,2834 @@
+{
+  "patches": {
+    "@/clear": {
+      "nodes": {
+        "BJkYMOrbv": {
+          "description": "Triggers a new clear.",
+          "label": "UPD",
+          "id": "BJkYMOrbv",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkU7MOrWP": {
+          "id": "BkU7MOrWP",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SkR9zuBWw": {
+          "description": "Pulses when the clear is done.",
+          "label": "DONE",
+          "id": "SkR9zuBWw",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SyDvz_HZw": {
+          "description": "The SegM8 device.",
+          "label": "DEV",
+          "id": "SyDvz_HZw",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-segm8-device"
+        },
+        "rkdrci9Ww": {
+          "description": "The SegM8 device.",
+          "label": "DEV'",
+          "id": "rkdrci9Ww",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/output-segm8-device"
+        }
+      },
+      "path": "@/clear",
+      "description": "Clears all the SegM8 modules, i.e., turns off all their segments.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\r\nstruct State {\r\n};\r\n\r\n{{ GENERATED_CODE }}\r\n\r\nvoid evaluate(Context ctx) {\r\n    auto chain = getValue<input_DEV>(ctx);\r\n\r\n    if (isSettingUp())\r\n        emitValue<output_DEVU0027>(ctx, chain);\r\n\r\n    if(isInputDirty<input_UPD>(ctx)) {\r\n        chain->clear();\r\n        emitValue<output_DONE>(ctx, true);\r\n    }\r\n}\r\n"
+        }
+      ]
+    },
+    "@/display-number": {
+      "nodes": {
+        "B1E6ms9-w": {
+          "description": "A value to display.",
+          "label": "VAL",
+          "id": "B1E6ms9-w",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BkAYfocWw": {
+          "id": "BkAYfocWw",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BkE74ocbD": {
+          "description": "The \"leading zeroes\" flag. If it is true adds zeroes to the beginning of the displayed value until it is W-sized.",
+          "label": "LZ",
+          "id": "BkE74ocbD",
+          "position": {
+            "x": 13,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "BkwL4iqbv": {
+          "description": "Triggers a new display of the value.",
+          "label": "UPD",
+          "id": "BkwL4iqbv",
+          "position": {
+            "x": 17,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1Yqfiq-v": {
+          "description": "The SegM8 device.",
+          "label": "DEV",
+          "id": "H1Yqfiq-v",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-segm8-device"
+        },
+        "HJxDNo9ZP": {
+          "description": "Pulses when the display of the value is done.",
+          "label": "DONE",
+          "id": "HJxDNo9ZP",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hy6Yss9bv": {
+          "description": "The SegM8 device.",
+          "label": "DEV'",
+          "id": "Hy6Yss9bv",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/output-segm8-device"
+        },
+        "Hyo0y3cWv": {
+          "description": "The number of SegM8 modules used to display digits after the dot. If it is set to 0, the value is displayed as an integer.",
+          "label": "DIG",
+          "id": "Hyo0y3cWv",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SyLyEo5-v": {
+          "description": "In a daisy chain, the ordinal segM8 module number from which the value display begins. The module numbering in a daisy chain starts from 0, from left module to right.",
+          "label": "POS",
+          "id": "SyLyEo5-v",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r11fVj9ZP": {
+          "boundLiterals": {
+            "__out__": "10"
+          },
+          "description": "The radix for an integer value. It can be 10 or 16. If the RDX is 16 the value is displayed in the hexadecimal format including the characters A, b, C, d, E, F;",
+          "label": "RDX",
+          "id": "r11fVj9ZP",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1uHNs5bv": {
+          "description": "The \"align\" flag. Aligns the displayed value to the left if true and to the right if false.",
+          "label": "A",
+          "id": "r1uHNs5bv",
+          "position": {
+            "x": 15,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rymeVjcZv": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "The width of the displayed value in segM8 modules. The dot \".\" character of the floating-point value does not occupy the entire segM8 module.",
+          "label": "W",
+          "id": "rymeVjcZv",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/display-number",
+      "description": "Displays a number value at the SegM8 module or several modules linked in a daisy chain.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\r\nstruct State {\r\n};\r\n\r\n{{ GENERATED_CODE }}\r\n\r\nvoid evaluate(Context ctx) {\r\n    auto chain = getValue<input_DEV>(ctx);\r\n    auto num = getValue<input_VAL>(ctx);\r\n    auto position = getValue<input_POS>(ctx);\r\n    auto width = getValue<input_W>(ctx);\r\n    auto precission = getValue<input_DIG>(ctx);\r\n    auto radix = getValue<input_RDX>(ctx);\r\n    auto leadzeros = getValue<input_LZ>(ctx);\r\n    auto toleft = getValue<input_A>(ctx);\r\n\r\n    if (isSettingUp())\r\n        emitValue<output_DEVU0027>(ctx, chain);\r\n\r\n    if(isInputDirty<input_UPD>(ctx)) {\r\n        for(uint8_t i = 0; i < width; i++) chain->writeSegments( 0, position + i); // clear field, put spaces\r\n        if(precission == 0) { // it is integer, not float\r\n            if(radix == 10) {\r\n                chain->display((int32_t)num, position, width, (toleft ? SEGM8_ALIGN_LEFT : 0) | (leadzeros ? SEGM8_PAD_ZEROS : 0));\r\n            } else if(radix == 16) {\r\n                chain->display((uint32_t)num, position, width, (toleft ? SEGM8_ALIGN_LEFT : 0) | (leadzeros ? SEGM8_PAD_ZEROS : 0) | SEGM8_RADIX_16);\r\n            } else { // other radixes not supported - error\r\n                chain->display(\"ERROR\", position, width, SEGM8_ALIGN_LEFT);\r\n            }\r\n        } else { // it is float\r\n            chain->display((double)num, position, width, precission, (toleft ? SEGM8_ALIGN_LEFT : 0) | (leadzeros ? SEGM8_PAD_ZEROS : 0));\r\n        }\r\n        emitValue<output_DONE>(ctx, true);\r\n    }\r\n}\r\n"
+        }
+      ]
+    },
+    "@/display-text": {
+      "nodes": {
+        "B1k6UuSWv": {
+          "description": "In a daisy chain, the ordinal SegM8 module number from which the text display begins. The module numbering in a daisy chain starts from 0, from left module to right.",
+          "label": "POS",
+          "id": "B1k6UuSWv",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJ-Oojqbw": {
+          "description": "The SegM8 device.",
+          "label": "DEV'",
+          "id": "BJ-Oojqbw",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/output-segm8-device"
+        },
+        "BJkIXOrbw": {
+          "id": "BJkIXOrbw",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ByyFXuBbw": {
+          "description": "Text to be displayed on the daisy-chain of indicator modules.",
+          "label": "TEXT",
+          "id": "ByyFXuBbw",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SJbqmuSZw": {
+          "description": "Triggers a new display of the text.",
+          "label": "UPD",
+          "id": "SJbqmuSZw",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Sk29QOS-w": {
+          "description": "Pulses when the display of the text is done.",
+          "label": "DONE",
+          "id": "Sk29QOS-w",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r1fp8uSWP": {
+          "description": "The width of the displayed text in segM8 modules.",
+          "label": "W",
+          "id": "r1fp8uSWP",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryzPmdrbD": {
+          "description": "The SegM8 device.",
+          "label": "DEV",
+          "id": "ryzPmdrbD",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-segm8-device"
+        }
+      },
+      "path": "@/display-text",
+      "description": "A text string to display. The string should consist of next characters: \"0\", \"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"A\", \"b\", \"C\", \"d\", \"E\", \"F\", \"G\", \"H\", \"I\", \"J\", \"L\", \"O\", \"P\", \"q\", \"r\", \"S\", \"t\", \"U\", \"Y\", space, dot , \"-\" , \"[\", \"]\", quote, double quote, underscore, degree. Instead of unsupported characters, the overline is displayed. The dot \".\" character does not occupy the entire segM8 module.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\r\nstruct State {\r\n};\r\n\r\n{{ GENERATED_CODE }}\r\n\r\nvoid evaluate(Context ctx) {\r\n    auto chain = getValue<input_DEV>(ctx);\r\n    auto text = getValue<input_TEXT>(ctx);\r\n    auto position = getValue<input_POS>(ctx);\r\n    auto width = getValue<input_W>(ctx);\r\n\r\n    if (isSettingUp())\r\n        emitValue<output_DEVU0027>(ctx, chain);\r\n\r\n    if(isInputDirty<input_UPD>(ctx)) {\r\n        char* buf = new char(length(text)+1);\r\n        dump(text, buf);\r\n        for(uint8_t i = 0; i < width; i++) chain->writeSegments( 0, position + i); // clear field, put spaces\r\n        chain->display(buf, position, width, SEGM8_ALIGN_LEFT);\r\n        delete buf;\r\n        emitValue<output_DONE>(ctx, true);\r\n    }\r\n}\r\n"
+        }
+      ]
+    },
+    "@/example-blink": {
+      "nodes": {
+        "ByXMfFBWv": {
+          "id": "ByXMfFBWv",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/clear"
+        },
+        "Byxn-YSZP": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "Byxn-YSZP",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "H1Iw2Lt-P": {
+          "id": "H1Iw2Lt-P",
+          "position": {
+            "x": 8,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/defer(pulse)"
+        },
+        "H1PFbFBZw": {
+          "boundLiterals": {
+            "ByyFXuBbw": "\"8\"",
+            "r1fp8uSWP": "1"
+          },
+          "id": "H1PFbFBZw",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/display-text"
+        },
+        "HJI3GFSWw": {
+          "id": "HJI3GFSWw",
+          "position": {
+            "x": 4,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "@/clear"
+        },
+        "Hk1KbKHWv": {
+          "boundLiterals": {
+            "H1tdHs5Ww": "D255",
+            "r1QuSjqbv": "D255",
+            "rJmFZ_Bbw": "8",
+            "ryTwBicbw": "D8"
+          },
+          "id": "Hk1KbKHWv",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/segm8-device"
+        },
+        "S1EaMYrWD": {
+          "id": "S1EaMYrWD",
+          "position": {
+            "x": 6,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/core/defer(pulse)"
+        },
+        "SJCiftBWv": {
+          "boundLiterals": {
+            "S1NKLdrWv": "128d"
+          },
+          "id": "SJCiftBWv",
+          "position": {
+            "x": 6,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/write-segments"
+        },
+        "ryI0GYHbv": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "ryI0GYHbv",
+          "position": {
+            "x": 6,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "ryVlfYH-w": {
+          "boundLiterals": {
+            "ryv7IRdSP1b": "On Boot"
+          },
+          "id": "ryVlfYH-w",
+          "position": {
+            "x": 12,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        }
+      },
+      "links": {
+        "BJTnoi9ZP": {
+          "id": "BJTnoi9ZP",
+          "input": {
+            "nodeId": "HJI3GFSWw",
+            "pinKey": "SyDvz_HZw"
+          },
+          "output": {
+            "nodeId": "SJCiftBWv",
+            "pinKey": "ByxMijcbw"
+          }
+        },
+        "BkuTzFB-D": {
+          "id": "BkuTzFB-D",
+          "input": {
+            "nodeId": "ryVlfYH-w",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "S1EaMYrWD",
+            "pinKey": "S1K8wUY9b"
+          }
+        },
+        "ByLGzYHWP": {
+          "id": "ByLGzYHWP",
+          "input": {
+            "nodeId": "ByXMfFBWv",
+            "pinKey": "BJkYMOrbv"
+          },
+          "output": {
+            "nodeId": "Byxn-YSZP",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "HJtD38FbP": {
+          "id": "HJtD38FbP",
+          "input": {
+            "nodeId": "Byxn-YSZP",
+            "pinKey": "H1mlUC_HDJZ"
+          },
+          "output": {
+            "nodeId": "H1Iw2Lt-P",
+            "pinKey": "S1K8wUY9b"
+          }
+        },
+        "HkEknIYbP": {
+          "id": "HkEknIYbP",
+          "input": {
+            "nodeId": "S1EaMYrWD",
+            "pinKey": "Hk-UvIK9b"
+          },
+          "output": {
+            "nodeId": "HJI3GFSWw",
+            "pinKey": "SkR9zuBWw"
+          }
+        },
+        "HysYZYBZD": {
+          "id": "HysYZYBZD",
+          "input": {
+            "nodeId": "H1PFbFBZw",
+            "pinKey": "ryzPmdrbD"
+          },
+          "output": {
+            "nodeId": "Hk1KbKHWv",
+            "pinKey": "SkOn-_SZv"
+          }
+        },
+        "SJww2Itbv": {
+          "id": "SJww2Itbv",
+          "input": {
+            "nodeId": "H1Iw2Lt-P",
+            "pinKey": "Hk-UvIK9b"
+          },
+          "output": {
+            "nodeId": "ByXMfFBWv",
+            "pinKey": "SkR9zuBWw"
+          }
+        },
+        "SkBr7FH-P": {
+          "id": "SkBr7FH-P",
+          "input": {
+            "nodeId": "ryI0GYHbv",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "SJCiftBWv",
+            "pinKey": "ry-u8dBbD"
+          }
+        },
+        "Sy8ezKBbD": {
+          "id": "Sy8ezKBbD",
+          "input": {
+            "nodeId": "H1PFbFBZw",
+            "pinKey": "SJbqmuSZw"
+          },
+          "output": {
+            "nodeId": "ryVlfYH-w",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "SyHAZKr-P": {
+          "id": "SyHAZKr-P",
+          "input": {
+            "nodeId": "Byxn-YSZP",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "H1PFbFBZw",
+            "pinKey": "Sk29QOS-w"
+          }
+        },
+        "r1Eu3IYWv": {
+          "id": "r1Eu3IYWv",
+          "input": {
+            "nodeId": "ryI0GYHbv",
+            "pinKey": "H1mlUC_HDJZ"
+          },
+          "output": {
+            "nodeId": "S1EaMYrWD",
+            "pinKey": "S1K8wUY9b"
+          }
+        },
+        "rJLAiLFWv": {
+          "id": "rJLAiLFWv",
+          "input": {
+            "nodeId": "SJCiftBWv",
+            "pinKey": "rk2PLOr-D"
+          },
+          "output": {
+            "nodeId": "ByXMfFBWv",
+            "pinKey": "SkR9zuBWw"
+          }
+        },
+        "rJtSXYS-P": {
+          "id": "rJtSXYS-P",
+          "input": {
+            "nodeId": "HJI3GFSWw",
+            "pinKey": "BJkYMOrbv"
+          },
+          "output": {
+            "nodeId": "ryI0GYHbv",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "rkW3iicbD": {
+          "id": "rkW3iicbD",
+          "input": {
+            "nodeId": "SJCiftBWv",
+            "pinKey": "SJk58drWv"
+          },
+          "output": {
+            "nodeId": "ByXMfFBWv",
+            "pinKey": "rkdrci9Ww"
+          }
+        },
+        "rylaiocZP": {
+          "id": "rylaiocZP",
+          "input": {
+            "nodeId": "ByXMfFBWv",
+            "pinKey": "SyDvz_HZw"
+          },
+          "output": {
+            "nodeId": "H1PFbFBZw",
+            "pinKey": "BJ-Oojqbw"
+          }
+        }
+      },
+      "comments": {
+        "HyfnJ9cZw": {
+          "content": "Draw \"8\"",
+          "id": "HyfnJ9cZw",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          }
+        },
+        "ryWwmtH-w": {
+          "content": "The example alternately lights up the symbol '8' and a dot on one module. Hardware SPI is used.",
+          "id": "ryWwmtH-w",
+          "position": {
+            "x": 8,
+            "y": 7,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 6,
+            "units": "slots"
+          }
+        },
+        "rylA15qbv": {
+          "content": "Draw \".\"\n128 is 0b10000000",
+          "id": "rylA15qbv",
+          "position": {
+            "x": 11,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example-blink",
+      "description": "The example alternately lights up the symbol '8' and a dot on one module. The example uses 1 SegM8 module. CS pin is connected to Arduino pin 8. Hardware SPI is used."
+    },
+    "@/example-clock": {
+      "nodes": {
+        "BJ4ruYcZv": {
+          "boundLiterals": {
+            "BJvrLOuyz": "60"
+          },
+          "id": "BJ4ruYcZv",
+          "position": {
+            "x": 14,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/modulo"
+        },
+        "BJI7_t9bD": {
+          "boundLiterals": {
+            "BytUCdHD1-": "60"
+          },
+          "id": "BJI7_t9bD",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/divide"
+        },
+        "ByJuC5CZv": {
+          "id": "ByJuC5CZv",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/math/floor"
+        },
+        "H167DKcZv": {
+          "boundLiterals": {
+            "B13SCNhl-": "1"
+          },
+          "id": "H167DKcZv",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "H1jknq0-D": {
+          "boundLiterals": {
+            "SJ4zUC_BD1-": "100"
+          },
+          "id": "H1jknq0-D",
+          "position": {
+            "x": 9,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/multiply"
+        },
+        "HJdd1j0bw": {
+          "boundLiterals": {
+            "r1AgIROHDJW": "2",
+            "ryTeUROHD1b": "0"
+          },
+          "id": "HJdd1j0bw",
+          "position": {
+            "x": 11,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/core/if-else"
+        },
+        "HJiMtYcWv": {
+          "boundLiterals": {
+            "H1tdHs5Ww": "D255",
+            "Hyxj-dBZD": "4",
+            "r1QuSjqbv": "D255",
+            "rJmFZ_Bbw": "8",
+            "ryTwBicbw": "D8"
+          },
+          "id": "HJiMtYcWv",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/segm8-device"
+        },
+        "Hku0a90-v": {
+          "id": "Hku0a90-v",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "HycSaY9WP": {
+          "id": "HycSaY9WP",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "S1ZPyoCWP": {
+          "id": "S1ZPyoCWP",
+          "position": {
+            "x": 8,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/core/if-else"
+        },
+        "S1kLyoR-v": {
+          "boundLiterals": {
+            "BytUCdHD1-": "100"
+          },
+          "id": "S1kLyoR-v",
+          "position": {
+            "x": 11,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/core/divide"
+        },
+        "r1-cRq0-v": {
+          "id": "r1-cRq0-v",
+          "position": {
+            "x": 16,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/math/floor"
+        },
+        "r1S-2qRbv": {
+          "id": "r1S-2qRbv",
+          "position": {
+            "x": 11,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/add"
+        },
+        "rJrj0cRbw": {
+          "id": "rJrj0cRbw",
+          "position": {
+            "x": 10,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/math/floor"
+        },
+        "rkRDuK9Zv": {
+          "boundLiterals": {
+            "BJvrLOuyz": "24"
+          },
+          "id": "rkRDuK9Zv",
+          "position": {
+            "x": 8,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/modulo"
+        },
+        "ryatno5Ww": {
+          "boundLiterals": {
+            "BkE74ocbD": "True",
+            "Hyo0y3cWv": "0",
+            "r11fVj9ZP": "10",
+            "rymeVjcZv": "4"
+          },
+          "id": "ryatno5Ww",
+          "position": {
+            "x": 7,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "@/display-number"
+        }
+      },
+      "links": {
+        "B12PyoA-w": {
+          "id": "B12PyoA-w",
+          "input": {
+            "nodeId": "ryatno5Ww",
+            "pinKey": "B1E6ms9-w"
+          },
+          "output": {
+            "nodeId": "S1ZPyoCWP",
+            "pinKey": "S13xLCuHvkW"
+          }
+        },
+        "Bkm_05C-w": {
+          "id": "Bkm_05C-w",
+          "input": {
+            "nodeId": "rkRDuK9Zv",
+            "pinKey": "ryKV8d_1f"
+          },
+          "output": {
+            "nodeId": "ByJuC5CZv",
+            "pinKey": "rkWeUCdBDkZ"
+          }
+        },
+        "ByG86FqbP": {
+          "id": "ByG86FqbP",
+          "input": {
+            "nodeId": "HycSaY9WP",
+            "pinKey": "ryTIROHwkW"
+          },
+          "output": {
+            "nodeId": "H167DKcZv",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "ByWdR5AZw": {
+          "id": "ByWdR5AZw",
+          "input": {
+            "nodeId": "ByJuC5CZv",
+            "pinKey": "SklxICdHP1b"
+          },
+          "output": {
+            "nodeId": "BJI7_t9bD",
+            "pinKey": "BkqLCOSw1W"
+          }
+        },
+        "ByvDyj0Zw": {
+          "id": "ByvDyj0Zw",
+          "input": {
+            "nodeId": "S1ZPyoCWP",
+            "pinKey": "ryTeUROHD1b"
+          },
+          "output": {
+            "nodeId": "r1S-2qRbv",
+            "pinKey": "SyomIRurDJ-"
+          }
+        },
+        "H1eK1oC-P": {
+          "id": "H1eK1oC-P",
+          "input": {
+            "nodeId": "HJdd1j0bw",
+            "pinKey": "S1yZIA_rDJZ"
+          },
+          "output": {
+            "nodeId": "HycSaY9WP",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "HJSDJsAZP": {
+          "id": "HJSDJsAZP",
+          "input": {
+            "nodeId": "S1ZPyoCWP",
+            "pinKey": "r1AgIROHDJW"
+          },
+          "output": {
+            "nodeId": "S1kLyoR-v",
+            "pinKey": "BkqLCOSw1W"
+          }
+        },
+        "HkuJCcAbv": {
+          "id": "HkuJCcAbv",
+          "input": {
+            "nodeId": "BJ4ruYcZv",
+            "pinKey": "ryKV8d_1f"
+          },
+          "output": {
+            "nodeId": "Hku0a90-v",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "HyeA2i5-P": {
+          "id": "HyeA2i5-P",
+          "input": {
+            "nodeId": "ryatno5Ww",
+            "pinKey": "BkwL4iqbv"
+          },
+          "output": {
+            "nodeId": "H167DKcZv",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "Hysq2o9-D": {
+          "id": "Hysq2o9-D",
+          "input": {
+            "nodeId": "ryatno5Ww",
+            "pinKey": "H1Yqfiq-v"
+          },
+          "output": {
+            "nodeId": "HJiMtYcWv",
+            "pinKey": "SkOn-_SZv"
+          }
+        },
+        "SJ750qAZP": {
+          "id": "SJ750qAZP",
+          "input": {
+            "nodeId": "r1-cRq0-v",
+            "pinKey": "SklxICdHP1b"
+          },
+          "output": {
+            "nodeId": "BJ4ruYcZv",
+            "pinKey": "Hku_LuOyz"
+          }
+        },
+        "SyHtkjAbv": {
+          "id": "SyHtkjAbv",
+          "input": {
+            "nodeId": "ryatno5Ww",
+            "pinKey": "Hyo0y3cWv"
+          },
+          "output": {
+            "nodeId": "HJdd1j0bw",
+            "pinKey": "S13xLCuHvkW"
+          }
+        },
+        "SyP-h5CZw": {
+          "id": "SyP-h5CZw",
+          "input": {
+            "nodeId": "r1S-2qRbv",
+            "pinKey": "BJnQUR_BwyZ"
+          },
+          "output": {
+            "nodeId": "H1jknq0-D",
+            "pinKey": "BkQzLCurwJZ"
+          }
+        },
+        "SyYiR50Zv": {
+          "id": "SyYiR50Zv",
+          "input": {
+            "nodeId": "H1jknq0-D",
+            "pinKey": "B1GfLR_SPk-"
+          },
+          "output": {
+            "nodeId": "rJrj0cRbw",
+            "pinKey": "rkWeUCdBDkZ"
+          }
+        },
+        "r1joCcA-D": {
+          "id": "r1joCcA-D",
+          "input": {
+            "nodeId": "rJrj0cRbw",
+            "pinKey": "SklxICdHP1b"
+          },
+          "output": {
+            "nodeId": "rkRDuK9Zv",
+            "pinKey": "Hku_LuOyz"
+          }
+        },
+        "r1zF1sAbw": {
+          "id": "r1zF1sAbw",
+          "input": {
+            "nodeId": "S1ZPyoCWP",
+            "pinKey": "S1yZIA_rDJZ"
+          },
+          "output": {
+            "nodeId": "HycSaY9WP",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "rJN1RqRWD": {
+          "id": "rJN1RqRWD",
+          "input": {
+            "nodeId": "BJI7_t9bD",
+            "pinKey": "SkdIRuBD1b"
+          },
+          "output": {
+            "nodeId": "Hku0a90-v",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "rkl8ki0Zv": {
+          "id": "rkl8ki0Zv",
+          "input": {
+            "nodeId": "S1kLyoR-v",
+            "pinKey": "SkdIRuBD1b"
+          },
+          "output": {
+            "nodeId": "r1S-2qRbv",
+            "pinKey": "SyomIRurDJ-"
+          }
+        },
+        "rku50qCWP": {
+          "id": "rku50qCWP",
+          "input": {
+            "nodeId": "r1S-2qRbv",
+            "pinKey": "HkqmLAOrD1W"
+          },
+          "output": {
+            "nodeId": "r1-cRq0-v",
+            "pinKey": "rkWeUCdBDkZ"
+          }
+        },
+        "ry1yAqC-D": {
+          "id": "ry1yAqC-D",
+          "input": {
+            "nodeId": "Hku0a90-v",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "H167DKcZv",
+            "pinKey": "HJU8CE2lW"
+          }
+        }
+      },
+      "comments": {
+        "HJD4cYcWw": {
+          "content": "Time in seconds from program start.",
+          "id": "HJD4cYcWw",
+          "position": {
+            "x": 14,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 3,
+            "units": "slots"
+          }
+        },
+        "HkXY9FqZw": {
+          "content": "Minutes",
+          "id": "HkXY9FqZw",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          }
+        },
+        "HyiL6F9bv": {
+          "content": "Point blinking",
+          "id": "HyiL6F9bv",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 3,
+            "units": "slots"
+          }
+        },
+        "rJiKqY5bw": {
+          "content": "Seconds",
+          "id": "rJiKqY5bw",
+          "position": {
+            "x": 14,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example-clock",
+      "description": "The example simulates a clock is displaying minutes and seconds. The example uses 4 SegM8 modules. CS pin is connected to Arduino pin 8. Hardware SPI is used."
+    },
+    "@/example-clock-emulation": {
+      "nodes": {
+        "Bk9pdSSmw": {
+          "id": "Bk9pdSSmw",
+          "position": {
+            "x": 4,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/pad-with-zeroes"
+        },
+        "BkICdSBmv": {
+          "id": "BkICdSBmv",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/pad-with-zeroes"
+        },
+        "H1Sq_BHXP": {
+          "id": "H1Sq_BHXP",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/datetime/unpack-datetime"
+        },
+        "H1vzuSHXD": {
+          "id": "H1vzuSHXD",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/debug/tethering-inet"
+        },
+        "HJZ9JC_Sv": {
+          "id": "HJZ9JC_Sv",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod-cloud/basics/now"
+        },
+        "HkC28SS7v": {
+          "id": "HkC28SS7v",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "HyPGYSH7P": {
+          "boundLiterals": {
+            "r1fp8uSWP": "4"
+          },
+          "id": "HyPGYSH7P",
+          "position": {
+            "x": 3,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/display-text"
+        },
+        "SkjGYBHmw": {
+          "boundLiterals": {
+            "Hyxj-dBZD": "4",
+            "ryTwBicbw": "D2"
+          },
+          "id": "SkjGYBHmw",
+          "position": {
+            "x": -1,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/segm8-device"
+        },
+        "rJKkKHBmv": {
+          "boundLiterals": {
+            "rJGQNB4df": "\".\""
+          },
+          "id": "rJKkKHBmv",
+          "position": {
+            "x": 4,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/join"
+        },
+        "rJYi8SHQP": {
+          "boundLiterals": {
+            "SkSuD6LMb": "On Boot",
+            "Skre8ROSv1-": "1"
+          },
+          "id": "rJYi8SHQP",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "ryOaLSSmw": {
+          "id": "ryOaLSSmw",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/defer(pulse)"
+        }
+      },
+      "links": {
+        "B1Lq1RdBv": {
+          "id": "B1Lq1RdBv",
+          "input": {
+            "nodeId": "H1Sq_BHXP",
+            "pinKey": "rkCYRgQDm"
+          },
+          "output": {
+            "nodeId": "HJZ9JC_Sv",
+            "pinKey": "ryFe8qI3U"
+          }
+        },
+        "B1oa8SSXP": {
+          "id": "B1oa8SSXP",
+          "input": {
+            "nodeId": "HkC28SS7v",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "ryOaLSSmw",
+            "pinKey": "S1K8wUY9b"
+          }
+        },
+        "BJ49yAuSw": {
+          "id": "BJ49yAuSw",
+          "input": {
+            "nodeId": "HJZ9JC_Sv",
+            "pinKey": "r1lFErc828"
+          },
+          "output": {
+            "nodeId": "H1vzuSHXD",
+            "pinKey": "SyveJHHBL"
+          }
+        },
+        "BJvxFBBXP": {
+          "id": "BJvxFBBXP",
+          "input": {
+            "nodeId": "rJKkKHBmv",
+            "pinKey": "rJJHNrVuM"
+          },
+          "output": {
+            "nodeId": "BkICdSBmv",
+            "pinKey": "Hk2bcGVDm"
+          }
+        },
+        "BksR_BrXv": {
+          "id": "BksR_BrXv",
+          "input": {
+            "nodeId": "BkICdSBmv",
+            "pinKey": "H1DWqMVw7"
+          },
+          "output": {
+            "nodeId": "H1Sq_BHXP",
+            "pinKey": "r1MljClXPm"
+          }
+        },
+        "Hypc10_Sv": {
+          "id": "Hypc10_Sv",
+          "input": {
+            "nodeId": "HJZ9JC_Sv",
+            "pinKey": "HyF4Hq828"
+          },
+          "output": {
+            "nodeId": "HkC28SS7v",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "SJ1kKSHQP": {
+          "id": "SJ1kKSHQP",
+          "input": {
+            "nodeId": "Bk9pdSSmw",
+            "pinKey": "H1DWqMVw7"
+          },
+          "output": {
+            "nodeId": "H1Sq_BHXP",
+            "pinKey": "BJZls0g7DQ"
+          }
+        },
+        "SJG6LSHmw": {
+          "id": "SJG6LSHmw",
+          "input": {
+            "nodeId": "HkC28SS7v",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "rJYi8SHQP",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "rJ1mtHrQw": {
+          "id": "rJ1mtHrQw",
+          "input": {
+            "nodeId": "HyPGYSH7P",
+            "pinKey": "ryzPmdrbD"
+          },
+          "output": {
+            "nodeId": "SkjGYBHmw",
+            "pinKey": "SkOn-_SZv"
+          }
+        },
+        "rk8xFBr7v": {
+          "id": "rk8xFBr7v",
+          "input": {
+            "nodeId": "rJKkKHBmv",
+            "pinKey": "HynENHNOz"
+          },
+          "output": {
+            "nodeId": "Bk9pdSSmw",
+            "pinKey": "Hk2bcGVDm"
+          }
+        },
+        "rkqNYrBXD": {
+          "id": "rkqNYrBXD",
+          "input": {
+            "nodeId": "HyPGYSH7P",
+            "pinKey": "ByyFXuBbw"
+          },
+          "output": {
+            "nodeId": "rJKkKHBmv",
+            "pinKey": "HJrBNr4dG"
+          }
+        },
+        "rkyjkRdSP": {
+          "id": "rkyjkRdSP",
+          "input": {
+            "nodeId": "ryOaLSSmw",
+            "pinKey": "Hk-UvIK9b"
+          },
+          "output": {
+            "nodeId": "HJZ9JC_Sv",
+            "pinKey": "Sk0OelypI"
+          }
+        }
+      },
+      "comments": {
+        "BykIMRuHD": {
+          "content": "Need XOD version 0.35.1 or more.",
+          "id": "BykIMRuHD",
+          "position": {
+            "x": -1,
+            "y": 4,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example-clock-emulation"
+    },
+    "@/example-counter": {
+      "nodes": {
+        "H1xIU5OGKP": {
+          "boundLiterals": {
+            "SkUjZA_L-": "On Boot"
+          },
+          "id": "H1xIU5OGKP",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "SJWUIcdMKw": {
+          "boundLiterals": {
+            "BJJICN2lW": "On Boot"
+          },
+          "id": "SJWUIcdMKw",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "r1LL5_MKP": {
+          "boundLiterals": {
+            "S1JYhqWYv": "1",
+            "SJWX-q_MYD": "1"
+          },
+          "id": "r1LL5_MKP",
+          "position": {
+            "x": 4,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/segm8-number"
+        }
+      },
+      "links": {
+        "BJu_q_GKD": {
+          "id": "BJu_q_GKD",
+          "input": {
+            "nodeId": "r1LL5_MKP",
+            "pinKey": "H1mZcOftv"
+          },
+          "output": {
+            "nodeId": "H1xIU5OGKP",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "rJQUIqdzYP": {
+          "id": "rJQUIqdzYP",
+          "input": {
+            "nodeId": "H1xIU5OGKP",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "SJWUIcdMKw",
+            "pinKey": "HJU8CE2lW"
+          }
+        }
+      },
+      "path": "@/example-counter",
+      "description": "Quickstart usage example."
+    },
+    "@/example-templates": {
+      "nodes": {
+        "B1-eUY11MP": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "B1-eUY11MP",
+          "position": {
+            "x": 15,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "B1W5_F11fv": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "B1W5_F11fv",
+          "position": {
+            "x": 21,
+            "y": 10,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "B1WB_Fk1zP": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "B1WB_Fk1zP",
+          "position": {
+            "x": 15,
+            "y": 10,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "B1fgUFkkzv": {
+          "boundLiterals": {
+            "S1NKLdrWv": "10h"
+          },
+          "id": "B1fgUFkkzv",
+          "position": {
+            "x": 13,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/write-segments"
+        },
+        "BJ4bYJkfD": {
+          "boundLiterals": {
+            "S1NKLdrWv": "01h"
+          },
+          "id": "BJ4bYJkfD",
+          "position": {
+            "x": 1,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/write-segments"
+        },
+        "BJ9vYkJfv": {
+          "boundLiterals": {
+            "ByyFXuBbw": "\"b\"",
+            "r1fp8uSWP": "1"
+          },
+          "id": "BJ9vYkJfv",
+          "position": {
+            "x": 1,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "@/display-text"
+        },
+        "BJPmq11zP": {
+          "id": "BJPmq11zP",
+          "position": {
+            "x": 21,
+            "y": 11,
+            "units": "slots"
+          },
+          "type": "xod/core/defer(pulse)"
+        },
+        "BJw8Fkyzv": {
+          "boundLiterals": {
+            "ByyFXuBbw": "\"G\"",
+            "r1fp8uSWP": "1"
+          },
+          "id": "BJw8Fkyzv",
+          "position": {
+            "x": 19,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/display-text"
+        },
+        "BJzb_YkkMD": {
+          "boundLiterals": {
+            "S1NKLdrWv": "08h"
+          },
+          "id": "BJzb_YkkMD",
+          "position": {
+            "x": 7,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "@/write-segments"
+        },
+        "BJzuBK1JzP": {
+          "boundLiterals": {
+            "S1NKLdrWv": "04h"
+          },
+          "id": "BJzuBK1JzP",
+          "position": {
+            "x": 7,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/write-segments"
+        },
+        "BkHuKykGv": {
+          "boundLiterals": {
+            "ByyFXuBbw": "\"F\"",
+            "r1fp8uSWP": "1"
+          },
+          "id": "BkHuKykGv",
+          "position": {
+            "x": 13,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "@/display-text"
+        },
+        "BkWOKJkGw": {
+          "boundLiterals": {
+            "ByyFXuBbw": "\"d\"",
+            "r1fp8uSWP": "1"
+          },
+          "id": "BkWOKJkGw",
+          "position": {
+            "x": 7,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "@/display-text"
+        },
+        "BkWcwK1yGw": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "BkWcwK1yGw",
+          "position": {
+            "x": 3,
+            "y": 10,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "BygLFJJfw": {
+          "boundLiterals": {
+            "ByyFXuBbw": "\"E\"",
+            "r1fp8uSWP": "1"
+          },
+          "id": "BygLFJJfw",
+          "position": {
+            "x": 13,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/display-text"
+        },
+        "H1gOStkJzw": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "H1gOStkJzw",
+          "position": {
+            "x": 9,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "H1xrdFyyfP": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "H1xrdFyyfP",
+          "position": {
+            "x": 15,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "HJEAOy1Mw": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "HJEAOy1Mw",
+          "position": {
+            "x": 3,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "HJZ-OFykGw": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "HJZ-OFykGw",
+          "position": {
+            "x": 9,
+            "y": 10,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "HJf3OJyMP": {
+          "boundLiterals": {
+            "ByyFXuBbw": "\"A\"",
+            "r1fp8uSWP": "1"
+          },
+          "id": "HJf3OJyMP",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/display-text"
+        },
+        "HkfHOKk1zw": {
+          "boundLiterals": {
+            "S1NKLdrWv": "20h"
+          },
+          "id": "HkfHOKk1zw",
+          "position": {
+            "x": 13,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "@/write-segments"
+        },
+        "HkfcwtyJMw": {
+          "boundLiterals": {
+            "S1NKLdrWv": "02h"
+          },
+          "id": "HkfcwtyJMw",
+          "position": {
+            "x": 1,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "@/write-segments"
+        },
+        "Hy-uOJyfP": {
+          "boundLiterals": {
+            "H1tdHs5Ww": "D13",
+            "r1QuSjqbv": "D11",
+            "ryTwBicbw": "D8"
+          },
+          "id": "Hy-uOJyfP",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/segm8-device"
+        },
+        "HyEqF1yfD": {
+          "boundLiterals": {
+            "ryv7IRdSP1b": "On Boot"
+          },
+          "id": "HyEqF1yfD",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "HyWOSFy1MP": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "HyWOSFy1MP",
+          "position": {
+            "x": 9,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "HyeeIYk1Gw": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "HyeeIYk1Gw",
+          "position": {
+            "x": 15,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "HygvUFyJGv": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "HygvUFyJGv",
+          "position": {
+            "x": 21,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "HylqDFkkzv": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "HylqDFkkzv",
+          "position": {
+            "x": 3,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "S1fP8YyJzP": {
+          "boundLiterals": {
+            "S1NKLdrWv": "40h"
+          },
+          "id": "S1fP8YyJzP",
+          "position": {
+            "x": 19,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/write-segments"
+        },
+        "S1ggt11MD": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "S1ggt11MD",
+          "position": {
+            "x": 3,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "SJ_SFyJMP": {
+          "boundLiterals": {
+            "ByyFXuBbw": "\"C\"",
+            "r1fp8uSWP": "1"
+          },
+          "id": "SJ_SFyJMP",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/display-text"
+        },
+        "Syl5uKJyMv": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "Syl5uKJyMv",
+          "position": {
+            "x": 21,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "r1G9OFJkGw": {
+          "boundLiterals": {
+            "S1NKLdrWv": "80h"
+          },
+          "id": "r1G9OFJkGw",
+          "position": {
+            "x": 19,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "@/write-segments"
+        },
+        "r1lbdY11Gw": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "r1lbdY11Gw",
+          "position": {
+            "x": 9,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "rJZvIFy1GD": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "rJZvIFy1GD",
+          "position": {
+            "x": 21,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "rJcuFy1Gw": {
+          "boundLiterals": {
+            "ByyFXuBbw": "\"H\"",
+            "r1fp8uSWP": "1"
+          },
+          "id": "rJcuFy1Gw",
+          "position": {
+            "x": 19,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "@/display-text"
+        }
+      },
+      "links": {
+        "B1IB_YkkMw": {
+          "id": "B1IB_YkkMw",
+          "input": {
+            "nodeId": "B1WB_Fk1zP",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "HkfHOKk1zw",
+            "pinKey": "ry-u8dBbD"
+          }
+        },
+        "B1I_BF1JGP": {
+          "id": "B1I_BF1JGP",
+          "input": {
+            "nodeId": "HyWOSFy1MP",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "BJzuBK1JzP",
+            "pinKey": "ry-u8dBbD"
+          }
+        },
+        "BJ85K1kfv": {
+          "id": "BJ85K1kfv",
+          "input": {
+            "nodeId": "HJf3OJyMP",
+            "pinKey": "SJbqmuSZw"
+          },
+          "output": {
+            "nodeId": "HyEqF1yfD",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "BJBw8YJyMv": {
+          "id": "BJBw8YJyMv",
+          "input": {
+            "nodeId": "S1fP8YyJzP",
+            "pinKey": "rk2PLOr-D"
+          },
+          "output": {
+            "nodeId": "HygvUFyJGv",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "BJK3jkJMv": {
+          "id": "BJK3jkJMv",
+          "input": {
+            "nodeId": "BJw8Fkyzv",
+            "pinKey": "ryzPmdrbD"
+          },
+          "output": {
+            "nodeId": "Hy-uOJyfP",
+            "pinKey": "SkOn-_SZv"
+          }
+        },
+        "BJXAF11zP": {
+          "id": "BJXAF11zP",
+          "input": {
+            "nodeId": "rJcuFy1Gw",
+            "pinKey": "SJbqmuSZw"
+          },
+          "output": {
+            "nodeId": "rJZvIFy1GD",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "BkGstkkGD": {
+          "id": "BkGstkkGD",
+          "input": {
+            "nodeId": "BJ9vYkJfv",
+            "pinKey": "SJbqmuSZw"
+          },
+          "output": {
+            "nodeId": "S1ggt11MD",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "BkI5OYykMD": {
+          "id": "BkI5OYykMD",
+          "input": {
+            "nodeId": "B1W5_F11fv",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "r1G9OFJkGw",
+            "pinKey": "ry-u8dBbD"
+          }
+        },
+        "BkIbuK11GD": {
+          "id": "BkIbuK11GD",
+          "input": {
+            "nodeId": "HJZ-OFykGw",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "BJzb_YkkMD",
+            "pinKey": "ry-u8dBbD"
+          }
+        },
+        "BkSx8YkkGw": {
+          "id": "BkSx8YkkGw",
+          "input": {
+            "nodeId": "B1fgUFkkzv",
+            "pinKey": "rk2PLOr-D"
+          },
+          "output": {
+            "nodeId": "HyeeIYk1Gw",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "BkmuSKJ1Gw": {
+          "id": "BkmuSKJ1Gw",
+          "input": {
+            "nodeId": "H1gOStkJzw",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "SJ_SFyJMP",
+            "pinKey": "Sk29QOS-w"
+          }
+        },
+        "ByXeLt1kMD": {
+          "id": "ByXeLt1kMD",
+          "input": {
+            "nodeId": "HyeeIYk1Gw",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "BygLFJJfw",
+            "pinKey": "Sk29QOS-w"
+          }
+        },
+        "Byo-K1Jzv": {
+          "id": "Byo-K1Jzv",
+          "input": {
+            "nodeId": "BJ4bYJkfD",
+            "pinKey": "SJk58drWv"
+          },
+          "output": {
+            "nodeId": "HJf3OJyMP",
+            "pinKey": "BJ-Oojqbw"
+          }
+        },
+        "H1ScutkkGv": {
+          "id": "H1ScutkkGv",
+          "input": {
+            "nodeId": "r1G9OFJkGw",
+            "pinKey": "rk2PLOr-D"
+          },
+          "output": {
+            "nodeId": "Syl5uKJyMv",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "HJCjK11zD": {
+          "id": "HJCjK11zD",
+          "input": {
+            "nodeId": "BJw8Fkyzv",
+            "pinKey": "SJbqmuSZw"
+          },
+          "output": {
+            "nodeId": "B1WB_Fk1zP",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "HJSr_Fykzv": {
+          "id": "HJSr_Fykzv",
+          "input": {
+            "nodeId": "HkfHOKk1zw",
+            "pinKey": "rk2PLOr-D"
+          },
+          "output": {
+            "nodeId": "H1xrdFyyfP",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "HJviKkJMv": {
+          "id": "HJviKkJMv",
+          "input": {
+            "nodeId": "SJ_SFyJMP",
+            "pinKey": "SJbqmuSZw"
+          },
+          "output": {
+            "nodeId": "BkWcwK1yGw",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "Hk1AFyJMw": {
+          "id": "Hk1AFyJMw",
+          "input": {
+            "nodeId": "BkWOKJkGw",
+            "pinKey": "SJbqmuSZw"
+          },
+          "output": {
+            "nodeId": "HyWOSFy1MP",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "Hk4qwKy1GD": {
+          "id": "Hk4qwKy1GD",
+          "input": {
+            "nodeId": "HkfcwtyJMw",
+            "pinKey": "SJk58drWv"
+          },
+          "output": {
+            "nodeId": "BJ9vYkJfv",
+            "pinKey": "BJ-Oojqbw"
+          }
+        },
+        "Hk4uStyyMD": {
+          "id": "Hk4uStyyMD",
+          "input": {
+            "nodeId": "BJzuBK1JzP",
+            "pinKey": "SJk58drWv"
+          },
+          "output": {
+            "nodeId": "SJ_SFyJMP",
+            "pinKey": "BJ-Oojqbw"
+          }
+        },
+        "HkEZ_YJ1MP": {
+          "id": "HkEZ_YJ1MP",
+          "input": {
+            "nodeId": "BJzb_YkkMD",
+            "pinKey": "SJk58drWv"
+          },
+          "output": {
+            "nodeId": "BkWOKJkGw",
+            "pinKey": "BJ-Oojqbw"
+          }
+        },
+        "HkN9OY1kfP": {
+          "id": "HkN9OY1kfP",
+          "input": {
+            "nodeId": "r1G9OFJkGw",
+            "pinKey": "SJk58drWv"
+          },
+          "output": {
+            "nodeId": "rJcuFy1Gw",
+            "pinKey": "BJ-Oojqbw"
+          }
+        },
+        "HknftJ1Mv": {
+          "id": "HknftJ1Mv",
+          "input": {
+            "nodeId": "S1ggt11MD",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "BJ4bYJkfD",
+            "pinKey": "ry-u8dBbD"
+          }
+        },
+        "HyEHdty1fP": {
+          "id": "HyEHdty1fP",
+          "input": {
+            "nodeId": "HkfHOKk1zw",
+            "pinKey": "SJk58drWv"
+          },
+          "output": {
+            "nodeId": "BkHuKykGv",
+            "pinKey": "BJ-Oojqbw"
+          }
+        },
+        "HyIwUY1kzw": {
+          "id": "HyIwUY1kzw",
+          "input": {
+            "nodeId": "rJZvIFy1GD",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "S1fP8YyJzP",
+            "pinKey": "ry-u8dBbD"
+          }
+        },
+        "Hyfhoy1zv": {
+          "id": "Hyfhoy1zv",
+          "input": {
+            "nodeId": "BkHuKykGv",
+            "pinKey": "ryzPmdrbD"
+          },
+          "output": {
+            "nodeId": "B1fgUFkkzv",
+            "pinKey": "ByxMijcbw"
+          }
+        },
+        "HyhhjJJMP": {
+          "id": "HyhhjJJMP",
+          "input": {
+            "nodeId": "BygLFJJfw",
+            "pinKey": "ryzPmdrbD"
+          },
+          "output": {
+            "nodeId": "Hy-uOJyfP",
+            "pinKey": "SkOn-_SZv"
+          }
+        },
+        "S137cJ1zw": {
+          "id": "S137cJ1zw",
+          "input": {
+            "nodeId": "HyEqF1yfD",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "BJPmq11zP",
+            "pinKey": "S1K8wUY9b"
+          }
+        },
+        "S1QDLtJ1MD": {
+          "id": "S1QDLtJ1MD",
+          "input": {
+            "nodeId": "HygvUFyJGv",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "BJw8Fkyzv",
+            "pinKey": "Sk29QOS-w"
+          }
+        },
+        "S1UxUY11fP": {
+          "id": "S1UxUY11fP",
+          "input": {
+            "nodeId": "B1-eUY11MP",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "B1fgUFkkzv",
+            "pinKey": "ry-u8dBbD"
+          }
+        },
+        "SJ4hjkyfP": {
+          "id": "SJ4hjkyfP",
+          "input": {
+            "nodeId": "rJcuFy1Gw",
+            "pinKey": "ryzPmdrbD"
+          },
+          "output": {
+            "nodeId": "S1fP8YyJzP",
+            "pinKey": "ByxMijcbw"
+          }
+        },
+        "SJO2Kyyzv": {
+          "id": "SJO2Kyyzv",
+          "input": {
+            "nodeId": "BkWOKJkGw",
+            "pinKey": "ryzPmdrbD"
+          },
+          "output": {
+            "nodeId": "BJzuBK1JzP",
+            "pinKey": "ByxMijcbw"
+          }
+        },
+        "SkWRKykzP": {
+          "id": "SkWRKykzP",
+          "input": {
+            "nodeId": "BkHuKykGv",
+            "pinKey": "SJbqmuSZw"
+          },
+          "output": {
+            "nodeId": "B1-eUY11MP",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "Sy85PFyyfP": {
+          "id": "Sy85PFyyfP",
+          "input": {
+            "nodeId": "BkWcwK1yGw",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "HkfcwtyJMw",
+            "pinKey": "ry-u8dBbD"
+          }
+        },
+        "SytX9kyMv": {
+          "id": "SytX9kyMv",
+          "input": {
+            "nodeId": "BJPmq11zP",
+            "pinKey": "Hk-UvIK9b"
+          },
+          "output": {
+            "nodeId": "B1W5_F11fv",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "r17cutk1zD": {
+          "id": "r17cutk1zD",
+          "input": {
+            "nodeId": "Syl5uKJyMv",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "rJcuFy1Gw",
+            "pinKey": "Sk29QOS-w"
+          }
+        },
+        "r1LMYkyGP": {
+          "id": "r1LMYkyGP",
+          "input": {
+            "nodeId": "BJ4bYJkfD",
+            "pinKey": "rk2PLOr-D"
+          },
+          "output": {
+            "nodeId": "HJEAOy1Mw",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "r1Sdrtk1Gw": {
+          "id": "r1Sdrtk1Gw",
+          "input": {
+            "nodeId": "BJzuBK1JzP",
+            "pinKey": "rk2PLOr-D"
+          },
+          "output": {
+            "nodeId": "H1gOStkJzw",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "r1mB_YJyzw": {
+          "id": "r1mB_YJyzw",
+          "input": {
+            "nodeId": "H1xrdFyyfP",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "BkHuKykGv",
+            "pinKey": "Sk29QOS-w"
+          }
+        },
+        "r1rbuYJkzw": {
+          "id": "r1rbuYJkzw",
+          "input": {
+            "nodeId": "BJzb_YkkMD",
+            "pinKey": "rk2PLOr-D"
+          },
+          "output": {
+            "nodeId": "r1lbdY11Gw",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "rJEDUKkkzP": {
+          "id": "rJEDUKkkzP",
+          "input": {
+            "nodeId": "S1fP8YyJzP",
+            "pinKey": "SJk58drWv"
+          },
+          "output": {
+            "nodeId": "BJw8Fkyzv",
+            "pinKey": "BJ-Oojqbw"
+          }
+        },
+        "rJKbYJ1zP": {
+          "id": "rJKbYJ1zP",
+          "input": {
+            "nodeId": "HJf3OJyMP",
+            "pinKey": "ryzPmdrbD"
+          },
+          "output": {
+            "nodeId": "Hy-uOJyfP",
+            "pinKey": "SkOn-_SZv"
+          }
+        },
+        "rkr5wFk1MP": {
+          "id": "rkr5wFk1MP",
+          "input": {
+            "nodeId": "HkfcwtyJMw",
+            "pinKey": "rk2PLOr-D"
+          },
+          "output": {
+            "nodeId": "HylqDFkkzv",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "ryI2KJJMP": {
+          "id": "ryI2KJJMP",
+          "input": {
+            "nodeId": "BJ9vYkJfv",
+            "pinKey": "ryzPmdrbD"
+          },
+          "output": {
+            "nodeId": "BJ4bYJkfD",
+            "pinKey": "ByxMijcbw"
+          }
+        },
+        "ryQcwFykfw": {
+          "id": "ryQcwFykfw",
+          "input": {
+            "nodeId": "HylqDFkkzv",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "BJ9vYkJfv",
+            "pinKey": "Sk29QOS-w"
+          }
+        },
+        "ryVeLt11MD": {
+          "id": "ryVeLt11MD",
+          "input": {
+            "nodeId": "B1fgUFkkzv",
+            "pinKey": "SJk58drWv"
+          },
+          "output": {
+            "nodeId": "BygLFJJfw",
+            "pinKey": "BJ-Oojqbw"
+          }
+        },
+        "ryX2FyJzw": {
+          "id": "ryX2FyJzw",
+          "input": {
+            "nodeId": "SJ_SFyJMP",
+            "pinKey": "ryzPmdrbD"
+          },
+          "output": {
+            "nodeId": "Hy-uOJyfP",
+            "pinKey": "SkOn-_SZv"
+          }
+        },
+        "rycjKyJfv": {
+          "id": "rycjKyJfv",
+          "input": {
+            "nodeId": "BygLFJJfw",
+            "pinKey": "SJbqmuSZw"
+          },
+          "output": {
+            "nodeId": "HJZ-OFykGw",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "ryh0OkJMw": {
+          "id": "ryh0OkJMw",
+          "input": {
+            "nodeId": "HJEAOy1Mw",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "HJf3OJyMP",
+            "pinKey": "Sk29QOS-w"
+          }
+        },
+        "rymbdKyyfP": {
+          "id": "rymbdKyyfP",
+          "input": {
+            "nodeId": "r1lbdY11Gw",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "BkWOKJkGw",
+            "pinKey": "Sk29QOS-w"
+          }
+        }
+      },
+      "path": "@/example-templates",
+      "description": "This example shows how to apply a write-segments patch. An example on one module alternately shows the segment name (a-h) and then shows the segment itself. CS pin is connected to Arduino pin 8. Hardware SPI is used."
+    },
+    "@/segm8-device": {
+      "nodes": {
+        "BkHHWOrZv": {
+          "id": "BkHHWOrZv",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1tdHs5Ww": {
+          "boundLiterals": {
+            "__out__": "D255"
+          },
+          "description": "The \"serial clock\" board port of the SPI interface the display is connected to. You can use any pin of the Arduino. For example: 'D4'.\nLeave this parameter at 'D255' when using hardware SPI.",
+          "label": "CLK",
+          "id": "H1tdHs5Ww",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Hyxj-dBZD": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "The number of modules in the daisy-chain. The default is 1.",
+          "label": "N",
+          "id": "Hyxj-dBZD",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkOn-_SZv": {
+          "description": "The SegM8 device.",
+          "label": "DEV",
+          "id": "SkOn-_SZv",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "r1QuSjqbv": {
+          "boundLiterals": {
+            "__out__": "D255"
+          },
+          "description": "The \"data output\" board port of the SPI interface the display is connected to. It can be named MOSI. You can use any pin of the Arduino. For example: 'D3'. Leave this parameter at 'D255' when using hardware SPI.",
+          "label": "DO",
+          "id": "r1QuSjqbv",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "ryTwBicbw": {
+          "description": "The \"chip select\" board port of the SPI interface the display is connected to. You can use any Arduino pin. For example: 'D8'.",
+          "label": "CS",
+          "id": "ryTwBicbw",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        }
+      },
+      "path": "@/segm8-device",
+      "description": "Device node for a single SegM8 display module or several modules linked in a daisy chain connected via hardware or software SPI interface. If the DO and CLK pin values are D255 the hardware SPI is used. Other DO and CLK pin values are used for the software SPI.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD require \"https://github.com/amperka/SegM8\"\r\n\r\n{{#global}}\r\n#include \"segm8.h\"\r\n{{/global}}\r\n\r\nstruct State {\r\n    uint8_t mem[sizeof(SegM8)];\r\n};\r\n\r\nusing Type = SegM8*;\r\n\r\n{{ GENERATED_CODE }}\r\n\r\nvoid evaluate(Context ctx) {\r\n    State* state = getState(ctx);\r\n    if(isSettingUp()) {\r\n        auto cnt = getValue<input_N>(ctx);\r\n        auto cs = getValue<input_CS>(ctx);\r\n        auto d0 = getValue<input_DO>(ctx);\r\n        auto clk = getValue<input_CLK>(ctx);\r\n        Type chain;\r\n        if(d0 == 255 || clk == 255) {\r\n            chain = new (state->mem) SegM8(cs, cnt);\r\n        } else {\r\n            chain = new (state->mem) SegM8(cs, d0, clk, cnt);\r\n        }\r\n        chain->begin();\r\n        emitValue<output_DEV>(ctx, chain);\r\n    }\r\n}\r\n"
+        }
+      ]
+    },
+    "@/segm8-number": {
+      "nodes": {
+        "ByGaaNHYw": {
+          "id": "ByGaaNHYw",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/act"
+        },
+        "H1mZcOftv": {
+          "description": "A value to display.",
+          "label": "VAL",
+          "id": "H1mZcOftv",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJEyCVHKv": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Allows or forbids value changes.",
+          "label": "ACT",
+          "id": "HJEyCVHKv",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "HJSmb9_MtP": {
+          "boundLiterals": {
+            "__out__": "D8"
+          },
+          "description": "The board port to which the CS pin of SegM8 is connected. You may use any Arduino pin. For example: 'D8'.",
+          "label": "CS",
+          "id": "HJSmb9_MtP",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HkLQbcuzYv": {
+          "id": "HkLQbcuzYv",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/segm8-device"
+        },
+        "HkXXZ9_zFw": {
+          "boundLiterals": {
+            "__out__": "D255"
+          },
+          "description": "The board port to which the DO pin of SegM8 is connected. You may use any Arduino pin. For example: 'D3'.\nLeave this parameter at 'D255' when using hardware SPI.",
+          "label": "DO",
+          "id": "HkXXZ9_zFw",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SJWX-q_MYD": {
+          "description": "The number of modules in the daisy-chain.",
+          "label": "N",
+          "id": "SJWX-q_MYD",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJeXbcuGYw": {
+          "id": "SJeXbcuGYw",
+          "position": {
+            "x": 1,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/display-number"
+        },
+        "ryEQ-qdMtD": {
+          "boundLiterals": {
+            "__out__": "D255"
+          },
+          "description": "The board port to which the CLK pin of SegM8 is connected. You may use any Arduino pin. For example: 'D4'.\nLeave this parameter at 'D255' when using hardware SPI.",
+          "label": "CLK",
+          "id": "ryEQ-qdMtD",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        }
+      },
+      "links": {
+        "B1wQ-5dftw": {
+          "id": "B1wQ-5dftw",
+          "input": {
+            "nodeId": "SJeXbcuGYw",
+            "pinKey": "H1Yqfiq-v"
+          },
+          "output": {
+            "nodeId": "HkLQbcuzYv",
+            "pinKey": "SkOn-_SZv"
+          }
+        },
+        "BJtXbcuGKw": {
+          "id": "BJtXbcuGKw",
+          "input": {
+            "nodeId": "HkLQbcuzYv",
+            "pinKey": "ryTwBicbw"
+          },
+          "output": {
+            "nodeId": "HJSmb9_MtP",
+            "pinKey": "__out__"
+          }
+        },
+        "H1dQZcdzKw": {
+          "id": "H1dQZcdzKw",
+          "input": {
+            "nodeId": "HkLQbcuzYv",
+            "pinKey": "H1tdHs5Ww"
+          },
+          "output": {
+            "nodeId": "ryEQ-qdMtD",
+            "pinKey": "__out__"
+          }
+        },
+        "Hyp7-cuMYv": {
+          "id": "Hyp7-cuMYv",
+          "input": {
+            "nodeId": "HkLQbcuzYv",
+            "pinKey": "r1QuSjqbv"
+          },
+          "output": {
+            "nodeId": "HkXXZ9_zFw",
+            "pinKey": "__out__"
+          }
+        },
+        "S1LTT4HYD": {
+          "id": "S1LTT4HYD",
+          "input": {
+            "nodeId": "SJeXbcuGYw",
+            "pinKey": "BkwL4iqbv"
+          },
+          "output": {
+            "nodeId": "ByGaaNHYw",
+            "pinKey": "H1fx68wzB"
+          }
+        },
+        "SJGeREHKw": {
+          "id": "SJGeREHKw",
+          "input": {
+            "nodeId": "ByGaaNHYw",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "H1mZcOftv",
+            "pinKey": "__out__"
+          }
+        },
+        "SkjXZ9_MtP": {
+          "id": "SkjXZ9_MtP",
+          "input": {
+            "nodeId": "SJeXbcuGYw",
+            "pinKey": "rymeVjcZv"
+          },
+          "output": {
+            "nodeId": "SJWX-q_MYD",
+            "pinKey": "__out__"
+          }
+        },
+        "SykeCVBtv": {
+          "id": "SykeCVBtv",
+          "input": {
+            "nodeId": "ByGaaNHYw",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "HJEyCVHKv",
+            "pinKey": "__out__"
+          }
+        },
+        "Syn7bquGtD": {
+          "id": "Syn7bquGtD",
+          "input": {
+            "nodeId": "SJeXbcuGYw",
+            "pinKey": "B1E6ms9-w"
+          },
+          "output": {
+            "nodeId": "H1mZcOftv",
+            "pinKey": "__out__"
+          }
+        },
+        "rkcXb5_zKw": {
+          "id": "rkcXb5_zKw",
+          "input": {
+            "nodeId": "HkLQbcuzYv",
+            "pinKey": "Hyxj-dBZD"
+          },
+          "output": {
+            "nodeId": "SJWX-q_MYD",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "path": "@/segm8-number",
+      "description": "Displays a number value on a SegM8 module or several modules linked in a daisy chain."
+    },
+    "@/write-segments": {
+      "nodes": {
+        "BJsF8_H-v": {
+          "description": "In a daisy chain, the ordinal SegM8 module number which segments to change. The module numbering in a daisy chain starts from 0, from left module to right.",
+          "label": "POS",
+          "id": "BJsF8_H-v",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ByxMijcbw": {
+          "description": "The SegM8 device.",
+          "label": "DEV'",
+          "id": "ByxMijcbw",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/output-segm8-device"
+        },
+        "S1NKLdrWv": {
+          "description": "The custom 8-bit template. Each bit corresponds to a specific segment of the SegM8 module. The 1 bit value enables the segment and 0 disables it. Put the default value with bit literal, ex - 00000000b. In XOD you can directly put the bit value to a byte pin.",
+          "label": "TMPL",
+          "id": "S1NKLdrWv",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SJk58drWv": {
+          "description": "The SegM8 device.",
+          "label": "DEV",
+          "id": "SJk58drWv",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-segm8-device"
+        },
+        "rk2PLOr-D": {
+          "description": "Triggers a new segment lighting",
+          "label": "UPD",
+          "id": "rk2PLOr-D",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkaHL_HWD": {
+          "id": "rkaHL_HWD",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ry-u8dBbD": {
+          "description": "Pulses when the segment lighting is done.",
+          "label": "DONE",
+          "id": "ry-u8dBbD",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/write-segments",
+      "description": "Turns on and off segments of a specific segM8 module.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\r\nstruct State {\r\n};\r\n\r\n{{ GENERATED_CODE }}\r\n\r\nvoid evaluate(Context ctx) {\r\n    auto chain = getValue<input_DEV>(ctx);\r\n    auto mask = getValue<input_TMPL>(ctx);\r\n    auto position = getValue<input_POS>(ctx);\r\n\r\n    if (isSettingUp())\r\n        emitValue<output_DEVU0027>(ctx, chain);\r\n\r\n    if(isInputDirty<input_UPD>(ctx)) {\r\n        chain->writeSegments(mask, position);\r\n        emitValue<output_DONE>(ctx, true);\r\n    }\r\n}\r\n"
+        }
+      ]
+    }
+  },
+  "license": "AGPL-3",
+  "version": "1.0.2",
+  "description": "XOD library to interface with the Amperka SegM8 display module.",
+  "apiKey": "9c260289-c8bb-4bac-a2af-60aba8c8b2e5",
+  "name": "segm8"
+}

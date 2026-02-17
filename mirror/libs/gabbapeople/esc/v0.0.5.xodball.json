@@ -1,0 +1,377 @@
+{
+  "description": "Library for common hobby ESC devices.",
+  "name": "esc",
+  "patches": {
+    "@/esc": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/RB-ENantel/RC_ESC\"\n\n{{#global}}\n#include <ESC.h>\n{{/global}}\n\nstruct State {\n    uint8_t mem[sizeof(ESC)];\n    ESC* myESC;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    if (isInputDirty<input_INIT>(ctx)){\n        auto port = (int)getValue<input_PORT>(ctx);\n        state->myESC = new (state->mem) ESC(port,1000,2000,500);\n        state->myESC->arm();\n        delay(5000);\n    }\n\n    if (isInputDirty<input_UPD>(ctx)){\n        int speedVal = getValue<input_SPD>(ctx);\n        state->myESC->speed(speedVal);\n    }\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Controls an ESC device ",
+      "nodes": {
+        "B1ZWhg4mn7": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers new write",
+          "id": "B1ZWhg4mn7",
+          "label": "UPD",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Bke-3e4m2X": {
+          "description": "Board port number the ESC is connected to",
+          "id": "Bke-3e4m2X",
+          "label": "PORT",
+          "position": {
+            "x": -0.05,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "H1b3lE7n7": {
+          "id": "H1b3lE7n7",
+          "position": {
+            "x": -0.05,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJjFZVm3Q": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Sets the ESC up",
+          "id": "HJjFZVm3Q",
+          "label": "INIT",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJ85-EmhQ": {
+          "description": "Speed value in the range [1000,2000]",
+          "id": "rJ85-EmhQ",
+          "label": "SPD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/esc"
+    },
+    "@/esc-calibration": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/RB-ENantel/RC_ESC\"\n\n{{#global}}\n#include <ESC.h>\n{{/global}}\n\nstruct State {\n    uint8_t mem[sizeof(ESC)];\n    ESC* myESC;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_CLB>(ctx))\n        return;\n\n    State* state = getState(ctx);\n    auto port = (int)getValue<input_PORT>(ctx);\n\n    state->myESC = new (state->mem) ESC(port,1000,2000,500);\n    emitValue<output_STATE>(ctx, true);\n    state->myESC->calib();\n    state->myESC->stop();\n    emitValue<output_STATE>(ctx, false);\n}\n\n\n\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Calibrates an ESC device",
+      "nodes": {
+        "H1Xsh2QX2m": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Calibrate ESC",
+          "id": "H1Xsh2QX2m",
+          "label": "CLB",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HJe8TQQ27": {
+          "description": "Outputs true on calibrated ESC",
+          "id": "HJe8TQQ27",
+          "label": "STATE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "HJfo2hmm37": {
+          "description": "Board port number the ESC is connected to",
+          "id": "HJfo2hmm37",
+          "label": "PORT",
+          "position": {
+            "x": -0.05,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SkZonn7mhm": {
+          "id": "SkZonn7mhm",
+          "position": {
+            "x": -0.05,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/esc-calibration"
+    },
+    "@/example-calibrate-with-button": {
+      "comments": {
+        "ByWiSyt_V": {
+          "content": "Press button to start calibrate",
+          "id": "ByWiSyt_V",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "ryLaSyYON": {
+          "content": "The led is on from the start. On successful calibration it will turn off.",
+          "id": "ryLaSyYON",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "width": 6,
+            "height": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "BkzSG3M1V": {
+          "id": "BkzSG3M1V",
+          "input": {
+            "nodeId": "HJ0oWhGyN",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "ryh5Zhzy4",
+            "pinKey": "HJe8TQQ27"
+          }
+        },
+        "HkE9ByYOE": {
+          "id": "HkE9ByYOE",
+          "input": {
+            "nodeId": "ryh5Zhzy4",
+            "pinKey": "H1Xsh2QX2m"
+          },
+          "output": {
+            "nodeId": "Syz5H1tuV",
+            "pinKey": "BJ--G1tI-"
+          }
+        }
+      },
+      "nodes": {
+        "HJ0oWhGyN": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D13"
+          },
+          "id": "HJ0oWhGyN",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "Syz5H1tuV": {
+          "boundLiterals": {
+            "ByNiWkt8Z": "D5"
+          },
+          "id": "Syz5H1tuV",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/button"
+        },
+        "ryh5Zhzy4": {
+          "boundLiterals": {
+            "H1Xsh2QX2m": "On Boot",
+            "HJe8TQQ27": "True",
+            "HJfo2hmm37": "D6"
+          },
+          "id": "ryh5Zhzy4",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/esc-calibration"
+        }
+      },
+      "path": "@/example-calibrate-with-button"
+    },
+    "@/servo-micros": {
+      "nodes": {
+        "BklN_A3g9V": {
+          "id": "BklN_A3g9V",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1WEdC2gq4": {
+          "description": "Fires on writing complete",
+          "id": "H1WEdC2gq4",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SJzVOA2gcV": {
+          "description": "A microseconds value to write",
+          "id": "SJzVOA2gcV",
+          "label": "MSEC",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Hy7NuCnx5E": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers new write",
+          "id": "Hy7NuCnx5E",
+          "label": "UPD",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "B14NORhgcN": {
+          "description": "Board port number the servo is connected to.",
+          "id": "B14NORhgcN",
+          "label": "PORT",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "BJH4_R3xcE": {
+          "description": "Fires if write failed. E.g. `PORT` does not exist.",
+          "id": "BJH4_R3xcE",
+          "label": "ERR",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/servo-micros",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\n{{#global}}\n#include <Servo.h>\n{{/global}}\n\nstruct State {\n    Servo servo;\n    int configuredPort = -1;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    State* state = getState(ctx);\n    auto port = (int)getValue<input_PORT>(ctx);\n    if (!isValidDigitalPort(port)) {\n        emitValue<output_ERR>(ctx, 1);\n        return;\n    }\n\n    if (port != state->configuredPort) {\n        state->servo.attach(port);\n        state->configuredPort = port;\n    }\n\n    state->servo.writeMicroseconds(getValue<input_MSEC>(ctx));\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/example-calibrate-like-servo": {
+      "nodes": {
+        "HJbhC3lcN": {
+          "id": "HJbhC3lcN",
+          "type": "xod/common-hardware/pot",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "BJu3Rhe5N": {
+          "boundLiterals": {
+            "HJCWLAdSwyW": "1",
+            "rJbGU0_Hv1Z": "1000",
+            "rkpbU0OrwyZ": "2000"
+          },
+          "id": "BJu3Rhe5N",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/math/map"
+        },
+        "ryMTCnxcV": {
+          "id": "ryMTCnxcV",
+          "type": "@/servo-micros",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B14NORhgcN": "D6"
+          }
+        }
+      },
+      "links": {
+        "SJ7602g9N": {
+          "id": "SJ7602g9N",
+          "output": {
+            "nodeId": "BJu3Rhe5N",
+            "pinKey": "H12bIR_SPyZ"
+          },
+          "input": {
+            "nodeId": "ryMTCnxcV",
+            "pinKey": "SJzVOA2gcV"
+          }
+        },
+        "r1NpRne54": {
+          "id": "r1NpRne54",
+          "output": {
+            "nodeId": "HJbhC3lcN",
+            "pinKey": "H1sM2A12-"
+          },
+          "input": {
+            "nodeId": "BJu3Rhe5N",
+            "pinKey": "BJlzICOSv1-"
+          }
+        }
+      },
+      "path": "@/example-calibrate-like-servo"
+    }
+  },
+  "version": "0.0.5"
+}

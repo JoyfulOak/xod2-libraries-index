@@ -1,0 +1,225 @@
+{
+  "description": "SI1145 UV/IR/Visible Light Sensor. Wraps https://github.com/adafruit/Adafruit_SI1145_Library.",
+  "license": "BSD",
+  "version": "0.0.2",
+  "patches": {
+    "@/si1145-light-sensor": {
+      "nodes": {
+        "ByyJuh8Xw": {
+          "id": "ByyJuh8Xw",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rJOY5n8QD": {
+          "id": "rJOY5n8QD",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "VIS",
+          "description": "Visible light."
+        },
+        "SkV9cn8mD": {
+          "id": "SkV9cn8mD",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "UV",
+          "description": "UV index."
+        },
+        "BkE2cnUXD": {
+          "id": "BkE2cnUXD",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "IR",
+          "description": "Infrared."
+        },
+        "BJV6qh8Qv": {
+          "id": "BJV6qh8Qv",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        },
+        "rkDR52IXP": {
+          "id": "rkDR52IXP",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulse on read."
+        }
+      },
+      "path": "@/si1145-light-sensor",
+      "description": "SI1145 UV/IR/Visible Light Sensor.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/adafruit/Adafruit_SI1145_Library\"\n\n//Include C++ libraries\n{{#global}}\n#include <Wire.h>\n#include <Adafruit_SI1145.h>\n{{/global}}\n\nstruct State {\n    uint8_t mem[sizeof(Adafruit_SI1145)];\n};\n\n// Define our custom type as a pointer on the class instance.\nusing Type = Adafruit_SI1145*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // It should be evaluated only once on the first (setup) transaction\n    if (isSettingUp()) {\n        auto state = getState(ctx);\n        // Create a new object in the memory area reserved previously.\n        Type sensor = new (state->mem) Adafruit_SI1145();\n        if (!sensor->begin()) {\n            raiseError(ctx);\n            return;\n        }\n    }\n\n    // Measure light intensity only if there is an input pulse.\n    if (isInputDirty<input_UPD>(ctx)) {\n        auto state = getState(ctx);\n        auto sensor = reinterpret_cast<Adafruit_SI1145*>(state->mem);\n\n        emitValue<output_VIS>(ctx, sensor->readVisible());\n        emitValue<output_IR>(ctx, sensor->readIR());\n\n        float UVindex = sensor->readUV();\n        // the index is multiplied by 100 so to get the\n        // integer index, divide by 100!\n        UVindex /= 100.0;\n        emitValue<output_UV>(ctx, UVindex);\n        emitValue<output_DONE>(ctx, 1);\n    }\n\n}\n"
+        }
+      ]
+    },
+    "@/example": {
+      "nodes": {
+        "SJExh28Qv": {
+          "id": "SJExh28Qv",
+          "type": "@/si1145-light-sensor",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "r1NZ2n8mP": {
+          "id": "r1NZ2n8mP",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        },
+        "BJiZ23L7v": {
+          "id": "BJiZ23L7v",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        },
+        "B1eibn38Qw": {
+          "id": "B1eibn38Qw",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        },
+        "HkaGTnImw": {
+          "id": "HkaGTnImw",
+          "type": "xod/core/count",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "SyDmp2Umw": {
+          "id": "SyDmp2Umw",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "BJQGh2LXw": {
+          "id": "BJQGh2LXw",
+          "output": {
+            "nodeId": "SJExh28Qv",
+            "pinKey": "SkV9cn8mD"
+          },
+          "input": {
+            "nodeId": "B1eibn38Qw",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "H1HG3hImw": {
+          "id": "H1HG3hImw",
+          "output": {
+            "nodeId": "SJExh28Qv",
+            "pinKey": "BkE2cnUXD"
+          },
+          "input": {
+            "nodeId": "BJiZ23L7v",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "B18f3hUXw": {
+          "id": "B18f3hUXw",
+          "output": {
+            "nodeId": "SJExh28Qv",
+            "pinKey": "rJOY5n8QD"
+          },
+          "input": {
+            "nodeId": "r1NZ2n8mP",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "ry77Th87v": {
+          "id": "ry77Th87v",
+          "output": {
+            "nodeId": "SJExh28Qv",
+            "pinKey": "rkDR52IXP"
+          },
+          "input": {
+            "nodeId": "HkaGTnImw",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "rJqmThLXv": {
+          "id": "rJqmThLXv",
+          "output": {
+            "nodeId": "HkaGTnImw",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "SyDmp2Umw",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/example",
+      "description": "Patch to test si1145-light-sensor. Run in debug mode."
+    }
+  },
+  "name": "si1145-light-sensor"
+}

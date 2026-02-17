@@ -1,0 +1,1569 @@
+{
+  "patches": {
+    "@/get-count": {
+      "nodes": {
+        "H1m9Chzys": {
+          "id": "H1m9Chzys",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rkxQcR2fkj": {
+          "description": "Sample buffer.",
+          "label": "Buffer",
+          "id": "rkxQcR2fkj",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sample-buffer"
+        },
+        "rkW7qChMJi": {
+          "description": "Update. ",
+          "label": "UPD",
+          "id": "rkW7qChMJi",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HyzX50nzJi": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "HyzX50nzJi",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "S1ef1Tz1s": {
+          "description": "Number of values in the sample buffer.",
+          "label": "Count",
+          "id": "S1ef1Tz1s",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/get-count",
+      "description": "Reports the number of values stored in the sample buffer.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (isInputDirty<input_UPD>(ctx)) {\n            auto samples = getValue<input_Buffer>(ctx);\n            emitValue<output_Count>(ctx, samples -> getCount());\n            emitValue<output_Done>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-highest": {
+      "nodes": {
+        "H1tWd571s": {
+          "id": "H1tWd571s",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Syxtb_9Qko": {
+          "description": "Sample buffer.",
+          "label": "Buffer",
+          "id": "Syxtb_9Qko",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sample-buffer"
+        },
+        "HJ-K-dqX1o": {
+          "description": "Update. ",
+          "label": "UPD",
+          "id": "HJ-K-dqX1o",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkGtbd5X1s": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "rkGtbd5X1s",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rkXK-d5Qyo": {
+          "description": "Highest value in the sample buffer.",
+          "label": "Highest",
+          "id": "rkXK-d5Qyo",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/get-highest",
+      "description": "Get the highest value in the sample buffer.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (isInputDirty<input_UPD>(ctx)) {\n            auto samples = getValue<input_Buffer>(ctx);\n            emitValue<output_Highest>(ctx, samples -> getHighest());\n            emitValue<output_Done>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-lowest": {
+      "nodes": {
+        "rkXpd9Xys": {
+          "id": "rkXpd9Xys",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1lmTO9Qko": {
+          "description": "Sample buffer.",
+          "label": "Buffer",
+          "id": "H1lmTO9Qko",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sample-buffer"
+        },
+        "S1ZX6d9Xyi": {
+          "description": "Update. ",
+          "label": "UPD",
+          "id": "S1ZX6d9Xyi",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJfX6O57yo": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "SJfX6O57yo",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "B1XXpu5m1i": {
+          "description": "Lowest value in the sample buffer.",
+          "label": "Lowest",
+          "id": "B1XXpu5m1i",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/get-lowest",
+      "description": "Get the lowest value in the sample buffer.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (isInputDirty<input_UPD>(ctx)) {\n            auto samples = getValue<input_Buffer>(ctx);\n            emitValue<output_Lowest>(ctx, samples -> getLowest());\n            emitValue<output_Done>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-mean": {
+      "nodes": {
+        "SJaIbpGJi": {
+          "id": "SJaIbpGJi",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Byea8-6Gko": {
+          "description": "Sample buffer.",
+          "label": "Buffer",
+          "id": "Byea8-6Gko",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sample-buffer"
+        },
+        "ryZTI-az1i": {
+          "description": "Update. ",
+          "label": "UPD",
+          "id": "ryZTI-az1i",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Hyf6L-6Mks": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "Hyf6L-6Mks",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SyQTLZaz1j": {
+          "description": "Mean of values in the sample buffer.",
+          "label": "Mean",
+          "id": "SyQTLZaz1j",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/get-mean",
+      "description": "Get the mean of the values stored in the sample buffer.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (isInputDirty<input_UPD>(ctx)) {\n            auto samples = getValue<input_Buffer>(ctx);\n            auto avg = samples -> getAverage();\n            emitValue<output_Mean>(ctx, avg);\n            emitValue<output_Done>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/clear": {
+      "nodes": {
+        "SkTGn2G1o": {
+          "id": "SkTGn2G1o",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "B1l6Gn3fJj": {
+          "description": "Sample buffer.",
+          "label": "Buffer",
+          "id": "B1l6Gn3fJj",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sample-buffer"
+        },
+        "ryMafh3GJj": {
+          "description": "Update. Empty buffer on pulse.",
+          "label": "UPD",
+          "id": "ryMafh3GJj",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "B1Q6GnnMko": {
+          "description": "Pulses when buffer emptied.",
+          "label": "Done",
+          "id": "B1Q6GnnMko",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/clear",
+      "description": "Empty the sample buffer.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (isInputDirty<input_UPD>(ctx)) {\n            auto samples = getValue<input_Buffer>(ctx);\n            samples -> clear();\n            emitValue<output_Done>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-quantile": {
+      "nodes": {
+        "HJ4Co57Jo": {
+          "id": "HJ4Co57Jo",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJgECsq7ks": {
+          "description": "Sample buffer.",
+          "label": "Buffer",
+          "id": "SJgECsq7ks",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sample-buffer"
+        },
+        "S1Z40jc7yo": {
+          "description": "Update. ",
+          "label": "UPD",
+          "id": "S1Z40jc7yo",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryfERjc7Jj": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "ryfERjc7Jj",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SkQNCo9mks": {
+          "description": "Value of the specified quantile.",
+          "label": "Value",
+          "id": "SkQNCo9mks",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HJby3qmys": {
+          "boundLiterals": {
+            "__out__": "0.05"
+          },
+          "description": "Quantile. For 5% quantile, input 0.05.",
+          "label": "Quant",
+          "id": "HJby3qmys",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/get-quantile",
+      "description": "Get specified quantile of values stored in the sample buffer.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (isInputDirty<input_UPD>(ctx)) {\n            auto samples = getValue<input_Buffer>(ctx);\n            auto quant = getValue<input_Quant>(ctx);\n            emitValue<output_Value>(ctx, samples -> getQuantile(quant));\n            emitValue<output_Done>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/is-full": {
+      "nodes": {
+        "rke1A2M1j": {
+          "id": "rke1A2M1j",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "B1xeJA3zys": {
+          "description": "Sample buffer.",
+          "label": "Buffer",
+          "id": "B1xeJA3zys",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sample-buffer"
+        },
+        "HJWxyAnfko": {
+          "description": "Update. ",
+          "label": "UPD",
+          "id": "HJWxyAnfko",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkMeJC3Gyj": {
+          "description": "Pulse after checking if buffer is full.",
+          "label": "Done",
+          "id": "BkMeJC3Gyj",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ryjkChzJj": {
+          "description": "True = buffer is full. False = buffer is not full.",
+          "label": "Full",
+          "id": "ryjkChzJj",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        }
+      },
+      "path": "@/is-full",
+      "description": "Is the buffer full?",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (isInputDirty<input_UPD>(ctx)) {\n            auto samples = getValue<input_Buffer>(ctx);\n            emitValue<output_Full>(ctx, samples -> isFull());\n            emitValue<output_Done>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-trimmed-mean": {
+      "nodes": {
+        "HkTmxiQ1i": {
+          "id": "HkTmxiQ1i",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HyxTmgj71i": {
+          "description": "Sample buffer.",
+          "label": "Buffer",
+          "id": "HyxTmgj71i",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sample-buffer"
+        },
+        "BkW6XeoQks": {
+          "description": "Update. ",
+          "label": "UPD",
+          "id": "BkW6XeoQks",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryzp7xj71i": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "ryzp7xj71i",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BJ7T7ls7ys": {
+          "description": "Trimmed mean.",
+          "label": "tMean",
+          "id": "BJ7T7ls7ys",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "H1NpXgi7yi": {
+          "boundLiterals": {
+            "__out__": "19"
+          },
+          "description": "Number of values to use when calculating mean.",
+          "label": "N",
+          "id": "H1NpXgi7yi",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/get-trimmed-mean",
+      "description": "Get the mean of the middle N values in the sample buffer. The trimmed mean excludes noise from outliers.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (isInputDirty<input_UPD>(ctx)) {\n            auto samples = getValue<input_Buffer>(ctx);\n            auto N = getValue<input_N>(ctx);\n            emitValue<output_tMean>(ctx, samples -> getAverage(N));\n            emitValue<output_Done>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/add": {
+      "nodes": {
+        "SJTm53GJs": {
+          "id": "SJTm53GJs",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BySNq2f1i": {
+          "description": "Sample buffer.",
+          "label": "Buffer",
+          "id": "BySNq2f1i",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sample-buffer"
+        },
+        "HygH9nM1j": {
+          "description": "New value to be stored in buffer.",
+          "label": "New",
+          "id": "HygH9nM1j",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJvYchMki": {
+          "description": "Update. Push new value into sample buffer.",
+          "label": "UPD",
+          "id": "HJvYchMki",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BJe3c2fyj": {
+          "description": "Pulses when a new value is stored in the sample buffer.",
+          "label": "Done",
+          "id": "BJe3c2fyj",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/add",
+      "description": "Adds a new value to the sample buffer. If the buffer is already full the new value replaces the oldest element.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (isInputDirty<input_UPD>(ctx)) {\n            auto samples = getValue<input_Buffer>(ctx);\n            float newValue = getValue<input_New>(ctx);\n            samples -> add(newValue);\n            emitValue<output_Done>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-median": {
+      "nodes": {
+        "H19pD5X1j": {
+          "id": "H19pD5X1j",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HylcavqQJo": {
+          "description": "Sample buffer.",
+          "label": "Buffer",
+          "id": "HylcavqQJo",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sample-buffer"
+        },
+        "HyZqTP97ki": {
+          "description": "Update. ",
+          "label": "UPD",
+          "id": "HyZqTP97ki",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "B1fc6D571s": {
+          "description": "Pulse on completion.",
+          "label": "Done",
+          "id": "B1fc6D571s",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HyQ9TDc7Jj": {
+          "description": "Median of values in the sample buffer.",
+          "label": "Median",
+          "id": "HyQ9TDc7Jj",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/get-median",
+      "description": "Get the median of the values stored in the sample buffer.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (isInputDirty<input_UPD>(ctx)) {\n            auto samples = getValue<input_Buffer>(ctx);\n            emitValue<output_Median>(ctx, samples -> getMedian());\n            emitValue<output_Done>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/sample-buffer": {
+      "nodes": {
+        "H1WAynfko": {
+          "id": "H1WAynfko",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJgJPnGko": {
+          "label": "Buffer",
+          "id": "rJgJPnGko",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "ByFjk6Gys": {
+          "boundLiterals": {
+            "__out__": "25"
+          },
+          "description": "Size of internal buffer. Must be a constant integer. Any changes during program execution will be ignored. Maximum size is 255. Odd sizes results in a 'real' middle element and will be a bit faster. Even sizes takes the average of the two middle elements as median.",
+          "label": "Size",
+          "id": "ByFjk6Gys",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/sample-buffer",
+      "description": "Create a sample buffer.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD require \"https://github.com/WaylandM/RunningMedian\"\n\n#include <RunningMedian.h>\n\nnode {\n    meta {\n        using Type = RunningMedian*;\n    }\n\n    uint8_t mem[sizeof(RunningMedian)];\n\n    void evaluate(Context ctx) {\n        if (!isSettingUp())\n            return;\n\n        uint8_t sampleSize = getValue<input_Size>(ctx);\n\n        Type samples = new (mem) RunningMedian(sampleSize);\n\n        emitValue<output_Buffer>(ctx, samples);\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/01-example": {
+      "nodes": {
+        "ByUZkDwys": {
+          "id": "ByUZkDwys",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/sample-buffer"
+        },
+        "B1zzyvwys": {
+          "boundLiterals": {
+            "HygH9nM1j": "5"
+          },
+          "id": "B1zzyvwys",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/add"
+        },
+        "S1JmyDvJs": {
+          "id": "S1JmyDvJs",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/clear"
+        },
+        "rJAmJDv1j": {
+          "id": "rJAmJDv1j",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/is-full"
+        },
+        "ByQ4JPPJj": {
+          "id": "ByQ4JPPJj",
+          "position": {
+            "x": 13,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/get-mean"
+        },
+        "r1PVJwwki": {
+          "id": "r1PVJwwki",
+          "position": {
+            "x": 18,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/get-median"
+        },
+        "HkbHJvPJj": {
+          "id": "HkbHJvPJj",
+          "position": {
+            "x": 15,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/get-trimmed-mean"
+        },
+        "r1nP1wP1i": {
+          "id": "r1nP1wP1i",
+          "position": {
+            "x": 20,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/get-quantile"
+        },
+        "HJMuJDvks": {
+          "id": "HJMuJDvks",
+          "position": {
+            "x": 23,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/get-lowest"
+        },
+        "HkBOJvPko": {
+          "id": "HkBOJvPko",
+          "position": {
+            "x": 25,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/get-highest"
+        },
+        "ryOu1vwJs": {
+          "id": "ryOu1vwJs",
+          "position": {
+            "x": 11,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/get-count"
+        },
+        "Sy-C1vP1s": {
+          "label": "Update",
+          "id": "Sy-C1vP1s",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "SJ8Jxwwkj": {
+          "label": "Update",
+          "id": "SJ8Jxwwkj",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HkPlgPv1s": {
+          "label": "Update",
+          "id": "HkPlgPv1s",
+          "position": {
+            "x": 12,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJKlewvyj": {
+          "label": "Update",
+          "id": "SJKlewvyj",
+          "position": {
+            "x": 14,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HyptgePvyi": {
+          "label": "Update",
+          "id": "HyptgePvyi",
+          "position": {
+            "x": 17,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rJcxxwPks": {
+          "label": "Update",
+          "id": "rJcxxwPks",
+          "position": {
+            "x": 19,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "BJoggwPJs": {
+          "label": "Update",
+          "id": "BJoggwPJs",
+          "position": {
+            "x": 22,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SkpillPwJi": {
+          "label": "Update",
+          "id": "SkpillPwJi",
+          "position": {
+            "x": 24,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "H1seoegDPyo": {
+          "label": "Update",
+          "id": "H1seoegDPyo",
+          "position": {
+            "x": 26,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SylElwwJi": {
+          "id": "SylElwwJi",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "BJofUxwvJs": {
+          "id": "BJofUxwvJs",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        },
+        "rkR8lvP1j": {
+          "label": "Samples",
+          "id": "rkR8lvP1j",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "SyW_lwD1o": {
+          "label": "Samples",
+          "id": "SyW_lwD1o",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "BkyFlwDyo": {
+          "label": "Samples",
+          "id": "BkyFlwDyo",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJQYewP1i": {
+          "label": "Samples",
+          "id": "SJQYewP1i",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1OYevvJj": {
+          "label": "Samples",
+          "id": "S1OYevvJj",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJ6tlDDyo": {
+          "label": "Samples",
+          "id": "HJ6tlDDyo",
+          "position": {
+            "x": 13,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJZqlPD1j": {
+          "label": "Samples",
+          "id": "HJZqlPD1j",
+          "position": {
+            "x": 15,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SkHcgvDJi": {
+          "label": "Samples",
+          "id": "SkHcgvDJi",
+          "position": {
+            "x": 18,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "Hk59gPwyi": {
+          "label": "Samples",
+          "id": "Hk59gPwyi",
+          "position": {
+            "x": 20,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HygsgPvys": {
+          "label": "Samples",
+          "id": "HygsgPvys",
+          "position": {
+            "x": 23,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HySoevPJj": {
+          "label": "Samples",
+          "id": "HySoevPJj",
+          "position": {
+            "x": 25,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "H1xN-vwJi": {
+          "id": "H1xN-vwJi",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "H1sSVWvP1s": {
+          "id": "H1sSVWvP1s",
+          "position": {
+            "x": 11,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "BksNbvPyj": {
+          "id": "BksNbvPyj",
+          "position": {
+            "x": 13,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "rykrWPvks": {
+          "id": "rykrWPvks",
+          "position": {
+            "x": 15,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "Hy7B-vwJi": {
+          "id": "Hy7B-vwJi",
+          "position": {
+            "x": 18,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "HyOHbDwki": {
+          "id": "HyOHbDwki",
+          "position": {
+            "x": 20,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "Hy3H-wvko": {
+          "id": "Hy3H-wvko",
+          "position": {
+            "x": 23,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "B1-UbDw1j": {
+          "id": "B1-UbDw1j",
+          "position": {
+            "x": 25,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "rytueuvJo": {
+          "id": "rytueuvJo",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "r1RkgcPJo": {
+          "id": "r1RkgcPJo",
+          "type": "xod/gpio/analog-read",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SysafcP1j": {
+          "id": "SysafcP1j",
+          "type": "xod/core/clock",
+          "position": {
+            "x": 8,
+            "y": -1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B13SCNhl-": "0.5"
+          }
+        },
+        "rkdRGqPks": {
+          "id": "rkdRGqPks",
+          "type": "xod/debug/tweak-boolean",
+          "position": {
+            "x": 8,
+            "y": -2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "Sk1e_NIVE": "True"
+          }
+        }
+      },
+      "links": {
+        "Hk4xlwDys": {
+          "id": "Hk4xlwDys",
+          "input": {
+            "nodeId": "rJAmJDv1j",
+            "pinKey": "HJWxyAnfko"
+          },
+          "output": {
+            "nodeId": "SJ8Jxwwkj",
+            "pinKey": "__out__"
+          }
+        },
+        "Syo-xPDJo": {
+          "id": "Syo-xPDJo",
+          "input": {
+            "nodeId": "ryOu1vwJs",
+            "pinKey": "rkW7qChMJi"
+          },
+          "output": {
+            "nodeId": "HkPlgPv1s",
+            "pinKey": "__out__"
+          }
+        },
+        "S1TZlPvys": {
+          "id": "S1TZlPvys",
+          "input": {
+            "nodeId": "ByQ4JPPJj",
+            "pinKey": "ryZTI-az1i"
+          },
+          "output": {
+            "nodeId": "SJKlewvyj",
+            "pinKey": "__out__"
+          }
+        },
+        "SJC-xPDko": {
+          "id": "SJC-xPDko",
+          "input": {
+            "nodeId": "HkbHJvPJj",
+            "pinKey": "BkW6XeoQks"
+          },
+          "output": {
+            "nodeId": "HyptgePvyi",
+            "pinKey": "__out__"
+          }
+        },
+        "SkxGlvD1s": {
+          "id": "SkxGlvD1s",
+          "input": {
+            "nodeId": "r1PVJwwki",
+            "pinKey": "HyZqTP97ki"
+          },
+          "output": {
+            "nodeId": "rJcxxwPks",
+            "pinKey": "__out__"
+          }
+        },
+        "rk-zlDDki": {
+          "id": "rk-zlDDki",
+          "input": {
+            "nodeId": "r1nP1wP1i",
+            "pinKey": "S1Z40jc7yo"
+          },
+          "output": {
+            "nodeId": "BJoggwPJs",
+            "pinKey": "__out__"
+          }
+        },
+        "rkmzgDDko": {
+          "id": "rkmzgDDko",
+          "input": {
+            "nodeId": "HJMuJDvks",
+            "pinKey": "S1ZX6d9Xyi"
+          },
+          "output": {
+            "nodeId": "SkpillPwJi",
+            "pinKey": "__out__"
+          }
+        },
+        "BkHMxwwks": {
+          "id": "BkHMxwwks",
+          "input": {
+            "nodeId": "HkBOJvPko",
+            "pinKey": "HJ-K-dqX1o"
+          },
+          "output": {
+            "nodeId": "H1seoegDPyo",
+            "pinKey": "__out__"
+          }
+        },
+        "BkVNxDPys": {
+          "id": "BkVNxDPys",
+          "input": {
+            "nodeId": "SylElwwJi",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "S1JmyDvJs",
+            "pinKey": "B1Q6GnnMko"
+          }
+        },
+        "HJ8NeDDJi": {
+          "id": "HJ8NeDDJi",
+          "input": {
+            "nodeId": "SylElwwJi",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "B1zzyvwys",
+            "pinKey": "BJe3c2fyj"
+          }
+        },
+        "ryyrlPv1j": {
+          "id": "ryyrlPv1j",
+          "input": {
+            "nodeId": "Sy-C1vP1s",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SylElwwJi",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "Sy8LeDP1s": {
+          "id": "Sy8LeDP1s",
+          "input": {
+            "nodeId": "S1JmyDvJs",
+            "pinKey": "ryMafh3GJj"
+          },
+          "output": {
+            "nodeId": "BJofUxwvJs",
+            "pinKey": "Bkf4BDsmV"
+          }
+        },
+        "BysDeDw1o": {
+          "id": "BysDeDw1o",
+          "input": {
+            "nodeId": "rkR8lvP1j",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ByUZkDwys",
+            "pinKey": "rJgJPnGko"
+          }
+        },
+        "ry3dxvP1j": {
+          "id": "ry3dxvP1j",
+          "input": {
+            "nodeId": "S1JmyDvJs",
+            "pinKey": "B1l6Gn3fJj"
+          },
+          "output": {
+            "nodeId": "SyW_lwD1o",
+            "pinKey": "__out__"
+          }
+        },
+        "SkMYgwvJo": {
+          "id": "SkMYgwvJo",
+          "input": {
+            "nodeId": "B1zzyvwys",
+            "pinKey": "BySNq2f1i"
+          },
+          "output": {
+            "nodeId": "BkyFlwDyo",
+            "pinKey": "__out__"
+          }
+        },
+        "S1DYxwDki": {
+          "id": "S1DYxwDki",
+          "input": {
+            "nodeId": "rJAmJDv1j",
+            "pinKey": "B1xeJA3zys"
+          },
+          "output": {
+            "nodeId": "SJQYewP1i",
+            "pinKey": "__out__"
+          }
+        },
+        "B12YlvwJs": {
+          "id": "B12YlvwJs",
+          "input": {
+            "nodeId": "ryOu1vwJs",
+            "pinKey": "rkxQcR2fkj"
+          },
+          "output": {
+            "nodeId": "S1OYevvJj",
+            "pinKey": "__out__"
+          }
+        },
+        "S1e5lwwyi": {
+          "id": "S1e5lwwyi",
+          "input": {
+            "nodeId": "ByQ4JPPJj",
+            "pinKey": "Byea8-6Gko"
+          },
+          "output": {
+            "nodeId": "HJ6tlDDyo",
+            "pinKey": "__out__"
+          }
+        },
+        "BJV9lwv1i": {
+          "id": "BJV9lwv1i",
+          "input": {
+            "nodeId": "HkbHJvPJj",
+            "pinKey": "HyxTmgj71i"
+          },
+          "output": {
+            "nodeId": "HJZqlPD1j",
+            "pinKey": "__out__"
+          }
+        },
+        "H1FclPDko": {
+          "id": "H1FclPDko",
+          "input": {
+            "nodeId": "r1PVJwwki",
+            "pinKey": "HylcavqQJo"
+          },
+          "output": {
+            "nodeId": "SkHcgvDJi",
+            "pinKey": "__out__"
+          }
+        },
+        "BkA5lPw1o": {
+          "id": "BkA5lPw1o",
+          "input": {
+            "nodeId": "r1nP1wP1i",
+            "pinKey": "SJgECsq7ks"
+          },
+          "output": {
+            "nodeId": "Hk59gPwyi",
+            "pinKey": "__out__"
+          }
+        },
+        "rJEiePwyj": {
+          "id": "rJEiePwyj",
+          "input": {
+            "nodeId": "HJMuJDvks",
+            "pinKey": "H1lmTO9Qko"
+          },
+          "output": {
+            "nodeId": "HygsgPvys",
+            "pinKey": "__out__"
+          }
+        },
+        "B1FsxPDJj": {
+          "id": "B1FsxPDJj",
+          "input": {
+            "nodeId": "HkBOJvPko",
+            "pinKey": "Syxtb_9Qko"
+          },
+          "output": {
+            "nodeId": "HySoevPJj",
+            "pinKey": "__out__"
+          }
+        },
+        "r1VEWDvks": {
+          "id": "r1VEWDvks",
+          "input": {
+            "nodeId": "H1xN-vwJi",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rJAmJDv1j",
+            "pinKey": "ryjkChzJj"
+          }
+        },
+        "BkFVbDP1s": {
+          "id": "BkFVbDP1s",
+          "input": {
+            "nodeId": "H1sSVWvP1s",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "ryOu1vwJs",
+            "pinKey": "S1ef1Tz1s"
+          }
+        },
+        "S1R4Wvvyj": {
+          "id": "S1R4Wvvyj",
+          "input": {
+            "nodeId": "BksNbvPyj",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "ByQ4JPPJj",
+            "pinKey": "SyQTLZaz1j"
+          }
+        },
+        "BkfHWww1j": {
+          "id": "BkfHWww1j",
+          "input": {
+            "nodeId": "rykrWPvks",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "HkbHJvPJj",
+            "pinKey": "BJ7T7ls7ys"
+          }
+        },
+        "B1vBbvwkj": {
+          "id": "B1vBbvwkj",
+          "input": {
+            "nodeId": "Hy7B-vwJi",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "r1PVJwwki",
+            "pinKey": "HyQ9TDc7Jj"
+          }
+        },
+        "SyiSWwPko": {
+          "id": "SyiSWwPko",
+          "input": {
+            "nodeId": "HyOHbDwki",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "r1nP1wP1i",
+            "pinKey": "SkQNCo9mks"
+          }
+        },
+        "rye8bPvyo": {
+          "id": "rye8bPvyo",
+          "input": {
+            "nodeId": "Hy3H-wvko",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "HJMuJDvks",
+            "pinKey": "B1XXpu5m1i"
+          }
+        },
+        "BkNIbPvJo": {
+          "id": "BkNIbPvJo",
+          "input": {
+            "nodeId": "B1-UbDw1j",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "HkBOJvPko",
+            "pinKey": "rkXK-d5Qyo"
+          }
+        },
+        "Hk0xx5Pko": {
+          "id": "Hk0xx5Pko",
+          "output": {
+            "nodeId": "r1RkgcPJo",
+            "pinKey": "SyBtREhlW"
+          },
+          "input": {
+            "nodeId": "B1zzyvwys",
+            "pinKey": "HygH9nM1j"
+          }
+        },
+        "BkJWx9vkj": {
+          "id": "BkJWx9vkj",
+          "output": {
+            "nodeId": "r1RkgcPJo",
+            "pinKey": "BkGpcpcJQ"
+          },
+          "input": {
+            "nodeId": "B1zzyvwys",
+            "pinKey": "HJvYchMki"
+          }
+        },
+        "Hk1RG9PJj": {
+          "id": "Hk1RG9PJj",
+          "output": {
+            "nodeId": "SysafcP1j",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "r1RkgcPJo",
+            "pinKey": "SyKd0E2x-"
+          }
+        },
+        "rksCGcDko": {
+          "id": "rksCGcDko",
+          "output": {
+            "nodeId": "rkdRGqPks",
+            "pinKey": "Sk1e_NIVE"
+          },
+          "input": {
+            "nodeId": "SysafcP1j",
+            "pinKey": "r1jzp_DTZ"
+          }
+        },
+        "SktLXcwko": {
+          "id": "SktLXcwko",
+          "output": {
+            "nodeId": "r1RkgcPJo",
+            "pinKey": "SyBtREhlW"
+          },
+          "input": {
+            "nodeId": "rytueuvJo",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/01-example",
+      "description": "Patch for testing and demonstration."
+    }
+  },
+  "license": "MIT",
+  "version": "0.0.1",
+  "description": "Library to determine the running median using a circular buffer. Wraps https://github.com/RobTillaart/Arduino/tree/master/libraries/RunningMedian",
+  "name": "running-median"
+}

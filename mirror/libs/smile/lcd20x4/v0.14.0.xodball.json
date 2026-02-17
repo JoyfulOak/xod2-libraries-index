@@ -1,0 +1,132 @@
+{
+  "authors": [
+    "xod"
+  ],
+  "description": "A crash course tutorial baked as a project",
+  "license": "MIT",
+  "name": "lcd20x4",
+  "patches": {
+    "@/lcd20x4": {
+      "nodes": {
+        "H1zrInmPf": {
+          "description": "Text for the first line",
+          "id": "H1zrInmPf",
+          "label": "L1",
+          "position": {
+            "x": 895,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "S1gzHI27wG": {
+          "description": "Board GPIO port with LCD D4 pin",
+          "id": "S1gzHI27wG",
+          "label": "D4",
+          "position": {
+            "x": 255,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rybMrU3QPz": {
+          "description": "Text for the second line",
+          "id": "rybMrU3QPz",
+          "label": "L2",
+          "position": {
+            "x": 1023,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SyMGBUnXwG": {
+          "description": "Board GPIO port with LCD D6 pin",
+          "id": "SyMGBUnXwG",
+          "label": "D6",
+          "position": {
+            "x": 511,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJXGSLn7vM": {
+          "description": "Board GPIO port with LCD D5 pin",
+          "id": "BJXGSLn7vM",
+          "label": "D5",
+          "position": {
+            "x": 383,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJNMrL37vG": {
+          "boundValues": {
+            "__out__": ""
+          },
+          "id": "HJNMrL37vG",
+          "label": "L3",
+          "position": {
+            "x": 907,
+            "y": 85
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "HyrfrIh7vG": {
+          "description": "Board GPIO port with LCD EN pin",
+          "id": "HyrfrIh7vG",
+          "label": "EN",
+          "position": {
+            "x": 127,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkUzSU3XPM": {
+          "id": "SkUzSU3XPM",
+          "position": {
+            "x": 127,
+            "y": 207
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ByDfrL3QDM": {
+          "description": "Board GPIO port with LCD RS pin",
+          "id": "ByDfrL3QDM",
+          "label": "RS",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJufB83mPf": {
+          "description": "Board GPIO port with LCD D7 pin",
+          "id": "rJufB83mPf",
+          "label": "D7",
+          "position": {
+            "x": 639,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BktMHI2mwG": {
+          "id": "BktMHI2mwG",
+          "label": "L4",
+          "position": {
+            "x": 1043,
+            "y": 85
+          },
+          "type": "xod/patch-nodes/input-string"
+        }
+      },
+      "path": "@/lcd20x4",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\n{{#global}}\n#include <LiquidCrystal.h>\n{{/global}}\n\nstruct State {\n    LiquidCrystal* lcd;\n};\n\n{{ GENERATED_CODE }}\n\nvoid printLine(LiquidCrystal* lcd, uint8_t lineIndex, XString str) {\n    lcd->setCursor(0, lineIndex);\n    uint8_t whitespace = 16;\n    for (auto it = str->iterate(); it; ++it, --whitespace)\n        lcd->write(*it);\n\n    // Clear the rest of the line\n    while (whitespace--)\n        lcd->write(' ');\n}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    auto lcd = state->lcd;\n    if (!state->lcd) {\n        state->lcd = lcd = new LiquidCrystal(\n            (int)getValue<input_RS>(ctx),\n            (int)getValue<input_EN>(ctx),\n            (int)getValue<input_D4>(ctx),\n            (int)getValue<input_D5>(ctx),\n            (int)getValue<input_D6>(ctx),\n            (int)getValue<input_D7>(ctx));\n\n        lcd->begin(20, 4);\n    }\n\n    printLine(lcd, 0, getValue<input_L1>(ctx));\n    printLine(lcd, 1, getValue<input_L2>(ctx));\n    printLine(lcd, 2, getValue<input_L3>(ctx));\n    printLine(lcd, 4, getValue<input_L4>(ctx));\n}\n"
+        }
+      ]
+    }
+  },
+  "version": "0.14.0"
+}

@@ -1,0 +1,343 @@
+{
+  "patches": {
+    "@/eeprom-read-uint": {
+      "nodes": {
+        "S14FdgAuq": {
+          "id": "S14FdgAuq",
+          "position": {
+            "x": 4,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJJqdxRu5": {
+          "description": "unsignd integer value read from adress",
+          "label": "VAL",
+          "id": "SJJqdxRu5",
+          "position": {
+            "x": 4,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SJaqOxA_c": {
+          "description": "Address in EEPROM where the value should be read",
+          "label": "ADDR",
+          "id": "SJaqOxA_c",
+          "position": {
+            "x": 4,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkyNsxAOq": {
+          "description": "Trigger the read function",
+          "label": "UPD",
+          "id": "rkyNsxAOq",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryxdWXyt9": {
+          "description": "Pulses after each read ",
+          "label": "OK",
+          "id": "ryxdWXyt9",
+          "position": {
+            "x": 6,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/eeprom-read-uint",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\n\n#pragma XOD require \"https://github.com/dancojocaru2000/ArduinoEEPROM\"\n\n{{#global}}\n#include <EEPROM.h>\n{{/global}}\n\nstruct State {\n    uint16_t cache = 0;\n    \n};\n\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto state = getState(ctx);\n\n    if (isInputDirty<input_UPD>(ctx)) {\n         \n        \n        auto addr = getValue<input_ADDR>(ctx);\n        \n        uint16_t addresse = addr; \n        auto result = EEPROM.read(addresse);\n     \n        byte lowbyte = result;\n        addresse = addresse +1;\n        result = EEPROM.read(addresse);\n        byte highbyte = result;  \n        \n        \n        state->cache = ((lowbyte << 0) & 0x00FF) + ((highbyte << 8) & 0xFF00); \n        emitValue<output_OK>(ctx, true);\n    }\n\n    emitValue<output_VAL>(ctx, state->cache);\n}\n/*This function will read a 2 byte integer from the eeprom at the specified address and address + 1\n   \n*/\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+        }
+      ]
+    },
+    "@/eeprom-write-uint": {
+      "nodes": {
+        "H1BJCt4Fc": {
+          "id": "H1BJCt4Fc",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJFxRKNKq": {
+          "description": "Address in EEPROM where the value should be stored",
+          "label": "ADDR",
+          "id": "SJFxRKNKq",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ByWKxCY4Fq": {
+          "description": "Trigger the write function",
+          "label": "UPD",
+          "id": "ByWKxCY4Fq",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BJdZ0FNY5": {
+          "description": "Emitted after calling EEPROM.write",
+          "label": "OK",
+          "id": "BJdZ0FNY5",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SyQMAFEF9": {
+          "description": "unsignd integer value to be stored",
+          "label": "VAL",
+          "id": "SyQMAFEF9",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/eeprom-write-uint",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD require \"https://github.com/dancojocaru2000/ArduinoEEPROM\"\n\n{{#global}}\n#include <EEPROM.h>\n{{/global}}\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (isInputDirty<input_UPD>(ctx)) {\n        auto addr = getValue<input_ADDR>(ctx);\n        auto val = getValue<input_VAL>(ctx);\n\n       uint16_t addresse = addr;\n        \n       uint16_t wert = val; \n    byte lowbyte = 0;\n    byte highbyte = 0;    \n    word hlbyte = 0;\n    hlbyte =  word(wert);\n     \n                \n    lowbyte =(( hlbyte) & 0x00FF);\n    highbyte =((hlbyte >> 8) & 0xFF);  \n        \n    EEPROM.write(addresse,lowbyte);  \n       \n    addresse = addresse + 1;\n        \n    EEPROM.write(addresse,highbyte);\n                       \n            \n        emitValue<output_OK>(ctx, true);\n    }\n}\n\n/*This function will write a 2 byte integer to the eeprom at the specified address and address + 1\n   \n*/\n"
+        }
+      ]
+    },
+    "@/example": {
+      "nodes": {
+        "rJ80TgCO5": {
+          "id": "rJ80TgCO5",
+          "position": {
+            "x": 7,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/eeprom-read-uint"
+        },
+        "SJEixXyKq": {
+          "boundLiterals": {
+            "ByfGSDjQE": "0"
+          },
+          "id": "SJEixXyKq",
+          "position": {
+            "x": 7,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "HyphlXJYq": {
+          "size": {
+            "height": 1,
+            "width": 6,
+            "units": "slots"
+          },
+          "id": "HyphlXJYq",
+          "position": {
+            "x": 3,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "SyuHZmyK5": {
+          "boundLiterals": {
+            "ByfGSDjQE": "0"
+          },
+          "id": "SyuHZmyK5",
+          "position": {
+            "x": 3,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "Bk0vCtVKc": {
+          "id": "Bk0vCtVKc",
+          "position": {
+            "x": 3,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/eeprom-write-uint"
+        },
+        "Hk4FAtNY9": {
+          "boundLiterals": {
+            "ByfGSDjQE": "12348"
+          },
+          "id": "Hk4FAtNY9",
+          "position": {
+            "x": 4,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "S1NAxert5": {
+          "id": "S1NAxert5",
+          "position": {
+            "x": 5,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        },
+        "ByRdZgSK5": {
+          "id": "ByRdZgSK5",
+          "position": {
+            "x": 8,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "S16K-eSt5": {
+          "id": "S16K-eSt5",
+          "position": {
+            "x": 10,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        }
+      },
+      "links": {
+        "ByDsxXyt5": {
+          "id": "ByDsxXyt5",
+          "input": {
+            "nodeId": "rJ80TgCO5",
+            "pinKey": "SJaqOxA_c"
+          },
+          "output": {
+            "nodeId": "SJEixXyKq",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "Bkg6lXkF9": {
+          "id": "Bkg6lXkF9",
+          "input": {
+            "nodeId": "HyphlXJYq",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rJ80TgCO5",
+            "pinKey": "SJJqdxRu5"
+          }
+        },
+        "r1c_AYNK9": {
+          "id": "r1c_AYNK9",
+          "input": {
+            "nodeId": "Bk0vCtVKc",
+            "pinKey": "SJFxRKNKq"
+          },
+          "output": {
+            "nodeId": "SyuHZmyK5",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "S10YCKNKq": {
+          "id": "S10YCKNKq",
+          "input": {
+            "nodeId": "Bk0vCtVKc",
+            "pinKey": "SyQMAFEF9"
+          },
+          "output": {
+            "nodeId": "Hk4FAtNY9",
+            "pinKey": "ByfGSDjQE"
+          }
+        },
+        "SJuAgeBF5": {
+          "id": "SJuAgeBF5",
+          "input": {
+            "nodeId": "Bk0vCtVKc",
+            "pinKey": "ByWKxCY4Fq"
+          },
+          "output": {
+            "nodeId": "S1NAxert5",
+            "pinKey": "Bkf4BDsmV"
+          }
+        },
+        "rkWKWxSt5": {
+          "id": "rkWKWxSt5",
+          "input": {
+            "nodeId": "rJ80TgCO5",
+            "pinKey": "rkyNsxAOq"
+          },
+          "output": {
+            "nodeId": "ByRdZgSK5",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "BywKZxHYq": {
+          "id": "BywKZxHYq",
+          "input": {
+            "nodeId": "ByRdZgSK5",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "Bk0vCtVKc",
+            "pinKey": "BJdZ0FNY5"
+          }
+        },
+        "HyGqZxBKc": {
+          "id": "HyGqZxBKc",
+          "input": {
+            "nodeId": "ByRdZgSK5",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "S16K-eSt5",
+            "pinKey": "Bkf4BDsmV"
+          }
+        }
+      },
+      "comments": {
+        "By-Q67kY5": {
+          "content": "Internal EE-Prom read and write 16bit unsignd integer. \n\nallowed EE-Prom Address = 0 - 1023\n(0,2,4,6...1020,1022)\n0 write/read´s 0+1, 2 read's 2+3 ...\n\nallowed uint variable = 0-65535 =(16bit)\nDo not use a signed variable!!!",
+          "id": "By-Q67kY5",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 2,
+            "width": 10,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example"
+    }
+  },
+  "license": "AGL",
+  "description": "Read and write  unsigned integer value 16bit  (0-65535) from /to the internal  EE-Prom",
+  "name": "ee-prom-read-write-uint16bit"
+}

@@ -1,0 +1,281 @@
+{
+  "patches": {
+    "@/main": {
+      "nodes": {
+        "ByqTVnay_": {
+          "boundLiterals": {
+            "ByG8gno6kO": "1Eh",
+            "HkLUlhoa1d": "0Ch",
+            "S1Ul3j6kO": "01h",
+            "SJr8ghjayO": "E4h",
+            "SkxIx2jTyO": "03h",
+            "r14UxhipJO": "01h"
+          },
+          "id": "ByqTVnay_",
+          "position": {
+            "x": 13,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/receive-rs485-data"
+        },
+        "S19XXyRyd": {
+          "boundLiterals": {
+            "BJMJkCp1O": "8",
+            "BJX0RppJd": "7",
+            "Sk3ive01u": "3"
+          },
+          "id": "S19XXyRyd",
+          "position": {
+            "x": 20,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "@/ttl-device"
+        }
+      },
+      "path": "@/main"
+    },
+    "@/receive-rs485-data": {
+      "attachments": [
+        {
+          "content": "#include<SoftwareSerial.h>\n\n\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n        if (!isInputDirty<input_UPD>(ctx)) \n            return;\n\nauto RS485_serial = getValue<input_IN>(ctx);\nint SET;    \nuint8_t Address = getValue<input_Address>(ctx);\nuint8_t Function = getValue<input_Function>(ctx);\nuint8_t Start_Address_1 = getValue<input_Start_Address_1>(ctx);\nuint8_t Start_Address_2 = getValue<input_Start_Address_2>(ctx);\nuint8_t Register_Length_1 = getValue<input_Register_Length_1>(ctx);\nuint8_t Register_Length_2 = getValue<input_Register_Length_2>(ctx);\nuint8_t CRC_L = getValue<input_CRC_L>(ctx);\nuint8_t CRC_H = getValue<input_CRC_H>(ctx);\nuint8_t ADDR[] = {Address, Function, Start_Address_1, Start_Address_2, Register_Length_1, Register_Length_2, CRC_L, CRC_H};\nuint8_t val[2];\nint i;\nint val1;\nint val2;\nint val3;\nSET = getValue<input_SET>(ctx);\n\ndigitalWrite (SET, 1);\ndelay (1000);\nRS485_serial->write(ADDR, 8);\n\ndigitalWrite(SET,0);\n    \ndelay (100);\nif(RS485_serial->available ())\n{\nfor (i=0; i<8; i++){\n    \nuint8_t RX1 = RS485_serial->read();\n\n\nif (i==3){\n\nval[0] = RX1;\n    }\n\nif (i==4){\n\nval[1] = RX1;\n    }\n}\nval1 = val[0];\nval2 = val1 % 10;\nval1 = val1/10;\nval1 = val1*4096;\nval2 = val2*256;\nval3 = val[1];\nval3 = val3 + val2 + val1;\nemitValue<output_Measurement>(ctx, val3);\nemitValue<output_DONE>(ctx, 1);\n}\n}\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1WUe3opJu": {
+          "description": "Include the Start_Address_1 number",
+          "label": "Start_Address_1",
+          "id": "B1WUe3opJu",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "ByG8gno6kO": {
+          "description": "Include the Start_Address_2 number",
+          "label": "Start_Address_2",
+          "id": "ByG8gno6kO",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HkLUlhoa1d": {
+          "description": "Include the CRC_H number",
+          "label": "CRC_H",
+          "id": "HkLUlhoa1d",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HkX-cg0k_": {
+          "description": "Connect to SET1 pin in ltt-device node",
+          "label": "SET",
+          "id": "HkX-cg0k_",
+          "position": {
+            "x": 12,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Hy7Ilhia1u": {
+          "description": "Include the Register_Length_1 number",
+          "label": "Register_Length_1",
+          "id": "Hy7Ilhia1u",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "S1PKAOayO": {
+          "id": "S1PKAOayO",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1Ul3j6kO": {
+          "description": "Include the Address number",
+          "label": "Address",
+          "id": "S1Ul3j6kO",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SJr8ghjayO": {
+          "description": "Include the CRC_L number",
+          "label": "CRC_L",
+          "id": "SJr8ghjayO",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SkxIx2jTyO": {
+          "description": "Include the Function number",
+          "label": "Function",
+          "id": "SkxIx2jTyO",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "r13PFG01_": {
+          "description": "The data is shown in this pin",
+          "label": "Measurement",
+          "id": "r13PFG01_",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "r14UxhipJO": {
+          "description": "Include the Register_Length_2 number",
+          "label": "Register_Length_2",
+          "id": "r14UxhipJO",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "r1CVv1CJO": {
+          "description": "Connect to ltt device node",
+          "id": "r1CVv1CJO",
+          "position": {
+            "x": 13,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-ttl-device"
+        },
+        "rJ7ShjTyd": {
+          "description": "Gives 1 when the node has successfully executed",
+          "label": "DONE",
+          "id": "rJ7ShjTyd",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ryhM3o6kO": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "label": "UPD",
+          "id": "ryhM3o6kO",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/receive-rs485-data"
+    },
+    "@/ttl-device": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/PaulStoffregen/SoftwareSerial\"\n#include<SoftwareSerial.h>\n\n#define TX_485 8 \n#define RX_485 7 \n\n\nnode {\n    \nmeta {\n\nusing Type = SoftwareSerial*;\n    }\n\n    SoftwareSerial Serial_RS485 = SoftwareSerial (RX_485, TX_485);\n\n\n    \n    Number foo;\n    uint8_t bar = 5;\n\nvoid evaluate(Context ctx) {\n    bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n\n\nint SET;\nSET = getValue<input_SET>(ctx);\npinMode (SET, OUTPUT);\nSerial_RS485.begin(9600);\nemitValue<output_SET1>(ctx, SET);\nemitValue<output_OUT>(ctx, &Serial_RS485);\n\n\n}\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1xWD10yO": {
+          "description": "Connect to receive-rs485-data node",
+          "id": "B1xWD10yO",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "BJMJkCp1O": {
+          "description": "Indicate the TX port for the communications with microcontroller",
+          "label": "TX",
+          "id": "BJMJkCp1O",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJX0RppJd": {
+          "description": "Indicate the RX port for the communications with microcontroller",
+          "label": "RX",
+          "id": "BJX0RppJd",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H1UOWI2Ju": {
+          "id": "H1UOWI2Ju",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HkP-_eAkO": {
+          "description": "Connect to SET pin in receive-rs485-data",
+          "label": "SET1",
+          "id": "HkP-_eAkO",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "Sk3ive01u": {
+          "description": "Set the RS485 into receiving (0) or sending (1) data mode",
+          "label": "SET",
+          "id": "Sk3ive01u",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/ttl-device"
+    }
+  },
+  "name": "rs485"
+}

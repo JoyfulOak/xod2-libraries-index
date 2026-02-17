@@ -1,0 +1,3012 @@
+{
+  "patches": {
+    "@/draw-pixel": {
+      "nodes": {
+        "HyfyYmjIV": {
+          "description": "Cursor x coordinate.",
+          "label": "X",
+          "id": "HyfyYmjIV",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1jpOXsIE": {
+          "description": "An SSD1306 OLED device.",
+          "label": "DEV",
+          "id": "S1jpOXsIE",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ssd1306-oled-i2c-device"
+        },
+        "S1qndmiIV": {
+          "id": "S1qndmiIV",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Sk3yt7sIE": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Colour of pixel. Options:\n0  = black;\n1 = white;\n2 = invert.",
+          "label": "COLOUR",
+          "id": "Sk3yt7sIE",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Sy3LY7oUV": {
+          "description": "Pulses on completion.",
+          "label": "DONE",
+          "id": "Sy3LY7oUV",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SyiyFXjUN": {
+          "description": "Cursor y coordinate.",
+          "label": "Y",
+          "id": "SyiyFXjUN",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkCbYXoU4": {
+          "description": "Update. Trigger write to display buffer.",
+          "label": "UPD",
+          "id": "rkCbYXoU4",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/draw-pixel",
+      "description": "Draw a pixel.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_SSD1306` class instance\n    auto display = getValue<input_DEV>(ctx);\n\n    auto x = getValue<input_X>(ctx);\n    auto y = getValue<input_Y>(ctx);\n    auto colour = getValue<input_COLOUR>(ctx);\n\n    display->drawPixel(x, y, colour);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/draw-circle": {
+      "nodes": {
+        "B13M_058N": {
+          "description": "TRUE to fill circle with colour, FALSE to draw outline only.",
+          "label": "FILL",
+          "id": "B13M_058N",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "B1BSYmjLE": {
+          "description": "Update. Trigger write to display buffer.",
+          "label": "UPD",
+          "id": "B1BSYmjLE",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1J2v0qL4": {
+          "description": "Centre-point y coordinate.",
+          "label": "Y",
+          "id": "H1J2v0qL4",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H1WqD0584": {
+          "description": "An SSD1306 OLED device.",
+          "label": "DEV",
+          "id": "H1WqD0584",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ssd1306-oled-i2c-device"
+        },
+        "H1x13wRqIE": {
+          "description": "Radius of circle (pixels).",
+          "label": "R",
+          "id": "H1x13wRqIE",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1dZKAcU4": {
+          "description": "Pulses on completion.",
+          "label": "DONE",
+          "id": "S1dZKAcU4",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r1FYvR5I4": {
+          "id": "r1FYvR5I4",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJtovR584": {
+          "description": "Centre-point x coordinate.",
+          "label": "X",
+          "id": "rJtovR584",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkgRBHhIV": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Colour of circle. Options:\n0  = black;\n1 = white;\n2 = invert.",
+          "label": "COLOUR",
+          "id": "rkgRBHhIV",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/draw-circle",
+      "description": "Draw a circle. Writes data to display buffer. To show content of display buffer on screen use node send-buffer-to-display.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_SSD1306` class instance\n    auto display = getValue<input_DEV>(ctx);\n\n    auto x = getValue<input_X>(ctx);\n    auto y = getValue<input_Y>(ctx);\n    auto radius = getValue<input_R>(ctx);\n    auto colour = getValue<input_COLOUR>(ctx);\n    auto fill = getValue<input_FILL>(ctx);\n\n    if (fill){\n        display->fillCircle(x, y, radius, colour);\n    }else{\n        display->drawCircle(x, y, radius, colour);\n    }\n\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/draw-line": {
+      "nodes": {
+        "B1h7EAqIV": {
+          "description": "End point y coordinate.",
+          "label": "Y1",
+          "id": "B1h7EAqIV",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJ7fUQiL4": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Colour of line. Options:\n0  = black;\n1 = white;\n2 = invert.",
+          "label": "COLOUR",
+          "id": "BJ7fUQiL4",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJjmVAc8N": {
+          "description": "Start point y coordinate.",
+          "label": "Y0",
+          "id": "BJjmVAc8N",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Bkr-NC9IN": {
+          "description": "Update. Trigger write to display buffer.",
+          "label": "UPD",
+          "id": "Bkr-NC9IN",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ByxiXEC9UE": {
+          "description": "End point x coordinate.",
+          "label": "X1",
+          "id": "ByxiXEC9UE",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HkP7VC58V": {
+          "description": "Start point x coordinate.",
+          "label": "X0",
+          "id": "HkP7VC58V",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Sk4LEAqIV": {
+          "description": "Pulses on completion.",
+          "label": "DONE",
+          "id": "Sk4LEAqIV",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r1h6mAcU4": {
+          "id": "r1h6mAcU4",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1re4Aq8N": {
+          "description": "An SSD1306 OLED device.",
+          "label": "DEV",
+          "id": "r1re4Aq8N",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ssd1306-oled-i2c-device"
+        }
+      },
+      "path": "@/draw-line",
+      "description": "Draw a line. Data written to display buffer. To show content of display buffer on screen use node send-buffer-to-display.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_SSD1306` class instance\n    auto display = getValue<input_DEV>(ctx);\n\n    auto x0 = getValue<input_X0>(ctx);\n    auto y0 = getValue<input_Y0>(ctx);\n    auto x1 = getValue<input_X1>(ctx);\n    auto y1 = getValue<input_Y1>(ctx);\n    auto colour = getValue<input_COLOUR>(ctx);\n\n    display->drawLine(x0, y0, x1, y1, colour);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/clear-display": {
+      "nodes": {
+        "S1mxGvKUN": {
+          "description": "An SSD1306 OLED device.",
+          "label": "DEV",
+          "id": "S1mxGvKUN",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ssd1306-oled-i2c-device"
+        },
+        "r1H7MwK8E": {
+          "description": "Update. Triggers clear display.",
+          "label": "UPD",
+          "id": "r1H7MwK8E",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1JkGDY8V": {
+          "id": "r1JkGDY8V",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rylSGPt8E": {
+          "description": "Pulses on completion.",
+          "label": "DONE",
+          "id": "rylSGPt8E",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/clear-display",
+      "description": "Clear contents of display buffer (set all pixels to off). Changes buffer contents only, no immediate effect on display. Follow up with a call to send-buffer-to-display, or with other graphics commands as needed by one's own application.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_SSD1306` class instance\n    auto display = getValue<input_DEV>(ctx);\n\n    display->clearDisplay();\n\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/draw-rectangle": {
+      "nodes": {
+        "HJVKiR83IN": {
+          "id": "HJVKiR83IN",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJrYjCL28E": {
+          "description": "Top left corner x coordinate.",
+          "label": "X",
+          "id": "HJrYjCL28E",
+          "position": {
+            "x": 1,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJxFo082LN": {
+          "description": "Top left corner y coordinate.",
+          "label": "Y",
+          "id": "SJxFo082LN",
+          "position": {
+            "x": 2,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkWYsRL28N": {
+          "description": "An SSD1306 OLED device.",
+          "label": "DEV",
+          "id": "SkWYsRL28N",
+          "position": {
+            "x": -0.05,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "@/input-ssd1306-oled-i2c-device"
+        },
+        "r1IFsRIn8E": {
+          "description": "Update. Trigger write to display buffer.",
+          "label": "UPD",
+          "id": "r1IFsRIn8E",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1KoAU3LN": {
+          "description": "TRUE to fill rectangle with colour, FALSE to draw outline only.",
+          "label": "FILL",
+          "id": "r1KoAU3LN",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "r1nJkD28V": {
+          "description": "Height in pixels.",
+          "label": "H",
+          "id": "r1nJkD28V",
+          "position": {
+            "x": 4,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJQtjAU3UE": {
+          "description": "Pulses on completion.",
+          "label": "DONE",
+          "id": "rJQtjAU3UE",
+          "position": {
+            "x": -0.05,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rkftoCL2UN": {
+          "description": "Width in pixels.",
+          "label": "W",
+          "id": "rkftoCL2UN",
+          "position": {
+            "x": 3,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkvYiAInI4": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Colour of circle. Options:\n0  = black;\n1 = white;\n2 = invert.",
+          "label": "COLOUR",
+          "id": "rkvYiAInI4",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/draw-rectangle",
+      "description": "Draw a rectangle. Writes data to display buffer. To show content of display buffer on screen use node send-buffer-to-display.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_SSD1306` class instance\n    auto display = getValue<input_DEV>(ctx);\n\n    auto x = getValue<input_X>(ctx);\n    auto y = getValue<input_Y>(ctx);\n    auto w = getValue<input_W>(ctx);\n    auto h = getValue<input_H>(ctx);\n    auto colour = getValue<input_COLOUR>(ctx);\n    auto fill = getValue<input_FILL>(ctx);\n\n    if (fill){\n        display->fillRect(x, y, w, h, colour);\n    }else{\n        display->drawRect(x, y, w, h, colour);\n    }\n\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/draw-rounded-rectangle": {
+      "nodes": {
+        "B1rFb2DhLV": {
+          "description": "Top left corner x coordinate.",
+          "label": "X",
+          "id": "B1rFb2DhLV",
+          "position": {
+            "x": 1,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJZFW2v3IV": {
+          "description": "An SSD1306 OLED device.",
+          "label": "DEV",
+          "id": "BJZFW2v3IV",
+          "position": {
+            "x": -0.05,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "@/input-ssd1306-oled-i2c-device"
+        },
+        "BylY-3Pn84": {
+          "description": "Top left corner y coordinate.",
+          "label": "Y",
+          "id": "BylY-3Pn84",
+          "position": {
+            "x": 2,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HyIYbhwh8E": {
+          "description": "Update. Trigger write to display buffer.",
+          "label": "UPD",
+          "id": "HyIYbhwh8E",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S1MT0whLE": {
+          "description": "Radius of corner rounding.",
+          "label": "R",
+          "id": "S1MT0whLE",
+          "position": {
+            "x": 5,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJOt-3wn8N": {
+          "description": "Height in pixels.",
+          "label": "H",
+          "id": "SJOt-3wn8N",
+          "position": {
+            "x": 4,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Sk4YZnw2I4": {
+          "id": "Sk4YZnw2I4",
+          "position": {
+            "x": -0.05,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1tZnDhLV": {
+          "description": "TRUE to fill rectangle with colour, FALSE to draw outline only.",
+          "label": "FILL",
+          "id": "r1tZnDhLV",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rkGYb3D2I4": {
+          "description": "Width in pixels.",
+          "label": "W",
+          "id": "rkGYb3D2I4",
+          "position": {
+            "x": 3,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryPtZnPhIN": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Colour of circle. Options:\n0  = black;\n1 = white;\n2 = invert.",
+          "label": "COLOUR",
+          "id": "ryPtZnPhIN",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryQK-nDnU4": {
+          "description": "Pulses on completion.",
+          "label": "DONE",
+          "id": "ryQK-nDnU4",
+          "position": {
+            "x": -0.05,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/draw-rounded-rectangle",
+      "description": "Draw a rounded  rectangle. Writes data to display buffer. To show content of display buffer on screen use node send-buffer-to-display.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_SSD1306` class instance\n    auto display = getValue<input_DEV>(ctx);\n\n    auto x = getValue<input_X>(ctx);\n    auto y = getValue<input_Y>(ctx);\n    auto w = getValue<input_W>(ctx);\n    auto h = getValue<input_H>(ctx);\n    auto r = getValue<input_R>(ctx);\n    auto colour = getValue<input_COLOUR>(ctx);\n    auto fill = getValue<input_FILL>(ctx);\n\n    if (fill){\n        display->fillRoundRect(x, y, w, h, r, colour);\n    }else{\n        display->drawRoundRect(x, y, w, h, r, colour);\n    }\n\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/dim-display": {
+      "nodes": {
+        "B1SnziKUV": {
+          "id": "B1SnziKUV",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJ-pMitLV": {
+          "description": "Update. Triggers action.",
+          "label": "UPD",
+          "id": "HJ-pMitLV",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SklJmiYLE": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "TRUE to enable lower brightness mode, FALSE for full brightness.",
+          "label": "DIM",
+          "id": "SklJmiYLE",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "r1hfmjK8V": {
+          "description": "Pulses on completion.",
+          "label": "DONE",
+          "id": "r1hfmjK8V",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJ31mjF8E": {
+          "description": "An SSD1306 OLED device.",
+          "label": "DEV",
+          "id": "rJ31mjF8E",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ssd1306-oled-i2c-device"
+        }
+      },
+      "path": "@/dim-display",
+      "description": "Dim display. This has an immediate effect on the display, no need to use the send-buffer-to-display node -- buffer contents are not changed.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_SSD1306` class instance\n    auto display = getValue<input_DEV>(ctx);\n\n    auto dim_display = getValue<input_DIM>(ctx);\n\n    display->dim(dim_display);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/draw-triangle": {
+      "nodes": {
+        "Bk2kHunU4": {
+          "description": "TRUE to fill triangle with colour, FALSE to draw outline only.",
+          "label": "FILL",
+          "id": "Bk2kHunU4",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "H1731r_2UE": {
+          "description": "Pulses on completion.",
+          "label": "DONE",
+          "id": "H1731r_2UE",
+          "position": {
+            "x": -0.05,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "H1Z3yH_hI4": {
+          "description": "An SSD1306 OLED device.",
+          "label": "DEV",
+          "id": "H1Z3yH_hI4",
+          "position": {
+            "x": -0.05,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "@/input-ssd1306-oled-i2c-device"
+        },
+        "H1gqfBu2IV": {
+          "description": "Vertex #2 y coordinate",
+          "label": "Y2",
+          "id": "H1gqfBu2IV",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJL2JSOh8V": {
+          "description": "Update. Trigger write to display buffer.",
+          "label": "UPD",
+          "id": "HJL2JSOh8V",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkN21HOnU4": {
+          "id": "HkN21HOnU4",
+          "position": {
+            "x": -0.05,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S15MBu38V": {
+          "description": "Vertex #2 x coordinate",
+          "label": "X2",
+          "id": "S15MBu38V",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1DhJBO38V": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Colour of circle. Options:\n0  = black;\n1 = white;\n2 = invert.",
+          "label": "COLOUR",
+          "id": "S1DhJBO38V",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1dhJSdhUV": {
+          "description": "Vertex #1 y coordinate",
+          "label": "Y1",
+          "id": "r1dhJSdhUV",
+          "position": {
+            "x": 4,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1rn1r_2LV": {
+          "description": "Vertex #0 x coordinate.",
+          "label": "X0",
+          "id": "r1rn1r_2LV",
+          "position": {
+            "x": 1,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkG21ruhUE": {
+          "description": "Vertex #1 x coordinate",
+          "label": "X1",
+          "id": "rkG21ruhUE",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rye2yBdhUN": {
+          "description": "Vertex #0 y coordinate",
+          "label": "Y0",
+          "id": "rye2yBdhUN",
+          "position": {
+            "x": 2,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/draw-triangle",
+      "description": "Draw a triangle. Writes data to display buffer. To show content of display buffer on screen use node send-buffer-to-display.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_SSD1306` class instance\n    auto display = getValue<input_DEV>(ctx);\n    auto x0 = getValue<input_X0>(ctx);\n    auto y0 = getValue<input_Y0>(ctx);\n    auto x1 = getValue<input_X1>(ctx);\n    auto y1 = getValue<input_Y1>(ctx);\n    auto x2 = getValue<input_X2>(ctx);\n    auto y2 = getValue<input_Y2>(ctx);\n    auto colour = getValue<input_COLOUR>(ctx);\n    auto fill = getValue<input_FILL>(ctx);\n\n    if (fill){\n        display->fillTriangle(x0, y0, x1, y1, x2, y2, colour);\n    }else{\n        display->drawTriangle(x0, y0, x1, y1, x2, y2, colour);\n    }\n\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/draw-text": {
+      "nodes": {
+        "B11QT1qLN": {
+          "description": "Update. Trigger write to display buffer.",
+          "label": "UPD",
+          "id": "B11QT1qLN",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkhUQ_2IN": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Colour of circle. Options:\n0  = black;\n1 = white;\n2 = invert.",
+          "label": "COLOUR",
+          "id": "BkhUQ_2IN",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Bkw-6yqI4": {
+          "description": "Cursor position y coordinate.",
+          "label": "Y",
+          "id": "Bkw-6yqI4",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ByW_2k9IN": {
+          "boundLiterals": {
+            "__out__": "02h"
+          },
+          "description": "Font size.",
+          "label": "SIZE",
+          "id": "ByW_2k9IN",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HJIQ6AY8E": {
+          "description": "An SSD1306 OLED device.",
+          "label": "DEV",
+          "id": "HJIQ6AY8E",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ssd1306-oled-i2c-device"
+        },
+        "HkeXpCt8N": {
+          "id": "HkeXpCt8N",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Hypl61qUE": {
+          "description": "Cursor position x coordinate.",
+          "label": "X",
+          "id": "Hypl61qUE",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1gH6CKIN": {
+          "boundLiterals": {
+            "__out__": "\"text\""
+          },
+          "description": "Text string. Special characters can be specified using octal index. For example the degree symbol \"°\" (decimal code 248) can be specified using \"\\370\".",
+          "label": "TEXT",
+          "id": "S1gH6CKIN",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "r1DL6CFU4": {
+          "description": "Pulses on completion.",
+          "label": "DONE",
+          "id": "r1DL6CFU4",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJgOsycUN": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "If TRUE text is wrapped.",
+          "label": "WRAP",
+          "id": "rJgOsycUN",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        }
+      },
+      "path": "@/draw-text",
+      "description": "Writes string to display buffer. To show content of display buffer on screen use node send-buffer-to-display.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_SSD1306` class instance\n    auto display = getValue<input_DEV>(ctx);\n    auto cursor_x = getValue<input_X>(ctx);\n    auto cursor_y = getValue<input_Y>(ctx);\n    auto xString = getValue<input_TEXT>(ctx);\n    auto font_size = getValue<input_SIZE>(ctx);\n    auto colour = getValue<input_COLOUR>(ctx);\n    auto wrap = getValue<input_WRAP>(ctx);\n\n    // `length` returns the number of characters and you need an extra one to keep the\n    // terminal NUL-character used in C string representation. Initialize to 0’s to\n    // ensure the last char is indeed NUL\n    // The following line worked on Arduino, but would not compile for esp8266:\n    // char cString[length(xString) + 1] = { 0 };\n    // Bug fixed by the following four lines provided by Martin Brader:\n    int N=length(xString) + 1;\n    char cString[N];\n    for(int i=0;i<N;i++)\n    cString[i]=0;\n    // move the data from XString to the plain C string\n    dump(xString, cString);\n\n    // Use full 256 char 'Code Page 437' font\n    display->cp437(true);\n    display->setTextWrap(wrap);\n    display->setCursor(cursor_x, cursor_y);\n    display->setTextSize(font_size);\n    display->setTextColor(colour);\n    display->println(cString);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/example-xod-logo": {
+      "nodes": {
+        "B1W5o6TIN": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "5"
+          },
+          "id": "B1W5o6TIN",
+          "position": {
+            "x": 4,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "BJJpsTpI4": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "5"
+          },
+          "id": "BJJpsTpI4",
+          "position": {
+            "x": 4,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "BJwgjppIE": {
+          "label": "DEV",
+          "id": "BJwgjppIE",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "BkwAj6a8V": {
+          "label": "DEV",
+          "id": "BkwAj6a8V",
+          "position": {
+            "x": 3,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "H1Sho66UE": {
+          "label": "DEV",
+          "id": "H1Sho66UE",
+          "position": {
+            "x": 3,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "H1sNjttLV": {
+          "id": "H1sNjttLV",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/ssd1306-oled-i2c-device"
+        },
+        "HktVj6pLV": {
+          "label": "DEV",
+          "id": "HktVj6pLV",
+          "position": {
+            "x": 3,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HyltViapUN": {
+          "label": "DEV",
+          "id": "HyltViapUN",
+          "position": {
+            "x": 3,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SkwBsYt84": {
+          "id": "SkwBsYt84",
+          "position": {
+            "x": 4,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/draw-xod-logo"
+        },
+        "Sy7256T8N": {
+          "id": "Sy7256T8N",
+          "position": {
+            "x": 4,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/send-buffer-to-display"
+        },
+        "rJMEnT6U4": {
+          "id": "rJMEnT6U4",
+          "position": {
+            "x": 4,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "@/invert-display"
+        },
+        "rJRUnTp8V": {
+          "boundLiterals": {
+            "Sk5RTCF84": "False"
+          },
+          "id": "rJRUnTp8V",
+          "position": {
+            "x": 4,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "@/invert-display"
+        },
+        "rJayoapLN": {
+          "boundLiterals": {
+            "r1H7MwK8E": "On Boot"
+          },
+          "id": "rJayoapLN",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/clear-display"
+        }
+      },
+      "links": {
+        "B1RnqaTUE": {
+          "id": "B1RnqaTUE",
+          "input": {
+            "nodeId": "Sy7256T8N",
+            "pinKey": "SJDbf_YUV"
+          },
+          "output": {
+            "nodeId": "SkwBsYt84",
+            "pinKey": "HJDI8YYUN"
+          }
+        },
+        "B1i8sa6LN": {
+          "id": "B1i8sa6LN",
+          "input": {
+            "nodeId": "SkwBsYt84",
+            "pinKey": "rkPrUKFIV"
+          },
+          "output": {
+            "nodeId": "HktVj6pLV",
+            "pinKey": "__out__"
+          }
+        },
+        "BkkLoppLV": {
+          "id": "BkkLoppLV",
+          "input": {
+            "nodeId": "SkwBsYt84",
+            "pinKey": "Skj7ItY8V"
+          },
+          "output": {
+            "nodeId": "rJayoapLN",
+            "pinKey": "rylSGPt8E"
+          }
+        },
+        "HJsvn6p8N": {
+          "id": "HJsvn6p8N",
+          "input": {
+            "nodeId": "rJRUnTp8V",
+            "pinKey": "BkZ9P5F8E"
+          },
+          "output": {
+            "nodeId": "BJJpsTpI4",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "Hy3lsap8E": {
+          "id": "Hy3lsap8E",
+          "input": {
+            "nodeId": "BJwgjppIE",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "H1sNjttLV",
+            "pinKey": "ryH6tSt8N"
+          }
+        },
+        "S1MPnT6L4": {
+          "id": "S1MPnT6L4",
+          "input": {
+            "nodeId": "rJRUnTp8V",
+            "pinKey": "BJZFD5YIN"
+          },
+          "output": {
+            "nodeId": "BkwAj6a8V",
+            "pinKey": "__out__"
+          }
+        },
+        "Sy_Jh6p8N": {
+          "id": "Sy_Jh6p8N",
+          "input": {
+            "nodeId": "B1W5o6TIN",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "Sy7256T8N",
+            "pinKey": "BkPGzdFI4"
+          }
+        },
+        "SywDnaa8E": {
+          "id": "SywDnaa8E",
+          "input": {
+            "nodeId": "rJMEnT6U4",
+            "pinKey": "BkZ9P5F8E"
+          },
+          "output": {
+            "nodeId": "B1W5o6TIN",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "rySDhp68E": {
+          "id": "rySDhp68E",
+          "input": {
+            "nodeId": "rJMEnT6U4",
+            "pinKey": "BJZFD5YIN"
+          },
+          "output": {
+            "nodeId": "H1Sho66UE",
+            "pinKey": "__out__"
+          }
+        },
+        "ryY5gC6L4": {
+          "id": "ryY5gC6L4",
+          "input": {
+            "nodeId": "BJJpsTpI4",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "rJMEnT6U4",
+            "pinKey": "rkQ3wctI4"
+          }
+        },
+        "ryaLiTpI4": {
+          "id": "ryaLiTpI4",
+          "input": {
+            "nodeId": "Sy7256T8N",
+            "pinKey": "Sy6LZuYIE"
+          },
+          "output": {
+            "nodeId": "HyltViapUN",
+            "pinKey": "__out__"
+          }
+        },
+        "HJrOxjN12": {
+          "id": "HJrOxjN12",
+          "output": {
+            "nodeId": "H1sNjttLV",
+            "pinKey": "ryH6tSt8N"
+          },
+          "input": {
+            "nodeId": "rJayoapLN",
+            "pinKey": "S1mxGvKUN"
+          }
+        }
+      },
+      "path": "@/example-xod-logo",
+      "description": "Display and inversion of XOD logo."
+    },
+    "@/example-scroll": {
+      "nodes": {
+        "BkekkSTIV": {
+          "boundLiterals": {
+            "r1H7MwK8E": "On Boot"
+          },
+          "id": "BkekkSTIV",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/clear-display"
+        },
+        "ByzBkBa8N": {
+          "boundLiterals": {
+            "H1j2-NpUE": "03h"
+          },
+          "id": "ByzBkBa8N",
+          "position": {
+            "x": 1,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/start-scroll"
+        },
+        "H1hvjH6LV": {
+          "label": "DEV",
+          "id": "H1hvjH6LV",
+          "position": {
+            "x": 0,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJ5kxHTLV": {
+          "id": "HJ5kxHTLV",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/send-buffer-to-display"
+        },
+        "HJr5oBTUE": {
+          "id": "HJr5oBTUE",
+          "position": {
+            "x": 1,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/stop-scroll"
+        },
+        "Hy3vlrpUN": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "30"
+          },
+          "id": "Hy3vlrpUN",
+          "position": {
+            "x": 1,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "S1EnRNpLN": {
+          "boundLiterals": {
+            "rJj1D289I": "3Ch"
+          },
+          "id": "S1EnRNpLN",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/ssd1306-oled-i2c-device"
+        },
+        "SJ-GoSTLN": {
+          "label": "DEV",
+          "id": "SJ-GoSTLN",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "SkGSoHpLE": {
+          "label": "DEV",
+          "id": "SkGSoHpLE",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rJZovoH6UE": {
+          "label": "DEV",
+          "id": "rJZovoH6UE",
+          "position": {
+            "x": 0,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "ry0JyH6IV": {
+          "boundLiterals": {
+            "ByW_2k9IN": "02h",
+            "Hypl61qUE": "31",
+            "S1gH6CKIN": "\"XOD\""
+          },
+          "id": "ry0JyH6IV",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/draw-text"
+        },
+        "ryXPsST84": {
+          "label": "DEV",
+          "id": "ryXPsST84",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "ryjwjr6IV": {
+          "label": "DEV",
+          "id": "ryjwjr6IV",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        }
+      },
+      "links": {
+        "BJDFa86IV": {
+          "id": "BJDFa86IV",
+          "input": {
+            "nodeId": "HJr5oBTUE",
+            "pinKey": "rkGz3cY8E"
+          },
+          "output": {
+            "nodeId": "Hy3vlrpUN",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "BJe7jrp8V": {
+          "id": "BJe7jrp8V",
+          "input": {
+            "nodeId": "SJ-GoSTLN",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "S1EnRNpLN",
+            "pinKey": "ryH6tSt8N"
+          }
+        },
+        "BJqcoSa8V": {
+          "id": "BJqcoSa8V",
+          "input": {
+            "nodeId": "HJr5oBTUE",
+            "pinKey": "SkyWnqYIN"
+          },
+          "output": {
+            "nodeId": "H1hvjH6LV",
+            "pinKey": "__out__"
+          }
+        },
+        "BJwKLT6LN": {
+          "id": "BJwKLT6LN",
+          "input": {
+            "nodeId": "ByzBkBa8N",
+            "pinKey": "rJN4Ay4a8E"
+          },
+          "output": {
+            "nodeId": "HJ5kxHTLV",
+            "pinKey": "BkPGzdFI4"
+          }
+        },
+        "H1YNkHa8N": {
+          "id": "H1YNkHa8N",
+          "input": {
+            "nodeId": "ry0JyH6IV",
+            "pinKey": "B11QT1qLN"
+          },
+          "output": {
+            "nodeId": "BkekkSTIV",
+            "pinKey": "rylSGPt8E"
+          }
+        },
+        "SJc_oHpUN": {
+          "id": "SJc_oHpUN",
+          "input": {
+            "nodeId": "HJ5kxHTLV",
+            "pinKey": "Sy6LZuYIE"
+          },
+          "output": {
+            "nodeId": "ryjwjr6IV",
+            "pinKey": "__out__"
+          }
+        },
+        "SJj_xBaUE": {
+          "id": "SJj_xBaUE",
+          "input": {
+            "nodeId": "Hy3vlrpUN",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "ByzBkBa8N",
+            "pinKey": "rJ4RkEp84"
+          }
+        },
+        "SkV_irp8E": {
+          "id": "SkV_irp8E",
+          "input": {
+            "nodeId": "ry0JyH6IV",
+            "pinKey": "HJIQ6AY8E"
+          },
+          "output": {
+            "nodeId": "ryXPsST84",
+            "pinKey": "__out__"
+          }
+        },
+        "r1XmeHpUE": {
+          "id": "r1XmeHpUE",
+          "input": {
+            "nodeId": "HJ5kxHTLV",
+            "pinKey": "SJDbf_YUV"
+          },
+          "output": {
+            "nodeId": "ry0JyH6IV",
+            "pinKey": "r1DL6CFU4"
+          }
+        },
+        "rJ1KoBaUV": {
+          "id": "rJ1KoBaUV",
+          "input": {
+            "nodeId": "ByzBkBa8N",
+            "pinKey": "HylNR1VTU4"
+          },
+          "output": {
+            "nodeId": "rJZovoH6UE",
+            "pinKey": "__out__"
+          }
+        },
+        "rJ9Lor6LV": {
+          "id": "rJ9Lor6LV",
+          "input": {
+            "nodeId": "BkekkSTIV",
+            "pinKey": "S1mxGvKUN"
+          },
+          "output": {
+            "nodeId": "SkGSoHpLE",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "path": "@/example-scroll",
+      "description": "Performs a diagonal right scroll for 30 seconds, then stops scrolling."
+    },
+    "@/example-draw-shapes": {
+      "nodes": {
+        "B1KNpRpIN": {
+          "boundLiterals": {
+            "S1MT0whLE": "8",
+            "r1tZnDhLV": "True"
+          },
+          "id": "B1KNpRpIN",
+          "position": {
+            "x": 2,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/draw-rounded-rectangle"
+        },
+        "B1yZk1RIN": {
+          "boundLiterals": {
+            "Bk2kHunU4": "True",
+            "H1gqfBu2IV": "32",
+            "S15MBu38V": "8",
+            "S1DhJBO38V": "2",
+            "r1dhJSdhUV": "8",
+            "r1rn1r_2LV": "8",
+            "rkG21ruhUE": "32",
+            "rye2yBdhUN": "8"
+          },
+          "id": "B1yZk1RIN",
+          "position": {
+            "x": 2,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/draw-triangle"
+        },
+        "BJ4SrJRIN": {
+          "boundLiterals": {
+            "BytUCdHD1-": "2"
+          },
+          "id": "BJ4SrJRIN",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/divide"
+        },
+        "BJLW0CpIE": {
+          "id": "BJLW0CpIE",
+          "position": {
+            "x": 1,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "@/send-buffer-to-display"
+        },
+        "BJh_-kCU4": {
+          "boundLiterals": {
+            "B13M_058N": "False",
+            "rkgRBHhIV": "0"
+          },
+          "id": "BJh_-kCU4",
+          "position": {
+            "x": 2,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "@/draw-circle"
+        },
+        "Bk-yhhATUV": {
+          "boundLiterals": {
+            "r1H7MwK8E": "On Boot"
+          },
+          "id": "Bk-yhhATUV",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/clear-display"
+        },
+        "ByTPHJ0L4": {
+          "label": "h/2",
+          "id": "ByTPHJ0L4",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "BytbRR6U4": {
+          "label": "DEV",
+          "id": "BytbRR6U4",
+          "position": {
+            "x": 1,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "H14faCp8N": {
+          "label": "H",
+          "id": "H14faCp8N",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "H18AhCTL4": {
+          "label": "W",
+          "id": "H18AhCTL4",
+          "position": {
+            "x": -1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "H1moUyAU4": {
+          "label": "w/2",
+          "id": "H1moUyAU4",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "S19M110UN": {
+          "label": "DEV",
+          "id": "S19M110UN",
+          "position": {
+            "x": 2,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1QuwyALE": {
+          "label": "h/2",
+          "id": "S1QuwyALE",
+          "position": {
+            "x": 4,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1yOpRpIV": {
+          "label": "W",
+          "id": "S1yOpRpIV",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SkQzIyCLN": {
+          "label": "h/8",
+          "id": "SkQzIyCLN",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "Sy12n0T8V": {
+          "id": "Sy12n0T8V",
+          "position": {
+            "x": -1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/ssd1306-oled-i2c-device"
+        },
+        "Sy3evJRU4": {
+          "label": "h/2",
+          "id": "Sy3evJRU4",
+          "position": {
+            "x": 6,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "r11T2CpUV": {
+          "id": "r11T2CpUV",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/get-display-dimensions"
+        },
+        "r1Myn30aUV": {
+          "label": "DEV",
+          "id": "r1Myn30aUV",
+          "position": {
+            "x": -1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "rJ3tLJRIE": {
+          "boundLiterals": {
+            "BytUCdHD1-": "2"
+          },
+          "id": "rJ3tLJRIE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/divide"
+        },
+        "rJ9Kb1RL4": {
+          "label": "DEV",
+          "id": "rJ9Kb1RL4",
+          "position": {
+            "x": 2,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rJZraCT8N": {
+          "label": "DEV",
+          "id": "rJZraCT8N",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rJlavBJRLN": {
+          "label": "h/8",
+          "id": "rJlavBJRLN",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "rkVy22068E": {
+          "label": "DEV",
+          "id": "rkVy22068E",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rkw-vkCIV": {
+          "label": "h/8",
+          "id": "rkw-vkCIV",
+          "position": {
+            "x": 4,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "ryHhwkCLN": {
+          "label": "w/2",
+          "id": "ryHhwkCLN",
+          "position": {
+            "x": 3,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "ryTrH10IE": {
+          "boundLiterals": {
+            "BytUCdHD1-": "8"
+          },
+          "id": "ryTrH10IE",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/divide"
+        },
+        "ryTuaAaLV": {
+          "label": "H",
+          "id": "ryTuaAaLV",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        }
+      },
+      "links": {
+        "B18STRTIV": {
+          "id": "B18STRTIV",
+          "input": {
+            "nodeId": "B1KNpRpIN",
+            "pinKey": "BJZFW2v3IV"
+          },
+          "output": {
+            "nodeId": "rJZraCT8N",
+            "pinKey": "__out__"
+          }
+        },
+        "B1Q4vkRLE": {
+          "id": "B1Q4vkRLE",
+          "input": {
+            "nodeId": "B1yZk1RIN",
+            "pinKey": "r1dhJSdhUV"
+          },
+          "output": {
+            "nodeId": "rkw-vkCIV",
+            "pinKey": "__out__"
+          }
+        },
+        "BJBJ22ApIN": {
+          "id": "BJBJ22ApIN",
+          "input": {
+            "nodeId": "r1Myn30aUV",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Sy12n0T8V",
+            "pinKey": "ryH6tSt8N"
+          }
+        },
+        "ByOJn3RaUV": {
+          "id": "ByOJn3RaUV",
+          "input": {
+            "nodeId": "Bk-yhhATUV",
+            "pinKey": "S1mxGvKUN"
+          },
+          "output": {
+            "nodeId": "rkVy22068E",
+            "pinKey": "__out__"
+          }
+        },
+        "Byf76Rp8E": {
+          "id": "Byf76Rp8E",
+          "input": {
+            "nodeId": "H14faCp8N",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r11T2CpUV",
+            "pinKey": "HywWxHhU4"
+          }
+        },
+        "BykUr1A84": {
+          "id": "BykUr1A84",
+          "input": {
+            "nodeId": "BJ4SrJRIN",
+            "pinKey": "SkdIRuBD1b"
+          },
+          "output": {
+            "nodeId": "r11T2CpUV",
+            "pinKey": "HywWxHhU4"
+          }
+        },
+        "H12yTApUV": {
+          "id": "H12yTApUV",
+          "input": {
+            "nodeId": "H18AhCTL4",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r11T2CpUV",
+            "pinKey": "HyXeeBhL4"
+          }
+        },
+        "H1NawkCIV": {
+          "id": "H1NawkCIV",
+          "input": {
+            "nodeId": "BJh_-kCU4",
+            "pinKey": "rJtovR584"
+          },
+          "output": {
+            "nodeId": "ryHhwkCLN",
+            "pinKey": "__out__"
+          }
+        },
+        "H1hDB08c8": {
+          "id": "H1hDB08c8",
+          "input": {
+            "nodeId": "r11T2CpUV",
+            "pinKey": "BysCJr2IN"
+          },
+          "output": {
+            "nodeId": "Sy12n0T8V",
+            "pinKey": "ryH6tSt8N"
+          }
+        },
+        "HkJ7UkRLN": {
+          "id": "HkJ7UkRLN",
+          "input": {
+            "nodeId": "B1KNpRpIN",
+            "pinKey": "S1MT0whLE"
+          },
+          "output": {
+            "nodeId": "SkQzIyCLN",
+            "pinKey": "__out__"
+          }
+        },
+        "HkaW0RTL4": {
+          "id": "HkaW0RTL4",
+          "input": {
+            "nodeId": "BJLW0CpIE",
+            "pinKey": "Sy6LZuYIE"
+          },
+          "output": {
+            "nodeId": "BytbRR6U4",
+            "pinKey": "__out__"
+          }
+        },
+        "Hkb9UkAL4": {
+          "id": "Hkb9UkAL4",
+          "input": {
+            "nodeId": "rJ3tLJRIE",
+            "pinKey": "SkdIRuBD1b"
+          },
+          "output": {
+            "nodeId": "r11T2CpUV",
+            "pinKey": "HyXeeBhL4"
+          }
+        },
+        "HyJCkkCIN": {
+          "id": "HyJCkkCIN",
+          "input": {
+            "nodeId": "B1yZk1RIN",
+            "pinKey": "HJL2JSOh8V"
+          },
+          "output": {
+            "nodeId": "B1KNpRpIN",
+            "pinKey": "ryQK-nDnU4"
+          }
+        },
+        "HyRg0RpL4": {
+          "id": "HyRg0RpL4",
+          "input": {
+            "nodeId": "B1KNpRpIN",
+            "pinKey": "HyIYbhwh8E"
+          },
+          "output": {
+            "nodeId": "Bk-yhhATUV",
+            "pinKey": "rylSGPt8E"
+          }
+        },
+        "HyqmPyALV": {
+          "id": "HyqmPyALV",
+          "input": {
+            "nodeId": "B1yZk1RIN",
+            "pinKey": "r1rn1r_2LV"
+          },
+          "output": {
+            "nodeId": "rkw-vkCIV",
+            "pinKey": "__out__"
+          }
+        },
+        "S12EwJRLN": {
+          "id": "S12EwJRLN",
+          "input": {
+            "nodeId": "B1yZk1RIN",
+            "pinKey": "H1gqfBu2IV"
+          },
+          "output": {
+            "nodeId": "Sy3evJRU4",
+            "pinKey": "__out__"
+          }
+        },
+        "S168Sk08E": {
+          "id": "S168Sk08E",
+          "input": {
+            "nodeId": "ryTrH10IE",
+            "pinKey": "SkdIRuBD1b"
+          },
+          "output": {
+            "nodeId": "r11T2CpUV",
+            "pinKey": "HywWxHhU4"
+          }
+        },
+        "S1oQGy0IE": {
+          "id": "S1oQGy0IE",
+          "input": {
+            "nodeId": "BJLW0CpIE",
+            "pinKey": "SJDbf_YUV"
+          },
+          "output": {
+            "nodeId": "BJh_-kCU4",
+            "pinKey": "S1dZKAcU4"
+          }
+        },
+        "SJNRrkRIE": {
+          "id": "SJNRrkRIE",
+          "input": {
+            "nodeId": "ByTPHJ0L4",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJ4SrJRIN",
+            "pinKey": "BkqLCOSw1W"
+          }
+        },
+        "Skj0T0p8V": {
+          "id": "Skj0T0p8V",
+          "input": {
+            "nodeId": "B1KNpRpIN",
+            "pinKey": "SJOt-3wn8N"
+          },
+          "output": {
+            "nodeId": "ryTuaAaLV",
+            "pinKey": "__out__"
+          }
+        },
+        "Sklmy1CIE": {
+          "id": "Sklmy1CIE",
+          "input": {
+            "nodeId": "B1yZk1RIN",
+            "pinKey": "H1Z3yH_hI4"
+          },
+          "output": {
+            "nodeId": "S19M110UN",
+            "pinKey": "__out__"
+          }
+        },
+        "Sya_PkRLV": {
+          "id": "Sya_PkRLV",
+          "input": {
+            "nodeId": "BJh_-kCU4",
+            "pinKey": "H1x13wRqIE"
+          },
+          "output": {
+            "nodeId": "S1QuwyALE",
+            "pinKey": "__out__"
+          }
+        },
+        "r1RYbyAUN": {
+          "id": "r1RYbyAUN",
+          "input": {
+            "nodeId": "BJh_-kCU4",
+            "pinKey": "H1WqD0584"
+          },
+          "output": {
+            "nodeId": "rJ9Kb1RL4",
+            "pinKey": "__out__"
+          }
+        },
+        "r1ndD1CIN": {
+          "id": "r1ndD1CIN",
+          "input": {
+            "nodeId": "BJh_-kCU4",
+            "pinKey": "H1J2v0qL4"
+          },
+          "output": {
+            "nodeId": "S1QuwyALE",
+            "pinKey": "__out__"
+          }
+        },
+        "r1p7vk0LE": {
+          "id": "r1p7vk0LE",
+          "input": {
+            "nodeId": "B1yZk1RIN",
+            "pinKey": "rye2yBdhUN"
+          },
+          "output": {
+            "nodeId": "rkw-vkCIV",
+            "pinKey": "__out__"
+          }
+        },
+        "r1rNvkAU4": {
+          "id": "r1rNvkAU4",
+          "input": {
+            "nodeId": "B1yZk1RIN",
+            "pinKey": "S15MBu38V"
+          },
+          "output": {
+            "nodeId": "rkw-vkCIV",
+            "pinKey": "__out__"
+          }
+        },
+        "r1tiIkCLN": {
+          "id": "r1tiIkCLN",
+          "input": {
+            "nodeId": "H1moUyAU4",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJ3tLJRIE",
+            "pinKey": "BkqLCOSw1W"
+          }
+        },
+        "rJ5NDyAU4": {
+          "id": "rJ5NDyAU4",
+          "input": {
+            "nodeId": "B1yZk1RIN",
+            "pinKey": "rkG21ruhUE"
+          },
+          "output": {
+            "nodeId": "Sy3evJRU4",
+            "pinKey": "__out__"
+          }
+        },
+        "rJEx8yRIN": {
+          "id": "rJEx8yRIN",
+          "input": {
+            "nodeId": "rJlavBJRLN",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ryTrH10IE",
+            "pinKey": "BkqLCOSw1W"
+          }
+        },
+        "rJOA6ATUE": {
+          "id": "rJOA6ATUE",
+          "input": {
+            "nodeId": "B1KNpRpIN",
+            "pinKey": "rkGYb3D2I4"
+          },
+          "output": {
+            "nodeId": "S1yOpRpIV",
+            "pinKey": "__out__"
+          }
+        },
+        "rkuXfy0U4": {
+          "id": "rkuXfy0U4",
+          "input": {
+            "nodeId": "BJh_-kCU4",
+            "pinKey": "B1BSYmjLE"
+          },
+          "output": {
+            "nodeId": "B1yZk1RIN",
+            "pinKey": "H1731r_2UE"
+          }
+        }
+      },
+      "path": "@/example-draw-shapes",
+      "description": "Draw shapes in proportion to display size."
+    },
+    "@/invert-display": {
+      "nodes": {
+        "BJZFD5YIN": {
+          "description": "An SSD1306 OLED device.",
+          "label": "DEV",
+          "id": "BJZFD5YIN",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-ssd1306-oled-i2c-device"
+        },
+        "BJwdw5KUE": {
+          "id": "BJwdw5KUE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BkZ9P5F8E": {
+          "description": "Update. Trigger action.",
+          "label": "UPD",
+          "id": "BkZ9P5F8E",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Sk5RTCF84": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "If true, switch to invert mode (black-on-white), else normal mode (white-on-black). ",
+          "label": "INV",
+          "id": "Sk5RTCF84",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rkQ3wctI4": {
+          "label": "DONE",
+          "id": "rkQ3wctI4",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/invert-display",
+      "description": "Enable or disable display invert mode (white-on-black vs black-on-white).  This has an immediate effect on the display, no need to use the send-buffer-to-display node  -- buffer contents are not changed, rather a different pixel mode of the display hardware is used. When \n enabled, drawing BLACK (value 0) pixels will actually draw white,  WHITE (value 1) will draw black.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_SSD1306` class instance\n    auto display = getValue<input_DEV>(ctx);\n\n    auto invert_display = getValue<input_INV>(ctx);\n\n    display->invertDisplay(invert_display);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/example-rotate-display": {
+      "nodes": {
+        "BJKaJJD5L": {
+          "boundLiterals": {
+            "r1H7MwK8E": "On Boot"
+          },
+          "id": "BJKaJJD5L",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/clear-display"
+        },
+        "Bkvibyw9U": {
+          "label": "DEV",
+          "id": "Bkvibyw9U",
+          "position": {
+            "x": 1,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "Bkzjb1wqU": {
+          "id": "Bkzjb1wqU",
+          "position": {
+            "x": 2,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "@/send-buffer-to-display"
+        },
+        "ByWnyJw5U": {
+          "id": "ByWnyJw5U",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/ssd1306-oled-i2c-device"
+        },
+        "H1bYp1yP5L": {
+          "label": "DEV",
+          "id": "H1bYp1yP5L",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "H1fYpJJDc8": {
+          "boundLiterals": {
+            "Bkw-6yqI4": "8",
+            "ByW_2k9IN": "03h",
+            "Hypl61qUE": "8",
+            "S1gH6CKIN": "\"XOD\""
+          },
+          "id": "H1fYpJJDc8",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/draw-text"
+        },
+        "H1qMzJDcL": {
+          "boundLiterals": {
+            "Bkw-6yqI4": "8",
+            "ByW_2k9IN": "03h",
+            "Hypl61qUE": "8",
+            "S1gH6CKIN": "\"XOD\""
+          },
+          "id": "H1qMzJDcL",
+          "position": {
+            "x": 3,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/draw-text"
+        },
+        "HkxmM1v9U": {
+          "label": "DEV",
+          "id": "HkxmM1v9U",
+          "position": {
+            "x": 2,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1gV-yD9U": {
+          "label": "DEV",
+          "id": "S1gV-yD9U",
+          "position": {
+            "x": 2,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1wub1v9I": {
+          "label": "DEV",
+          "id": "S1wub1v9I",
+          "position": {
+            "x": 2,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJbdZyw9I": {
+          "boundLiterals": {
+            "BJ7urnUq8": "01h"
+          },
+          "id": "SJbdZyw9I",
+          "position": {
+            "x": 3,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/rotate-display"
+        },
+        "r1hmbkPc8": {
+          "id": "r1hmbkPc8",
+          "position": {
+            "x": 3,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/send-buffer-to-display"
+        },
+        "rJQFakyP5I": {
+          "label": "DEV",
+          "id": "rJQFakyP5I",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rkgK6yywqL": {
+          "label": "DEV",
+          "id": "rkgK6yywqL",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        }
+      },
+      "links": {
+        "Bk4tpJJPcI": {
+          "id": "Bk4tpJJPcI",
+          "input": {
+            "nodeId": "H1fYpJJDc8",
+            "pinKey": "B11QT1qLN"
+          },
+          "output": {
+            "nodeId": "BJKaJJD5L",
+            "pinKey": "rylSGPt8E"
+          }
+        },
+        "BygK-yv5L": {
+          "id": "BygK-yv5L",
+          "input": {
+            "nodeId": "SJbdZyw9I",
+            "pinKey": "rJV0NhU5U"
+          },
+          "output": {
+            "nodeId": "S1wub1v9I",
+            "pinKey": "__out__"
+          }
+        },
+        "ByiXMyw58": {
+          "id": "ByiXMyw58",
+          "input": {
+            "nodeId": "H1qMzJDcL",
+            "pinKey": "B11QT1qLN"
+          },
+          "output": {
+            "nodeId": "SJbdZyw9I",
+            "pinKey": "H1MN0Vh85U"
+          }
+        },
+        "ByrY61yD5L": {
+          "id": "ByrY61yD5L",
+          "input": {
+            "nodeId": "H1fYpJJDc8",
+            "pinKey": "HJIQ6AY8E"
+          },
+          "output": {
+            "nodeId": "rJQFakyP5I",
+            "pinKey": "__out__"
+          }
+        },
+        "HJ67f1v9L": {
+          "id": "HJ67f1v9L",
+          "input": {
+            "nodeId": "Bkzjb1wqU",
+            "pinKey": "SJDbf_YUV"
+          },
+          "output": {
+            "nodeId": "H1qMzJDcL",
+            "pinKey": "r1DL6CFU4"
+          }
+        },
+        "SJLtpy1wq8": {
+          "id": "SJLtpy1wq8",
+          "input": {
+            "nodeId": "BJKaJJD5L",
+            "pinKey": "S1mxGvKUN"
+          },
+          "output": {
+            "nodeId": "H1bYp1yP5L",
+            "pinKey": "__out__"
+          }
+        },
+        "SJ_7fkw5U": {
+          "id": "SJ_7fkw5U",
+          "input": {
+            "nodeId": "H1qMzJDcL",
+            "pinKey": "HJIQ6AY8E"
+          },
+          "output": {
+            "nodeId": "HkxmM1v9U",
+            "pinKey": "__out__"
+          }
+        },
+        "SypTkkD9U": {
+          "id": "SypTkkD9U",
+          "input": {
+            "nodeId": "rkgK6yywqL",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ByWnyJw5U",
+            "pinKey": "ryH6tSt8N"
+          }
+        },
+        "rJT7ZJPqL": {
+          "id": "rJT7ZJPqL",
+          "input": {
+            "nodeId": "r1hmbkPc8",
+            "pinKey": "SJDbf_YUV"
+          },
+          "output": {
+            "nodeId": "H1fYpJJDc8",
+            "pinKey": "r1DL6CFU4"
+          }
+        },
+        "rkzFbyvqU": {
+          "id": "rkzFbyvqU",
+          "input": {
+            "nodeId": "SJbdZyw9I",
+            "pinKey": "rJg4RN3I9I"
+          },
+          "output": {
+            "nodeId": "r1hmbkPc8",
+            "pinKey": "BkPGzdFI4"
+          }
+        },
+        "ryE4-ywqU": {
+          "id": "ryE4-ywqU",
+          "input": {
+            "nodeId": "r1hmbkPc8",
+            "pinKey": "Sy6LZuYIE"
+          },
+          "output": {
+            "nodeId": "S1gV-yD9U",
+            "pinKey": "__out__"
+          }
+        },
+        "ryjj-kw58": {
+          "id": "ryjj-kw58",
+          "input": {
+            "nodeId": "Bkzjb1wqU",
+            "pinKey": "Sy6LZuYIE"
+          },
+          "output": {
+            "nodeId": "Bkvibyw9U",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "path": "@/example-rotate-display",
+      "description": "Text will be drawn in two different directions."
+    },
+    "@/get-display-dimensions": {
+      "nodes": {
+        "BysCJr2IN": {
+          "description": "An SSD1306 OLED device.",
+          "label": "DEV",
+          "id": "BysCJr2IN",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ssd1306-oled-i2c-device"
+        },
+        "HyTiJrhIV": {
+          "id": "HyTiJrhIV",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HyXeeBhL4": {
+          "description": "Width of display in pixels.",
+          "label": "WIDTH",
+          "id": "HyXeeBhL4",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HywWxHhU4": {
+          "description": "Height of display in pixels.",
+          "label": "HEIGHT",
+          "id": "HywWxHhU4",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/get-display-dimensions",
+      "description": "Get dimensions of display in pixels.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n   // Get a pointer to the `Adafruit_SSD1306` class instance\n    auto display = getValue<input_DEV>(ctx);\n\n    int16_t display_width, display_height;\n    display_width = display->width();\n    display_height = display->height();\n\n    emitValue<output_WIDTH>(ctx, display_width);\n    emitValue<output_HEIGHT>(ctx, display_height);\n}\n"
+        }
+      ]
+    },
+    "@/draw-xod-logo": {
+      "nodes": {
+        "Bk3zIFKL4": {
+          "id": "Bk3zIFKL4",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJDI8YYUN": {
+          "description": "Pulses on completion.",
+          "label": "DONE",
+          "id": "HJDI8YYUN",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Skj7ItY8V": {
+          "description": "Update. Trigger write to display buffer.",
+          "label": "UPD",
+          "id": "Skj7ItY8V",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkPrUKFIV": {
+          "description": "An SSD1306 OLED device.",
+          "label": "DEV",
+          "id": "rkPrUKFIV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ssd1306-oled-i2c-device"
+        }
+      },
+      "path": "@/draw-xod-logo",
+      "description": "Draw XOD logo. Logo is 128 x 64 pixels.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "nodespace{\n// 'xod_logo_128_64', 128x64px\n    static const unsigned char xod_logo_128_64 [] PROGMEM = {\n\t    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \n\t    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \n\t    0x00, 0x7f, 0xe0, 0x00, 0x00, 0x1f, 0xf8, 0x0f, 0xfc, 0x07, 0xff, 0xff, 0xf8, 0x00, 0x00, 0x00, \n\t    0x00, 0x3f, 0xf0, 0x00, 0x00, 0x1f, 0xf8, 0x1f, 0xfe, 0x03, 0xff, 0xff, 0xfc, 0x00, 0x00, 0x00, \n\t    0x00, 0x3f, 0xf0, 0x00, 0x00, 0x3f, 0xf0, 0x1f, 0xff, 0x03, 0xff, 0xff, 0xfc, 0x00, 0x00, 0x00, \n\t    0x00, 0x1f, 0xf8, 0x00, 0x00, 0x7f, 0xe0, 0x3f, 0xff, 0x01, 0xff, 0xff, 0xfe, 0x00, 0x00, 0x00, \n\t    0x00, 0x0f, 0xfc, 0x00, 0x00, 0x7f, 0xe0, 0x3f, 0xff, 0x81, 0xff, 0xff, 0xfe, 0x00, 0x00, 0x00, \n\t    0x00, 0x0f, 0xfc, 0x00, 0x00, 0xff, 0xc0, 0x7f, 0xff, 0x80, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, \n\t    0x00, 0x07, 0xfe, 0x00, 0x00, 0xff, 0xc0, 0xff, 0xff, 0xc0, 0x7f, 0xff, 0xff, 0x80, 0x00, 0x00, \n\t    0x00, 0x07, 0xfe, 0x00, 0x01, 0xff, 0x80, 0xff, 0xff, 0xc0, 0x7f, 0xff, 0xff, 0x80, 0x00, 0x00, \n\t    0x00, 0x03, 0xff, 0x00, 0x01, 0xff, 0x81, 0xff, 0xff, 0xe0, 0x3f, 0xff, 0xff, 0xc0, 0x00, 0x00, \n\t    0x00, 0x03, 0xff, 0x00, 0x03, 0xff, 0x01, 0xff, 0xff, 0xf0, 0x00, 0x00, 0xff, 0xc0, 0x00, 0x00, \n\t    0x00, 0x01, 0xff, 0x80, 0x07, 0xfe, 0x03, 0xff, 0x3f, 0xf0, 0x00, 0x00, 0x7f, 0xe0, 0x00, 0x00, \n\t    0x00, 0x00, 0xff, 0xc0, 0x07, 0xfe, 0x03, 0xff, 0x1f, 0xf8, 0x00, 0x00, 0x7f, 0xf0, 0x00, 0x00, \n\t    0x00, 0x00, 0xff, 0xc0, 0x0f, 0xfc, 0x07, 0xfe, 0x1f, 0xf8, 0x00, 0x00, 0x3f, 0xf0, 0x00, 0x00, \n\t    0x00, 0x00, 0x7f, 0xe0, 0x0f, 0xfc, 0x0f, 0xfc, 0x0f, 0xfc, 0x00, 0x00, 0x1f, 0xf8, 0x00, 0x00, \n\t    0x00, 0x00, 0x7f, 0xe0, 0x1f, 0xf8, 0x0f, 0xfc, 0x0f, 0xfc, 0x00, 0x00, 0x1f, 0xf8, 0x00, 0x00, \n\t    0x00, 0x00, 0x3f, 0xf0, 0x3f, 0xf8, 0x1f, 0xf8, 0x07, 0xfe, 0x00, 0x00, 0x0f, 0xfc, 0x00, 0x00, \n\t    0x00, 0x00, 0x3f, 0xf8, 0x3f, 0xf0, 0x1f, 0xf8, 0x07, 0xff, 0x00, 0x00, 0x0f, 0xfc, 0x00, 0x00, \n\t    0x00, 0x00, 0x1f, 0xf8, 0x7f, 0xe0, 0x3f, 0xf0, 0x03, 0xff, 0x00, 0x00, 0x07, 0xfe, 0x00, 0x00, \n\t    0x00, 0x00, 0x0f, 0xfc, 0x7f, 0xe0, 0x3f, 0xf0, 0x01, 0xff, 0x80, 0x00, 0x07, 0xff, 0x00, 0x00, \n\t    0x00, 0x00, 0x0f, 0xfc, 0xff, 0xc0, 0x7f, 0xe0, 0x01, 0xff, 0x80, 0x00, 0x03, 0xff, 0x00, 0x00, \n\t    0x00, 0x00, 0x07, 0xfe, 0xff, 0xc0, 0xff, 0xc0, 0x00, 0xff, 0xc0, 0x00, 0x01, 0xff, 0x80, 0x00, \n\t    0x00, 0x00, 0x07, 0xff, 0xff, 0x80, 0xff, 0xc0, 0x00, 0xff, 0xc0, 0x00, 0x01, 0xff, 0x80, 0x00, \n\t    0x00, 0x00, 0x03, 0xff, 0xff, 0x81, 0xff, 0x80, 0x00, 0x7f, 0xe0, 0x00, 0x00, 0xff, 0xc0, 0x00, \n\t    0x00, 0x00, 0x01, 0xff, 0xff, 0x01, 0xff, 0x80, 0x00, 0x3f, 0xf0, 0x00, 0x00, 0xff, 0xc0, 0x00, \n\t    0x00, 0x00, 0x01, 0xff, 0xfe, 0x03, 0xff, 0x00, 0x00, 0x3f, 0xf0, 0x00, 0x00, 0x7f, 0xe0, 0x00, \n\t    0x00, 0x00, 0x00, 0xff, 0xfe, 0x03, 0xff, 0x00, 0x00, 0x1f, 0xf8, 0x00, 0x00, 0x7f, 0xf0, 0x00, \n\t    0x00, 0x00, 0x00, 0xff, 0xfc, 0x07, 0xfe, 0x00, 0x00, 0x1f, 0xf8, 0x00, 0x00, 0x3f, 0xf0, 0x00, \n\t    0x00, 0x00, 0x00, 0x7f, 0xfc, 0x0f, 0xfc, 0x00, 0x00, 0x0f, 0xfc, 0x00, 0x00, 0x1f, 0xf8, 0x00, \n\t    0x00, 0x00, 0x00, 0x7f, 0xf8, 0x0f, 0xfc, 0x00, 0x00, 0x0f, 0xfc, 0x00, 0x00, 0x1f, 0xf8, 0x00, \n\t    0x00, 0x00, 0x00, 0x3f, 0xf8, 0x1f, 0xf8, 0x00, 0x00, 0x07, 0xfe, 0x00, 0x00, 0x0f, 0xfc, 0x00, \n\t    0x00, 0x00, 0x00, 0x3f, 0xf8, 0x1f, 0xf8, 0x00, 0x00, 0x07, 0xfe, 0x00, 0x00, 0x0f, 0xfc, 0x00, \n\t    0x00, 0x00, 0x00, 0x7f, 0xf8, 0x0f, 0xfc, 0x00, 0x00, 0x0f, 0xfc, 0x00, 0x00, 0x1f, 0xf8, 0x00, \n\t    0x00, 0x00, 0x00, 0x7f, 0xfc, 0x0f, 0xfe, 0x00, 0x00, 0x0f, 0xfc, 0x00, 0x00, 0x1f, 0xf8, 0x00, \n\t    0x00, 0x00, 0x00, 0xff, 0xfc, 0x07, 0xfe, 0x00, 0x00, 0x1f, 0xf8, 0x00, 0x00, 0x3f, 0xf0, 0x00, \n\t    0x00, 0x00, 0x00, 0xff, 0xfe, 0x03, 0xff, 0x00, 0x00, 0x1f, 0xf8, 0x00, 0x00, 0x7f, 0xe0, 0x00, \n\t    0x00, 0x00, 0x01, 0xff, 0xfe, 0x03, 0xff, 0x00, 0x00, 0x3f, 0xf0, 0x00, 0x00, 0x7f, 0xe0, 0x00, \n\t    0x00, 0x00, 0x03, 0xff, 0xff, 0x01, 0xff, 0x80, 0x00, 0x7f, 0xe0, 0x00, 0x00, 0xff, 0xc0, 0x00, \n\t    0x00, 0x00, 0x03, 0xff, 0xff, 0x81, 0xff, 0x80, 0x00, 0x7f, 0xe0, 0x00, 0x00, 0xff, 0xc0, 0x00, \n\t    0x00, 0x00, 0x07, 0xff, 0xff, 0x80, 0xff, 0xc0, 0x00, 0xff, 0xc0, 0x00, 0x01, 0xff, 0x80, 0x00, \n\t    0x00, 0x00, 0x07, 0xfe, 0xff, 0xc0, 0xff, 0xe0, 0x00, 0xff, 0xc0, 0x00, 0x01, 0xff, 0x80, 0x00, \n\t    0x00, 0x00, 0x0f, 0xfc, 0xff, 0xc0, 0x7f, 0xe0, 0x01, 0xff, 0x80, 0x00, 0x03, 0xff, 0x00, 0x00, \n\t    0x00, 0x00, 0x0f, 0xfc, 0x7f, 0xe0, 0x3f, 0xf0, 0x01, 0xff, 0x80, 0x00, 0x07, 0xfe, 0x00, 0x00, \n\t    0x00, 0x00, 0x1f, 0xf8, 0x7f, 0xe0, 0x3f, 0xf0, 0x03, 0xff, 0x00, 0x00, 0x07, 0xfe, 0x00, 0x00, \n\t    0x00, 0x00, 0x3f, 0xf0, 0x3f, 0xf0, 0x1f, 0xf8, 0x07, 0xfe, 0x00, 0x00, 0x0f, 0xfc, 0x00, 0x00, \n\t    0x00, 0x00, 0x3f, 0xf0, 0x1f, 0xf8, 0x1f, 0xf8, 0x07, 0xfe, 0x00, 0x00, 0x0f, 0xfc, 0x00, 0x00, \n\t    0x00, 0x00, 0x7f, 0xe0, 0x1f, 0xf8, 0x0f, 0xfc, 0x0f, 0xfc, 0x00, 0x00, 0x1f, 0xf8, 0x00, 0x00, \n\t    0x00, 0x00, 0x7f, 0xe0, 0x0f, 0xfc, 0x0f, 0xfe, 0x0f, 0xfc, 0x00, 0x00, 0x1f, 0xf8, 0x00, 0x00, \n\t    0x00, 0x00, 0xff, 0xc0, 0x0f, 0xfc, 0x07, 0xfe, 0x1f, 0xf8, 0x00, 0x00, 0x3f, 0xf0, 0x00, 0x00, \n\t    0x00, 0x00, 0xff, 0xc0, 0x07, 0xfe, 0x03, 0xff, 0x1f, 0xf8, 0x00, 0x00, 0x7f, 0xe0, 0x00, 0x00, \n\t    0x00, 0x01, 0xff, 0x80, 0x07, 0xfe, 0x03, 0xff, 0x3f, 0xf0, 0x00, 0x00, 0x7f, 0xe0, 0x00, 0x00, \n\t    0x00, 0x03, 0xff, 0x00, 0x03, 0xff, 0x01, 0xff, 0xff, 0xe0, 0x00, 0x00, 0xff, 0xc0, 0x00, 0x00, \n\t    0x00, 0x03, 0xff, 0x00, 0x01, 0xff, 0x81, 0xff, 0xff, 0xe0, 0x3f, 0xff, 0xff, 0xc0, 0x00, 0x00, \n\t    0x00, 0x07, 0xfe, 0x00, 0x01, 0xff, 0x80, 0xff, 0xff, 0xc0, 0x7f, 0xff, 0xff, 0x80, 0x00, 0x00, \n\t    0x00, 0x07, 0xfe, 0x00, 0x00, 0xff, 0xc0, 0x7f, 0xff, 0xc0, 0x7f, 0xff, 0xff, 0x80, 0x00, 0x00, \n\t    0x00, 0x0f, 0xfc, 0x00, 0x00, 0xff, 0xc0, 0x7f, 0xff, 0x80, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, \n\t    0x00, 0x0f, 0xfc, 0x00, 0x00, 0x7f, 0xe0, 0x3f, 0xff, 0x81, 0xff, 0xff, 0xfe, 0x00, 0x00, 0x00, \n\t    0x00, 0x1f, 0xf8, 0x00, 0x00, 0x7f, 0xf0, 0x3f, 0xff, 0x01, 0xff, 0xff, 0xfe, 0x00, 0x00, 0x00, \n\t    0x00, 0x3f, 0xf0, 0x00, 0x00, 0x3f, 0xf0, 0x1f, 0xfe, 0x03, 0xff, 0xff, 0xfc, 0x00, 0x00, 0x00, \n\t    0x00, 0x3f, 0xf0, 0x00, 0x00, 0x1f, 0xf8, 0x1f, 0xfe, 0x03, 0xff, 0xff, 0xfc, 0x00, 0x00, 0x00, \n\t    0x00, 0x7f, 0xe0, 0x00, 0x00, 0x1f, 0xf8, 0x0f, 0xfc, 0x07, 0xff, 0xff, 0xf8, 0x00, 0x00, 0x00, \n\t    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \n\t    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00\n    };\n}\n\nnode {\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        // Get a pointer to the `Adafruit_SSD1306` class instance\n        auto display = getValue<input_DEV>(ctx);\n        display->drawBitmap(0,0,xod_logo_128_64,128,64,1);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/send-buffer-to-display": {
+      "nodes": {
+        "BkPGzdFI4": {
+          "label": "DONE",
+          "id": "BkPGzdFI4",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SJDbf_YUV": {
+          "label": "UPD",
+          "id": "SJDbf_YUV",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Sk8I-_F8N": {
+          "id": "Sk8I-_F8N",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Sy6LZuYIE": {
+          "label": "DEV",
+          "id": "Sy6LZuYIE",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ssd1306-oled-i2c-device"
+        }
+      },
+      "path": "@/send-buffer-to-display",
+      "description": "Push data currently in RAM to SSD1306 display. Drawing operations are not visible until this function is called. Call after each graphics command, or after a whole set of graphics commands, as best needed by one's own application.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_SSD1306` class instance\n    auto display = getValue<input_DEV>(ctx);\n    display->display();\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/stop-scroll": {
+      "nodes": {
+        "HkIQh9Y8N": {
+          "label": "DONE",
+          "id": "HkIQh9Y8N",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "S1IxnqYIE": {
+          "id": "S1IxnqYIE",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SkyWnqYIN": {
+          "label": "DEV",
+          "id": "SkyWnqYIN",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ssd1306-oled-i2c-device"
+        },
+        "rkGz3cY8E": {
+          "label": "UPD",
+          "id": "rkGz3cY8E",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/stop-scroll",
+      "description": "Stop scrolling.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_SSD1306` class instance\n    auto display = getValue<input_DEV>(ctx);\n\n    display->stopscroll();\n\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/rotate-display": {
+      "nodes": {
+        "BJ7urnUq8": {
+          "description": "00h through to 03h corresponding to 4 cardinal rotations.",
+          "label": "ROT",
+          "id": "BJ7urnUq8",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "ByZE0V3L9I": {
+          "description": "Rotates display in any of the four cardinal directions.",
+          "id": "ByZE0V3L9I",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1MN0Vh85U": {
+          "description": "Pulses on completion.",
+          "label": "DONE",
+          "id": "H1MN0Vh85U",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJV0NhU5U": {
+          "description": "An SSD1306 OLED device.",
+          "label": "DEV",
+          "id": "rJV0NhU5U",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ssd1306-oled-i2c-device"
+        },
+        "rJg4RN3I9I": {
+          "description": "Update. Triggers rotate display.",
+          "label": "UPD",
+          "id": "rJg4RN3I9I",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/rotate-display",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_SSD1306` class instance\n    auto display = getValue<input_DEV>(ctx);\n\n    display->setRotation(getValue<input_ROT>(ctx));\n\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/start-scroll": {
+      "nodes": {
+        "BJ7VRJEpIV": {
+          "description": "First row",
+          "label": "FIRST",
+          "id": "BJ7VRJEpIV",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "H1bERyNTIV": {
+          "id": "H1bERyNTIV",
+          "position": {
+            "x": -0.05,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1j2-NpUE": {
+          "boundLiterals": {
+            "__out__": "00h"
+          },
+          "description": "Direction. Options:\n00h = left-handed scroll;\n01h = right-handed scroll;\n02h = diagonal scroll left;\n03h = diagonal scroll right.\n",
+          "label": "DIR",
+          "id": "H1j2-NpUE",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HkG4AJ4TIV": {
+          "boundLiterals": {
+            "__out__": "07h"
+          },
+          "description": "Last row",
+          "label": "LAST",
+          "id": "HkG4AJ4TIV",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HylNR1VTU4": {
+          "description": "An SSD1306 OLED device.",
+          "label": "DEV",
+          "id": "HylNR1VTU4",
+          "position": {
+            "x": -0.05,
+            "y": -0.05,
+            "units": "slots"
+          },
+          "type": "@/input-ssd1306-oled-i2c-device"
+        },
+        "rJ4RkEp84": {
+          "description": "Pulses on completion.",
+          "label": "DONE",
+          "id": "rJ4RkEp84",
+          "position": {
+            "x": -0.05,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJN4Ay4a8E": {
+          "description": "Update. Trigger start.",
+          "label": "UPD",
+          "id": "rJN4Ay4a8E",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/start-scroll",
+      "description": "Activate scroll for all or part of the display. To scroll whole display set FIRST to 00h and LAST to 0Fh.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_SSD1306` class instance\n    auto display = getValue<input_DEV>(ctx);\n    auto first = getValue<input_FIRST>(ctx);\n    auto last = getValue<input_LAST>(ctx);\n    auto direction = getValue<input_DIR>(ctx);\n\n    switch (direction) {\n        case 0:\n            display->startscrollleft(first, last);\n            break;\n        case 1:\n            display->startscrollright(first, last);\n            break;\n        case 2:\n            display->startscrolldiagleft(first, last);\n            break;\n        case 3:\n            display->startscrolldiagright(first, last);\n            break;\n    }\n\n    emitValue<output_DONE>(ctx, 1);\n\n}\n"
+        }
+      ]
+    },
+    "@/ssd1306-oled-i2c-device": {
+      "nodes": {
+        "BJgxWIFUV": {
+          "boundLiterals": {
+            "__out__": "64"
+          },
+          "description": "Display  height in pixels (default 64).",
+          "label": "HEIGHT",
+          "id": "BJgxWIFUV",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HyWOqSYLE": {
+          "boundLiterals": {
+            "__out__": "-1"
+          },
+          "description": "Reset pin (using Arduino pin numbering), or -1 if not used  (some displays might be wired to share the microcontroller's reset pin).",
+          "label": "RESET_PIN",
+          "id": "HyWOqSYLE",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkfwO9_IN": {
+          "id": "SkfwO9_IN",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1vM-UYL4": {
+          "boundLiterals": {
+            "__out__": "128"
+          },
+          "description": "Display width in pixels (default 128).",
+          "label": "WIDTH",
+          "id": "r1vM-UYL4",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryH6tSt8N": {
+          "description": "An SSD1306 OLED device.",
+          "label": "DEV",
+          "id": "ryH6tSt8N",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "Sk0fpVM13": {
+          "description": "I²C bus.",
+          "label": "I2C",
+          "id": "Sk0fpVM13",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/i2c/input-i2c"
+        },
+        "SkCpR9VJ2": {
+          "boundLiterals": {
+            "__out__": "3Ch"
+          },
+          "description": "I²C address of the SSD1306 OLED device.",
+          "label": "ADDRESS",
+          "id": "SkCpR9VJ2",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/ssd1306-oled-i2c-device",
+      "description": "Create SSD1306 OLED device.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD error_raise enable\n\n// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/adafruit/Adafruit_SSD1306\"\n#pragma XOD require \"https://github.com/adafruit/Adafruit-GFX-Library\"\n#pragma XOD require \"https://github.com/adafruit/Adafruit_BusIO\"\n\n//Include C++ libraries\n{{#global}}\n#include <SPI.h>\n#include <Wire.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_SSD1306.h>\n{{/global}}\n\n// Adafruit_SSD1306 class wants to know I2C bus in the moment of instantiation\n// but we don't know them at this moment.\n// Therefore, we reserve memory to store an instance of the class,\n// and create the instance later:\nstruct State {\n    uint8_t mem[sizeof(Adafruit_SSD1306)];\n};\n\n// Define our custom type as a pointer on the class instance.\nusing Type = Adafruit_SSD1306*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // It should be evaluated only once on the first (setup) transaction\n    if (!isSettingUp())\n        return;\n\n    auto state = getState(ctx);\n    auto wire = getValue<input_I2C>(ctx);\n    auto width = getValue<input_WIDTH>(ctx);\n    auto height = getValue<input_HEIGHT>(ctx);\n    auto reset_pin = getValue<input_RESET_PIN>(ctx);\n\n    // Create a new object in the memory area reserved previously.\n    Type display = new (state->mem) Adafruit_SSD1306(width, height, wire, reset_pin);\n\n    // Attempt to initialize display module; if attempt fails raise error\n    auto address = getValue<input_ADDRESS>(ctx);\n    if (!display->begin(SSD1306_SWITCHCAPVCC, address)) {\n      raiseError(ctx);\n      return;\n    }\n\n    emitValue<output_DEV>(ctx, display);\n}\n"
+        }
+      ]
+    }
+  },
+  "license": "BSD",
+  "version": "0.0.9",
+  "description": "Arduino library for OLED displays driven by the SSD1306 chip. Communication via I2C. Wraps Adafruit_SSD1306 (https://github.com/adafruit/Adafruit_SSD1306).",
+  "name": "ssd1306-oled-i2c"
+}

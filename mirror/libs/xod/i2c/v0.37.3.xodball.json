@@ -1,0 +1,567 @@
+{
+  "patches": {
+    "@/begin-transmission": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B13jr_VOW": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B13jr_VOW",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "BJfKruVdb": {
+          "boundLiterals": {},
+          "description": "Triggers the transmission start",
+          "label": "SEND",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJfKruVdb",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HJbjB_Nd-": {
+          "boundLiterals": {},
+          "description": "Pulses when the transmission successfully starts. Chain it to a `write-byte` node.",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJbjB_Nd-",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HJkfWmny7": {
+          "boundLiterals": {},
+          "description": "I²C interface object",
+          "label": "I2C",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJkfWmny7",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-i2c",
+          "@@type": "xod-project/Node"
+        },
+        "SyssEEhJm": {
+          "boundLiterals": {},
+          "description": "I²C address of the target slave device",
+          "label": "ADDR",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyssEEhJm",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/begin-transmission",
+      "description": "Begins a transmission to the I²C slave device.\n\nPossible errors:\n— Invalid I2C address",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_SEND\n#pragma XOD error_raise enable\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_SEND>(ctx))\n            return;\n\n        uint8_t addr = getValue<input_ADDR>(ctx);\n\n        if (addr > 127) {\n            raiseError(ctx); // Invalid I2C address\n            return;\n        }\n\n        auto wire = getValue<input_I2C>(ctx);\n        wire->beginTransmission(addr);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/end-transmission": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1vdYXhkQ": {
+          "boundLiterals": {},
+          "description": "I²C interface object",
+          "label": "I2C",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1vdYXhkQ",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "@/input-i2c",
+          "@@type": "xod-project/Node"
+        },
+        "SJJbvdEOb": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJJbvdEOb",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "Sk2oU_Vdb": {
+          "boundLiterals": {},
+          "description": "Triggers the transmission end. Use `DONE` output of a `write-byte` as the source of the pulse.",
+          "label": "SEND",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk2oU_Vdb",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "ryviw_EOb": {
+          "boundLiterals": {},
+          "description": "Pulses when the transmission successfully completes.",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryviw_EOb",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/end-transmission",
+      "description": "Ends a transmission to a slave device initiated with `begin-transmission`. All bytes queued for writing with `write-byte` will flush at the moment of this node trigerring.\n\nPossible errors:\n— Data too long to fit in transmit buffer\n— Received NACK on transmit of address\n— Received NACK on transmit of data\n— Other error",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_SEND\n#pragma XOD error_raise enable\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_SEND>(ctx))\n            return;\n\n        auto wire = getValue<input_I2C>(ctx);\n\n        if (wire->endTransmission() == 0) {\n            emitValue<output_DONE>(ctx, 1);\n        } else {\n            raiseError(ctx);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/i2c": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "HyvnPf3kQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyvnPf3kQ",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-self",
+          "@@type": "xod-project/Node"
+        },
+        "Sy_mOfh1X": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sy_mOfh1X",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/i2c",
+      "description": "I²C interface object constructor. Returns hardware I²C #0.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#include <Wire.h>\n\nnode {\n    meta {\n        using Type = TwoWire*;\n    }\n\n    void evaluate(Context ctx) {\n        Wire.begin();\n        emitValue<output_OUT>(ctx, &Wire);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/read-byte": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "SJeoE43JQ": {
+          "boundLiterals": {},
+          "description": "The byte read",
+          "label": "BYTE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJeoE43JQ",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "SkylK_Ed-": {
+          "boundLiterals": {},
+          "description": "Triggers the read. Use another `read-byte` or `request` as a source signal.",
+          "label": "READ",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkylK_Ed-",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SyvJYdVdW": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyvJYdVdW",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "ryBWhQhkm": {
+          "boundLiterals": {},
+          "description": "I²C interface object",
+          "label": "I2C",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryBWhQhkm",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-i2c",
+          "@@type": "xod-project/Node"
+        },
+        "rypZF_Nub": {
+          "boundLiterals": {},
+          "description": "Pulses when read completes successfully. When multiple bytes should be read, send it to the next `read-byte` node in a chain.",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rypZF_Nub",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/read-byte",
+      "description": "Reads the next byte received from an I²C device after `request` succeeded.\n\nPossible errors:\n- Can't read byte",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_READ\n#pragma XOD error_raise enable\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_READ>(ctx))\n            return;\n\n        auto wire = getValue<input_I2C>(ctx);\n        if (!wire->available()) {\n            raiseError(ctx);\n            return;\n        }\n\n        auto res = wire->read();\n        if (res == -1) {\n            raiseError(ctx); // Can't read byte\n            return;\n         }\n\n        emitValue<output_BYTE>(ctx, (uint8_t)res);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/request": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkRw4E3kX": {
+          "boundLiterals": {},
+          "description": "Slave device I²C address to request from",
+          "label": "ADDR",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkRw4E3kX",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "Hk1dRQh17": {
+          "boundLiterals": {},
+          "description": "I2C interface object",
+          "label": "I2C",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hk1dRQh17",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-i2c",
+          "@@type": "xod-project/Node"
+        },
+        "SJjmdOVOW": {
+          "boundLiterals": {},
+          "description": "Sends the request",
+          "label": "SEND",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJjmdOVOW",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Sk7BudNdZ": {
+          "boundLiterals": {},
+          "description": "Pulses when the request is successfully send. Send it to a `read-byte`.",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk7BudNdZ",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "r1NONEn1m": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Number of bytes to request",
+          "label": "N",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1NONEn1m",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "rkoN_dNOW": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkoN_dNOW",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/request",
+      "description": "Requests N bytes from a given slave I²C device.\n\nPossible errors:\n— Invalid I2C address",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_SEND\n#pragma XOD error_raise enable\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_SEND>(ctx))\n            return;\n\n        auto wire = getValue<input_I2C>(ctx);\n        auto addr = (uint8_t)getValue<input_ADDR>(ctx);\n        auto nBytes = (uint8_t)getValue<input_N>(ctx);\n\n        if (addr > 127) {\n            raiseError(ctx); // Invalid I2C address\n            return;\n        }\n\n        wire->requestFrom(addr, nBytes);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/write-byte": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJrcyE3y7": {
+          "boundLiterals": {},
+          "description": "I²C interface object",
+          "label": "I2C",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJrcyE3y7",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-i2c",
+          "@@type": "xod-project/Node"
+        },
+        "S1FFN4nkm": {
+          "boundLiterals": {},
+          "description": "Datum to write",
+          "label": "BYTE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1FFN4nkm",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "S1dKPuVdW": {
+          "boundLiterals": {},
+          "description": "Pushes the `BYTE` to the send queue. Use pulse outputs from `begin-transmission` or another `write-byte` as a source signal.",
+          "label": "SEND",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1dKPuVdW",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SJB3vO4uZ": {
+          "boundLiterals": {},
+          "description": "Pulses when the `BYTE` queued successfully. Send the output pulse to another `write-byte` in a chain or an `end-transmission` node.",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJB3vO4uZ",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "r1j2DdNO-": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1j2DdNO-",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/write-byte",
+      "description": "Pushes a byte to send queue.\n\nPossible errors:\n— No bytes written. Probably due to buffer overflow.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_SEND\n#pragma XOD error_raise enable\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_SEND>(ctx))\n            return;\n\n        auto wire = getValue<input_I2C>(ctx);\n        auto written = wire->write(getValue<input_BYTE>(ctx));\n        if (written != 1) {\n          raiseError(ctx); // No bytes written\n          return;\n        }\n\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "authors": [],
+  "license": "",
+  "version": "0.37.3",
+  "description": "My fork of \"xod/i2c\"",
+  "apiKey": "",
+  "name": "i2c"
+}

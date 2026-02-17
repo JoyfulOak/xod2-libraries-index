@@ -1,0 +1,375 @@
+{
+  "description": "Enables MIDI I/O communications on the Arduino serial ports.\nBased on https://github.com/FortySevenEffects/arduino_midi_library",
+  "license": "MIT",
+  "name": "serial-midi",
+  "patches": {
+    "@/receive(uart)": {
+      "attachments": [
+        {
+          "content": "// Most of the code below is taken from Arduino MIDI Library (https://github.com/FortySevenEffects/arduino_midi_library)\n// and modified to work as a XOD node.\n\nenum MidiType {\n    InvalidType           = 0x00,    ///< For notifying errors\n    NoteOff               = 0x80,    ///< Note Off\n    NoteOn                = 0x90,    ///< Note On\n    AfterTouchPoly        = 0xA0,    ///< Polyphonic AfterTouch\n    ControlChange         = 0xB0,    ///< Control Change / Channel Mode\n    ProgramChange         = 0xC0,    ///< Program Change\n    AfterTouchChannel     = 0xD0,    ///< Channel (monophonic) AfterTouch\n    PitchBend             = 0xE0,    ///< Pitch Bend\n    SystemExclusive       = 0xF0,    ///< System Exclusive\n    TimeCodeQuarterFrame  = 0xF1,    ///< System Common - MIDI Time Code Quarter Frame\n    SongPosition          = 0xF2,    ///< System Common - Song Position Pointer\n    SongSelect            = 0xF3,    ///< System Common - Song Select\n    TuneRequest           = 0xF6,    ///< System Common - Tune Request\n    Clock                 = 0xF8,    ///< System Real Time - Timing Clock\n    Start                 = 0xFA,    ///< System Real Time - Start\n    Continue              = 0xFB,    ///< System Real Time - Continue\n    Stop                  = 0xFC,    ///< System Real Time - Stop\n    ActiveSensing         = 0xFE,    ///< System Real Time - Active Sensing\n    SystemReset           = 0xFF,    ///< System Real Time - System Reset\n};\n\nstruct State {\n    MidiType runningStatus = InvalidType;\n    uint8_t pendingMessage[3] = {0, 0, 0};\n    uint8_t pendingMessageExpectedLength = 0;\n    uint8_t pendingMessageIndex = 0;\n};\n\n// clang-format off\n{{ GENERATED_CODE }}\n// clang-format on\n\nMidiType getTypeFromStatusByte(byte inStatus) {\n    if ((inStatus  < 0x80) ||\n        (inStatus == 0xf4) ||\n        (inStatus == 0xf5) ||\n        (inStatus == 0xf9) ||\n        (inStatus == 0xfD)) {\n        // Data bytes and undefined.\n        return InvalidType;\n    }\n\n    if (inStatus < 0xf0) {\n        // Channel message, remove channel nibble.\n        return MidiType(inStatus & 0xf0);\n    }\n\n    return MidiType(inStatus);\n}\n\ninline uint8_t getChannelFromStatusByte(byte inStatus) {\n    return (inStatus & 0x0f) + 1;\n}\n\nbool isChannelMessage(MidiType inType) {\n    return (inType == NoteOff           ||\n            inType == NoteOn            ||\n            inType == ControlChange     ||\n            inType == AfterTouchPoly    ||\n            inType == AfterTouchChannel ||\n            inType == PitchBend         ||\n            inType == ProgramChange);\n}\n\ninline void resetInput(State* state) {\n    state->pendingMessageIndex = 0;\n    state->pendingMessageExpectedLength = 0;\n    state->runningStatus = InvalidType;\n}\n\nvoid evaluate(Context ctx) {\n    auto uart = getValue<input_MIDI>(ctx);\n\n    // TODO: is this really necessary?\n    if (uart->getBaudRate() != 31250) {\n        uart->changeBaudRate(31250);\n    }\n\n    if (!isInputDirty<input_RCV>(ctx))\n        return;\n\n    if (!uart->available())\n        return;\n\n    auto state = getState(ctx);\n\n    // Parsing algorithm:\n    // Get a byte from the serial buffer.\n    // If there is no pending message to be recomposed, start a new one.\n    //  - Find type and channel (if pertinent)\n    //  - Look for other bytes in buffer, call parser recursively,\n    //    until the message is assembled or the buffer is empty.\n    // Else, add the extracted byte to the pending message, and check validity.\n    // When the message is done, emit it along with the \"DONE\" pulse.\n\n    uint8_t extracted = 0x00;\n    if (!uart->readByte(&extracted))\n        return;\n\n    // Ignore Undefined\n    if (extracted == 0xf9 || extracted == 0xfd)\n        return;\n\n    if (state->pendingMessageIndex == 0) {\n        // Start a new pending message\n        state->pendingMessage[0] = extracted;\n\n        // Check for running status first\n        if (isChannelMessage(getTypeFromStatusByte(state->runningStatus))) {\n            // Only these types allow Running Status\n\n            // If the status byte is not received, prepend it\n            // to the pending message\n            if (extracted < 0x80) {\n                state->pendingMessage[0] = state->runningStatus;\n                state->pendingMessage[1] = extracted;\n                state->pendingMessageIndex = 1;\n            }\n            // Else: well, we received another status byte,\n            // so the running status does not apply here.\n            // It will be updated upon completion of this message.\n        }\n\n        switch (getTypeFromStatusByte(state->pendingMessage[0])) {\n            // 1 byte messages\n            case Start:\n            case Continue:\n            case Stop:\n            case Clock:\n            case ActiveSensing:\n            case SystemReset:\n            case TuneRequest: {\n                // Handle the message type directly here.\n                ValueType<output_MSG>::T msg = {};\n                msg.type = getTypeFromStatusByte(state->pendingMessage[0]);\n                msg.channel = 0;\n                msg.data1 = 0;\n                msg.data2 = 0;\n\n                emitValue<output_MSG>(ctx, msg);\n                emitValue<output_DONE>(ctx, 1);\n\n                // Do not reset all input attributes, Running Status must remain unchanged.\n                // We still need to reset these\n                state->pendingMessageIndex = 0;\n                state->pendingMessageExpectedLength = 0;\n\n                return;\n            }\n\n            // 2 byte messages\n            case ProgramChange:\n            case AfterTouchChannel:\n            case TimeCodeQuarterFrame:\n            case SongSelect: {\n                state->pendingMessageExpectedLength = 2;\n                break;\n            }\n\n            // 3 byte messages\n            case NoteOn:\n            case NoteOff:\n            case ControlChange:\n            case PitchBend:\n            case AfterTouchPoly:\n            case SongPosition: {\n                state->pendingMessageExpectedLength = 3;\n                break;\n            }\n\n            case SystemExclusive: {\n                // The message can be any length\n                // between 3 and MidiMessage::sSysExMaxSize bytes\n                state->pendingMessageExpectedLength = 3;\n                state->runningStatus = InvalidType;\n                // TODO: properly handle SysEx messages\n                break;\n            }\n\n            case InvalidType:\n            default: {\n                resetInput(state);\n                return;\n            }\n        }\n\n        if (state->pendingMessageIndex >= (state->pendingMessageExpectedLength - 1)) {\n            // Reception complete\n            ValueType<output_MSG>::T msg = {};\n            msg.type = getTypeFromStatusByte(state->pendingMessage[0]);\n            msg.channel = getChannelFromStatusByte(state->pendingMessage[0]);\n            msg.data1 = state->pendingMessage[1];\n            msg.data2 = 0; // Completed new message has 1 data byte\n\n            emitValue<output_MSG>(ctx, msg);\n            emitValue<output_DONE>(ctx, 1);\n\n            state->pendingMessageIndex = 0;\n            state->pendingMessageExpectedLength = 0;\n            return;\n        } else {\n            // Waiting for more data\n            state->pendingMessageIndex++;\n        }\n\n        // Message is not complete, wait for another call\n        return;\n    } else {\n        // First, test if this is a status byte\n        if (extracted >= 0x80) {\n            // Reception of status bytes in the middle of an uncompleted message\n            // are allowed only for interleaved Real Time message or EOX\n            switch (extracted) {\n                case Clock:\n                case Start:\n                case Continue:\n                case Stop:\n                case ActiveSensing:\n                case SystemReset:\n                    // Here we will have to extract the one-byte message,\n                    // emit it, and recompose the message it was\n                    // interleaved into. Oh, and without killing the running status..\n                    // This is done by leaving the pending message as is,\n                    // it will be completed on next calls.\n                    ValueType<output_MSG>::T msg = {};\n                    msg.type = extracted;\n                    msg.channel = 0;\n                    msg.data1= 0;\n                    msg.data2 = 0;\n\n                    emitValue<output_MSG>(ctx, msg);\n                    emitValue<output_DONE>(ctx, 1);\n\n                    return;\n\n                // End of Exclusive\n                case 0xf7:\n                    // TODO: properly handle SysEx messages\n                    resetInput(state);\n                    return;\n\n                default:\n                    break; // LCOV_EXCL_LINE - Coverage blind spot\n            }\n        }\n\n        // Add extracted data byte to pending message\n        if (state->pendingMessage[0] == SystemExclusive) {\n            // TODO: properly handle SysEx messages\n        } else {\n            state->pendingMessage[state->pendingMessageIndex] = extracted;\n        }\n\n        // Now we are going to check if we have reached the end of the message\n        if (state->pendingMessageIndex >= (state->pendingMessageExpectedLength - 1)) {\n            // \"FML\" case: fall down here with an overflown SysEx..\n            // This means we received the last possible data byte that can fit the buffer.\n            if (state->pendingMessage[0] == SystemExclusive) {\n                resetInput(state);\n                return;\n            }\n\n            ValueType<output_MSG>::T msg = {};\n            msg.type = getTypeFromStatusByte(state->pendingMessage[0]);\n\n            if (isChannelMessage(msg.type))\n                msg.channel = getChannelFromStatusByte(state->pendingMessage[0]);\n            else\n                msg.channel = 0;\n\n            msg.data1 = state->pendingMessage[1];\n\n            // Save data2 only if applicable\n            msg.data2 = state->pendingMessageExpectedLength == 3 ? state->pendingMessage[2] : 0;\n\n            // Reset local variables\n            state->pendingMessageIndex = 0;\n            state->pendingMessageExpectedLength = 0;\n\n            // Handle NoteOn meaasges with 0 velocity as NoteOff\n            if (msg.type == NoteOn && msg.data2 == 0) {\n                msg.type = NoteOff;\n            }\n\n            emitValue<output_MSG>(ctx, msg);\n            emitValue<output_DONE>(ctx, 1);\n\n            // Activate running status (if enabled for the received type)\n            switch (msg.type) {\n                case NoteOff:\n                case NoteOn:\n                case AfterTouchPoly:\n                case ControlChange:\n                case ProgramChange:\n                case AfterTouchChannel:\n                case PitchBend:\n                    // Running status enabled: store it from received message\n                    state->runningStatus = state->pendingMessage[0];\n                    break;\n\n                default:\n                    // No running status\n                    state->runningStatus = InvalidType;\n                    break;\n            }\n        } else {\n            // Message is not complete.\n            // Update the index of the pending message.\n            state->pendingMessageIndex++;\n        }\n    }\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B13xvC11r": {
+          "id": "B13xvC11r",
+          "label": "MSG",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "e/midi/output-message"
+        },
+        "H1TXQipRV": {
+          "id": "H1TXQipRV",
+          "label": "MIDI",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/uart/input-uart"
+        },
+        "HkQQ77spCN": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "id": "HkQQ77spCN",
+          "label": "RCV",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJxm7miaAN": {
+          "id": "rJxm7miaAN",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ry7m7saCE": {
+          "id": "ry7m7saCE",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/receive(uart)"
+    },
+    "@/send(uart)": {
+      "attachments": [
+        {
+          "content": "// Most of the code below is taken from Arduino MIDI Library (https://github.com/FortySevenEffects/arduino_midi_library)\n// and modified to work as a XOD node.\n\nnodespace {\n    constexpr uint8_t PitchBend             = 0xE0;\n    constexpr uint8_t ProgramChange         = 0xC0;\n    constexpr uint8_t AfterTouchChannel     = 0xD0;\n    constexpr uint8_t Clock                 = 0xF8;\n    constexpr uint8_t Start                 = 0xFA;\n    constexpr uint8_t Continue              = 0xFB;\n    constexpr uint8_t Stop                  = 0xFC;\n    constexpr uint8_t ActiveSensing         = 0xFE;\n    constexpr uint8_t SystemReset           = 0xFF;\n}\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_SEND>(ctx)) return;\n\n        auto uart = getValue<input_MIDI>(ctx);\n        auto msg = getValue<input_MSG>(ctx);\n\n        // Then test if channel is valid\n        if (msg.channel >= 17  ||\n            msg.channel == 0 || // TODO: why?\n            msg.type < 0x80) {\n            return; // Don't send anything\n        }\n\n        if (msg.type <= PitchBend) {  // Channel messages\n            // Protection: remove MSBs on data\n            msg.data1 &= 0x7f;\n            msg.data2 &= 0x7f;\n\n            const uint8_t status = msg.type | ((msg.channel - 1) & 0x0f);\n            uart->writeByte(status);\n\n            // Then send data\n            uart->writeByte(msg.data1);\n            if (msg.type != ProgramChange && msg.type != AfterTouchChannel) {\n                uart->writeByte(msg.data2);\n            }\n\n            emitValue<output_DONE>(ctx, 1);\n        } else if (msg.type >= Clock && msg.type <= SystemReset) {\n            switch (msg.type) {\n                case Clock:\n                case Start:\n                case Stop:\n                case Continue:\n                case ActiveSensing:\n                case SystemReset: {\n                    uart->writeByte(msg.type);\n                    emitValue<output_DONE>(ctx, 1);\n                    break;\n                }\n                default:\n                    break;\n            }\n        }\n    }\n}\n\n\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "Hy8sMyykH": {
+          "id": "Hy8sMyykH",
+          "label": "MIDI",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/uart/input-uart"
+        },
+        "SJ-ocGky1S": {
+          "id": "SJ-ocGky1S",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Skzj5GJJ1H": {
+          "id": "Skzj5GJJ1H",
+          "label": "SEND",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Sy7iqz11JB": {
+          "id": "Sy7iqz11JB",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJ_kD0y1r": {
+          "id": "rJ_kD0y1r",
+          "label": "MSG",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "e/midi/input-message"
+        }
+      },
+      "path": "@/send(uart)"
+    },
+    "@/serial-midi": {
+      "links": {
+        "HytWWR1yS": {
+          "id": "HytWWR1yS",
+          "input": {
+            "nodeId": "B1Lvx0JkS",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SydWW0ykB",
+            "pinKey": "Sk450OL-X"
+          }
+        }
+      },
+      "nodes": {
+        "B1Lvx0JkS": {
+          "id": "B1Lvx0JkS",
+          "label": "MIDI",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/uart/output-uart"
+        },
+        "SydWW0ykB": {
+          "boundLiterals": {
+            "BytfJKIWX": "31250"
+          },
+          "id": "SydWW0ykB",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/uart/uart-0"
+        }
+      },
+      "path": "@/serial-midi"
+    },
+    "@/serial1-midi": {
+      "links": {
+        "By--WAJkB": {
+          "id": "By--WAJkB",
+          "input": {
+            "nodeId": "BkvueCJJB",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "S1xW-Ryyr",
+            "pinKey": "Sk450OL-X"
+          }
+        }
+      },
+      "nodes": {
+        "BkvueCJJB": {
+          "id": "BkvueCJJB",
+          "label": "MIDI",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/uart/output-uart"
+        },
+        "S1xW-Ryyr": {
+          "boundLiterals": {
+            "BytfJKIWX": "31250"
+          },
+          "id": "S1xW-Ryyr",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/uart/uart-1"
+        }
+      },
+      "path": "@/serial1-midi"
+    },
+    "@/serial2-midi": {
+      "links": {
+        "Sk4ebAJ1r": {
+          "id": "Sk4ebAJ1r",
+          "input": {
+            "nodeId": "S11Fl01kS",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rygxW0J1S",
+            "pinKey": "Sk450OL-X"
+          }
+        }
+      },
+      "nodes": {
+        "S11Fl01kS": {
+          "id": "S11Fl01kS",
+          "label": "MIDI",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/uart/output-uart"
+        },
+        "rygxW0J1S": {
+          "boundLiterals": {
+            "BytfJKIWX": "31250"
+          },
+          "id": "rygxW0J1S",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/uart/uart-2"
+        }
+      },
+      "path": "@/serial2-midi"
+    },
+    "@/serial3-midi": {
+      "links": {
+        "H1vJW0J1H": {
+          "id": "H1vJW0J1H",
+          "input": {
+            "nodeId": "HydKxRyJS",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Sy_Ag0kJH",
+            "pinKey": "Sk450OL-X"
+          }
+        }
+      },
+      "nodes": {
+        "HydKxRyJS": {
+          "id": "HydKxRyJS",
+          "label": "MIDI",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/uart/output-uart"
+        },
+        "Sy_Ag0kJH": {
+          "boundLiterals": {
+            "BytfJKIWX": "31250"
+          },
+          "id": "Sy_Ag0kJH",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/uart/uart-3"
+        }
+      },
+      "path": "@/serial3-midi"
+    },
+    "@/softserial-midi": {
+      "links": {
+        "S1m6x01kr": {
+          "id": "S1m6x01kr",
+          "input": {
+            "nodeId": "HJfsgA1kB",
+            "pinKey": "r1mZktLZm"
+          },
+          "output": {
+            "nodeId": "S1ZaeAJJr",
+            "pinKey": "__out__"
+          }
+        },
+        "SJGTx0JJr": {
+          "id": "SJGTx0JJr",
+          "input": {
+            "nodeId": "HJfsgA1kB",
+            "pinKey": "Syz-kKUWX"
+          },
+          "output": {
+            "nodeId": "ry0he011S",
+            "pinKey": "__out__"
+          }
+        },
+        "rJVsxAyyS": {
+          "id": "rJVsxAyyS",
+          "input": {
+            "nodeId": "H1I9eRykS",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HJfsgA1kB",
+            "pinKey": "rycxytIZQ"
+          }
+        }
+      },
+      "nodes": {
+        "H1I9eRykS": {
+          "id": "H1I9eRykS",
+          "label": "MIDI",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/uart/output-uart"
+        },
+        "HJfsgA1kB": {
+          "boundLiterals": {
+            "Sy0-yt8ZQ": "31250"
+          },
+          "id": "HJfsgA1kB",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/uart/soft-uart"
+        },
+        "S1ZaeAJJr": {
+          "id": "S1ZaeAJJr",
+          "label": "TX",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "ry0he011S": {
+          "id": "ry0he011S",
+          "label": "RX",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        }
+      },
+      "path": "@/softserial-midi"
+    }
+  },
+  "version": "0.0.2"
+}

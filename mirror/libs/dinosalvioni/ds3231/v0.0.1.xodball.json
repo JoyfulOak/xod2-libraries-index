@@ -1,0 +1,165 @@
+{
+  "name": "ds3231",
+  "patches": {
+    "@/main": {
+      "links": {
+        "BJzp8eoxP": {
+          "id": "BJzp8eoxP",
+          "input": {
+            "nodeId": "BJD9Uxsev",
+            "pinKey": "ByDPwJxu7"
+          },
+          "output": {
+            "nodeId": "HySsIxoeD",
+            "pinKey": "r1ZqKlXPX"
+          }
+        },
+        "H1_m9xslP": {
+          "id": "H1_m9xslP",
+          "input": {
+            "nodeId": "Byydyxiew",
+            "pinKey": "ByxFD1xjgv"
+          },
+          "output": {
+            "nodeId": "BJD9Uxsev",
+            "pinKey": "Bk1eOQ6mHvm"
+          }
+        },
+        "S1jcUgixD": {
+          "id": "S1jcUgixD",
+          "input": {
+            "nodeId": "BJD9Uxsev",
+            "pinKey": "SJsba7HDQ"
+          },
+          "output": {
+            "nodeId": "SJUKLxsxw",
+            "pinKey": "S1FPmmHD7"
+          }
+        }
+      },
+      "nodes": {
+        "BJD9Uxsev": {
+          "id": "BJD9Uxsev",
+          "position": {
+            "x": 10,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod-dev/ds-rtc/write"
+        },
+        "Byydyxiew": {
+          "boundLiterals": {
+            "ByxFD1xjgv": "Never"
+          },
+          "id": "Byydyxiew",
+          "position": {
+            "x": 10,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "@/rtc3231"
+        },
+        "H1u3wxoxP": {
+          "id": "H1u3wxoxP",
+          "position": {
+            "x": 18,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        },
+        "HySsIxoeD": {
+          "boundLiterals": {
+            "HygQhYlQw7": "50",
+            "S1-M2YemPQ": "6",
+            "SkQnYg7wQ": "29",
+            "ryjoteXwm": "2017"
+          },
+          "id": "HySsIxoeD",
+          "position": {
+            "x": 18,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/datetime/datetime"
+        },
+        "SJUKLxsxw": {
+          "id": "SJUKLxsxw",
+          "position": {
+            "x": 9,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod-dev/ds-rtc/rtc-device"
+        }
+      },
+      "path": "@/main"
+    },
+    "@/rtc3231": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/JChristensen/DS3232RTC\"\n#pragma XOD require \"https://github.com/janelia-arduino/Streaming\"\n#pragma XOD require \"https://github.com/PaulStoffregen/Time\"\n\n\n\n{{#global}}\n#include \"DS3232RTC.h\"\n#include \"Streaming.h\"\n#include \"TimeLib.h\"\n\n\n\n{{/global}}\n\nstruct State {\n\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n\n{\n\n\n    // initialize the alarms to known values, clear the alarm flags, clear the alarm interrupt flags\n    RTC.setAlarm(ALM1_MATCH_DATE, 0, 0, 0, 1);\n    RTC.setAlarm(ALM2_MATCH_DATE, 0, 0, 0, 1);\n    RTC.alarm(ALARM_1);\n    RTC.alarm(ALARM_2);\n    RTC.alarmInterrupt(ALARM_1, false);\n    RTC.alarmInterrupt(ALARM_2, false);\n    RTC.squareWave(SQWAVE_NONE);\n\n //   tmElements_t tm;\n   // tm.Hour = 06;               // set the RTC time to 06:29:50\n //   tm.Minute = 29;\n //   tm.Second = 50;\n //   tm.Day = 16;\n //   tm.Month = 9;\n //   tm.Year = 2017 - 1970;      // tmElements_t.Year is the offset from 1970\n   //RTC.write(tm);              // set the RTC from the tm structure\n\n    \n}\n\n\n    if(isInputDirty<input_SET>(ctx)){\n       // set Alarm 2 for 06:30:00\n    RTC.setAlarm(ALM2_MATCH_HOURS, 0, getValue<input_MIN>(ctx), getValue<input_HOUR>(ctx), 1);\n    // clear the alarm flags\n    RTC.alarm(ALARM_1);\n    RTC.alarm(ALARM_2);\n    // configure the INT/SQW pin for \"interrupt\" operation (disable square wave output)\n    RTC.squareWave(SQWAVE_NONE);\n    // enable interrupt output for Alarm 2 only\n    RTC.alarmInterrupt(ALARM_1, false);\n    RTC.alarmInterrupt(ALARM_2, true);\nemitValue<output_DONE>(ctx, 1);\n\n    }\n\n}\n"
+        }
+      ],
+      "nodes": {
+        "BytD1gjgD": {
+          "id": "BytD1gjgD",
+          "position": {
+            "x": 0,
+            "y": 0.8,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ByxFD1xjgv": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "update pusle",
+          "id": "ByxFD1xjgv",
+          "label": "SET",
+          "position": {
+            "x": 0.9999999999999998,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkVSXfilw": {
+          "id": "BkVSXfilw",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "HOUR"
+        },
+        "SJTSmfjlP": {
+          "id": "SJTSmfjlP",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "MIN"
+        },
+        "S1MRXMigv": {
+          "id": "S1MRXMigv",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "DONE"
+        }
+      },
+      "path": "@/rtc3231"
+    }
+  },
+  "version": "0.0.1"
+}

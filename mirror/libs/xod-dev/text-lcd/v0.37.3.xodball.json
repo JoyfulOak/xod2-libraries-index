@@ -1,0 +1,5688 @@
+{
+  "patches": {
+    "@/clear": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B17ti8lJmH": {
+          "boundLiterals": {},
+          "description": "Fires when LCD is cleared",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B17ti8lJmH",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "BkWKiLlymr": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "DEV'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkWKiLlymr",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-t1",
+          "@@type": "xod-project/Node"
+        },
+        "HJMtiIgJQB": {
+          "boundLiterals": {},
+          "description": "Clear the display",
+          "label": "DO",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJMtiIgJQB",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rkYoUeJmS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkYoUeJmS",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/abstract",
+          "@@type": "xod-project/Node"
+        },
+        "rklYoUgk7S": {
+          "boundLiterals": {},
+          "description": "A text LCD device",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rklYoUgk7S",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-t1",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/clear",
+      "description": "Clears the LCD screen and positions the cursor in the upper-left corner",
+      "attachments": []
+    },
+    "@/clear(text-lcd-i2c-device)": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "Bybin8xkmB": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "DEV'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bybin8xkmB",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/output-text-lcd-i2c-device",
+          "@@type": "xod-project/Node"
+        },
+        "H1fihUlkmS": {
+          "boundLiterals": {},
+          "description": "Fires when LCD is cleared",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1fihUlkmS",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "H1snUgJXS": {
+          "boundLiterals": {},
+          "description": "An I2C text LCD device",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1snUgJXS",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-text-lcd-i2c-device",
+          "@@type": "xod-project/Node"
+        },
+        "HJms2IlyXB": {
+          "boundLiterals": {},
+          "description": "Clear the display",
+          "label": "DO",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJms2IlyXB",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rkli2LeyXH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkli2LeyXH",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/clear(text-lcd-i2c-device)",
+      "description": "Clears the LCD screen and positions the cursor in the upper-left corner",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    void evaluate(Context ctx) {\n        auto t = getValue<input_DEV>(ctx);\n        if (isInputDirty<input_DO>(ctx)) {\n            t.lcd->clear();\n            emitValue<output_DONE>(ctx, 1);\n        }\n\n        emitValue<output_DEVU0027>(ctx, t);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/clear(text-lcd-parallel-device)": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkgMKnXJQr": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkgMKnXJQr",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "HJ7GKnQ1QS": {
+          "boundLiterals": {},
+          "description": "Clear the display",
+          "label": "DO",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJ7GKnQ1QS",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rJettnmy7S": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "DEV'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJettnmy7S",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/output-text-lcd-parallel-device",
+          "@@type": "xod-project/Node"
+        },
+        "ryKtnX17B": {
+          "boundLiterals": {},
+          "description": "A text LCD device with parallel interface",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryKtnX17B",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-text-lcd-parallel-device",
+          "@@type": "xod-project/Node"
+        },
+        "ryffY27J7H": {
+          "boundLiterals": {},
+          "description": "Fires when LCD is cleared",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryffY27J7H",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/clear(text-lcd-parallel-device)",
+      "description": "Clears the LCD screen and positions the cursor in the upper-left corner",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    void evaluate(Context ctx) {\n        auto t = getValue<input_DEV>(ctx);\n        if (isInputDirty<input_DO>(ctx)) {\n            t.lcd->clear();\n            emitValue<output_DONE>(ctx, 1);\n        }\n\n        emitValue<output_DEVU0027>(ctx, t);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example-i2c-print": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1iMYgyQr": {
+          "boundLiterals": {
+            "SJbIkb0zr": "Continuously"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1iMYgyQr",
+          "position": {
+            "x": 1,
+            "y": 3
+          },
+          "type": "@/set-backlight",
+          "@@type": "xod-project/Node"
+        },
+        "B1zWHN17H": {
+          "boundLiterals": {
+            "H1wh06BEW": "\"Hello world!\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1zWHN17H",
+          "position": {
+            "x": 8,
+            "y": 2
+          },
+          "type": "xod/debug/tweak-string-32",
+          "@@type": "xod-project/Node"
+        },
+        "BJlpYNTbmS": {
+          "boundLiterals": {
+            "Bk4KSSrxXr": "2",
+            "SJKHrSeQH": "Continuously"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJlpYNTbmS",
+          "position": {
+            "x": 3,
+            "y": 5
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        },
+        "HJeIFN6bQB": {
+          "boundLiterals": {
+            "Bk4KSSrxXr": "1",
+            "SJKHrSeQH": "Continuously"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJeIFN6bQB",
+          "position": {
+            "x": 10,
+            "y": 3
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        },
+        "HkTFEpZXB": {
+          "boundLiterals": {
+            "H1wh06BEW": "\"On the text LCD\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkTFEpZXB",
+          "position": {
+            "x": 7,
+            "y": 4
+          },
+          "type": "xod/debug/tweak-string-32",
+          "@@type": "xod-project/Node"
+        },
+        "HyJMtlkmS": {
+          "boundLiterals": {
+            "HkdEXeCMH": "20",
+            "SkeN7eCzr": "4",
+            "Sy3aTyCzS": "38h"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyJMtlkmS",
+          "position": {
+            "x": -2,
+            "y": 3
+          },
+          "type": "@/text-lcd-i2c-device",
+          "@@type": "xod-project/Node"
+        },
+        "SJ3uV6-Xr": {
+          "boundLiterals": {
+            "SJKHrSeQH": "Continuously"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJ3uV6-Xr",
+          "position": {
+            "x": 4,
+            "y": 3
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        },
+        "SkUYNTb7H": {
+          "boundLiterals": {
+            "H1wh06BEW": "\"Nice to meet you\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkUYNTb7H",
+          "position": {
+            "x": 14,
+            "y": 2
+          },
+          "type": "xod/debug/tweak-string-32",
+          "@@type": "xod-project/Node"
+        },
+        "SyWTKV6-7S": {
+          "boundLiterals": {
+            "H1wh06BEW": "\"- XOD\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyWTKV6-7S",
+          "position": {
+            "x": 13,
+            "y": 4
+          },
+          "type": "xod/debug/tweak-string-32",
+          "@@type": "xod-project/Node"
+        },
+        "rJdQFekXS": {
+          "boundLiterals": {
+            "Sk1e_NIVE": "True"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJdQFekXS",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/debug/tweak-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "rkMaY4a-7r": {
+          "boundLiterals": {
+            "Bk4KSSrxXr": "3",
+            "SJKHrSeQH": "Continuously",
+            "SylLSSgmr": "11",
+            "rJ38HSxmH": "5"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkMaY4a-7r",
+          "position": {
+            "x": 9,
+            "y": 5
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B15KV6WQH": {
+          "id": "B15KV6WQH",
+          "input": {
+            "nodeId": "HJeIFN6bQB",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "SJ3uV6-Xr",
+            "pinKey": "BygFrrHgXr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "B1KQYlk7B": {
+          "id": "B1KQYlk7B",
+          "input": {
+            "nodeId": "B1iMYgyQr",
+            "pinKey": "Sk8kkWAfS"
+          },
+          "output": {
+            "nodeId": "rJdQFekXS",
+            "pinKey": "Sk1e_NIVE"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "B1lYN6W7r": {
+          "id": "B1lYN6W7r",
+          "input": {
+            "nodeId": "SJ3uV6-Xr",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "B1zWHN17H",
+            "pinKey": "H1wh06BEW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJVaFETbQB": {
+          "id": "BJVaFETbQB",
+          "input": {
+            "nodeId": "rkMaY4a-7r",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "SyWTKV6-7S",
+            "pinKey": "H1wh06BEW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "By5QYgJmr": {
+          "id": "By5QYgJmr",
+          "input": {
+            "nodeId": "B1iMYgyQr",
+            "pinKey": "BJg11ZRzB"
+          },
+          "output": {
+            "nodeId": "HyJMtlkmS",
+            "pinKey": "rJZSQgAfS"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJ0uV6Z7H": {
+          "id": "HJ0uV6Z7H",
+          "input": {
+            "nodeId": "SJ3uV6-Xr",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "B1iMYgyQr",
+            "pinKey": "HJnQJbCfr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkHTYNTZQH": {
+          "id": "HkHTYNTZQH",
+          "input": {
+            "nodeId": "rkMaY4a-7r",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "BJlpYNTbmS",
+            "pinKey": "BygFrrHgXr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hkb9NTZQB": {
+          "id": "Hkb9NTZQB",
+          "input": {
+            "nodeId": "BJlpYNTbmS",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "HJeIFN6bQB",
+            "pinKey": "BygFrrHgXr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HymTFNpZQH": {
+          "id": "HymTFNpZQH",
+          "input": {
+            "nodeId": "BJlpYNTbmS",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "HkTFEpZXB",
+            "pinKey": "H1wh06BEW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkbLt4T-QS": {
+          "id": "rkbLt4T-QS",
+          "input": {
+            "nodeId": "HJeIFN6bQB",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "SkUYNTb7H",
+            "pinKey": "H1wh06BEW"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/example-i2c-print",
+      "description": "",
+      "attachments": []
+    },
+    "@/example-parallel-print": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "By3Ki7kQH": {
+          "boundLiterals": {
+            "B1Ak971XS": "D10",
+            "BJMRJqQ1Xr": "D9",
+            "H1e01q7kXr": "D12",
+            "Syb0J5XymB": "D11",
+            "r1X0y5XkQS": "D8",
+            "rJ4Ayq7ymH": "D13"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "By3Ki7kQH",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "@/text-lcd-parallel-device",
+          "@@type": "xod-project/Node"
+        },
+        "H1_3jmkXB": {
+          "boundLiterals": {
+            "H1wh06BEV": "\"It works!\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1_3jmkXB",
+          "position": {
+            "x": 10,
+            "y": 2
+          },
+          "type": "xod/debug/tweak-string-16",
+          "@@type": "xod-project/Node"
+        },
+        "H1mhiXkmH": {
+          "boundLiterals": {
+            "H1wh06BEV": "\"Hello\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1mhiXkmH",
+          "position": {
+            "x": 4,
+            "y": 2
+          },
+          "type": "xod/debug/tweak-string-16",
+          "@@type": "xod-project/Node"
+        },
+        "HyxLSSa-7B": {
+          "boundLiterals": {
+            "SJKHrSeQH": "Continuously"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyxLSSa-7B",
+          "position": {
+            "x": 0,
+            "y": 3
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        },
+        "rkM8SH6WXr": {
+          "boundLiterals": {
+            "Bk4KSSrxXr": "1",
+            "SJKHrSeQH": "Continuously"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkM8SH6WXr",
+          "position": {
+            "x": 6,
+            "y": 3
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B1SISBp-Xr": {
+          "id": "B1SISBp-Xr",
+          "input": {
+            "nodeId": "rkM8SH6WXr",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "HyxLSSa-7B",
+            "pinKey": "BygFrrHgXr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJ0HBp-XS": {
+          "id": "HJ0HBp-XS",
+          "input": {
+            "nodeId": "rkM8SH6WXr",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "H1_3jmkXB",
+            "pinKey": "H1wh06BEV"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJ5rHT-mB": {
+          "id": "rJ5rHT-mB",
+          "input": {
+            "nodeId": "HyxLSSa-7B",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "By3Ki7kQH",
+            "pinKey": "Skzk0Fm1mH"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJhrr6WmH": {
+          "id": "rJhrr6WmH",
+          "input": {
+            "nodeId": "HyxLSSa-7B",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "H1mhiXkmH",
+            "pinKey": "H1wh06BEV"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/example-parallel-print",
+      "description": "",
+      "attachments": []
+    },
+    "@/example-print-at": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "ByAItrx7H": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByAItrx7H",
+          "position": {
+            "x": 4,
+            "y": 3
+          },
+          "type": "xod/core/count",
+          "@@type": "xod-project/Node"
+        },
+        "ByeeXOSeXH": {
+          "boundLiterals": {
+            "HkdEXeCMH": "16",
+            "SkeN7eCzr": "2",
+            "Sy3aTyCzS": "38h"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByeeXOSeXH",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "@/text-lcd-i2c-device",
+          "@@type": "xod-project/Node"
+        },
+        "H1gDYHxXB": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1gDYHxXB",
+          "position": {
+            "x": 7,
+            "y": 2
+          },
+          "type": "xod/core/clock",
+          "@@type": "xod-project/Node"
+        },
+        "SJp2YSgQS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJp2YSgQS",
+          "position": {
+            "x": 7,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/jumper",
+          "@@type": "xod-project/Node"
+        },
+        "r1GIYBgXH": {
+          "boundLiterals": {
+            "SJKHrSeQH": "Continuously",
+            "SylLSSgmr": "10",
+            "rJ-trBSlmB": "\"Value:\"",
+            "rJ38HSxmH": "6"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1GIYBgXH",
+          "position": {
+            "x": 0,
+            "y": 4
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        },
+        "rkO7_Bemr": {
+          "boundLiterals": {
+            "SJKHrSeQH": "On Boot",
+            "rJ-trBSlmB": "\"Value:\"",
+            "rJ38HSxmH": "10"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkO7_Bemr",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        },
+        "ryLFYBxQr": {
+          "boundLiterals": {
+            "Bk4KSSrxXr": "1",
+            "SJKHrSeQH": "On Boot",
+            "SylLSSgmr": "4",
+            "rJ-trBSlmB": "\"It works, as you see\"",
+            "rJ38HSxmH": "8"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryLFYBxQr",
+          "position": {
+            "x": 0,
+            "y": 5
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B1GvtrlQr": {
+          "id": "B1GvtrlQr",
+          "input": {
+            "nodeId": "ByAItrx7H",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "H1gDYHxXB",
+            "pinKey": "HJU8CE2lW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Bk_FFBgXr": {
+          "id": "Bk_FFBgXr",
+          "input": {
+            "nodeId": "ryLFYBxQr",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "r1GIYBgXH",
+            "pinKey": "BygFrrHgXr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1BIKrl7S": {
+          "id": "S1BIKrl7S",
+          "input": {
+            "nodeId": "r1GIYBgXH",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "rkO7_Bemr",
+            "pinKey": "BygFrrHgXr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJJ6FreXS": {
+          "id": "SJJ6FreXS",
+          "input": {
+            "nodeId": "r1GIYBgXH",
+            "pinKey": "SJKHrSeQH"
+          },
+          "output": {
+            "nodeId": "SJp2YSgQS",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SytutHx7r": {
+          "id": "SytutHx7r",
+          "input": {
+            "nodeId": "r1GIYBgXH",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "ByAItrx7H",
+            "pinKey": "r1yhZRd8W"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r10nKrxmr": {
+          "id": "r10nKrxmr",
+          "input": {
+            "nodeId": "SJp2YSgQS",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "H1gDYHxXB",
+            "pinKey": "HJU8CE2lW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkYmurgXS": {
+          "id": "rkYmurgXS",
+          "input": {
+            "nodeId": "rkO7_Bemr",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "ByeeXOSeXH",
+            "pinKey": "rJZSQgAfS"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/example-print-at",
+      "description": "",
+      "attachments": []
+    },
+    "@/example-quick-start": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "H1jwHTbXH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1jwHTbXH",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "@/text-lcd-i2c-16x2",
+          "@@type": "xod-project/Node"
+        },
+        "S1XOH6WXB": {
+          "boundLiterals": {
+            "BJxIhfrk7B": "D11",
+            "SkzI2fBkmH": "D9",
+            "r1QLnzH1mr": "D10",
+            "rk8I2fHkXH": "D8",
+            "rkVLnGSJQS": "D12",
+            "ryHL2GHyQS": "D13"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1XOH6WXB",
+          "position": {
+            "x": 6,
+            "y": 1
+          },
+          "type": "@/text-lcd-parallel-16x2",
+          "@@type": "xod-project/Node"
+        },
+        "S1xEtSpZmB": {
+          "boundLiterals": {
+            "H1wh06BEV": "\"World\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1xEtSpZmB",
+          "position": {
+            "x": 13,
+            "y": 0
+          },
+          "type": "xod/debug/tweak-string-16",
+          "@@type": "xod-project/Node"
+        },
+        "rJNFSpZ7H": {
+          "boundLiterals": {
+            "H1wh06BEV": "\"Hello\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJNFSpZ7H",
+          "position": {
+            "x": 12,
+            "y": 0
+          },
+          "type": "xod/debug/tweak-string-16",
+          "@@type": "xod-project/Node"
+        },
+        "ry9uBabQr": {
+          "boundLiterals": {
+            "H1wh06BEV": "\"World\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ry9uBabQr",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/debug/tweak-string-16",
+          "@@type": "xod-project/Node"
+        },
+        "ryF_raW7H": {
+          "boundLiterals": {
+            "H1wh06BEV": "\"Hello\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryF_raW7H",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/debug/tweak-string-16",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "By2dH6-Xr": {
+          "id": "By2dH6-Xr",
+          "input": {
+            "nodeId": "H1jwHTbXH",
+            "pinKey": "BJ3DAE1QS"
+          },
+          "output": {
+            "nodeId": "ryF_raW7H",
+            "pinKey": "H1wh06BEV"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyDYHT-QS": {
+          "id": "SyDYHT-QS",
+          "input": {
+            "nodeId": "S1XOH6WXB",
+            "pinKey": "HJbIhGB1XB"
+          },
+          "output": {
+            "nodeId": "S1xEtSpZmB",
+            "pinKey": "H1wh06BEV"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkTuHTWXS": {
+          "id": "rkTuHTWXS",
+          "input": {
+            "nodeId": "H1jwHTbXH",
+            "pinKey": "rJgnw0417B"
+          },
+          "output": {
+            "nodeId": "ry9uBabQr",
+            "pinKey": "H1wh06BEV"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryUYBpbXB": {
+          "id": "ryUYBpbXB",
+          "input": {
+            "nodeId": "S1XOH6WXB",
+            "pinKey": "HJInzryQr"
+          },
+          "output": {
+            "nodeId": "rJNFSpZ7H",
+            "pinKey": "H1wh06BEV"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/example-quick-start",
+      "description": "",
+      "attachments": []
+    },
+    "@/print-at": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "Bk4KSSrxXr": {
+          "boundLiterals": {},
+          "description": "The row index on the display. Starts from 0.",
+          "label": "ROW",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bk4KSSrxXr",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "BygFrrHgXr": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "DEV'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BygFrrHgXr",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-t1",
+          "@@type": "xod-project/Node"
+        },
+        "S1zKHHSx7H": {
+          "boundLiterals": {},
+          "description": "Fires when the allocated area is updated",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1zKHHSx7H",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SJ7FBrHl7B": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJ7FBrHl7B",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/abstract",
+          "@@type": "xod-project/Node"
+        },
+        "SJKHrSeQH": {
+          "boundLiterals": {},
+          "description": "Update the allocated area content",
+          "label": "DO",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJKHrSeQH",
+          "position": {
+            "x": 10,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SylLSSgmr": {
+          "boundLiterals": {},
+          "description": "Position in the row. Starts from 0.",
+          "label": "POS",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SylLSSgmr",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "r1StrSrl7S": {
+          "boundLiterals": {},
+          "description": "A text LCD device",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1StrSrl7S",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-t1",
+          "@@type": "xod-project/Node"
+        },
+        "rJ-trBSlmB": {
+          "boundLiterals": {},
+          "description": "Text to print on the row",
+          "label": "VAL",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJ-trBSlmB",
+          "position": {
+            "x": 8,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "rJ38HSxmH": {
+          "boundLiterals": {
+            "__out__": "+Inf"
+          },
+          "description": "The length of the allocated area on the LCD screen.",
+          "label": "LEN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJ38HSxmH",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/print-at",
+      "description": "Prints a text on the LCD screen in the allocated area, specified by `ROW` index, position at the row and length.\nThe text trims to the allocated area length. If the text is shorter — the rest of the allocated area will be cleared (replaced with whitespaces).",
+      "attachments": []
+    },
+    "@/print-at(text-lcd-i2c-device)": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkNZDBemr": {
+          "boundLiterals": {},
+          "description": "Update the allocated area content",
+          "label": "DO",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkNZDBemr",
+          "position": {
+            "x": 10,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "H1M4bPBeQr": {
+          "boundLiterals": {},
+          "description": "Fires when the allocated area is updated",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1M4bPBeQr",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HJWEWwSlmS": {
+          "boundLiterals": {},
+          "description": "Text to print on the row",
+          "label": "VAL",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJWEWwSlmS",
+          "position": {
+            "x": 8,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "S1RSwBlmH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1RSwBlmH",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "SJ3ZDSemB": {
+          "boundLiterals": {},
+          "description": "An I2C text LCD device",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJ3ZDSemB",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-text-lcd-i2c-device",
+          "@@type": "xod-project/Node"
+        },
+        "Sk84WwSgXH": {
+          "boundLiterals": {},
+          "description": "Position in the row. Starts from 0.",
+          "label": "POS",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk84WwSgXH",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "SkVEbvSxXr": {
+          "boundLiterals": {},
+          "description": "The row index on the display. Starts from 0.",
+          "label": "ROW",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkVEbvSxXr",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "ryg3bDrxXB": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "DEV'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryg3bDrxXB",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/output-text-lcd-i2c-device",
+          "@@type": "xod-project/Node"
+        },
+        "ryvVZwBeQr": {
+          "boundLiterals": {
+            "__out__": "+Inf"
+          },
+          "description": "The length of the allocated area on the LCD screen.",
+          "label": "LEN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryvVZwBeQr",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/print-at(text-lcd-i2c-device)",
+      "description": "",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nnode {\n    static void printAt(LiquidCrystal_I2C* lcd, uint8_t rowIndex, uint8_t posIndex, uint8_t len, XString str) {\n        lcd->setCursor(posIndex, rowIndex);\n        uint8_t whitespace = len;\n        for (auto it = str.iterate(); it && whitespace > 0; ++it, --whitespace)\n            lcd->write(*it);\n\n        // Clear the rest of the area\n        while (whitespace--)\n            lcd->write(' ');\n    }\n\n    void evaluate(Context ctx) {\n        auto t = getValue<input_DEV>(ctx);\n\n        if (isInputDirty<input_DO>(ctx)) {\n            XString str = getValue<input_VAL>(ctx);\n            uint8_t row = (uint8_t) getValue<input_ROW>(ctx);\n            uint8_t pos = (uint8_t) getValue<input_POS>(ctx);\n\n            Number _len = getValue<input_LEN>(ctx);\n            uint8_t restLen = t.cols - pos;\n            uint8_t len = (_len > restLen) ? restLen : (uint8_t) _len;\n\n            if (row < 0 || row >= t.rows || pos < 0 || pos >= t.cols) {\n                raiseError<output_DONE>(ctx);\n                return;\n            }\n\n            printAt(t.lcd, row, pos, len, str);\n            emitValue<output_DONE>(ctx, 1);\n        }\n\n        emitValue<output_DEVU0027>(ctx, t);\n    }\n};\n"
+        }
+      ]
+    },
+    "@/print-at(text-lcd-parallel-device)": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJuoJurl7S": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJuoJurl7S",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "BkEedrl7B": {
+          "boundLiterals": {},
+          "description": "A text LCD device with parallel interface",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkEedrl7B",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-text-lcd-parallel-device",
+          "@@type": "xod-project/Node"
+        },
+        "ByQiydrlQr": {
+          "boundLiterals": {},
+          "description": "The row index on the display. Starts from 0.",
+          "label": "ROW",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByQiydrlQr",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "HyfokOHxQr": {
+          "boundLiterals": {},
+          "description": "Fires when the allocated area is updated",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyfokOHxQr",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SkWokdHx7r": {
+          "boundLiterals": {},
+          "description": "Text to print on the row",
+          "label": "VAL",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkWokdHx7r",
+          "position": {
+            "x": 8,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "SyeVl_rgQB": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "DEV'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyeVl_rgQB",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/output-text-lcd-parallel-device",
+          "@@type": "xod-project/Node"
+        },
+        "Syljy_rgmr": {
+          "boundLiterals": {},
+          "description": "Update the allocated area content",
+          "label": "DO",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Syljy_rgmr",
+          "position": {
+            "x": 10,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rk4iydre7r": {
+          "boundLiterals": {},
+          "description": "Position in the row. Starts from 0.",
+          "label": "POS",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rk4iydre7r",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "ryBi1_rl7r": {
+          "boundLiterals": {
+            "__out__": "+Inf"
+          },
+          "description": "The length of the allocated area on the LCD screen.",
+          "label": "LEN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryBi1_rl7r",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/print-at(text-lcd-parallel-device)",
+      "description": "",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    static void printAt(LiquidCrystal* lcd, uint8_t rowIndex, uint8_t posIndex, uint8_t len, XString str) {\n        lcd->setCursor(posIndex, rowIndex);\n        uint8_t whitespace = len;\n        for (auto it = str.iterate(); it && whitespace > 0; ++it, --whitespace)\n            lcd->write(*it);\n\n        // Clear the rest of the area\n        while (whitespace--)\n            lcd->write(' ');\n    }\n\n    void evaluate(Context ctx) {\n        auto t = getValue<input_DEV>(ctx);\n\n        if (isInputDirty<input_DO>(ctx)) {\n            XString str = getValue<input_VAL>(ctx);\n            uint8_t row = (uint8_t) getValue<input_ROW>(ctx);\n            uint8_t pos = (uint8_t) getValue<input_POS>(ctx);\n\n            Number _len = getValue<input_LEN>(ctx);\n            uint8_t restLen = t.cols - pos;\n            uint8_t len = (_len > restLen) ? restLen : (uint8_t) _len;\n\n            if (row < 0 || row >= t.rows || pos < 0 || pos >= t.cols) {\n                raiseError<output_DONE>(ctx);\n                return;\n            }\n\n            printAt(t.lcd, row, pos, len, str);\n            emitValue<output_DONE>(ctx, 1);\n        }\n\n        emitValue<output_DEVU0027>(ctx, t);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/set-backlight": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJg11ZRzB": {
+          "boundLiterals": {},
+          "description": "An I2C text LCD device",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJg11ZRzB",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-text-lcd-i2c-device",
+          "@@type": "xod-project/Node"
+        },
+        "HJnQJbCfr": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "DEV'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJnQJbCfr",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/output-text-lcd-i2c-device",
+          "@@type": "xod-project/Node"
+        },
+        "S1Y8yWRGr": {
+          "boundLiterals": {},
+          "description": "Fires when backlight is updated",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1Y8yWRGr",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SJ1gJbCMS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJ1gJbCMS",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "SJbIkb0zr": {
+          "boundLiterals": {},
+          "description": "Applies `BL` value to the text LCD backlight",
+          "label": "DO",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJbIkb0zr",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Sk8kkWAfS": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Backlight enable/disable",
+          "label": "BL",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk8kkWAfS",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/set-backlight",
+      "description": "Turns on or off the backlight of the I²C text LCD.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nnode {\n    void evaluate(Context ctx) {\n        auto t = getValue<input_DEV>(ctx);\n        if (isInputDirty<input_DO>(ctx)) {\n            t.lcd->setBacklight(getValue<input_BL>(ctx));\n            emitValue<output_DONE>(ctx, 1);\n        }\n\n        emitValue<output_DEVU0027>(ctx, t);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/text-lcd-i2c-device": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "HJsS7e0zB": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJsS7e0zB",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "HkdEXeCMH": {
+          "boundLiterals": {
+            "__out__": "16"
+          },
+          "description": "",
+          "label": "COLS",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkdEXeCMH",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "SkeN7eCzr": {
+          "boundLiterals": {
+            "__out__": "2"
+          },
+          "description": "",
+          "label": "ROWS",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkeN7eCzr",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "Sy3aTyCzS": {
+          "boundLiterals": {
+            "__out__": "27h"
+          },
+          "description": "",
+          "label": "ADDR",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sy3aTyCzS",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "rJZSQgAfS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJZSQgAfS",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-self",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/text-lcd-i2c-device",
+      "description": "",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD error_raise enable\n\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n\nnode {\n    meta {\n        struct Type {\n            LiquidCrystal_I2C* lcd;\n            uint8_t rows;\n            uint8_t cols;\n        };\n    }\n\n    uint8_t mem[sizeof(LiquidCrystal_I2C)];\n\n    void evaluate(Context ctx) {\n        uint8_t addr = getValue<input_ADDR>(ctx);\n        uint8_t rows = (uint8_t) getValue<input_ROWS>(ctx);\n        uint8_t cols = (uint8_t) getValue<input_COLS>(ctx);\n\n        if (addr > 127) {\n            raiseError(ctx);\n            return;\n        }\n\n        Type t;\n        t.rows = rows;\n        t.cols = cols;\n        // do we need `&` here?\n        t.lcd = new (mem) LiquidCrystal_I2C(addr, cols, rows);\n        t.lcd->begin();\n\n        emitValue<output_DEV>(ctx, t);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/text-lcd-i2c-20x4": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1-67xBy7B": {
+          "boundLiterals": {},
+          "description": "Text for the first line",
+          "label": "L1",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1-67xBy7B",
+          "position": {
+            "x": 5,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "B13L86W7B": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B13L86W7B",
+          "position": {
+            "x": 15,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/jumper",
+          "@@type": "xod-project/Node"
+        },
+        "B1HaXxBy7r": {
+          "boundLiterals": {
+            "HkdEXeCMH": "20",
+            "SkeN7eCzr": "4"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1HaXxBy7r",
+          "position": {
+            "x": -1,
+            "y": 5
+          },
+          "type": "@/text-lcd-i2c-device",
+          "@@type": "xod-project/Node"
+        },
+        "B1_seLTW7B": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1_seLTW7B",
+          "position": {
+            "x": 5,
+            "y": 5
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        },
+        "B1kUeSkmB": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1kUeSkmB",
+          "position": {
+            "x": 28,
+            "y": 4
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "B1pmxByQH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1pmxByQH",
+          "position": {
+            "x": 10,
+            "y": 4
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "BJmgajer1XH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJmgajer1XH",
+          "position": {
+            "x": 11,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "BJqWFSy7r": {
+          "boundLiterals": {
+            "Sk4Kl0RT4": "\"ERR\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJqWFSy7r",
+          "position": {
+            "x": 14,
+            "y": 1
+          },
+          "type": "xod/core/if-error",
+          "@@type": "xod-project/Node"
+        },
+        "BklzZU6WmB": {
+          "boundLiterals": {
+            "Bk4KSSrxXr": "3"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BklzZU6WmB",
+          "position": {
+            "x": 23,
+            "y": 5
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        },
+        "By0rlrkXS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "By0rlrkXS",
+          "position": {
+            "x": 22,
+            "y": 4
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "ByVpmeSJ7B": {
+          "boundLiterals": {
+            "__out__": "27h"
+          },
+          "description": "I²C address of the expander chip.",
+          "label": "ADDR",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByVpmeSJ7B",
+          "position": {
+            "x": -1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "BylTQxSymr": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Backlight enable/disable",
+          "label": "BL",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BylTQxSymr",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "H1Q88pb7S": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1Q88pb7S",
+          "position": {
+            "x": 9,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/jumper",
+          "@@type": "xod-project/Node"
+        },
+        "H1dTXlSy7S": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1dTXlSy7S",
+          "position": {
+            "x": 2,
+            "y": 5
+          },
+          "type": "@/set-backlight",
+          "@@type": "xod-project/Node"
+        },
+        "HJ2a7eSy7B": {
+          "boundLiterals": {},
+          "description": "Fires when write is done",
+          "label": "ACK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJ2a7eSy7B",
+          "position": {
+            "x": 5,
+            "y": 7
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HkGVlSkmB": {
+          "boundLiterals": {},
+          "description": "Text for the third line",
+          "label": "L3",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkGVlSkmB",
+          "position": {
+            "x": 11,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "HkmTmgrJmB": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Fires update of LCD display on incoming value change while `ACT` is true.",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkmTmgrJmB",
+          "position": {
+            "x": 17,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "Hktx6igH17H": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hktx6igH17H",
+          "position": {
+            "x": 23,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "S1Pg6oerkQH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1Pg6oerkQH",
+          "position": {
+            "x": 17,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "S1dbKSJXB": {
+          "boundLiterals": {
+            "Sk4Kl0RT4": "\"ERR\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1dbKSJXB",
+          "position": {
+            "x": 8,
+            "y": 1
+          },
+          "type": "xod/core/if-error",
+          "@@type": "xod-project/Node"
+        },
+        "SJPaQlHyXS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJPaQlHyXS",
+          "position": {
+            "x": 16,
+            "y": 4
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "SJZgToer17B": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJZgToer17B",
+          "position": {
+            "x": 17,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/to-bus",
+          "@@type": "xod-project/Node"
+        },
+        "SkLpQeSk7S": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkLpQeSk7S",
+          "position": {
+            "x": 4,
+            "y": 4
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "SyEP86ZXS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyEP86ZXS",
+          "position": {
+            "x": 21,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/jumper",
+          "@@type": "xod-project/Node"
+        },
+        "SyXEgBy7B": {
+          "boundLiterals": {},
+          "description": "Text for the fourth line",
+          "label": "L4",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyXEgBy7B",
+          "position": {
+            "x": 14,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "SyySIaWXH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyySIaWXH",
+          "position": {
+            "x": 3,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/jumper",
+          "@@type": "xod-project/Node"
+        },
+        "r1GaXeSy7B": {
+          "boundLiterals": {},
+          "description": "Text for the second line",
+          "label": "L2",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1GaXeSy7B",
+          "position": {
+            "x": 8,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "r1GbUaZmB": {
+          "boundLiterals": {
+            "Bk4KSSrxXr": "2"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1GbUaZmB",
+          "position": {
+            "x": 17,
+            "y": 5
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        },
+        "r1ZuUT-7B": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1ZuUT-7B",
+          "position": {
+            "x": 27,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/jumper",
+          "@@type": "xod-project/Node"
+        },
+        "r1jlpjgHJXB": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1jlpjgHJXB",
+          "position": {
+            "x": 29,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "r1s6XeSyXS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 4,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1s6XeSyXS",
+          "position": {
+            "x": 5,
+            "y": 6
+          },
+          "type": "xod/core/any",
+          "@@type": "xod-project/Node"
+        },
+        "rJKigL6bmH": {
+          "boundLiterals": {
+            "Bk4KSSrxXr": "1"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJKigL6bmH",
+          "position": {
+            "x": 11,
+            "y": 5
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        },
+        "rJkWFB1QB": {
+          "boundLiterals": {
+            "Sk4Kl0RT4": "\"ERR\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJkWFB1QB",
+          "position": {
+            "x": 5,
+            "y": 1
+          },
+          "type": "xod/core/if-error",
+          "@@type": "xod-project/Node"
+        },
+        "rkHgajxBkQH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkHgajxBkQH",
+          "position": {
+            "x": 5,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "rkYZKS1mH": {
+          "boundLiterals": {
+            "Sk4Kl0RT4": "\"ERR\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkYZKS1mH",
+          "position": {
+            "x": 11,
+            "y": 1
+          },
+          "type": "xod/core/if-error",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B1QbLabQH": {
+          "id": "B1QbLabQH",
+          "input": {
+            "nodeId": "r1GbUaZmB",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "rJKigL6bmH",
+            "pinKey": "BygFrrHgXr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJ4EAF_dH": {
+          "id": "BJ4EAF_dH",
+          "input": {
+            "nodeId": "rJKigL6bmH",
+            "pinKey": "SJKHrSeQH"
+          },
+          "output": {
+            "nodeId": "SJPaQlHyXS",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJN_L6WQS": {
+          "id": "BJN_L6WQS",
+          "input": {
+            "nodeId": "B1kUeSkmB",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "r1ZuUT-7B",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Bk5PUa-7r": {
+          "id": "Bk5PUa-7r",
+          "input": {
+            "nodeId": "SyEP86ZXS",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkYZKS1mH",
+            "pinKey": "BkV5xRCpE"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkNlToxSymB": {
+          "id": "BkNlToxSymB",
+          "input": {
+            "nodeId": "B1pmxByQH",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "BJmgajer1XH",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkmDLpWXS": {
+          "id": "BkmDLpWXS",
+          "input": {
+            "nodeId": "B13L86W7B",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "S1dbKSJXB",
+            "pinKey": "BkV5xRCpE"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BktL8abQH": {
+          "id": "BktL8abQH",
+          "input": {
+            "nodeId": "B1_seLTW7B",
+            "pinKey": "SJKHrSeQH"
+          },
+          "output": {
+            "nodeId": "B1pmxByQH",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Bkw_LabmS": {
+          "id": "Bkw_LabmS",
+          "input": {
+            "nodeId": "r1ZuUT-7B",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJqWFSy7r",
+            "pinKey": "BkV5xRCpE"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Byfe6ieBJQB": {
+          "id": "Byfe6ieBJQB",
+          "input": {
+            "nodeId": "SJZgToer17B",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HkmTmgrJmB",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ByqjxIaWmr": {
+          "id": "ByqjxIaWmr",
+          "input": {
+            "nodeId": "rJKigL6bmH",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "B1_seLTW7B",
+            "pinKey": "BygFrrHgXr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Bys8UaZXB": {
+          "id": "Bys8UaZXB",
+          "input": {
+            "nodeId": "r1s6XeSyXS",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "B1_seLTW7B",
+            "pinKey": "S1zKHHSx7H"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H18UUpZ7S": {
+          "id": "H18UUpZ7S",
+          "input": {
+            "nodeId": "H1Q88pb7S",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJkWFB1QB",
+            "pinKey": "BkV5xRCpE"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1WSUTW7B": {
+          "id": "H1WSUTW7B",
+          "input": {
+            "nodeId": "SkLpQeSk7S",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "SyySIaWXH",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJWGtSJ7H": {
+          "id": "HJWGtSJ7H",
+          "input": {
+            "nodeId": "S1dbKSJXB",
+            "pinKey": "S1XteAATV"
+          },
+          "output": {
+            "nodeId": "r1GaXeSy7B",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJWPLabmS": {
+          "id": "HJWPLabmS",
+          "input": {
+            "nodeId": "r1s6XeSyXS",
+            "pinKey": "ByU7LRuSPkW-$1"
+          },
+          "output": {
+            "nodeId": "rJKigL6bmH",
+            "pinKey": "S1zKHHSx7H"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hk1wUpbQS": {
+          "id": "Hk1wUpbQS",
+          "input": {
+            "nodeId": "SJPaQlHyXS",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "B13L86W7B",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hy2wU6bXB": {
+          "id": "Hy2wU6bXB",
+          "input": {
+            "nodeId": "r1s6XeSyXS",
+            "pinKey": "ByU7LRuSPkW-$2"
+          },
+          "output": {
+            "nodeId": "r1GbUaZmB",
+            "pinKey": "S1zKHHSx7H"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hy6-YSy7r": {
+          "id": "Hy6-YSy7r",
+          "input": {
+            "nodeId": "BJqWFSy7r",
+            "pinKey": "S1XteAATV"
+          },
+          "output": {
+            "nodeId": "SyXEgBy7B",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HyOLUa-7S": {
+          "id": "HyOLUa-7S",
+          "input": {
+            "nodeId": "B1_seLTW7B",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "H1Q88pb7S",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1IOITW7r": {
+          "id": "S1IOITW7r",
+          "input": {
+            "nodeId": "BklzZU6WmB",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "r1ZuUT-7B",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1OvLpbXH": {
+          "id": "S1OvLpbXH",
+          "input": {
+            "nodeId": "r1GbUaZmB",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "SyEP86ZXS",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1PwUpZmS": {
+          "id": "S1PwUpZmS",
+          "input": {
+            "nodeId": "By0rlrkXS",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "SyEP86ZXS",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1reaQlry7S": {
+          "id": "S1reaQlry7S",
+          "input": {
+            "nodeId": "H1dTXlSy7S",
+            "pinKey": "SJbIkb0zr"
+          },
+          "output": {
+            "nodeId": "SkLpQeSk7S",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1vrIa-QS": {
+          "id": "S1vrIa-QS",
+          "input": {
+            "nodeId": "SyySIaWXH",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BylTQxSymr",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJ2xpoerkXH": {
+          "id": "SJ2xpoerkXH",
+          "input": {
+            "nodeId": "B1kUeSkmB",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "r1jlpjgHJXB",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJ8x6oerJQS": {
+          "id": "SJ8x6oerJQS",
+          "input": {
+            "nodeId": "SkLpQeSk7S",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "rkHgajxBkQH",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJOepjxS1mB": {
+          "id": "SJOepjxS1mB",
+          "input": {
+            "nodeId": "SJPaQlHyXS",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "S1Pg6oerkQH",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJZM-8pW7H": {
+          "id": "SJZM-8pW7H",
+          "input": {
+            "nodeId": "BklzZU6WmB",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "r1GbUaZmB",
+            "pinKey": "BygFrrHgXr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJaxTmlBJQB": {
+          "id": "SJaxTmlBJQB",
+          "input": {
+            "nodeId": "r1s6XeSyXS",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "H1dTXlSy7S",
+            "pinKey": "S1Y8yWRGr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkJ_L6WmB": {
+          "id": "SkJ_L6WmB",
+          "input": {
+            "nodeId": "r1s6XeSyXS",
+            "pinKey": "ByU7LRuSPkW-$3"
+          },
+          "output": {
+            "nodeId": "BklzZU6WmB",
+            "pinKey": "S1zKHHSx7H"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkgvUpZmS": {
+          "id": "SkgvUpZmS",
+          "input": {
+            "nodeId": "rJKigL6bmH",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "B13L86W7B",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SygzFSJQH": {
+          "id": "SygzFSJQH",
+          "input": {
+            "nodeId": "rkYZKS1mH",
+            "pinKey": "S1XteAATV"
+          },
+          "output": {
+            "nodeId": "HkGVlSkmB",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1LERKO_H": {
+          "id": "r1LERKO_H",
+          "input": {
+            "nodeId": "r1GbUaZmB",
+            "pinKey": "SJKHrSeQH"
+          },
+          "output": {
+            "nodeId": "By0rlrkXS",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1kgaQgH17r": {
+          "id": "r1kgaQgH17r",
+          "input": {
+            "nodeId": "B1HaXxBy7r",
+            "pinKey": "Sy3aTyCzS"
+          },
+          "output": {
+            "nodeId": "ByVpmeSJ7B",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJVl6Qxr17B": {
+          "id": "rJVl6Qxr17B",
+          "input": {
+            "nodeId": "H1dTXlSy7S",
+            "pinKey": "BJg11ZRzB"
+          },
+          "output": {
+            "nodeId": "B1HaXxBy7r",
+            "pinKey": "rJZSQgAfS"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJg-p7eByQr": {
+          "id": "rJg-p7eByQr",
+          "input": {
+            "nodeId": "HJ2a7eSy7B",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1s6XeSyXS",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkDV0Yuur": {
+          "id": "rkDV0Yuur",
+          "input": {
+            "nodeId": "BklzZU6WmB",
+            "pinKey": "SJKHrSeQH"
+          },
+          "output": {
+            "nodeId": "B1kUeSkmB",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkGBUa-7H": {
+          "id": "rkGBUa-7H",
+          "input": {
+            "nodeId": "H1dTXlSy7S",
+            "pinKey": "Sk8kkWAfS"
+          },
+          "output": {
+            "nodeId": "SyySIaWXH",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkPU8aWQH": {
+          "id": "rkPU8aWQH",
+          "input": {
+            "nodeId": "B1pmxByQH",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "H1Q88pb7S",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkyWI6-Qr": {
+          "id": "rkyWI6-Qr",
+          "input": {
+            "nodeId": "B1_seLTW7B",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "H1dTXlSy7S",
+            "pinKey": "HJnQJbCfr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryVfYH17S": {
+          "id": "ryVfYH17S",
+          "input": {
+            "nodeId": "rJkWFB1QB",
+            "pinKey": "S1XteAATV"
+          },
+          "output": {
+            "nodeId": "B1-67xBy7B",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rycl6ilS1Qr": {
+          "id": "rycl6ilS1Qr",
+          "input": {
+            "nodeId": "By0rlrkXS",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "Hktx6igH17H",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/text-lcd-i2c-20x4",
+      "description": "A quick-start node drives a text LCD screen with a PCF8574 or PCA8574 I²C expander module. Usually have a value in range 0x20-0x27 or 0x38-0x3F. Consult LCD/expander documentation to know the exact value.",
+      "attachments": []
+    },
+    "@/text-lcd-parallel-16x2": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJ3v7BymS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJ3v7BymS",
+          "position": {
+            "x": 14,
+            "y": 2
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "BJFS7HyQB": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJFS7HyQB",
+          "position": {
+            "x": 1,
+            "y": 3
+          },
+          "type": "@/text-lcd-parallel-device",
+          "@@type": "xod-project/Node"
+        },
+        "BJxIhfrk7B": {
+          "boundLiterals": {},
+          "description": "Board GPIO port with LCD D4 pin",
+          "label": "D4",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJxIhfrk7B",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "HJInzryQr": {
+          "boundLiterals": {},
+          "description": "Text for the first line",
+          "label": "L1",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJInzryQr",
+          "position": {
+            "x": 11,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "HJbIhGB1XB": {
+          "boundLiterals": {},
+          "description": "Text for the second line",
+          "label": "L2",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJbIhGB1XB",
+          "position": {
+            "x": 19,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "HJg2vQByQS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJg2vQByQS",
+          "position": {
+            "x": 20,
+            "y": 2
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "HyjEmHkmB": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Fires update of LCD display on incoming value change while `ACT` is true.",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyjEmHkmB",
+          "position": {
+            "x": 21,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "SkzI2fBkmH": {
+          "boundLiterals": {},
+          "description": "Board GPIO port with LCD D6 pin",
+          "label": "D6",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkzI2fBkmH",
+          "position": {
+            "x": 5,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "SyA47CZmB": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyA47CZmB",
+          "position": {
+            "x": 9,
+            "y": 3
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        },
+        "SyOnDXSyXB": {
+          "boundLiterals": {},
+          "description": "Fires when write is done",
+          "label": "ACK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyOnDXSyXB",
+          "position": {
+            "x": 10,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "r1QLnzH1mr": {
+          "boundLiterals": {},
+          "description": "Board GPIO port with LCD D5 pin",
+          "label": "D5",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1QLnzH1mr",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "r1_vFHJ7H": {
+          "boundLiterals": {
+            "Sk4Kl0RT4": "\"ERR\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1_vFHJ7H",
+          "position": {
+            "x": 19,
+            "y": 1
+          },
+          "type": "xod/core/if-error",
+          "@@type": "xod-project/Node"
+        },
+        "r1fwKS1Xr": {
+          "boundLiterals": {
+            "Sk4Kl0RT4": "\"ERR\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1fwKS1Xr",
+          "position": {
+            "x": 11,
+            "y": 1
+          },
+          "type": "xod/core/if-error",
+          "@@type": "xod-project/Node"
+        },
+        "rJgCVmRZXr": {
+          "boundLiterals": {
+            "Bk4KSSrxXr": "1"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJgCVmRZXr",
+          "position": {
+            "x": 15,
+            "y": 3
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        },
+        "rk8I2fHkXH": {
+          "boundLiterals": {},
+          "description": "Board GPIO port with LCD D7 pin",
+          "label": "D7",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rk8I2fHkXH",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "rkVLnGSJQS": {
+          "boundLiterals": {},
+          "description": "Board GPIO port with LCD EN pin",
+          "label": "EN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkVLnGSJQS",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "rkXhPXHyXS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkXhPXHyXS",
+          "position": {
+            "x": 10,
+            "y": 4
+          },
+          "type": "xod/core/any",
+          "@@type": "xod-project/Node"
+        },
+        "ryHL2GHyQS": {
+          "boundLiterals": {},
+          "description": "Board GPIO port with LCD RS pin",
+          "label": "RS",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryHL2GHyQS",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "BJiHXBkmr": {
+          "id": "BJiHXBkmr",
+          "input": {
+            "nodeId": "BJFS7HyQB",
+            "pinKey": "r1X0y5XkQS"
+          },
+          "output": {
+            "nodeId": "ryHL2GHyQS",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkMrm0ZQB": {
+          "id": "BkMrm0ZQB",
+          "input": {
+            "nodeId": "SyA47CZmB",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "BJFS7HyQB",
+            "pinKey": "Skzk0Fm1mH"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "By-ImrkQS": {
+          "id": "By-ImrkQS",
+          "input": {
+            "nodeId": "BJFS7HyQB",
+            "pinKey": "rJ4Ayq7ymH"
+          },
+          "output": {
+            "nodeId": "rk8I2fHkXH",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJzOFSkmr": {
+          "id": "HJzOFSkmr",
+          "input": {
+            "nodeId": "HJg2vQByQS",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "r1_vFHJ7H",
+            "pinKey": "BkV5xRCpE"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hk-0V7RWmH": {
+          "id": "Hk-0V7RWmH",
+          "input": {
+            "nodeId": "rJgCVmRZXr",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "SyA47CZmB",
+            "pinKey": "BygFrrHgXr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hy3B7rJQS": {
+          "id": "Hy3B7rJQS",
+          "input": {
+            "nodeId": "BJFS7HyQB",
+            "pinKey": "BJMRJqQ1Xr"
+          },
+          "output": {
+            "nodeId": "rkVLnGSJQS",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HyVUQAb7B": {
+          "id": "HyVUQAb7B",
+          "input": {
+            "nodeId": "rkXhPXHyXS",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "rJgCVmRZXr",
+            "pinKey": "S1zKHHSx7H"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S16BmHk7H": {
+          "id": "S16BmHk7H",
+          "input": {
+            "nodeId": "BJFS7HyQB",
+            "pinKey": "B1Ak971XS"
+          },
+          "output": {
+            "nodeId": "BJxIhfrk7B",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1JL7S17H": {
+          "id": "S1JL7S17H",
+          "input": {
+            "nodeId": "BJFS7HyQB",
+            "pinKey": "H1e01q7kXr"
+          },
+          "output": {
+            "nodeId": "SkzI2fBkmH",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1MIX0bQr": {
+          "id": "S1MIX0bQr",
+          "input": {
+            "nodeId": "rkXhPXHyXS",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "SyA47CZmB",
+            "pinKey": "S1zKHHSx7H"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJxLXRb7H": {
+          "id": "SJxLXRb7H",
+          "input": {
+            "nodeId": "rJgCVmRZXr",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "r1_vFHJ7H",
+            "pinKey": "BkV5xRCpE"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkIwYH1mH": {
+          "id": "SkIwYH1mH",
+          "input": {
+            "nodeId": "BJ3v7BymS",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "r1fwKS1Xr",
+            "pinKey": "BkV5xRCpE"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkRHQH1QS": {
+          "id": "SkRHQH1QS",
+          "input": {
+            "nodeId": "BJFS7HyQB",
+            "pinKey": "Syb0J5XymB"
+          },
+          "output": {
+            "nodeId": "r1QLnzH1mr",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkaSmR-XB": {
+          "id": "SkaSmR-XB",
+          "input": {
+            "nodeId": "SyA47CZmB",
+            "pinKey": "SJKHrSeQH"
+          },
+          "output": {
+            "nodeId": "BJ3v7BymS",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r10jXrJmr": {
+          "id": "r10jXrJmr",
+          "input": {
+            "nodeId": "BJ3v7BymS",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "HyjEmHkmB",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1WUXRZXS": {
+          "id": "r1WUXRZXS",
+          "input": {
+            "nodeId": "rJgCVmRZXr",
+            "pinKey": "SJKHrSeQH"
+          },
+          "output": {
+            "nodeId": "HJg2vQByQS",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1be3vQByXB": {
+          "id": "r1be3vQByXB",
+          "input": {
+            "nodeId": "SyOnDXSyXB",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkXhPXHyXS",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1yuKH17r": {
+          "id": "r1yuKH17r",
+          "input": {
+            "nodeId": "r1_vFHJ7H",
+            "pinKey": "S1XteAATV"
+          },
+          "output": {
+            "nodeId": "HJbIhGB1XB",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJhr70bXH": {
+          "id": "rJhr70bXH",
+          "input": {
+            "nodeId": "SyA47CZmB",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "r1fwKS1Xr",
+            "pinKey": "BkV5xRCpE"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryNwtryQr": {
+          "id": "ryNwtryQr",
+          "input": {
+            "nodeId": "r1fwKS1Xr",
+            "pinKey": "S1XteAATV"
+          },
+          "output": {
+            "nodeId": "HJInzryQr",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryxhmrJmH": {
+          "id": "ryxhmrJmH",
+          "input": {
+            "nodeId": "HJg2vQByQS",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "HyjEmHkmB",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/text-lcd-parallel-16x2",
+      "description": "Drives a text LCD screen with HD44780 chip.",
+      "attachments": []
+    },
+    "@/text-lcd-parallel-20x4": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1BYHFS1mB": {
+          "boundLiterals": {},
+          "description": "Text for the fourth line",
+          "label": "L4",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1BYHFS1mB",
+          "position": {
+            "x": 19,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "B1GtBtr1mH": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Fires update of LCD display on incoming value change while `ACT` is true.",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1GtBtr1mH",
+          "position": {
+            "x": 22,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "BJ_wGEBJ7r": {
+          "boundLiterals": {
+            "BJ-JCKXJmr": "20",
+            "rJxy0YmkXS": "4"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJ_wGEBJ7r",
+          "position": {
+            "x": 0,
+            "y": 5
+          },
+          "type": "@/text-lcd-parallel-device",
+          "@@type": "xod-project/Node"
+        },
+        "BkBwM4Hy7H": {
+          "boundLiterals": {},
+          "description": "Board GPIO port with LCD RS pin",
+          "label": "RS",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkBwM4Hy7H",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "BkCwMES17B": {
+          "boundLiterals": {},
+          "description": "Fires when write is done",
+          "label": "ACK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkCwMES17B",
+          "position": {
+            "x": 9,
+            "y": 7
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "BkUKBFry7r": {
+          "boundLiterals": {},
+          "description": "Text for the second line",
+          "label": "L2",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkUKBFry7r",
+          "position": {
+            "x": 13,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "H1GwG4SJmH": {
+          "boundLiterals": {},
+          "description": "Board GPIO port with LCD D6 pin",
+          "label": "D6",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1GwG4SJmH",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "H1NYHYHy7S": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1NYHYHy7S",
+          "position": {
+            "x": 22,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/to-bus",
+          "@@type": "xod-project/Node"
+        },
+        "H1YKBYSkXS": {
+          "boundLiterals": {
+            "Sk4Kl0RT4": "\"ERR\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1YKBYSkXS",
+          "position": {
+            "x": 10,
+            "y": 1
+          },
+          "type": "xod/core/if-error",
+          "@@type": "xod-project/Node"
+        },
+        "H1tSFHJmr": {
+          "boundLiterals": {},
+          "description": "Text for the first line",
+          "label": "L1",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1tSFHJmr",
+          "position": {
+            "x": 10,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "HJYFXAZmS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJYFXAZmS",
+          "position": {
+            "x": 24,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/jumper",
+          "@@type": "xod-project/Node"
+        },
+        "HkcRXNBkQH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkcRXNBkQH",
+          "position": {
+            "x": 26,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "HkstHtHy7S": {
+          "boundLiterals": {
+            "Sk4Kl0RT4": "\"ERR\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkstHtHy7S",
+          "position": {
+            "x": 16,
+            "y": 1
+          },
+          "type": "xod/core/if-error",
+          "@@type": "xod-project/Node"
+        },
+        "Hy9tBtHkmB": {
+          "boundLiterals": {
+            "Sk4Kl0RT4": "\"ERR\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hy9tBtHkmB",
+          "position": {
+            "x": 13,
+            "y": 1
+          },
+          "type": "xod/core/if-error",
+          "@@type": "xod-project/Node"
+        },
+        "S14DMESymH": {
+          "boundLiterals": {},
+          "description": "Board GPIO port with LCD EN pin",
+          "label": "EN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S14DMESymH",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "S1N0mEBymB": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1N0mEBymB",
+          "position": {
+            "x": 31,
+            "y": 4
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "S1QC7ErymS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1QC7ErymS",
+          "position": {
+            "x": 25,
+            "y": 4
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "S1ZFBtBkmB": {
+          "boundLiterals": {},
+          "description": "Text for the third line",
+          "label": "L3",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1ZFBtBkmB",
+          "position": {
+            "x": 16,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "S1eDzVBkmr": {
+          "boundLiterals": {},
+          "description": "Board GPIO port with LCD D4 pin",
+          "label": "D4",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1eDzVBkmr",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "S1lMDXAZmH": {
+          "boundLiterals": {
+            "Bk4KSSrxXr": "3"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1lMDXAZmH",
+          "position": {
+            "x": 26,
+            "y": 5
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        },
+        "SJnKSKrJQS": {
+          "boundLiterals": {
+            "Sk4Kl0RT4": "\"ERR\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJnKSKrJQS",
+          "position": {
+            "x": 19,
+            "y": 1
+          },
+          "type": "xod/core/if-error",
+          "@@type": "xod-project/Node"
+        },
+        "SkRmNSJQB": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkRmNSJQB",
+          "position": {
+            "x": 13,
+            "y": 4
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "SkxCmVrkQS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkxCmVrkQS",
+          "position": {
+            "x": 19,
+            "y": 4
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "SyXPzErk7H": {
+          "boundLiterals": {},
+          "description": "Board GPIO port with LCD D5 pin",
+          "label": "D5",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyXPzErk7H",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "Syg9XCbmH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Syg9XCbmH",
+          "position": {
+            "x": 30,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/jumper",
+          "@@type": "xod-project/Node"
+        },
+        "SytAX4SJ7B": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SytAX4SJ7B",
+          "position": {
+            "x": 32,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "r1gjUXRWmS": {
+          "boundLiterals": {
+            "Bk4KSSrxXr": "1"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1gjUXRWmS",
+          "position": {
+            "x": 14,
+            "y": 5
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        },
+        "r1i074H1Qr": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1i074H1Qr",
+          "position": {
+            "x": 20,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "r1pDzNBJmH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 3,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1pDzNBJmH",
+          "position": {
+            "x": 9,
+            "y": 6
+          },
+          "type": "xod/core/any",
+          "@@type": "xod-project/Node"
+        },
+        "rJjL7RWQS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJjL7RWQS",
+          "position": {
+            "x": 8,
+            "y": 5
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        },
+        "rk-YXAbmr": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rk-YXAbmr",
+          "position": {
+            "x": 18,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/jumper",
+          "@@type": "xod-project/Node"
+        },
+        "rk3umRZ7B": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rk3umRZ7B",
+          "position": {
+            "x": 12,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/jumper",
+          "@@type": "xod-project/Node"
+        },
+        "ry8PzNS17B": {
+          "boundLiterals": {},
+          "description": "Board GPIO port with LCD D7 pin",
+          "label": "D7",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ry8PzNS17B",
+          "position": {
+            "x": 5,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "ryhAXEHy7r": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryhAXEHy7r",
+          "position": {
+            "x": 14,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "ryzvmR-QH": {
+          "boundLiterals": {
+            "Bk4KSSrxXr": "2"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryzvmR-QH",
+          "position": {
+            "x": 20,
+            "y": 5
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B16qQRbmr": {
+          "id": "B16qQRbmr",
+          "input": {
+            "nodeId": "ryzvmR-QH",
+            "pinKey": "SJKHrSeQH"
+          },
+          "output": {
+            "nodeId": "S1QC7ErymS",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "B1AYrFB1mB": {
+          "id": "B1AYrFB1mB",
+          "input": {
+            "nodeId": "SJnKSKrJQS",
+            "pinKey": "S1XteAATV"
+          },
+          "output": {
+            "nodeId": "B1BYHFS1mB",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJ15XAWQS": {
+          "id": "BJ15XAWQS",
+          "input": {
+            "nodeId": "HJYFXAZmS",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HkstHtHy7S",
+            "pinKey": "BkV5xRCpE"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJflPGVHJmS": {
+          "id": "BJflPGVHJmS",
+          "input": {
+            "nodeId": "BJ_wGEBJ7r",
+            "pinKey": "Syb0J5XymB"
+          },
+          "output": {
+            "nodeId": "SyXPzErk7H",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ByR5XA-Xr": {
+          "id": "ByR5XA-Xr",
+          "input": {
+            "nodeId": "S1lMDXAZmH",
+            "pinKey": "SJKHrSeQH"
+          },
+          "output": {
+            "nodeId": "S1N0mEBymB",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H14ZCmVr1QB": {
+          "id": "H14ZCmVr1QB",
+          "input": {
+            "nodeId": "S1N0mEBymB",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "SytAX4SJ7B",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1EwQ0-mB": {
+          "id": "H1EwQ0-mB",
+          "input": {
+            "nodeId": "ryzvmR-QH",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "r1gjUXRWmS",
+            "pinKey": "BygFrrHgXr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1NevfEry7S": {
+          "id": "H1NevfEry7S",
+          "input": {
+            "nodeId": "BJ_wGEBJ7r",
+            "pinKey": "rJ4Ayq7ymH"
+          },
+          "output": {
+            "nodeId": "ry8PzNS17B",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1UiXC-mH": {
+          "id": "H1UiXC-mH",
+          "input": {
+            "nodeId": "r1pDzNBJmH",
+            "pinKey": "ByU7LRuSPkW-$2"
+          },
+          "output": {
+            "nodeId": "S1lMDXAZmH",
+            "pinKey": "S1zKHHSx7H"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1rgKrKrkQr": {
+          "id": "H1rgKrKrkQr",
+          "input": {
+            "nodeId": "H1YKBYSkXS",
+            "pinKey": "S1XteAATV"
+          },
+          "output": {
+            "nodeId": "H1tSFHJmr",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJRK7CWQB": {
+          "id": "HJRK7CWQB",
+          "input": {
+            "nodeId": "ryzvmR-QH",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "HJYFXAZmS",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJelwMNryQr": {
+          "id": "HJelwMNryQr",
+          "input": {
+            "nodeId": "BJ_wGEBJ7r",
+            "pinKey": "BJMRJqQ1Xr"
+          },
+          "output": {
+            "nodeId": "S14DMESymH",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJvcm0b7S": {
+          "id": "HJvcm0b7S",
+          "input": {
+            "nodeId": "S1lMDXAZmH",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "Syg9XCbmH",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkSZCXEryXH": {
+          "id": "HkSZCXEryXH",
+          "input": {
+            "nodeId": "S1QC7ErymS",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "HkcRXNBkQH",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkZiUXC-7r": {
+          "id": "HkZiUXC-7r",
+          "input": {
+            "nodeId": "r1gjUXRWmS",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "rJjL7RWQS",
+            "pinKey": "BygFrrHgXr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkaFm0WmB": {
+          "id": "HkaFm0WmB",
+          "input": {
+            "nodeId": "S1QC7ErymS",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "HJYFXAZmS",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HklD7Ab7B": {
+          "id": "HklD7Ab7B",
+          "input": {
+            "nodeId": "rJjL7RWQS",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "BJ_wGEBJ7r",
+            "pinKey": "Skzk0Fm1mH"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HyHYQR-Xr": {
+          "id": "HyHYQR-Xr",
+          "input": {
+            "nodeId": "r1gjUXRWmS",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "rk-YXAbmr",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S14t7RZXr": {
+          "id": "S14t7RZXr",
+          "input": {
+            "nodeId": "SkxCmVrkQS",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "rk-YXAbmr",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1PtXAW7B": {
+          "id": "S1PtXAW7B",
+          "input": {
+            "nodeId": "rk-YXAbmr",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Hy9tBtHkmB",
+            "pinKey": "BkV5xRCpE"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1XevfVSJmS": {
+          "id": "S1XevfVSJmS",
+          "input": {
+            "nodeId": "BJ_wGEBJ7r",
+            "pinKey": "H1e01q7kXr"
+          },
+          "output": {
+            "nodeId": "H1GwG4SJmH",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1zlYHtS1QB": {
+          "id": "S1zlYHtS1QB",
+          "input": {
+            "nodeId": "Hy9tBtHkmB",
+            "pinKey": "S1XteAATV"
+          },
+          "output": {
+            "nodeId": "BkUKBFry7r",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJMs70-7B": {
+          "id": "SJMs70-7B",
+          "input": {
+            "nodeId": "r1pDzNBJmH",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "r1gjUXRWmS",
+            "pinKey": "S1zKHHSx7H"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJkgwG4BJ7r": {
+          "id": "SJkgwG4BJ7r",
+          "input": {
+            "nodeId": "BJ_wGEBJ7r",
+            "pinKey": "r1X0y5XkQS"
+          },
+          "output": {
+            "nodeId": "BkBwM4Hy7H",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJnc7RZ7S": {
+          "id": "SJnc7RZ7S",
+          "input": {
+            "nodeId": "r1gjUXRWmS",
+            "pinKey": "SJKHrSeQH"
+          },
+          "output": {
+            "nodeId": "SkxCmVrkQS",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkVsmA-mS": {
+          "id": "SkVsmA-mS",
+          "input": {
+            "nodeId": "r1pDzNBJmH",
+            "pinKey": "ByU7LRuSPkW-$1"
+          },
+          "output": {
+            "nodeId": "ryzvmR-QH",
+            "pinKey": "S1zKHHSx7H"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Sy-gYHYSy7B": {
+          "id": "Sy-gYHYSy7B",
+          "input": {
+            "nodeId": "HkstHtHy7S",
+            "pinKey": "S1XteAATV"
+          },
+          "output": {
+            "nodeId": "S1ZFBtBkmB",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyT_70b7r": {
+          "id": "SyT_70b7r",
+          "input": {
+            "nodeId": "SkRmNSJQB",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "rk3umRZ7B",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1WMv7Cb7S": {
+          "id": "r1WMv7Cb7S",
+          "input": {
+            "nodeId": "S1lMDXAZmH",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "ryzvmR-QH",
+            "pinKey": "BygFrrHgXr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1WevMEHkXS": {
+          "id": "r1WevMEHkXS",
+          "input": {
+            "nodeId": "BJ_wGEBJ7r",
+            "pinKey": "B1Ak971XS"
+          },
+          "output": {
+            "nodeId": "S1eDzVBkmr",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1aKSKBJmr": {
+          "id": "r1aKSKBJmr",
+          "input": {
+            "nodeId": "H1NYHYHy7S",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "B1GtBtr1mH",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJDWRXErk7B": {
+          "id": "rJDWRXErk7B",
+          "input": {
+            "nodeId": "SkRmNSJQB",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "ryhAXEHy7r",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJI-R7NHkXS": {
+          "id": "rJI-R7NHkXS",
+          "input": {
+            "nodeId": "SkxCmVrkQS",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "r1i074H1Qr",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJU5QA-mS": {
+          "id": "rJU5QA-mS",
+          "input": {
+            "nodeId": "S1N0mEBymB",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "Syg9XCbmH",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJZsX0b7B": {
+          "id": "rJZsX0b7B",
+          "input": {
+            "nodeId": "r1pDzNBJmH",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "rJjL7RWQS",
+            "pinKey": "S1zKHHSx7H"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkOewz4SkQS": {
+          "id": "rkOewz4SkQS",
+          "input": {
+            "nodeId": "BkCwMES17B",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1pDzNBJmH",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkeFX0WmH": {
+          "id": "rkeFX0WmH",
+          "input": {
+            "nodeId": "rk3umRZ7B",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "H1YKBYSkXS",
+            "pinKey": "BkV5xRCpE"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rki5XRZQS": {
+          "id": "rki5XRZQS",
+          "input": {
+            "nodeId": "rJjL7RWQS",
+            "pinKey": "SJKHrSeQH"
+          },
+          "output": {
+            "nodeId": "SkRmNSJQB",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryJKQAZ7S": {
+          "id": "ryJKQAZ7S",
+          "input": {
+            "nodeId": "rJjL7RWQS",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "rk3umRZ7B",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryKcm0Z7H": {
+          "id": "ryKcm0Z7H",
+          "input": {
+            "nodeId": "Syg9XCbmH",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJnKSKrJQS",
+            "pinKey": "BkV5xRCpE"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/text-lcd-parallel-20x4",
+      "description": "Drives a text LCD screen with HD44780 chip.",
+      "attachments": []
+    },
+    "@/text-lcd-parallel-device": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1Ak971XS": {
+          "boundLiterals": {},
+          "description": "Board GPIO port with LCD D4 pin",
+          "label": "D4",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1Ak971XS",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "BJ-JCKXJmr": {
+          "boundLiterals": {
+            "__out__": "16"
+          },
+          "description": "",
+          "label": "COLS",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJ-JCKXJmr",
+          "position": {
+            "x": 12,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "BJMRJqQ1Xr": {
+          "boundLiterals": {},
+          "description": "Board GPIO port with LCD EN pin",
+          "label": "EN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJMRJqQ1Xr",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "H17kCK7J7B": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H17kCK7J7B",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "H1e01q7kXr": {
+          "boundLiterals": {},
+          "description": "Board GPIO port with LCD D6 pin",
+          "label": "D6",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1e01q7kXr",
+          "position": {
+            "x": 8,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "Skzk0Fm1mH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Skzk0Fm1mH",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-self",
+          "@@type": "xod-project/Node"
+        },
+        "Syb0J5XymB": {
+          "boundLiterals": {},
+          "description": "Board GPIO port with LCD D5 pin",
+          "label": "D5",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Syb0J5XymB",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "r1X0y5XkQS": {
+          "boundLiterals": {},
+          "description": "Board GPIO port with LCD RS pin",
+          "label": "RS",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1X0y5XkQS",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "rJ4Ayq7ymH": {
+          "boundLiterals": {},
+          "description": "Board GPIO port with LCD D7 pin",
+          "label": "D7",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJ4Ayq7ymH",
+          "position": {
+            "x": 10,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "rJxy0YmkXS": {
+          "boundLiterals": {
+            "__out__": "2"
+          },
+          "description": "",
+          "label": "ROWS",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJxy0YmkXS",
+          "position": {
+            "x": 14,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/text-lcd-parallel-device",
+      "description": "",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD error_raise enable\n\n#include <LiquidCrystal.h>\n\nnode {\n    meta {\n      struct Type {\n          LiquidCrystal* lcd;\n          uint8_t rows;\n          uint8_t cols;\n      };\n    }\n\n    static_assert(isValidDigitalPort(constant_input_RS), \"must be a valid digital port\");\n    static_assert(isValidDigitalPort(constant_input_EN), \"must be a valid digital port\");\n    static_assert(isValidDigitalPort(constant_input_D4), \"must be a valid digital port\");\n    static_assert(isValidDigitalPort(constant_input_D5), \"must be a valid digital port\");\n    static_assert(isValidDigitalPort(constant_input_D6), \"must be a valid digital port\");\n    static_assert(isValidDigitalPort(constant_input_D7), \"must be a valid digital port\");\n\n    LiquidCrystal lcd = LiquidCrystal(\n      constant_input_RS,\n      constant_input_EN,\n      constant_input_D4,\n      constant_input_D5,\n      constant_input_D6,\n      constant_input_D7\n    );\n\n    void evaluate(Context ctx) {\n        uint8_t rows = (uint8_t) getValue<input_ROWS>(ctx);\n        uint8_t cols = (uint8_t) getValue<input_COLS>(ctx);\n\n        Type t;\n        t.rows = rows;\n        t.cols = cols;\n        t.lcd = &lcd;\n        t.lcd->begin(t.cols, t.rows);\n\n        emitValue<output_DEV>(ctx, t);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/text-lcd-i2c-16x2": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1qTR4yQS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1qTR4yQS",
+          "position": {
+            "x": 2,
+            "y": 4
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "BJ3DAE1QS": {
+          "boundLiterals": {},
+          "description": "Text for the first line",
+          "label": "L1",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJ3DAE1QS",
+          "position": {
+            "x": 5,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "Bk4L0VkXS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bk4L0VkXS",
+          "position": {
+            "x": 8,
+            "y": 4
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "H1AidryXr": {
+          "boundLiterals": {
+            "Sk4Kl0RT4": "\"ERR\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1AidryXr",
+          "position": {
+            "x": 5,
+            "y": 1
+          },
+          "type": "xod/core/if-error",
+          "@@type": "xod-project/Node"
+        },
+        "Hki5BaWQr": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hki5BaWQr",
+          "position": {
+            "x": 3,
+            "y": 5
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        },
+        "HkiR4bB1Xr": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkiR4bB1Xr",
+          "position": {
+            "x": 15,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "HyJRS6W7H": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyJRS6W7H",
+          "position": {
+            "x": 13,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/jumper",
+          "@@type": "xod-project/Node"
+        },
+        "HyvAEWS17H": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyvAEWS17H",
+          "position": {
+            "x": 9,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "S1tAEZB1QH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1tAEZB1QH",
+          "position": {
+            "x": 3,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "SJRKAVkmH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJRKAVkmH",
+          "position": {
+            "x": -3,
+            "y": 5
+          },
+          "type": "@/text-lcd-i2c-device",
+          "@@type": "xod-project/Node"
+        },
+        "Skb2DR4JQS": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Fires update of LCD display on incoming value change while `ACT` is true.",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Skb2DR4JQS",
+          "position": {
+            "x": 11,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "SkjaR41QH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkjaR41QH",
+          "position": {
+            "x": 14,
+            "y": 4
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "SynRH6bmH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SynRH6bmH",
+          "position": {
+            "x": 1,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/jumper",
+          "@@type": "xod-project/Node"
+        },
+        "SytpB6WXr": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SytpB6WXr",
+          "position": {
+            "x": 7,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/jumper",
+          "@@type": "xod-project/Node"
+        },
+        "r1nU1SkXS": {
+          "boundLiterals": {},
+          "description": "Fires when write is done",
+          "label": "ACK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1nU1SkXS",
+          "position": {
+            "x": 3,
+            "y": 7
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rJgnw0417B": {
+          "boundLiterals": {},
+          "description": "Text for the second line",
+          "label": "L2",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJgnw0417B",
+          "position": {
+            "x": 8,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "rJpoBT-Qr": {
+          "boundLiterals": {
+            "Bk4KSSrxXr": "1"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJpoBT-Qr",
+          "position": {
+            "x": 9,
+            "y": 5
+          },
+          "type": "@/print-at",
+          "@@type": "xod-project/Node"
+        },
+        "rJv0REyXS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJv0REyXS",
+          "position": {
+            "x": 0,
+            "y": 5
+          },
+          "type": "@/set-backlight",
+          "@@type": "xod-project/Node"
+        },
+        "rkedCVkXS": {
+          "boundLiterals": {
+            "__out__": "27h"
+          },
+          "description": "I²C address of the expander chip.",
+          "label": "ADDR",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkedCVkXS",
+          "position": {
+            "x": -3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "rySRNZHJmH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rySRNZHJmH",
+          "position": {
+            "x": 11,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/to-bus",
+          "@@type": "xod-project/Node"
+        },
+        "rySRdBkQB": {
+          "boundLiterals": {
+            "Sk4Kl0RT4": "\"ERR\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rySRdBkQB",
+          "position": {
+            "x": 8,
+            "y": 1
+          },
+          "type": "xod/core/if-error",
+          "@@type": "xod-project/Node"
+        },
+        "rya8CVyXS": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Backlight enable/disable",
+          "label": "BL",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rya8CVyXS",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "ryeI1SJXB": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 2,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryeI1SJXB",
+          "position": {
+            "x": 3,
+            "y": 6
+          },
+          "type": "xod/core/any",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B12CEbBymr": {
+          "id": "B12CEbBymr",
+          "input": {
+            "nodeId": "SkjaR41QH",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "HkiR4bB1Xr",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "B15pHTWmH": {
+          "id": "B15pHTWmH",
+          "input": {
+            "nodeId": "Bk4L0VkXS",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "SytpB6WXr",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "B1W9AVJmB": {
+          "id": "B1W9AVJmB",
+          "input": {
+            "nodeId": "SJRKAVkmH",
+            "pinKey": "Sy3aTyCzS"
+          },
+          "output": {
+            "nodeId": "rkedCVkXS",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJyJ8pZmH": {
+          "id": "BJyJ8pZmH",
+          "input": {
+            "nodeId": "B1qTR4yQS",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "SynRH6bmH",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ByoP1r17H": {
+          "id": "ByoP1r17H",
+          "input": {
+            "nodeId": "r1nU1SkXS",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ryeI1SJXB",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Byp9S6WQr": {
+          "id": "Byp9S6WQr",
+          "input": {
+            "nodeId": "Hki5BaWQr",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "rJv0REyXS",
+            "pinKey": "HJnQJbCfr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1ERSpWXr": {
+          "id": "H1ERSpWXr",
+          "input": {
+            "nodeId": "HyJRS6W7H",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rySRdBkQB",
+            "pinKey": "BkV5xRCpE"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1PC_HkmB": {
+          "id": "H1PC_HkmB",
+          "input": {
+            "nodeId": "rySRdBkQB",
+            "pinKey": "S1XteAATV"
+          },
+          "output": {
+            "nodeId": "rJgnw0417B",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJICNZBJ7S": {
+          "id": "HJICNZBJ7S",
+          "input": {
+            "nodeId": "rySRNZHJmH",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Skb2DR4JQS",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJOCNZry7B": {
+          "id": "HJOCNZry7B",
+          "input": {
+            "nodeId": "Bk4L0VkXS",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "HyvAEWS17H",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkTJ8TbQS": {
+          "id": "HkTJ8TbQS",
+          "input": {
+            "nodeId": "ryeI1SJXB",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "Hki5BaWQr",
+            "pinKey": "S1zKHHSx7H"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkxkL6b7r": {
+          "id": "HkxkL6b7r",
+          "input": {
+            "nodeId": "rJv0REyXS",
+            "pinKey": "Sk8kkWAfS"
+          },
+          "output": {
+            "nodeId": "SynRH6bmH",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hy9CEWHymH": {
+          "id": "Hy9CEWHymH",
+          "input": {
+            "nodeId": "B1qTR4yQS",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "S1tAEZB1QH",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hy9TOry7B": {
+          "id": "Hy9TOry7B",
+          "input": {
+            "nodeId": "H1AidryXr",
+            "pinKey": "S1XteAATV"
+          },
+          "output": {
+            "nodeId": "BJ3DAE1QS",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HyFCRVJmB": {
+          "id": "HyFCRVJmB",
+          "input": {
+            "nodeId": "rJv0REyXS",
+            "pinKey": "BJg11ZRzB"
+          },
+          "output": {
+            "nodeId": "SJRKAVkmH",
+            "pinKey": "rJZSQgAfS"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HyRiraZ7H": {
+          "id": "HyRiraZ7H",
+          "input": {
+            "nodeId": "rJpoBT-Qr",
+            "pinKey": "SJKHrSeQH"
+          },
+          "output": {
+            "nodeId": "SkjaR41QH",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HynyU6ZXS": {
+          "id": "HynyU6ZXS",
+          "input": {
+            "nodeId": "rJpoBT-Qr",
+            "pinKey": "r1StrSrl7S"
+          },
+          "output": {
+            "nodeId": "Hki5BaWQr",
+            "pinKey": "BygFrrHgXr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S17LJByQB": {
+          "id": "S17LJByQB",
+          "input": {
+            "nodeId": "ryeI1SJXB",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "rJv0REyXS",
+            "pinKey": "S1Y8yWRGr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJ1jH6ZXS": {
+          "id": "SJ1jH6ZXS",
+          "input": {
+            "nodeId": "Hki5BaWQr",
+            "pinKey": "SJKHrSeQH"
+          },
+          "output": {
+            "nodeId": "Bk4L0VkXS",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJ7JL6-QS": {
+          "id": "SJ7JL6-QS",
+          "input": {
+            "nodeId": "SynRH6bmH",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rya8CVyXS",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Sk2aHpb7S": {
+          "id": "Sk2aHpb7S",
+          "input": {
+            "nodeId": "Hki5BaWQr",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "SytpB6WXr",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkAyUpZmS": {
+          "id": "SkAyUpZmS",
+          "input": {
+            "nodeId": "ryeI1SJXB",
+            "pinKey": "ByU7LRuSPkW-$1"
+          },
+          "output": {
+            "nodeId": "rJpoBT-Qr",
+            "pinKey": "S1zKHHSx7H"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyXCHp-mr": {
+          "id": "SyXCHp-mr",
+          "input": {
+            "nodeId": "rJpoBT-Qr",
+            "pinKey": "rJ-trBSlmB"
+          },
+          "output": {
+            "nodeId": "HyJRS6W7H",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkMAB6WXH": {
+          "id": "rkMAB6WXH",
+          "input": {
+            "nodeId": "SkjaR41QH",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "HyJRS6W7H",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkpTraWXB": {
+          "id": "rkpTraWXB",
+          "input": {
+            "nodeId": "SytpB6WXr",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "H1AidryXr",
+            "pinKey": "BkV5xRCpE"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryoARNk7r": {
+          "id": "ryoARNk7r",
+          "input": {
+            "nodeId": "rJv0REyXS",
+            "pinKey": "SJbIkb0zr"
+          },
+          "output": {
+            "nodeId": "B1qTR4yQS",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/text-lcd-i2c-16x2",
+      "description": "A quick-start node drives a text LCD screen with a PCF8574 or PCA8574 I²C expander module. Usually have a value in range 0x20-0x27 or 0x38-0x3F. Consult LCD/expander documentation to know the exact value.",
+      "attachments": []
+    }
+  },
+  "authors": [],
+  "license": "AGPL-3.0",
+  "version": "0.37.3",
+  "description": "Nodes to drive a common text liquid crystal displays with I²C or parallel interfaces.",
+  "apiKey": "",
+  "name": "text-lcd"
+}

@@ -1,0 +1,461 @@
+{
+  "patches": {
+    "@/render": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJblG9nrGU": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJblG9nrGU",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "BJgmVh-7I": {
+          "boundLiterals": {},
+          "description": "Triggers a new rendering process.",
+          "label": "DO",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJgmVh-7I",
+          "position": {
+            "x": 4,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Bygxm4h-mL": {
+          "boundLiterals": {},
+          "description": "Pulses when the rendering process is done.",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bygxm4h-mL",
+          "position": {
+            "x": 3,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HJ6Zd_J8L": {
+          "boundLiterals": {},
+          "description": "The display device.",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJ6Zd_J8L",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "@/input-ssd1306-128x64-i2c-device",
+          "@@type": "xod-project/Node"
+        },
+        "Sk-lm42W7I": {
+          "boundLiterals": {},
+          "description": "A tree of graphic elements created using the xod/graphics library.",
+          "label": "GFX",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk-lm42W7I",
+          "position": {
+            "x": 3,
+            "y": 1
+          },
+          "type": "xod/graphics/input-graphics",
+          "@@type": "xod-project/Node"
+        },
+        "ryqMOOkLI": {
+          "boundLiterals": {},
+          "description": "The display device.",
+          "label": "DEV'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryqMOOkLI",
+          "position": {
+            "x": 2,
+            "y": 3
+          },
+          "type": "@/output-ssd1306-128x64-i2c-device",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/render",
+      "description": "Renders a tree of graphic elements and display them on the device.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    void evaluate(Context ctx) {\n        auto dev = getValue<input_DEV>(ctx);\n\n        if (isSettingUp())\n            emitValue<output_DEVU0027>(ctx, dev);\n\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        auto gfx = getValue<input_GFX>(ctx);\n\n        if (gfx) {\n            gfx->render(dev);\n            dev->sendBuffer();\n        }\n\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/ssd1306-128x64-i2c": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1ls-83WmL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1ls-83WmL",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "HJSlIn-QI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJSlIn-QI",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "@/ssd1306-128x64-i2c-device",
+          "@@type": "xod-project/Node"
+        },
+        "HksZIhWQI": {
+          "boundLiterals": {},
+          "description": "A tree of graphic elements created using the xod/graphics library.",
+          "label": "GFX",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HksZIhWQI",
+          "position": {
+            "x": 5,
+            "y": -1
+          },
+          "type": "xod/graphics/input-graphics",
+          "@@type": "xod-project/Node"
+        },
+        "HyVi-I2b78": {
+          "boundLiterals": {},
+          "description": "Pulses to acknowledge changes in the tree of graphic elements.",
+          "label": "ACK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyVi-I2b78",
+          "position": {
+            "x": 5,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "S1de82bm8": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1de82bm8",
+          "position": {
+            "x": 4,
+            "y": 1
+          },
+          "type": "@/render",
+          "@@type": "xod-project/Node"
+        },
+        "SJfsbI2bX8": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Makes the display react to incoming changes in a tree of graphic elements while `ACT` is true.",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJfsbI2bX8",
+          "position": {
+            "x": 7,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "SkuSL3WXU": {
+          "boundLiterals": {
+            "__out__": "3Ch"
+          },
+          "description": "I²C address. 3Ch by default.",
+          "label": "ADDR",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkuSL3WXU",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "ryVVL2Z78": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "I2C",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryVVL2Z78",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/i2c/input-i2c",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B1Xz8hZmU": {
+          "id": "B1Xz8hZmU",
+          "input": {
+            "nodeId": "S1de82bm8",
+            "pinKey": "BJgmVh-7I"
+          },
+          "output": {
+            "nodeId": "B1ls-83WmL",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJP9L2ZQU": {
+          "id": "BJP9L2ZQU",
+          "input": {
+            "nodeId": "HJSlIn-QI",
+            "pinKey": "SJRYLhZmU"
+          },
+          "output": {
+            "nodeId": "SkuSL3WXU",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkeN_ukLL": {
+          "id": "BkeN_ukLL",
+          "input": {
+            "nodeId": "S1de82bm8",
+            "pinKey": "HJ6Zd_J8L"
+          },
+          "output": {
+            "nodeId": "HJSlIn-QI",
+            "pinKey": "HyzldOJI8"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJ9sWIhZXI": {
+          "id": "HJ9sWIhZXI",
+          "input": {
+            "nodeId": "B1ls-83WmL",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "SJfsbI2bX8",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJjE83bQU": {
+          "id": "HJjE83bQU",
+          "input": {
+            "nodeId": "HJSlIn-QI",
+            "pinKey": "By5FY7hsS"
+          },
+          "output": {
+            "nodeId": "ryVVL2Z78",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkFM8h-mU": {
+          "id": "SkFM8h-mU",
+          "input": {
+            "nodeId": "HyVi-I2b78",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "S1de82bm8",
+            "pinKey": "Bygxm4h-mL"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyrG83bXU": {
+          "id": "SyrG83bXU",
+          "input": {
+            "nodeId": "S1de82bm8",
+            "pinKey": "Sk-lm42W7I"
+          },
+          "output": {
+            "nodeId": "HksZIhWQI",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1PjZ8h-QI": {
+          "id": "r1PjZ8h-QI",
+          "input": {
+            "nodeId": "B1ls-83WmL",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "HksZIhWQI",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/ssd1306-128x64-i2c",
+      "description": "A quick-start node drives an SSD1306 based monochrome 128x64 TFT LCD connected through an I2C interface.",
+      "attachments": []
+    },
+    "@/ssd1306-128x64-i2c-device": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "By5FY7hsS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "I2C",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "By5FY7hsS",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/i2c/input-i2c",
+          "@@type": "xod-project/Node"
+        },
+        "Hkg4W34xjS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hkg4W34xjS",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "HyzldOJI8": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyzldOJI8",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-self",
+          "@@type": "xod-project/Node"
+        },
+        "SJRYLhZmU": {
+          "boundLiterals": {
+            "__out__": "3Ch"
+          },
+          "description": "I²C address. 3Ch by default.",
+          "label": "ADDR",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJRYLhZmU",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/ssd1306-128x64-i2c-device",
+      "description": "Device node for an SSD1306 based monochrome 128x64  TFT LCD connected through an I2C interface. ",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#include <SSD1306.h>\n\nnode {\n    meta {\n        using Type = SSD1306*;\n    }\n\n    uint8_t mem[sizeof(SSD1306)];\n    uint8_t buffer[SSD1306_DISPLAY_WIDTH * SSD1306_DISPLAY_HEIGHT / 8];\n\n    void evaluate(Context ctx) {\n        if (!isSettingUp())\n            return;\n\n        auto i2c = getValue<input_I2C>(ctx);\n        uint8_t addr = getValue<input_ADDR>(ctx);\n\n        if (addr > 127) {\n            raiseError(ctx);\n            return;\n        }\n\n        Type dev = new (mem) SSD1306(i2c, addr, buffer);\n\n    dev->begin();\n    dev->clearScreen();\n    dev->sendBuffer();\n\n        emitValue<output_DEV>(ctx, dev);\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "authors": [],
+  "license": "AGPL-3.0",
+  "version": "0.37.3",
+  "description": "Nodes to drive SD1306-based monochrome LCDs with I2C interface.",
+  "apiKey": "",
+  "name": "ssd1306-display"
+}

@@ -1,0 +1,81 @@
+{
+  "description": "Random Node only for WEMOS-D1_Mini Board.\nGenerates pseudo-random numbers in range [0; 1). Uses a linear congruential generator algorithm.",
+  "license": "AGPL-3",
+  "name": "random-wemos-d1",
+  "patches": {
+    "@/random-wemos-d1": {
+      "attachments": [
+        {
+          "content": "\n{{#global}}\n#include <limits.h>\n{{/global}}\n\nusing State = unsigned int;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    unsigned int* seedp = getState(ctx);\n    if (isInputDirty<input_RST>(ctx))\n        *seedp = (unsigned int)(getValue<input_SEED>(ctx) * ULONG_MAX);\n\n    if (isInputDirty<input_UPD>(ctx)) {\n        int rnd = rand_r(seedp);\n        emitValue<output_OUT>(ctx, (Number)rnd / ((Number)RAND_MAX + 1.0));\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "ByPb4dU0I": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers output update, that is generates the next pseudo-random number.",
+          "id": "ByPb4dU0I",
+          "label": "UPD",
+          "position": {
+            "x": -7,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HJeDZ4dUR8": {
+          "id": "HJeDZ4dUR8",
+          "position": {
+            "x": -9,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HkQPZVuIR8": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "A new seed value for the generator in range [0; 1]. Used only on `RST` pulse.",
+          "id": "HkQPZVuIR8",
+          "label": "SEED",
+          "position": {
+            "x": -9,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HkWD-VdI0I": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Initializes the generator with a new `SEED` value. You should initialize with a truly random value at least once (usually on boot), otherwise you’ll get the same number sequence on each program run.",
+          "id": "HkWD-VdI0I",
+          "label": "RST",
+          "position": {
+            "x": -8,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJGv-4d8CU": {
+          "description": "The last pseudo-random value in range [0; 1)",
+          "id": "SJGv-4d8CU",
+          "position": {
+            "x": -9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/random-wemos-d1"
+    }
+  },
+  "version": "1.0.0"
+}

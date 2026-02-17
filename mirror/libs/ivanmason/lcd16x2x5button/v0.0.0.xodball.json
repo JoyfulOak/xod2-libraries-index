@@ -1,0 +1,2454 @@
+{
+  "description": "This has node for outputing one line of text and a node for reading a 5 button keypad also nodes for moving the cursor ",
+  "name": "lcd16x2x5button",
+  "patches": {
+    "@/lcd16x2": {
+      "attachments": [
+        {
+          "content": "{{#global}}\n#include <LiquidCrystal.h>\n{{/global}}\n\nusing Type = LiquidCrystal*;\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n     if (isInputDirty<input_UPD>(ctx)){\n         auto lcd = new LiquidCrystal(\n            (int)getValue<input_RS>(ctx),\n            (int)getValue<input_EN>(ctx),\n            (int)getValue<input_D4>(ctx),\n            (int)getValue<input_D5>(ctx),\n            (int)getValue<input_D6>(ctx),\n            (int)getValue<input_D7>(ctx));\n\n        lcd->begin(16, 2);\n        emitValue<output_DEV>(ctx,lcd);\n        emitValue<output_DONE>(ctx, 1);\n    }\n    \n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Configures board peripherals to start\nlcd\n \n",
+      "nodes": {
+        "H16r-MhKN": {
+          "id": "H16r-MhKN",
+          "label": "DONE",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "H1S2kf3F4": {
+          "id": "H1S2kf3F4",
+          "label": "D4",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HJo3kz2KV": {
+          "id": "HJo3kz2KV",
+          "label": "D5",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HJpiyz2YE": {
+          "id": "HJpiyz2YE",
+          "label": "EN",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "S1La1f3YV": {
+          "id": "S1La1f3YV",
+          "label": "D7",
+          "position": {
+            "x": 14,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SJx81fnFE": {
+          "id": "SJx81fnFE",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rkQVkM2KE": {
+          "id": "rkQVkM2KE",
+          "label": "DEV",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "rka8WMnF4": {
+          "id": "rka8WMnF4",
+          "label": "UPD",
+          "position": {
+            "x": 16,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkb6kf3tV": {
+          "id": "rkb6kf3tV",
+          "label": "D6",
+          "position": {
+            "x": 12,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "ryUjkMnF4": {
+          "id": "ryUjkMnF4",
+          "label": "RS",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        }
+      },
+      "path": "@/lcd16x2"
+    },
+    "@/lcd16x2cursor": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    emitValue<output_DEVU0027>(ctx, getValue<input_DEV>(ctx));\n    \n    if (isInputDirty<input_UPD>(ctx)){\n        auto lcd = getValue<input_DEV>(ctx);\n        lcd->setCursor(getValue<input_Cx>(ctx), getValue<input_Cy>(ctx));\n        if(getValue<input_CUR>(ctx)){\n            lcd->cursor();\n        }\n        else {\n            lcd->noCursor();\n        }\n        \n        if(getValue<input_BLINK>(ctx)){\n            lcd->blink();\n        }\n        else {lcd->noBlink();}\n\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1-4YP2FE": {
+          "description": "Cursor Position Y\n0 or 1",
+          "id": "B1-4YP2FE",
+          "label": "Cy",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "B1hwXP3FN": {
+          "id": "B1hwXP3FN",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Bk4IXDnYE": {
+          "description": "True For Blinking False For Not Blinking\n",
+          "id": "Bk4IXDnYE",
+          "label": "BLINK",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "H1cQFvnFV": {
+          "description": "Cursor Position X\n0 to 15",
+          "id": "H1cQFvnFV",
+          "label": "Cx",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJUyVOhKV": {
+          "description": "True cursor on and False for cursor \noff",
+          "id": "HJUyVOhKV",
+          "label": "CUR",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "S1_NQDhtE": {
+          "description": "Lcd Objected",
+          "id": "S1_NQDhtE",
+          "label": "DEV",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lcd16x2"
+        },
+        "S1l9Bv3KN": {
+          "description": "Trigger When Done",
+          "id": "S1l9Bv3KN",
+          "label": "DONE",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SkREmPhYE": {
+          "description": "Lcd Objected",
+          "id": "SkREmPhYE",
+          "label": "DEV'",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-lcd16x2"
+        },
+        "ryTH7w2YN": {
+          "description": "Trigger to Output Cursor",
+          "id": "ryTH7w2YN",
+          "label": "UPD",
+          "position": {
+            "x": 13,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/lcd16x2cursor"
+    },
+    "@/lcd16x2print": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n\n    emitValue<output_DEVU0027>(ctx, getValue<input_DEV>(ctx));\n    \n    if (isInputDirty<input_UPD>(ctx)){\n        auto lcd = getValue<input_DEV>(ctx);\n        \n        auto text = getValue<input_TEXT>(ctx);\n                \n        lcd->setCursor(getValue<input_Cx>(ctx), getValue<input_Cy>(ctx));\n        uint8_t whitespace = 16;\n        for (auto it = text.iterate(); it; ++it, --whitespace)\n        lcd->write(*it);\n\n        // Clear the rest of the line\n        while (whitespace--)\n            lcd->write(' ');\n        \n        emitValue<output_DONE>(ctx, 1); \n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BkQ5zm3K4": {
+          "description": "\n",
+          "id": "BkQ5zm3K4",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1nhpXnFE": {
+          "description": "Trigger to Output Text",
+          "id": "H1nhpXnFE",
+          "label": "UPD",
+          "position": {
+            "x": 13,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HJ9l-7nKN": {
+          "description": "Lcd Objected",
+          "id": "HJ9l-7nKN",
+          "label": "DEV",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-lcd16x2"
+        },
+        "HysWZm3FN": {
+          "description": "Lcd Objected",
+          "id": "HysWZm3FN",
+          "label": "DEV'",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-lcd16x2"
+        },
+        "HyzKsD3FE": {
+          "description": "Cursor Position Y\n0 or 1",
+          "id": "HyzKsD3FE",
+          "label": "Cy",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SktGWQnt4": {
+          "description": "Text To Write To LCD",
+          "id": "SktGWQnt4",
+          "label": "TEXT",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "r1tZuwnKE": {
+          "description": "Trigger When Done\n",
+          "id": "r1tZuwnKE",
+          "label": "DONE",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJ_OjvhK4": {
+          "description": "Cursor Position X\n0 to 16\n",
+          "id": "rJ_OjvhK4",
+          "label": "Cx",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/lcd16x2print"
+    },
+    "@/lcd5button": {
+      "links": {
+        "B1Oxsg9_hY4": {
+          "id": "B1Oxsg9_hY4",
+          "input": {
+            "nodeId": "Hyesx9u2FN",
+            "pinKey": "HJx50mkvz"
+          },
+          "output": {
+            "nodeId": "rkHig9_3KE",
+            "pinKey": "H12bIR_SPyZ"
+          }
+        },
+        "B1Vlie9_2tN": {
+          "id": "B1Vlie9_2tN",
+          "input": {
+            "nodeId": "Hyesx9u2FN",
+            "pinKey": "Bybo3pXywM"
+          },
+          "output": {
+            "nodeId": "rybjg5OnF4",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "Bkcxse9OhKE": {
+          "id": "Bkcxse9OhKE",
+          "input": {
+            "nodeId": "BJKoe9O2tE",
+            "pinKey": "HJx50mkvz"
+          },
+          "output": {
+            "nodeId": "rkHig9_3KE",
+            "pinKey": "H12bIR_SPyZ"
+          }
+        },
+        "Bkhgol5u2FN": {
+          "id": "Bkhgol5u2FN",
+          "input": {
+            "nodeId": "ByGil9_ht4",
+            "pinKey": "S1jhaXJvf"
+          },
+          "output": {
+            "nodeId": "B1ogq_2tE",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "Bkiq0CRFE": {
+          "id": "Bkiq0CRFE",
+          "input": {
+            "nodeId": "B1hix9unF4",
+            "pinKey": "SyKd0E2x-"
+          },
+          "output": {
+            "nodeId": "H1Ic0AAFE",
+            "pinKey": "__out__"
+          }
+        },
+        "BydpodhFN": {
+          "id": "BydpodhFN",
+          "input": {
+            "nodeId": "B1kTsdhY4",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "B1hix9unF4",
+            "pinKey": "BkGpcpcJQ"
+          }
+        },
+        "ByiligqOhKN": {
+          "id": "ByiligqOhKN",
+          "input": {
+            "nodeId": "Hyesx9u2FN",
+            "pinKey": "S1jhaXJvf"
+          },
+          "output": {
+            "nodeId": "Bkcigcu2KE",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "ByqXidhFV": {
+          "id": "ByqXidhFV",
+          "input": {
+            "nodeId": "rJsi9O3tE",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJKoe9O2tE",
+            "pinKey": "S1gs26myDM"
+          }
+        },
+        "H11-jl9u3FN": {
+          "id": "H11-jl9u3FN",
+          "input": {
+            "nodeId": "SyGlog5uhtV",
+            "pinKey": "S1jhaXJvf"
+          },
+          "output": {
+            "nodeId": "BJxesxcd2FN",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "H1Bbje9d2YN": {
+          "id": "H1Bbje9d2YN",
+          "input": {
+            "nodeId": "BJKoe9O2tE",
+            "pinKey": "S1jhaXJvf"
+          },
+          "output": {
+            "nodeId": "H1uoe5_3YE",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "H1e-se5unKV": {
+          "id": "H1e-se5unKV",
+          "input": {
+            "nodeId": "Sy6sl5dnFE",
+            "pinKey": "S1jhaXJvf"
+          },
+          "output": {
+            "nodeId": "HkPjlqO2YE",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "H1txslcd3t4": {
+          "id": "H1txslcd3t4",
+          "input": {
+            "nodeId": "B1hix9unF4",
+            "pinKey": "SkuhqCqym"
+          },
+          "output": {
+            "nodeId": "Skjoxcd3YE",
+            "pinKey": "__out__"
+          }
+        },
+        "HJXliecdnF4": {
+          "id": "HJXliecdnF4",
+          "input": {
+            "nodeId": "SyGlog5uhtV",
+            "pinKey": "Bybo3pXywM"
+          },
+          "output": {
+            "nodeId": "rk1ljgc_nF4",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "HJb-jequ2YV": {
+          "id": "HJb-jequ2YV",
+          "input": {
+            "nodeId": "SyGlog5uhtV",
+            "pinKey": "HJx50mkvz"
+          },
+          "output": {
+            "nodeId": "rkHig9_3KE",
+            "pinKey": "H12bIR_SPyZ"
+          }
+        },
+        "Hy8lixqOhFN": {
+          "id": "Hy8lixqOhFN",
+          "input": {
+            "nodeId": "ByGil9_ht4",
+            "pinKey": "Bybo3pXywM"
+          },
+          "output": {
+            "nodeId": "rJAsec_3FV",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "SJQEouhtN": {
+          "id": "SJQEouhtN",
+          "input": {
+            "nodeId": "H1r29uhKV",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SyGlog5uhtV",
+            "pinKey": "S1gs26myDM"
+          }
+        },
+        "Skrljgc_3FN": {
+          "id": "Skrljgc_3FN",
+          "input": {
+            "nodeId": "Sy6sl5dnFE",
+            "pinKey": "HJx50mkvz"
+          },
+          "output": {
+            "nodeId": "rkHig9_3KE",
+            "pinKey": "H12bIR_SPyZ"
+          }
+        },
+        "Sy07j_3YV": {
+          "id": "Sy07j_3YV",
+          "input": {
+            "nodeId": "Bkbn9dhFE",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ByGil9_ht4",
+            "pinKey": "S1gs26myDM"
+          }
+        },
+        "Syw4i_2YE": {
+          "id": "Syw4i_2YE",
+          "input": {
+            "nodeId": "H152cd3KV",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Hyesx9u2FN",
+            "pinKey": "S1gs26myDM"
+          }
+        },
+        "rJUE8JRKE": {
+          "id": "rJUE8JRKE",
+          "input": {
+            "nodeId": "rkHig9_3KE",
+            "pinKey": "BJlzICOSv1-"
+          },
+          "output": {
+            "nodeId": "B1hix9unF4",
+            "pinKey": "SyBtREhlW"
+          }
+        },
+        "rki4jOnYE": {
+          "id": "rki4jOnYE",
+          "input": {
+            "nodeId": "Bk1T5O3K4",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Sy6sl5dnFE",
+            "pinKey": "S1gs26myDM"
+          }
+        },
+        "rkzZjecdnYN": {
+          "id": "rkzZjecdnYN",
+          "input": {
+            "nodeId": "BJKoe9O2tE",
+            "pinKey": "Bybo3pXywM"
+          },
+          "output": {
+            "nodeId": "BJ-xsx5O2KN",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "ry6loe9O2YE": {
+          "id": "ry6loe9O2YE",
+          "input": {
+            "nodeId": "Sy6sl5dnFE",
+            "pinKey": "Bybo3pXywM"
+          },
+          "output": {
+            "nodeId": "r1Vsgq_hYE",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "rywxoe5uhtV": {
+          "id": "rywxoe5uhtV",
+          "input": {
+            "nodeId": "ByGil9_ht4",
+            "pinKey": "HJx50mkvz"
+          },
+          "output": {
+            "nodeId": "rkHig9_3KE",
+            "pinKey": "H12bIR_SPyZ"
+          }
+        }
+      },
+      "nodes": {
+        "B1hix9unF4": {
+          "id": "B1hix9unF4",
+          "label": "analog read",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/gpio/analog-read"
+        },
+        "B1kTsdhY4": {
+          "id": "B1kTsdhY4",
+          "label": "DONE",
+          "position": {
+            "x": 18,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "B1ogq_2tE": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "1.96"
+          },
+          "id": "B1ogq_2tE",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-number"
+        },
+        "BJ-xsx5O2KN": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "3.2"
+          },
+          "id": "BJ-xsx5O2KN",
+          "position": {
+            "x": 4,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-number"
+        },
+        "BJKoe9O2tE": {
+          "description": "pre-set value, can vary according to components (resistors)",
+          "id": "BJKoe9O2tE",
+          "label": "3.13",
+          "position": {
+            "x": 2,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "e/comparison/between"
+        },
+        "BJxesxcd2FN": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "0.40"
+          },
+          "id": "BJxesxcd2FN",
+          "position": {
+            "x": 9,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-number"
+        },
+        "Bk1T5O3K4": {
+          "id": "Bk1T5O3K4",
+          "label": "RIGHT",
+          "position": {
+            "x": 14,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "Bkbn9dhFE": {
+          "id": "Bkbn9dhFE",
+          "label": "LEFT",
+          "position": {
+            "x": 5,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "Bkcigcu2KE": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "1.20"
+          },
+          "id": "Bkcigcu2KE",
+          "position": {
+            "x": 12,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-number"
+        },
+        "ByGil9_ht4": {
+          "description": "pre-set value, can vary according to components (resistors)",
+          "id": "ByGil9_ht4",
+          "label": "2",
+          "position": {
+            "x": 5,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "e/comparison/between"
+        },
+        "H152cd3KV": {
+          "id": "H152cd3KV",
+          "label": "DOWN",
+          "position": {
+            "x": 11,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "H1Ic0AAFE": {
+          "id": "H1Ic0AAFE",
+          "label": "UPD",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1r29uhKV": {
+          "id": "H1r29uhKV",
+          "label": "UP",
+          "position": {
+            "x": 8,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "H1uoe5_3YE": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "3.00"
+          },
+          "id": "H1uoe5_3YE",
+          "position": {
+            "x": 3,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-number"
+        },
+        "HkPjlqO2YE": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "0"
+          },
+          "id": "HkPjlqO2YE",
+          "position": {
+            "x": 15,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-number"
+        },
+        "Hyesx9u2FN": {
+          "description": "pre-set value, can vary according to components (resistors)",
+          "id": "Hyesx9u2FN",
+          "label": "1.26",
+          "position": {
+            "x": 11,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "e/comparison/between"
+        },
+        "Skjoxcd3YE": {
+          "boundLiterals": {
+            "__out__": "A0"
+          },
+          "description": "ADC pin, read value",
+          "id": "Skjoxcd3YE",
+          "label": "PORTB",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Sy6sl5dnFE": {
+          "description": "pre-set value, can vary according to components (resistors)",
+          "id": "Sy6sl5dnFE",
+          "label": "0.00",
+          "position": {
+            "x": 14,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "e/comparison/between"
+        },
+        "SyGlog5uhtV": {
+          "description": "pre-set value, can vary according to components (resistors)",
+          "id": "SyGlog5uhtV",
+          "label": "0.49",
+          "position": {
+            "x": 8,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "e/comparison/between"
+        },
+        "r1Vsgq_hYE": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "0.05"
+          },
+          "id": "r1Vsgq_hYE",
+          "position": {
+            "x": 16,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-number"
+        },
+        "rJAsec_3FV": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "2.02"
+          },
+          "id": "rJAsec_3FV",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-number"
+        },
+        "rJsi9O3tE": {
+          "id": "rJsi9O3tE",
+          "label": "SELECT",
+          "position": {
+            "x": 2,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "rk1ljgc_nF4": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "0.55"
+          },
+          "id": "rk1ljgc_nF4",
+          "position": {
+            "x": 10,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-number"
+        },
+        "rkHig9_3KE": {
+          "boundLiterals": {
+            "HJCWLAdSwyW": "1",
+            "rkpbU0OrwyZ": "5"
+          },
+          "id": "rkHig9_3KE",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/math/map"
+        },
+        "rybjg5OnF4": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "1.30"
+          },
+          "id": "rybjg5OnF4",
+          "position": {
+            "x": 13,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-number"
+        }
+      },
+      "path": "@/lcd5button"
+    },
+    "@/main": {
+      "links": {
+        "B1HQtGk9E": {
+          "id": "B1HQtGk9E",
+          "input": {
+            "nodeId": "B1NJYzJ9E",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Skj6f2CF4",
+            "pinKey": "ryZtrjAKE"
+          }
+        },
+        "B1_XtRCKN": {
+          "id": "B1_XtRCKN",
+          "input": {
+            "nodeId": "BJ7zY00KN",
+            "pinKey": "H1nhpXnFE"
+          },
+          "output": {
+            "nodeId": "H1XT_0CtE",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "B1rotMJ9E": {
+          "id": "B1rotMJ9E",
+          "input": {
+            "nodeId": "ryUctMy94",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "B1py6iRYV",
+            "pinKey": "ryZtrjAKE"
+          }
+        },
+        "B1zWl1kqE": {
+          "id": "B1zWl1kqE",
+          "input": {
+            "nodeId": "rJEdSm3K4",
+            "pinKey": "H1nhpXnFE"
+          },
+          "output": {
+            "nodeId": "SJ8uykkq4",
+            "pinKey": "S1l9Bv3KN"
+          }
+        },
+        "BJ60r6CKV": {
+          "id": "BJ60r6CKV",
+          "input": {
+            "nodeId": "HyFt-XCYV",
+            "pinKey": "Bk4IXDnYE"
+          },
+          "output": {
+            "nodeId": "ryRjSaCFV",
+            "pinKey": "__out__"
+          }
+        },
+        "BJ6N5MJqV": {
+          "id": "BJ6N5MJqV",
+          "input": {
+            "nodeId": "SkT-9f1cN",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkOHWR0YV",
+            "pinKey": "SJUl8Aurv1W"
+          }
+        },
+        "BJE0VhCY4": {
+          "id": "BJE0VhCY4",
+          "input": {
+            "nodeId": "H10xWhAKE",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "rk4KiO3tN",
+            "pinKey": "B1kTsdhY4"
+          }
+        },
+        "BJKksX15N": {
+          "id": "BJKksX15N",
+          "input": {
+            "nodeId": "BJ6ceaCFN",
+            "pinKey": "S1ZOJ3RY4"
+          },
+          "output": {
+            "nodeId": "S1I6qQ154",
+            "pinKey": "__out__"
+          }
+        },
+        "BJTsjz1q4": {
+          "id": "BJTsjz1q4",
+          "input": {
+            "nodeId": "HklEv6RKN",
+            "pinKey": "HJ9l-7nKN"
+          },
+          "output": {
+            "nodeId": "BkEijGJ5N",
+            "pinKey": "__out__"
+          }
+        },
+        "BJa7Wc0KN": {
+          "id": "BJa7Wc0KN",
+          "input": {
+            "nodeId": "HJg7-90t4",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rk4KiO3tN",
+            "pinKey": "Bk1T5O3K4"
+          }
+        },
+        "BJtaE2AY4": {
+          "id": "BJtaE2AY4",
+          "input": {
+            "nodeId": "H10xWhAKE",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "Skj6f2CF4",
+            "pinKey": "SyEs3oAYN"
+          }
+        },
+        "BkQ9kyJqN": {
+          "id": "BkQ9kyJqN",
+          "input": {
+            "nodeId": "rJEdSm3K4",
+            "pinKey": "HJ9l-7nKN"
+          },
+          "output": {
+            "nodeId": "SJ8uykkq4",
+            "pinKey": "SkREmPhYE"
+          }
+        },
+        "BkVdu0RtV": {
+          "id": "BkVdu0RtV",
+          "input": {
+            "nodeId": "HkZU2D3YE",
+            "pinKey": "HJ9l-7nKN"
+          },
+          "output": {
+            "nodeId": "rJEdSm3K4",
+            "pinKey": "HysWZm3FN"
+          }
+        },
+        "ByQPWRAFE": {
+          "id": "ByQPWRAFE",
+          "input": {
+            "nodeId": "rkOHWR0YV",
+            "pinKey": "S1OlUAuBD1-"
+          },
+          "output": {
+            "nodeId": "S1cUb00KV",
+            "pinKey": "__out__"
+          }
+        },
+        "BySgmCRF4": {
+          "id": "BySgmCRF4",
+          "input": {
+            "nodeId": "Skj6f2CF4",
+            "pinKey": "ryKa7s0KE"
+          },
+          "output": {
+            "nodeId": "r1gAM0AK4",
+            "pinKey": "SyM2ATB-b"
+          }
+        },
+        "H14MW9AFV": {
+          "id": "H14MW9AFV",
+          "input": {
+            "nodeId": "ry4bZ5AYN",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rk4KiO3tN",
+            "pinKey": "Bkbn9dhFE"
+          }
+        },
+        "H1MAD6CFN": {
+          "id": "H1MAD6CFN",
+          "input": {
+            "nodeId": "HklEv6RKN",
+            "pinKey": "SktGWQnt4"
+          },
+          "output": {
+            "nodeId": "SJV6DpRYV",
+            "pinKey": "r1H_oipZb"
+          }
+        },
+        "H1SXWqAtV": {
+          "id": "H1SXWqAtV",
+          "input": {
+            "nodeId": "rJhMZ50KV",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rk4KiO3tN",
+            "pinKey": "H1r29uhKV"
+          }
+        },
+        "H1a1o71qN": {
+          "id": "H1a1o71qN",
+          "input": {
+            "nodeId": "r1fIgmk9N",
+            "pinKey": "S1ZOJ3RY4"
+          },
+          "output": {
+            "nodeId": "Hkp69X19N",
+            "pinKey": "__out__"
+          }
+        },
+        "HJ2DKGkc4": {
+          "id": "HJ2DKGkc4",
+          "input": {
+            "nodeId": "HyFt-XCYV",
+            "pinKey": "B1-4YP2FE"
+          },
+          "output": {
+            "nodeId": "SklGYGy9N",
+            "pinKey": "__out__"
+          }
+        },
+        "HJI0tAAYV": {
+          "id": "HJI0tAAYV",
+          "input": {
+            "nodeId": "rJpHqDhY4",
+            "pinKey": "S1_NQDhtE"
+          },
+          "output": {
+            "nodeId": "SkAutC0F4",
+            "pinKey": "HysWZm3FN"
+          }
+        },
+        "HJP2wfyqE": {
+          "id": "HJP2wfyqE",
+          "input": {
+            "nodeId": "S1G2PMJ5E",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJpHqDhY4",
+            "pinKey": "SkREmPhYE"
+          }
+        },
+        "HJ_yD0RFE": {
+          "id": "HJ_yD0RFE",
+          "input": {
+            "nodeId": "rk36LC0K4",
+            "pinKey": "S1OlUAuBD1-"
+          },
+          "output": {
+            "nodeId": "HJeyPCAY4",
+            "pinKey": "__out__"
+          }
+        },
+        "HJgCE20KN": {
+          "id": "HJgCE20KN",
+          "input": {
+            "nodeId": "H10xWhAKE",
+            "pinKey": "ByU7LRuSPkW-$1"
+          },
+          "output": {
+            "nodeId": "B1py6iRYV",
+            "pinKey": "SyEs3oAYN"
+          }
+        },
+        "HJhfIgXJ5V": {
+          "id": "HJhfIgXJ5V",
+          "input": {
+            "nodeId": "B1zGIxQyc4",
+            "pinKey": "S1OlUAuBD1-"
+          },
+          "output": {
+            "nodeId": "SkXfLxQy9V",
+            "pinKey": "__out__"
+          }
+        },
+        "HJjMUgQy54": {
+          "id": "HJjMUgQy54",
+          "input": {
+            "nodeId": "HyezIgQJ9E",
+            "pinKey": "H1nhpXnFE"
+          },
+          "output": {
+            "nodeId": "B1zGIxQyc4",
+            "pinKey": "SJUl8Aurv1W"
+          }
+        },
+        "HkPtFQ19E": {
+          "id": "HkPtFQ19E",
+          "input": {
+            "nodeId": "BJ6ceaCFN",
+            "pinKey": "ryKa7s0KE"
+          },
+          "output": {
+            "nodeId": "SkqPVXkcE",
+            "pinKey": "SyM2ATB-b"
+          }
+        },
+        "Hk__uRAKV": {
+          "id": "Hk__uRAKV",
+          "input": {
+            "nodeId": "HkZU2D3YE",
+            "pinKey": "H1nhpXnFE"
+          },
+          "output": {
+            "nodeId": "rJEdSm3K4",
+            "pinKey": "r1tZuwnKE"
+          }
+        },
+        "HkbDfARYE": {
+          "id": "HkbDfARYE",
+          "input": {
+            "nodeId": "Skj6f2CF4",
+            "pinKey": "B1MRXiAYE"
+          },
+          "output": {
+            "nodeId": "rkOHWR0YV",
+            "pinKey": "SyM2ATB-b"
+          }
+        },
+        "HkxeG8gQ1cN": {
+          "id": "HkxeG8gQ1cN",
+          "input": {
+            "nodeId": "HyezIgQJ9E",
+            "pinKey": "HJ9l-7nKN"
+          },
+          "output": {
+            "nodeId": "HJ8fUxQk94",
+            "pinKey": "__out__"
+          }
+        },
+        "HyMttmJ9E": {
+          "id": "HyMttmJ9E",
+          "input": {
+            "nodeId": "r1fIgmk9N",
+            "pinKey": "ryKa7s0KE"
+          },
+          "output": {
+            "nodeId": "SkqPVXkcE",
+            "pinKey": "SJUl8Aurv1W"
+          }
+        },
+        "Hy_lqAAtV": {
+          "id": "Hy_lqAAtV",
+          "input": {
+            "nodeId": "rJpHqDhY4",
+            "pinKey": "ryTH7w2YN"
+          },
+          "output": {
+            "nodeId": "SkAutC0F4",
+            "pinKey": "r1tZuwnKE"
+          }
+        },
+        "HydIKmy9E": {
+          "id": "HydIKmy9E",
+          "input": {
+            "nodeId": "r1fIgmk9N",
+            "pinKey": "B1MRXiAYE"
+          },
+          "output": {
+            "nodeId": "BJuL471cV",
+            "pinKey": "SJUl8Aurv1W"
+          }
+        },
+        "S10MB6CtE": {
+          "id": "S10MB6CtE",
+          "input": {
+            "nodeId": "B1py6iRYV",
+            "pinKey": "S1ZOJ3RY4"
+          },
+          "output": {
+            "nodeId": "S1OzBpRKN",
+            "pinKey": "__out__"
+          }
+        },
+        "S19zLxQk9N": {
+          "id": "S19zLxQk9N",
+          "input": {
+            "nodeId": "HyWzIl7Jc4",
+            "pinKey": "BJlHojaWZ"
+          },
+          "output": {
+            "nodeId": "r1fIgmk9N",
+            "pinKey": "ryZtrjAKE"
+          }
+        },
+        "S1AsNQJ9N": {
+          "id": "S1AsNQJ9N",
+          "input": {
+            "nodeId": "BJuL471cV",
+            "pinKey": "HkDgIRdrv1W"
+          },
+          "output": {
+            "nodeId": "HkaVsfkqE",
+            "pinKey": "__out__"
+          }
+        },
+        "S1CWdmJ94": {
+          "id": "S1CWdmJ94",
+          "input": {
+            "nodeId": "HJk4vQk9E",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "HkZAwQkq4",
+            "pinKey": "Hk6M4X9Cz"
+          }
+        },
+        "S1KlpiRYV": {
+          "id": "S1KlpiRYV",
+          "input": {
+            "nodeId": "B1py6iRYV",
+            "pinKey": "B1MRXiAYE"
+          },
+          "output": {
+            "nodeId": "ry4bZ5AYN",
+            "pinKey": "__out__"
+          }
+        },
+        "S1Y9HQ2K4": {
+          "id": "S1Y9HQ2K4",
+          "input": {
+            "nodeId": "rJEdSm3K4",
+            "pinKey": "SktGWQnt4"
+          },
+          "output": {
+            "nodeId": "HJL5SX2KN",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "S1ZkQARFE": {
+          "id": "S1ZkQARFE",
+          "input": {
+            "nodeId": "r1gAM0AK4",
+            "pinKey": "S1OlUAuBD1-"
+          },
+          "output": {
+            "nodeId": "B1K0zRCYE",
+            "pinKey": "__out__"
+          }
+        },
+        "S1h_KQ154": {
+          "id": "S1h_KQ154",
+          "input": {
+            "nodeId": "BJ6ceaCFN",
+            "pinKey": "B1MRXiAYE"
+          },
+          "output": {
+            "nodeId": "BJuL471cV",
+            "pinKey": "SyM2ATB-b"
+          }
+        },
+        "SJ3UZ70K4": {
+          "id": "SJ3UZ70K4",
+          "input": {
+            "nodeId": "BywvyQ0tV",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rk4KiO3tN",
+            "pinKey": "rJsi9O3tE"
+          }
+        },
+        "SJ5nemRFE": {
+          "id": "SJ5nemRFE",
+          "input": {
+            "nodeId": "HkBoxmRtE",
+            "pinKey": "ryTIROHwkW"
+          },
+          "output": {
+            "nodeId": "BywvyQ0tV",
+            "pinKey": "__out__"
+          }
+        },
+        "SJKa4mJ5N": {
+          "id": "SJKa4mJ5N",
+          "input": {
+            "nodeId": "SkqPVXkcE",
+            "pinKey": "HkDgIRdrv1W"
+          },
+          "output": {
+            "nodeId": "BJ_uszkq4",
+            "pinKey": "__out__"
+          }
+        },
+        "SJOkOXk5N": {
+          "id": "SJOkOXk5N",
+          "input": {
+            "nodeId": "BJuL471cV",
+            "pinKey": "S1OlUAuBD1-"
+          },
+          "output": {
+            "nodeId": "HkZAwQkq4",
+            "pinKey": "Hk6M4X9Cz"
+          }
+        },
+        "SJXAB60FN": {
+          "id": "SJXAB60FN",
+          "input": {
+            "nodeId": "rJw3r6AKV",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HkBoxmRtE",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "SJjiKRRF4": {
+          "id": "SJjiKRRF4",
+          "input": {
+            "nodeId": "SkAutC0F4",
+            "pinKey": "H1nhpXnFE"
+          },
+          "output": {
+            "nodeId": "BJ7zY00KN",
+            "pinKey": "r1tZuwnKE"
+          }
+        },
+        "SJskO6RYN": {
+          "id": "SJskO6RYN",
+          "input": {
+            "nodeId": "SJV6DpRYV",
+            "pinKey": "BJlHojaWZ"
+          },
+          "output": {
+            "nodeId": "BJ6ceaCFN",
+            "pinKey": "ryZtrjAKE"
+          }
+        },
+        "SJx5Jk154": {
+          "id": "SJx5Jk154",
+          "input": {
+            "nodeId": "SJ8uykkq4",
+            "pinKey": "S1_NQDhtE"
+          },
+          "output": {
+            "nodeId": "BJ27QM2FE",
+            "pinKey": "rkQVkM2KE"
+          }
+        },
+        "SJzrcGk5V": {
+          "id": "SJzrcGk5V",
+          "input": {
+            "nodeId": "HyBmqfycV",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1gAM0AK4",
+            "pinKey": "SJUl8Aurv1W"
+          }
+        },
+        "SkNGWhCFV": {
+          "id": "SkNGWhCFV",
+          "input": {
+            "nodeId": "HyFt-XCYV",
+            "pinKey": "ryTH7w2YN"
+          },
+          "output": {
+            "nodeId": "H10xWhAKE",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "SkoTvGy5N": {
+          "id": "SkoTvGy5N",
+          "input": {
+            "nodeId": "HyFt-XCYV",
+            "pinKey": "S1_NQDhtE"
+          },
+          "output": {
+            "nodeId": "ryxowz1qE",
+            "pinKey": "__out__"
+          }
+        },
+        "Skp7uXy54": {
+          "id": "Skp7uXy54",
+          "input": {
+            "nodeId": "HJzzdQ1qV",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "HyLXOmJcN",
+            "pinKey": "__out__"
+          }
+        },
+        "SyQ8x115V": {
+          "id": "SyQ8x115V",
+          "input": {
+            "nodeId": "H1XT_0CtE",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "HkZU2D3YE",
+            "pinKey": "r1tZuwnKE"
+          }
+        },
+        "SyRyPCAtV": {
+          "id": "SyRyPCAtV",
+          "input": {
+            "nodeId": "rk36LC0K4",
+            "pinKey": "HkDgIRdrv1W"
+          },
+          "output": {
+            "nodeId": "BJ6ceaCFN",
+            "pinKey": "SyEs3oAYN"
+          }
+        },
+        "SyaGUxQkqN": {
+          "id": "SyaGUxQkqN",
+          "input": {
+            "nodeId": "B1zGIxQyc4",
+            "pinKey": "HkDgIRdrv1W"
+          },
+          "output": {
+            "nodeId": "r1fIgmk9N",
+            "pinKey": "SyEs3oAYN"
+          }
+        },
+        "SyekO7k5E": {
+          "id": "SyekO7k5E",
+          "input": {
+            "nodeId": "HkZAwQkq4",
+            "pinKey": "B1e728TKKM"
+          },
+          "output": {
+            "nodeId": "HyHhBQycN",
+            "pinKey": "__out__"
+          }
+        },
+        "r1LoK0RFN": {
+          "id": "r1LoK0RFN",
+          "input": {
+            "nodeId": "SkAutC0F4",
+            "pinKey": "HJ9l-7nKN"
+          },
+          "output": {
+            "nodeId": "BJ7zY00KN",
+            "pinKey": "HysWZm3FN"
+          }
+        },
+        "r1sbnCCtE": {
+          "id": "r1sbnCCtE",
+          "input": {
+            "nodeId": "ByDdETCFE",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJpHqDhY4",
+            "pinKey": "S1l9Bv3KN"
+          }
+        },
+        "r1uym0Ct4": {
+          "id": "r1uym0Ct4",
+          "input": {
+            "nodeId": "r1gAM0AK4",
+            "pinKey": "HkDgIRdrv1W"
+          },
+          "output": {
+            "nodeId": "HyJmW5RYN",
+            "pinKey": "__out__"
+          }
+        },
+        "r1w5ykk94": {
+          "id": "r1w5ykk94",
+          "input": {
+            "nodeId": "SJ8uykkq4",
+            "pinKey": "ryTH7w2YN"
+          },
+          "output": {
+            "nodeId": "BJ27QM2FE",
+            "pinKey": "H16r-MhKN"
+          }
+        },
+        "rJJhAiAK4": {
+          "id": "rJJhAiAK4",
+          "input": {
+            "nodeId": "B1py6iRYV",
+            "pinKey": "ryKa7s0KE"
+          },
+          "output": {
+            "nodeId": "HJg7-90t4",
+            "pinKey": "__out__"
+          }
+        },
+        "rJYsFG1cE": {
+          "id": "rJYsFG1cE",
+          "input": {
+            "nodeId": "HyFt-XCYV",
+            "pinKey": "H1cQFvnFV"
+          },
+          "output": {
+            "nodeId": "HykFYzJ9E",
+            "pinKey": "__out__"
+          }
+        },
+        "rJaK2PntV": {
+          "id": "rJaK2PntV",
+          "input": {
+            "nodeId": "HkZU2D3YE",
+            "pinKey": "SktGWQnt4"
+          },
+          "output": {
+            "nodeId": "BJSKhD3tN",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "rJijyJy5V": {
+          "id": "rJijyJy5V",
+          "input": {
+            "nodeId": "BJ7zY00KN",
+            "pinKey": "HJ9l-7nKN"
+          },
+          "output": {
+            "nodeId": "HkZU2D3YE",
+            "pinKey": "HysWZm3FN"
+          }
+        },
+        "rkFXbqAYN": {
+          "id": "rkFXbqAYN",
+          "input": {
+            "nodeId": "HyJmW5RYN",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rk4KiO3tN",
+            "pinKey": "H152cd3KV"
+          }
+        },
+        "rkFz8e7J54": {
+          "id": "rkFz8e7J54",
+          "input": {
+            "nodeId": "HyezIgQJ9E",
+            "pinKey": "SktGWQnt4"
+          },
+          "output": {
+            "nodeId": "HyWzIl7Jc4",
+            "pinKey": "r1H_oipZb"
+          }
+        },
+        "ry5HGCAY4": {
+          "id": "ry5HGCAY4",
+          "input": {
+            "nodeId": "rkOHWR0YV",
+            "pinKey": "HkDgIRdrv1W"
+          },
+          "output": {
+            "nodeId": "rJhMZ50KV",
+            "pinKey": "__out__"
+          }
+        },
+        "ryA1_mJc4": {
+          "id": "ryA1_mJc4",
+          "input": {
+            "nodeId": "SkqPVXkcE",
+            "pinKey": "S1OlUAuBD1-"
+          },
+          "output": {
+            "nodeId": "HkZAwQkq4",
+            "pinKey": "Hk6M4X9Cz"
+          }
+        },
+        "rysVSpAFE": {
+          "id": "rysVSpAFE",
+          "input": {
+            "nodeId": "Skj6f2CF4",
+            "pinKey": "S1ZOJ3RY4"
+          },
+          "output": {
+            "nodeId": "SJEQBpAtV",
+            "pinKey": "__out__"
+          }
+        },
+        "ryuR8RAt4": {
+          "id": "ryuR8RAt4",
+          "input": {
+            "nodeId": "HklEv6RKN",
+            "pinKey": "H1nhpXnFE"
+          },
+          "output": {
+            "nodeId": "rk36LC0K4",
+            "pinKey": "SJUl8Aurv1W"
+          }
+        }
+      },
+      "nodes": {
+        "B1K0zRCYE": {
+          "id": "B1K0zRCYE",
+          "label": "SELECT",
+          "position": {
+            "x": 14,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "B1NJYzJ9E": {
+          "id": "B1NJYzJ9E",
+          "label": "Cy",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "B1py6iRYV": {
+          "boundLiterals": {
+            "HktkVjCFE": "15",
+            "SJ9MBs0t4": "1",
+            "rJw3XjAFV": "7"
+          },
+          "id": "B1py6iRYV",
+          "label": "Left Right Counter",
+          "position": {
+            "x": 19,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/updowncount"
+        },
+        "B1zGIxQyc4": {
+          "id": "B1zGIxQyc4",
+          "position": {
+            "x": 14,
+            "y": 13,
+            "units": "slots"
+          },
+          "type": "xod/core/branch"
+        },
+        "BJ27QM2FE": {
+          "boundLiterals": {
+            "H1S2kf3F4": "D4",
+            "HJo3kz2KV": "D5",
+            "HJpiyz2YE": "D9",
+            "S1La1f3YV": "D7",
+            "rka8WMnF4": "On Boot",
+            "rkb6kf3tV": "D6",
+            "ryUjkMnF4": "D8"
+          },
+          "id": "BJ27QM2FE",
+          "position": {
+            "x": 2,
+            "y": -4,
+            "units": "slots"
+          },
+          "type": "@/lcd16x2"
+        },
+        "BJ6ceaCFN": {
+          "boundLiterals": {
+            "HktkVjCFE": "24",
+            "SJ9MBs0t4": "1",
+            "SkSfEsCYN": "1",
+            "rJw3XjAFV": "1"
+          },
+          "id": "BJ6ceaCFN",
+          "position": {
+            "x": 2,
+            "y": 11,
+            "units": "slots"
+          },
+          "type": "@/updowncount"
+        },
+        "BJ7zY00KN": {
+          "boundLiterals": {
+            "HyzKsD3FE": "0",
+            "SktGWQnt4": "\"Start  1\""
+          },
+          "id": "BJ7zY00KN",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/lcd16x2print"
+        },
+        "BJSKhD3tN": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "\"By Ivan Mason\""
+          },
+          "id": "BJSKhD3tN",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-string"
+        },
+        "BJ_uszkq4": {
+          "id": "BJ_uszkq4",
+          "label": "Sup",
+          "position": {
+            "x": 11,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "BJuL471cV": {
+          "id": "BJuL471cV",
+          "position": {
+            "x": 8,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "xod/core/branch"
+        },
+        "BkEijGJ5N": {
+          "id": "BkEijGJ5N",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 13,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "ByDdETCFE": {
+          "id": "ByDdETCFE",
+          "label": "RTS",
+          "position": {
+            "x": 3,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "BywvyQ0tV": {
+          "id": "BywvyQ0tV",
+          "position": {
+            "x": 11,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-true"
+        },
+        "H10xWhAKE": {
+          "arityLevel": 2,
+          "id": "H10xWhAKE",
+          "position": {
+            "x": 16,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "H1XT_0CtE": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "10"
+          },
+          "id": "H1XT_0CtE",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "HJ8fUxQk94": {
+          "id": "HJ8fUxQk94",
+          "label": "DEV",
+          "position": {
+            "x": 10,
+            "y": 13,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJL5SX2KN": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "\"Kato Turntable\""
+          },
+          "id": "HJL5SX2KN",
+          "position": {
+            "x": 3,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-string"
+        },
+        "HJeyPCAY4": {
+          "id": "HJeyPCAY4",
+          "label": "SELECT",
+          "position": {
+            "x": 5,
+            "y": 12,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJg7-90t4": {
+          "id": "HJg7-90t4",
+          "position": {
+            "x": 20,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-true"
+        },
+        "HJk4vQk9E": {
+          "id": "HJk4vQk9E",
+          "position": {
+            "x": 15,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "HJzzdQ1qV": {
+          "id": "HJzzdQ1qV",
+          "position": {
+            "x": 13,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "HkBoxmRtE": {
+          "id": "HkBoxmRtE",
+          "position": {
+            "x": 10,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "HkZAwQkq4": {
+          "boundLiterals": {
+            "SJXlVQqRM": "0",
+            "SkiWEQc0z": "1"
+          },
+          "id": "HkZAwQkq4",
+          "position": {
+            "x": 8,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "gweimer/utils/if-else-v"
+        },
+        "HkZU2D3YE": {
+          "boundLiterals": {
+            "HyzKsD3FE": "1"
+          },
+          "id": "HkZU2D3YE",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/lcd16x2print"
+        },
+        "HkaVsfkqE": {
+          "id": "HkaVsfkqE",
+          "label": "Sdown",
+          "position": {
+            "x": 9,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HklEv6RKN": {
+          "boundLiterals": {
+            "ByI67mntN": "True",
+            "rJ_OjvhK4": "7"
+          },
+          "id": "HklEv6RKN",
+          "position": {
+            "x": 1,
+            "y": 14,
+            "units": "slots"
+          },
+          "type": "@/lcd16x2print"
+        },
+        "Hkp69X19N": {
+          "id": "Hkp69X19N",
+          "label": "RTS",
+          "position": {
+            "x": 17,
+            "y": 10,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HyBmqfycV": {
+          "id": "HyBmqfycV",
+          "label": "Sdown",
+          "position": {
+            "x": 14,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "HyFt-XCYV": {
+          "boundLiterals": {
+            "B1-4YP2FE": "0",
+            "Bk4IXDnYE": "True",
+            "H1cQFvnFV": "0",
+            "HJUyVOhKV": "True"
+          },
+          "id": "HyFt-XCYV",
+          "position": {
+            "x": 11,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/lcd16x2cursor"
+        },
+        "HyHhBQycN": {
+          "id": "HyHhBQycN",
+          "label": "Cy",
+          "position": {
+            "x": 9,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HyJmW5RYN": {
+          "id": "HyJmW5RYN",
+          "position": {
+            "x": 16,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-true"
+        },
+        "HyLXOmJcN": {
+          "id": "HyLXOmJcN",
+          "label": "Cy",
+          "position": {
+            "x": 13,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HyWzIl7Jc4": {
+          "boundLiterals": {
+            "HJTIija-W": "0"
+          },
+          "id": "HyWzIl7Jc4",
+          "position": {
+            "x": 11,
+            "y": 12,
+            "units": "slots"
+          },
+          "type": "xod/core/format-number"
+        },
+        "HyezIgQJ9E": {
+          "boundLiterals": {
+            "ByI67mntN": "True",
+            "HyzKsD3FE": "1",
+            "rJ_OjvhK4": "7"
+          },
+          "id": "HyezIgQJ9E",
+          "position": {
+            "x": 10,
+            "y": 14,
+            "units": "slots"
+          },
+          "type": "@/lcd16x2print"
+        },
+        "HykFYzJ9E": {
+          "id": "HykFYzJ9E",
+          "label": "Cx",
+          "position": {
+            "x": 14,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1G2PMJ5E": {
+          "id": "S1G2PMJ5E",
+          "label": "DEV",
+          "position": {
+            "x": 2,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "S1I6qQ154": {
+          "id": "S1I6qQ154",
+          "label": "RTS",
+          "position": {
+            "x": 8,
+            "y": 10,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1OzBpRKN": {
+          "id": "S1OzBpRKN",
+          "label": "RTS",
+          "position": {
+            "x": 25,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1cUb00KV": {
+          "id": "S1cUb00KV",
+          "label": "SELECT",
+          "position": {
+            "x": 12,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJ8uykkq4": {
+          "boundLiterals": {
+            "B1-4YP2FE": "0",
+            "Bk4IXDnYE": "False",
+            "H1cQFvnFV": "0",
+            "HJUyVOhKV": "False"
+          },
+          "id": "SJ8uykkq4",
+          "position": {
+            "x": 2,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "@/lcd16x2cursor"
+        },
+        "SJEQBpAtV": {
+          "id": "SJEQBpAtV",
+          "label": "RTS",
+          "position": {
+            "x": 16,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJV6DpRYV": {
+          "boundLiterals": {
+            "HJTIija-W": "0"
+          },
+          "id": "SJV6DpRYV",
+          "position": {
+            "x": 2,
+            "y": 12,
+            "units": "slots"
+          },
+          "type": "xod/core/format-number"
+        },
+        "SkAutC0F4": {
+          "boundLiterals": {
+            "HyzKsD3FE": "1",
+            "SktGWQnt4": "\"Finish 24\""
+          },
+          "id": "SkAutC0F4",
+          "position": {
+            "x": 2,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/lcd16x2print"
+        },
+        "SkT-9f1cN": {
+          "id": "SkT-9f1cN",
+          "label": "Sup",
+          "position": {
+            "x": 12,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "SkXfLxQy9V": {
+          "id": "SkXfLxQy9V",
+          "label": "SELECT",
+          "position": {
+            "x": 14,
+            "y": 12,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "Skj6f2CF4": {
+          "boundLiterals": {
+            "HktkVjCFE": "1",
+            "SJ9MBs0t4": "1",
+            "rJw3XjAFV": "0"
+          },
+          "id": "Skj6f2CF4",
+          "label": "Up Down Counter",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/updowncount"
+        },
+        "SklGYGy9N": {
+          "id": "SklGYGy9N",
+          "label": "Cy",
+          "position": {
+            "x": 15,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SkqPVXkcE": {
+          "id": "SkqPVXkcE",
+          "position": {
+            "x": 10,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "xod/core/branch"
+        },
+        "r1fIgmk9N": {
+          "boundLiterals": {
+            "HktkVjCFE": "24",
+            "SJ9MBs0t4": "1",
+            "SkSfEsCYN": "1",
+            "rJw3XjAFV": "24"
+          },
+          "id": "r1fIgmk9N",
+          "position": {
+            "x": 11,
+            "y": 11,
+            "units": "slots"
+          },
+          "type": "@/updowncount"
+        },
+        "r1gAM0AK4": {
+          "id": "r1gAM0AK4",
+          "position": {
+            "x": 14,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/branch"
+        },
+        "rJEdSm3K4": {
+          "boundLiterals": {
+            "ByI67mntN": "True"
+          },
+          "id": "rJEdSm3K4",
+          "position": {
+            "x": 2,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "@/lcd16x2print"
+        },
+        "rJhMZ50KV": {
+          "id": "rJhMZ50KV",
+          "position": {
+            "x": 14,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-true"
+        },
+        "rJpHqDhY4": {
+          "boundLiterals": {
+            "B1-4YP2FE": "0",
+            "Bk4IXDnYE": "False",
+            "H1cQFvnFV": "7",
+            "HJUyVOhKV": "True"
+          },
+          "id": "rJpHqDhY4",
+          "position": {
+            "x": 2,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/lcd16x2cursor"
+        },
+        "rJw3r6AKV": {
+          "id": "rJw3r6AKV",
+          "label": "SELECT",
+          "position": {
+            "x": 10,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "rk36LC0K4": {
+          "id": "rk36LC0K4",
+          "position": {
+            "x": 5,
+            "y": 13,
+            "units": "slots"
+          },
+          "type": "xod/core/branch"
+        },
+        "rk4KiO3tN": {
+          "id": "rk4KiO3tN",
+          "position": {
+            "x": 14,
+            "y": -4,
+            "units": "slots"
+          },
+          "type": "@/lcd5button"
+        },
+        "rkOHWR0YV": {
+          "id": "rkOHWR0YV",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/branch"
+        },
+        "ry4bZ5AYN": {
+          "id": "ry4bZ5AYN",
+          "position": {
+            "x": 18,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-true"
+        },
+        "ryRjSaCFV": {
+          "id": "ryRjSaCFV",
+          "label": "SELECT",
+          "position": {
+            "x": 13,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "ryUctMy94": {
+          "id": "ryUctMy94",
+          "label": "Cx",
+          "position": {
+            "x": 19,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "ryxowz1qE": {
+          "id": "ryxowz1qE",
+          "label": "DEV",
+          "position": {
+            "x": 11,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        }
+      },
+      "path": "@/main"
+    },
+    "@/updowncount": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    float start = getValue<input_START>(ctx);\n    float count = getValue<input_COUNT>(ctx);\n    float min = getValue<input_Min>(ctx);\n    float max = getValue<input_Max>(ctx);\n    float result = getValue<output_OUT>(ctx);\n\n    if (isInputDirty<input_RTS>(ctx))result = start;\n\n     if (isInputDirty<input_ADD>(ctx)){\n         ++result;\n         if(result >= max)result = max;\n     }\n     if (isInputDirty<input_SUBTRACT>(ctx)){\n         --result;\n         if(result <= min)result = min;\n     }\n    emitValue<output_OUT>(ctx, result);\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Count down to min by Subtracting the amount of count or Count up to max by adding the amount of count with start as the first number",
+      "nodes": {
+        "B1MRXiAYE": {
+          "description": "Count Down",
+          "id": "B1MRXiAYE",
+          "label": "SUBTRACT",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkHFSjRK4": {
+          "id": "HkHFSjRK4",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HktkVjCFE": {
+          "id": "HktkVjCFE",
+          "label": "Max",
+          "position": {
+            "x": 13,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1ZOJ3RY4": {
+          "boundLiterals": {
+            "__out__": "Never"
+          },
+          "description": "Reset counter",
+          "id": "S1ZOJ3RY4",
+          "label": "RTS",
+          "position": {
+            "x": 15,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJ9MBs0t4": {
+          "description": "Counting by",
+          "id": "SJ9MBs0t4",
+          "label": "COUNT",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkSfEsCYN": {
+          "id": "SkSfEsCYN",
+          "label": "Min",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SyEs3oAYN": {
+          "id": "SyEs3oAYN",
+          "label": "DONE",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJw3XjAFV": {
+          "description": "Starting number",
+          "id": "rJw3XjAFV",
+          "label": "START",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryKa7s0KE": {
+          "description": "Count Up",
+          "id": "ryKa7s0KE",
+          "label": "ADD",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryZtrjAKE": {
+          "id": "ryZtrjAKE",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/updowncount"
+    }
+  }
+}

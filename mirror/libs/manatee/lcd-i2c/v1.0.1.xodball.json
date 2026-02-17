@@ -1,0 +1,144 @@
+{
+  "description": "With this library you can use your LCD with I2C adapter super easy! Check documentation to understand how to use it!",
+  "license": "GPL",
+  "name": "lcd-i2c",
+  "patches": {
+    "@/lcd-20x4-i2c": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "{{#global}}\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n{{/global}}\n\nstruct State {\n    LiquidCrystal_I2C* lcd;\n};\n\n{{ GENERATED_CODE }}\n\nvoid printLine(LiquidCrystal_I2C* lcd, uint8_t lineIndex, XString str) {\n    lcd->setCursor(0, lineIndex);\n    uint8_t whitespace = 20;\n    for (auto it = str.iterate(); it; ++it, --whitespace)\n        lcd->write(*it);\n\n    //Clear remaining LCD lines\n    while (whitespace--)\n        lcd->write(' ');\n}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    auto lcd = state->lcd;\n    if (!state->lcd)\n    {\n        uint8_t addr = getValue<input_ADDR>(ctx);\n        state->lcd = lcd = new LiquidCrystal_I2C(addr, 20, 4);\n        lcd->begin();\n    }\n\n    printLine(lcd, 0, getValue<input_L1>(ctx));\n    printLine(lcd, 1, getValue<input_L2>(ctx));\n    printLine(lcd, 2, getValue<input_L3>(ctx));\n    printLine(lcd, 3, getValue<input_L4>(ctx));\n    lcd->setBacklight(getValue<input_BL>(ctx));\n}"
+        }
+      ],
+      "nodes": {
+        "HJn1itX2M": {
+          "boundValues": {
+            "__out__": true
+          },
+          "description": "Turn blacklight ON/OFF. Default is ON(true)",
+          "id": "HJn1itX2M",
+          "label": "BL",
+          "position": {
+            "x": 0,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "HyukoY73z": {
+          "description": "First Line ",
+          "id": "HyukoY73z",
+          "label": "L1",
+          "position": {
+            "x": 68,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "HyxbgstXhz": {
+          "description": "Fourth Line",
+          "id": "HyxbgstXhz",
+          "label": "L4",
+          "position": {
+            "x": 170,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SybxjK73f": {
+          "description": "Third Line",
+          "id": "SybxjK73f",
+          "label": "L3",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "rJxesK72z": {
+          "description": "Second Line",
+          "id": "rJxesK72z",
+          "label": "L2",
+          "position": {
+            "x": 102,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "rypzjtm2G": {
+          "id": "rypzjtm2G",
+          "label": "CORE",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ByUJGrU2f": {
+          "id": "ByUJGrU2f",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": -34,
+            "y": 102
+          },
+          "label": "ADDR",
+          "description": "Your LCD address converted from HEX to DEC",
+          "boundValues": {
+            "__out__": 63
+          }
+        }
+      },
+      "path": "@/lcd-20x4-i2c"
+    },
+    "@/main": {
+      "attachments": [
+        {
+          "content": "\n{{#global}}\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n{{/global}}\n\nstruct State {\n    LiquidCrystal_I2C* lcd;\n};\n\n{{ GENERATED_CODE }}\n\nvoid printLine(LiquidCrystal_I2C* lcd, uint8_t lineIndex, XString str) {\n    lcd->setCursor(0, lineIndex);\n    uint8_t whitespace = 20;\n    for (auto it = str.iterate(); it; ++it, --whitespace)\n        lcd->write(*it);\n\n    // Clear the rest of the line\n    while (whitespace--)\n        lcd->write(' ');\n}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    auto lcd = state->lcd;\n    if (!state->lcd) {\n        //char addr[] = getValue<input_ADDR>(ctx);\n        uint8_t addr = getValue<input_ADDR>(ctx);\n        state->lcd = lcd = new LiquidCrystal_I2C(addr, 20, 4);\n        lcd->begin();\n    }\n\n    printLine(lcd, 0, getValue<input_L1>(ctx));\n    printLine(lcd, 1, getValue<input_L2>(ctx));\n    printLine(lcd, 2, getValue<input_L3>(ctx));\n    printLine(lcd, 3, getValue<input_L4>(ctx));\n    lcd->setBacklight(getValue<input_BL>(ctx));\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "comments": {
+        "HJH6gc7nz": {
+          "content": "If you don't know how to find your LCD address read the following:\nHow to get your LCD address:\n\n1. Go to this site https://playground.arduino.cc/Main/I2cScanner and copy paste all the codes into a new arduino file\n2. Wire LCD to arduino\n3. Upload file into arduino and open Serial Monitor from Arduino IDE and you will be able to see your LCD address\n\n",
+          "id": "HJH6gc7nz",
+          "position": {
+            "x": 102,
+            "y": 102
+          },
+          "size": {
+            "width": 544,
+            "height": 153
+          }
+        },
+        "B1uOMH83z": {
+          "id": "B1uOMH83z",
+          "position": {
+            "x": 102,
+            "y": 408
+          },
+          "size": {
+            "width": 238,
+            "height": 153
+          },
+          "content": "Example of LCD addresses:\n\n0x3F = 63 (usually 20x4 LCD)\n0x27 = 39 (usually 16x2 LCD)\n"
+        }
+      },
+      "nodes": {
+        "Syhnjt72z": {
+          "boundValues": {
+            "S10uc4I3G": "0x3f"
+          },
+          "id": "Syhnjt72z",
+          "position": {
+            "x": 102,
+            "y": 306
+          },
+          "type": "@/lcd-20x4-i2c"
+        }
+      },
+      "path": "@/main"
+    }
+  },
+  "version": "1.0.1"
+}

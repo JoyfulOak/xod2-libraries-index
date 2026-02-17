@@ -1,0 +1,124 @@
+{
+  "description": "Nodes to read OneWire DS18B20 digital thermometers",
+  "license": "AGPL-3",
+  "name": "ds18b20",
+  "patches": {
+    "@/ds-example": {
+      "comments": {
+        "S1eYY8fVM": {
+          "id": "S1eYY8fVM",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "size": {
+            "width": 510,
+            "height": 51
+          },
+          "content": "1. Connect a DS18B20 sensor to the port #7\n2. Make sure to pull up the signal line with a 4.7K resistor\n3. Upload with debugger enabled to monitor sensor data"
+        }
+      },
+      "description": "A `ds18b20-thermometer` node usage example",
+      "links": {
+        "ryVutUM4M": {
+          "id": "ryVutUM4M",
+          "output": {
+            "nodeId": "S1RvtIfVz",
+            "pinKey": "BJkDP8GEM"
+          },
+          "input": {
+            "nodeId": "r1Z_FLz4G",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "nodes": {
+        "S1RvtIfVz": {
+          "id": "S1RvtIfVz",
+          "type": "@/ds18b20-thermometer",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "boundValues": {
+            "B1VSPLfEG": 7
+          }
+        },
+        "r1Z_FLz4G": {
+          "id": "r1Z_FLz4G",
+          "type": "xod/core/watch",
+          "position": {
+            "x": 34,
+            "y": 204
+          }
+        }
+      },
+      "path": "@/ds-example"
+    },
+    "@/ds18b20-thermometer": {
+      "nodes": {
+        "B1VSPLfEG": {
+          "id": "B1VSPLfEG",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "label": "PORT",
+          "description": "Board port number the sensor is connected to."
+        },
+        "SJlIvIMEM": {
+          "id": "SJlIvIMEM",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "label": "UPD",
+          "description": "Triggers new update, i.e. temperature reading.",
+          "boundValues": {
+            "__out__": "CONTINUOUSLY"
+          }
+        },
+        "BJkDP8GEM": {
+          "id": "BJkDP8GEM",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "label": "Tc",
+          "description": "The last read temperature value measured in °C."
+        },
+        "B1wPwUMNM": {
+          "id": "B1wPwUMNM",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 34,
+            "y": 102
+          }
+        },
+        "rkZ3_IzEG": {
+          "id": "rkZ3_IzEG",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "label": "DONE",
+          "description": "Pulses when a reading is done and `Tc` is refreshed."
+        }
+      },
+      "path": "@/ds18b20-thermometer",
+      "description": "Reads temperature from a DS18B20 sensor. Expects single-drop bus setup, i.e. one thermometer on a port.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "/*\n *  Datasheet can be found at\n *  https://cdn-shop.adafruit.com/datasheets/DS18B20.pdf\n *\n *  Most code comments are quotes from that datasheet\n */\n\nenum {\n    CMD_CONVERT = 0x44,\n    CMD_READ_SCRATCHPAD = 0xBE,\n    CMD_SKIP_ROM = 0xCC\n};\n\nvoid writeByte(uint8_t pin, uint8_t data) {\n    pinMode(pin, OUTPUT);\n\n    // There are two types of write time slots: “Write 1” time slots and “Write\n    // 0” time slots. The bus master uses a Write 1 time slot to write a logic\n    // 1 to the DS18B20 and a Write 0 time slot to write a logic 0 to the\n    // DS18B20. All write time slots must be a minimum of 60µs in duration with\n    // a minimum of a 1µs recovery time between individual write slots. Both\n    // types of write time slots are initiated by the master pulling the 1-Wire\n    // bus low\n\n    for (uint8_t i = 8; i--; data >>= 1) {\n        bool bit = data & 0x01;\n\n        // To generate a Write 1 time slot, after pulling the 1-Wire bus low,\n        // the bus master must release the 1-Wire bus within 15µs. When the bus\n        // is released, the 5kΩ pullup resistor will pull the bus high. To\n        // generate a Write 0 time slot, after pulling the 1-Wire bus low, the\n        // bus master must continue to hold the bus low for the duration of the\n        // time slot (at least 60µs)\n\n        digitalWrite(pin, LOW); \n        delayMicroseconds(bit ? 10 : 50);\n        digitalWrite(pin, HIGH);\n        delayMicroseconds(bit ? 50 : 10);\n\n    }\n\n    pinMode(pin, INPUT); // release the bus\n}\n\nuint8_t readByte(uint8_t pin) {\n    uint8_t r = 0;\n    for (uint8_t i = 0; i < 8; ++i) {\n        // All read time slots must be a minimum of 60µs in duration with a\n        // minimum of a 1µs recovery time between slots. A read time slot is\n        // initiated by the master device pulling the 1-Wire bus low for a\n        // minimum of 1µs and then releasing the bus.\n        pinMode(pin, OUTPUT);\n        digitalWrite(pin, LOW);\n        delayMicroseconds(1);\n        pinMode(pin, INPUT);\n\n        // Output data from the DS18B20 is valid for 15µs after the falling\n        // edge that initiated the read time slot.  Therefore, the master must\n        // release the bus and then sample the bus state within 15µs from the\n        // start of the slot.\n        delayMicroseconds(5);\n\n        // After the master initiates the read time slot, the DS18B20 will\n        // begin transmitting a 1 or 0 on bus. The DS18B20 transmits a 1 by\n        // leaving the bus high and transmits a 0 by pulling the bus low. When\n        // transmitting a 0, the DS18B20 will release the bus by the end of the\n        // time slot, and the bus will be pulled back to its high idle state by\n        // the pullup resister.\n        r |= digitalRead(pin) << i;\n\n        delayMicroseconds(54); // complete the cycle\n    }\n\n    return r;\n}\n\nbool init(uint8_t pin) {\n    // All communication with the DS18B20 begins with an initialization\n    // sequence that consists of a reset pulse from the master followed by a\n    // presence pulse from the DS18B20...\n\n    // During the initialization sequence the bus master transmits (TX) the\n    // reset pulse by pulling the 1-Wire bus low for a minimum of 480µs. The\n    // bus master then releases the bus and goes into receive mode (RX). \n    pinMode(pin, OUTPUT);\n    digitalWrite(pin, LOW);\n    delayMicroseconds(480);\n    pinMode(pin, INPUT);\n\n    // When the bus is released, the 5kΩ pullup resistor pulls the 1-Wire bus\n    // high. When the DS18B20 detects this rising edge, it waits 15µs to 60µs\n    // and then transmits a presence pulse by pulling the 1-Wire bus low for\n    // 60µs to 240µs.\n    delayMicroseconds(60);\n    if (digitalRead(pin))\n        return false; // no presence\n\n    delayMicroseconds(420); // complete initialization procedure\n\n    return true;\n}\n\nbool readTemperature(uint8_t pin, Number* out) {\n    if (!init(pin))\n        return false;\n\n    writeByte(pin, CMD_SKIP_ROM);\n    writeByte(pin, CMD_CONVERT);\n\n    if (!init(pin))\n        return false;\n\n    writeByte(pin, CMD_SKIP_ROM);\n    writeByte(pin, CMD_READ_SCRATCHPAD);\n\n    int16_t hi = readByte(pin);\n    int16_t lo = readByte(pin);\n    *out = (Number)(hi | lo << 8) / 16.0;\n    return true;\n}\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n    \n    auto port = getValue<input_PORT>(ctx);\n    Number tc;\n    bool success = readTemperature(port, &tc);\n    if (!success)\n        return;\n    \n    emitValue<output_Tc>(ctx, tc);\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    }
+  },
+  "version": "1.0.0"
+}

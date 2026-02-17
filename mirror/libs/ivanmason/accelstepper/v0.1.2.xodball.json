@@ -1,0 +1,3580 @@
+{
+  "description": "A wraper  library for Accelstepper. Copyright (C) 2012 Mike McCauley",
+  "license": "AGLP",
+  "name": "accelstepper",
+  "patches": {
+    "@/accelstepper-device": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/waspinator/AccelStepper\"\n\n// Include C++ library:\n{{#global}}\n#include <AccelStepper.h>\n{{/global}}\n\nstruct State {\n   uint8_t mem[sizeof(AccelStepper)];\n};\n\nusing Type = AccelStepper*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // It should be evaluated only once on the first (setup) transaction\n    if (!isSettingUp())\n        return;\n\n    auto state = getState(ctx);\n\n    const uint8_t port1 = getValue<input_M1>(ctx);\n    const uint8_t port2 = getValue<input_M2>(ctx);\n    const uint8_t port3 = getValue<input_M3>(ctx);\n    const uint8_t port4 = getValue<input_M4>(ctx);\n\n    uint8_t MotorType = getValue<input_Mtype>(ctx);\n    Type stepper = new (state->mem) AccelStepper(MotorType, port1, port2, port3, port4);\n    \n    emitValue<output_DEV>(ctx, stepper);\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Constructor. You can have multiple simultaneous steppers, all moving at different speeds and accelerations, provided you call their run() functions at frequent enough intervals. Current Position is set to 0, target position is set to 0. MaxSpeed and Acceleration default to 1.0. ",
+      "nodes": {
+        "HJ4JVpfzL": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "1 = Driver\n2 = Full 2 Wire\n3 = Full 3 Wire\n4 = Full 4 wire\n6 = Half 3 wire\n8 = Half 4 wire",
+          "id": "HJ4JVpfzL",
+          "label": "Mtype",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJUu7Tff8": {
+          "boundLiterals": {
+            "__out__": "D5"
+          },
+          "description": "Arduino digital pin number for motor pin 4. Defaults to pin 5. ",
+          "id": "HJUu7Tff8",
+          "label": "M4",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HyIlI6zfI": {
+          "id": "HyIlI6zfI",
+          "label": "DEV",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "S1-IQ6fGU": {
+          "boundLiterals": {
+            "__out__": "D2"
+          },
+          "description": "Arduino digital pin number for motor pin 1. Defaults to pin 2. For a AccelStepper::DRIVER (interface==1), this is the Step input to the driver. Low to high transition means to step) ",
+          "id": "S1-IQ6fGU",
+          "label": "M1",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "S1rzvoXfU": {
+          "id": "S1rzvoXfU",
+          "label": "DONE",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SyhPmTMf8": {
+          "boundLiterals": {
+            "__out__": "D4"
+          },
+          "description": "Arduino digital pin number for motor pin 3. Defaults to pin 4. ",
+          "id": "SyhPmTMf8",
+          "label": "M3",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rJd8maff8": {
+          "boundLiterals": {
+            "__out__": "D3"
+          },
+          "description": "Arduino digital pin number for motor pin 2. Defaults to pin 3. For a AccelStepper::DRIVER (interface==1), this is the Direction input the driver. High means forward. ",
+          "id": "rJd8maff8",
+          "label": "M2",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "ryHJUTzG8": {
+          "id": "ryHJUTzG8",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/accelstepper-device"
+    },
+    "@/currentposition": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n   if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n\n    emitValue<output_CurPos>(ctx,(long)stepper->currentPosition());\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "The currently motor position. ",
+      "nodes": {
+        "B10KWnQzI": {
+          "description": "the current motor position in steps. Positive is clockwise from the 0 position. ",
+          "id": "B10KWnQzI",
+          "label": "CurPos",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HJiuW3mfU": {
+          "id": "HJiuW3mfU",
+          "label": "UPD",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SyXqZ2mf8": {
+          "id": "SyXqZ2mf8",
+          "label": "DONE",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJgLbnXf8": {
+          "id": "rJgLbnXf8",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        },
+        "ry5Fbn7GI": {
+          "id": "ry5Fbn7GI",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/currentposition"
+    },
+    "@/direction": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (isInputDirty<input_CW>(ctx))\n        emitValue<output_DIR>(ctx, 1);\n    else\n        emitValue<output_DIR>(ctx, 0);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BkcD7v1XU": {
+          "id": "BkcD7v1XU",
+          "label": "CW",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ByI_XD1XL": {
+          "id": "ByI_XD1XL",
+          "label": "DIR",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "HJtdXvJ7U": {
+          "id": "HJtdXvJ7U",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HyJ_mvkQI": {
+          "id": "HyJ_mvkQI",
+          "label": "CCW",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/direction"
+    },
+    "@/distancetogo": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n\n    emitValue<output_dist>(ctx,(long)stepper->distanceToGo());\n    emitValue<output_DONE>(ctx, 1);\n}\n\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "The distance from the current position to the target position. ",
+      "nodes": {
+        "B1kA3imf8": {
+          "id": "B1kA3imf8",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        },
+        "HJcb6oXM8": {
+          "id": "HJcb6oXM8",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S12lTjXf8": {
+          "description": "the distance from the current position to the target position in steps. Positive is clockwise from the current position. ",
+          "id": "S12lTjXf8",
+          "label": "dist",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rJUJai7MU": {
+          "id": "rJUJai7MU",
+          "label": "UPD",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryHzaoQfI": {
+          "id": "ryHzaoQfI",
+          "label": "DONE",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/distancetogo"
+    },
+    "@/example-constantspeed": {
+      "links": {
+        "B12VcDyXL": {
+          "id": "B12VcDyXL",
+          "input": {
+            "nodeId": "Sy-19Dkm8",
+            "pinKey": "SJjoRzVfI"
+          },
+          "output": {
+            "nodeId": "H1HV5wkX8",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "BJyc9PkXI": {
+          "id": "BJyc9PkXI",
+          "input": {
+            "nodeId": "B1XTKP1XI",
+            "pinKey": "BJlCIj7MI"
+          },
+          "output": {
+            "nodeId": "SyioYvJXL",
+            "pinKey": "S1rzvoXfU"
+          }
+        },
+        "Bknl5vyQL": {
+          "id": "Bknl5vyQL",
+          "input": {
+            "nodeId": "B11AKPJXL",
+            "pinKey": "Sy_A3GVG8"
+          },
+          "output": {
+            "nodeId": "SyioYvJXL",
+            "pinKey": "HyIlI6zfI"
+          }
+        },
+        "H1QqqD1QU": {
+          "id": "H1QqqD1QU",
+          "input": {
+            "nodeId": "B11AKPJXL",
+            "pinKey": "ryWBaGEz8"
+          },
+          "output": {
+            "nodeId": "B1XTKP1XI",
+            "pinKey": "H1alEjmGI"
+          }
+        },
+        "H1Yx9Dk78": {
+          "id": "H1Yx9Dk78",
+          "input": {
+            "nodeId": "B1XTKP1XI",
+            "pinKey": "HkL1EimML"
+          },
+          "output": {
+            "nodeId": "SyioYvJXL",
+            "pinKey": "HyIlI6zfI"
+          }
+        },
+        "S1X85wJm8": {
+          "id": "S1X85wJm8",
+          "input": {
+            "nodeId": "H1yLcwJX8",
+            "pinKey": "Hk-UvIK9b"
+          },
+          "output": {
+            "nodeId": "Sy-19Dkm8",
+            "pinKey": "HJDh0fEzI"
+          }
+        },
+        "SJUI5v1XU": {
+          "id": "SJUI5v1XU",
+          "input": {
+            "nodeId": "H1HV5wkX8",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "H1yLcwJX8",
+            "pinKey": "S1K8wUY9b"
+          }
+        },
+        "SyYNcPJXI": {
+          "id": "SyYNcPJXI",
+          "input": {
+            "nodeId": "H1HV5wkX8",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "B11AKPJXL",
+            "pinKey": "SybE6MEzL"
+          }
+        },
+        "r11b5PJQU": {
+          "id": "r11b5PJQU",
+          "input": {
+            "nodeId": "Sy-19Dkm8",
+            "pinKey": "r1oF0MVMU"
+          },
+          "output": {
+            "nodeId": "SyioYvJXL",
+            "pinKey": "HyIlI6zfI"
+          }
+        }
+      },
+      "nodes": {
+        "B11AKPJXL": {
+          "boundLiterals": {
+            "Hyy4f8wzL": "False",
+            "SJr-6fNM8": "100"
+          },
+          "id": "B11AKPJXL",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/setspeed"
+        },
+        "B1XTKP1XI": {
+          "boundLiterals": {
+            "SymAQi7M8": "500.0"
+          },
+          "id": "B1XTKP1XI",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/setmaxspeed"
+        },
+        "H1HV5wkX8": {
+          "id": "H1HV5wkX8",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "H1yLcwJX8": {
+          "id": "H1yLcwJX8",
+          "position": {
+            "x": 8,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/defer(pulse)"
+        },
+        "Sy-19Dkm8": {
+          "id": "Sy-19Dkm8",
+          "position": {
+            "x": 1,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/runspeed"
+        },
+        "SyioYvJXL": {
+          "boundLiterals": {
+            "HJ4JVpfzL": "4"
+          },
+          "id": "SyioYvJXL",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/accelstepper-device"
+        }
+      },
+      "path": "@/example-constantspeed"
+    },
+    "@/example-multistepper": {
+      "links": {
+        "B1kG0iVmL": {
+          "id": "B1kG0iVmL",
+          "input": {
+            "nodeId": "H1h2qsNm8",
+            "pinKey": "Hk5nRhWQU"
+          },
+          "output": {
+            "nodeId": "Hk3ZRiN7U",
+            "pinKey": "rJxPLsNXU"
+          }
+        },
+        "BJ7GRjE78": {
+          "id": "BJ7GRjE78",
+          "input": {
+            "nodeId": "Hk3ZRiN7U",
+            "pinKey": "rkeO8iEXU"
+          },
+          "output": {
+            "nodeId": "HyurEq4XI",
+            "pinKey": "rJqZvT-m8"
+          }
+        },
+        "BJboI5V7L": {
+          "id": "BJboI5V7L",
+          "input": {
+            "nodeId": "B1eCdpZ7U",
+            "pinKey": "BJlCIj7MI"
+          },
+          "output": {
+            "nodeId": "HJht83lX8",
+            "pinKey": "S1rzvoXfU"
+          }
+        },
+        "BkPNVqEQ8": {
+          "id": "BkPNVqEQ8",
+          "input": {
+            "nodeId": "HJpXVc4Q8",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "B1eCdpZ7U",
+            "pinKey": "H1alEjmGI"
+          }
+        },
+        "BkbcRsVQL": {
+          "id": "BkbcRsVQL",
+          "input": {
+            "nodeId": "Hkn_RoEX8",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "HJFYCiVXL",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "ByWoFTWQ8": {
+          "id": "ByWoFTWQ8",
+          "input": {
+            "nodeId": "rysYYpbmU",
+            "pinKey": "BygApTqym"
+          },
+          "output": {
+            "nodeId": "Hkl5L3lm8",
+            "pinKey": "S1rzvoXfU"
+          }
+        },
+        "ByxhgiNXU": {
+          "id": "ByxhgiNXU",
+          "input": {
+            "nodeId": "HyurEq4XI",
+            "pinKey": "SykZwabm8"
+          },
+          "output": {
+            "nodeId": "H13KeiEXL",
+            "pinKey": "SyJdVa-mI"
+          }
+        },
+        "H1VMlj4mL": {
+          "id": "H1VMlj4mL",
+          "input": {
+            "nodeId": "Bym-eoNm8",
+            "pinKey": "B10MR2lQI"
+          },
+          "output": {
+            "nodeId": "HJpXVc4Q8",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "H1mSosN78": {
+          "id": "H1mSosN78",
+          "input": {
+            "nodeId": "B1P69iVmL",
+            "pinKey": "rkQD46-m8"
+          },
+          "output": {
+            "nodeId": "HyurEq4XI",
+            "pinKey": "rJqZvT-m8"
+          }
+        },
+        "HJ109iV78": {
+          "id": "HJ109iV78",
+          "input": {
+            "nodeId": "B1P69iVmL",
+            "pinKey": "BJVG4abm8"
+          },
+          "output": {
+            "nodeId": "H1h2qsNm8",
+            "pinKey": "Bkm6AhWQ8"
+          }
+        },
+        "HJfuAjN78": {
+          "id": "HJfuAjN78",
+          "input": {
+            "nodeId": "BJ2w0oNXI",
+            "pinKey": "H1WOodf7L"
+          },
+          "output": {
+            "nodeId": "rkl_Cc4XL",
+            "pinKey": "r1EeN2gQ8"
+          }
+        },
+        "HJw0qoE78": {
+          "id": "HJw0qoE78",
+          "input": {
+            "nodeId": "B1P69iVmL",
+            "pinKey": "HyFzE6WmI"
+          },
+          "output": {
+            "nodeId": "Bym-eoNm8",
+            "pinKey": "H1NLJsEX8"
+          }
+        },
+        "HkBcljEQU": {
+          "id": "HkBcljEQU",
+          "input": {
+            "nodeId": "H13KeiEXL",
+            "pinKey": "HyFzE6WmI"
+          },
+          "output": {
+            "nodeId": "Bym-eoNm8",
+            "pinKey": "H1NLJsEX8"
+          }
+        },
+        "Hy7N4cNmI": {
+          "id": "Hy7N4cNmI",
+          "input": {
+            "nodeId": "HJpXVc4Q8",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "BkEkt6bmU",
+            "pinKey": "H1alEjmGI"
+          }
+        },
+        "HyQF0oE7U": {
+          "id": "HyQF0oE7U",
+          "input": {
+            "nodeId": "BJ2w0oNXI",
+            "pinKey": "r14Fo_GXL"
+          },
+          "output": {
+            "nodeId": "Hkn_RoEX8",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "Hy_1YTZQ8": {
+          "id": "Hy_1YTZQ8",
+          "input": {
+            "nodeId": "BkEkt6bmU",
+            "pinKey": "HkL1EimML"
+          },
+          "output": {
+            "nodeId": "Hkl5L3lm8",
+            "pinKey": "HyIlI6zfI"
+          }
+        },
+        "Sy3jgiNXI": {
+          "id": "Sy3jgiNXI",
+          "input": {
+            "nodeId": "HyurEq4XI",
+            "pinKey": "Byc1Pp-Q8"
+          },
+          "output": {
+            "nodeId": "rkl_Cc4XL",
+            "pinKey": "r1EeN2gQ8"
+          }
+        },
+        "SyA-bj47L": {
+          "id": "SyA-bj47L",
+          "input": {
+            "nodeId": "H13KeiEXL",
+            "pinKey": "BJVG4abm8"
+          },
+          "output": {
+            "nodeId": "HkmWWsN78",
+            "pinKey": "Bkm6AhWQ8"
+          }
+        },
+        "SyHiI9EX8": {
+          "id": "SyHiI9EX8",
+          "input": {
+            "nodeId": "BkEkt6bmU",
+            "pinKey": "BJlCIj7MI"
+          },
+          "output": {
+            "nodeId": "Hkl5L3lm8",
+            "pinKey": "S1rzvoXfU"
+          }
+        },
+        "SyTKCiVmU": {
+          "id": "SyTKCiVmU",
+          "input": {
+            "nodeId": "HJFYCiVXL",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "BJ2w0oNXI",
+            "pinKey": "Sye9suGXU"
+          }
+        },
+        "r1GXgjE7I": {
+          "id": "r1GXgjE7I",
+          "input": {
+            "nodeId": "Bym-eoNm8",
+            "pinKey": "S1Vtw2gmU"
+          },
+          "output": {
+            "nodeId": "HJht83lX8",
+            "pinKey": "HyIlI6zfI"
+          }
+        },
+        "r1ibWoVXI": {
+          "id": "r1ibWoVXI",
+          "input": {
+            "nodeId": "HkmWWsN78",
+            "pinKey": "Hk5nRhWQU"
+          },
+          "output": {
+            "nodeId": "By6Jbj4mL",
+            "pinKey": "H1aZ92W7L"
+          }
+        },
+        "r1nMeoEXI": {
+          "id": "r1nMeoEXI",
+          "input": {
+            "nodeId": "Bym-eoNm8",
+            "pinKey": "HyuOD3g7L"
+          },
+          "output": {
+            "nodeId": "rkl_Cc4XL",
+            "pinKey": "r1EeN2gQ8"
+          }
+        },
+        "rJDGRoVm8": {
+          "id": "rJDGRoVm8",
+          "input": {
+            "nodeId": "Hk3ZRiN7U",
+            "pinKey": "HJd88oE78"
+          },
+          "output": {
+            "nodeId": "By6Jbj4mL",
+            "pinKey": "H1aZ92W7L"
+          }
+        },
+        "rJPC_TbXI": {
+          "id": "rJPC_TbXI",
+          "input": {
+            "nodeId": "B1eCdpZ7U",
+            "pinKey": "HkL1EimML"
+          },
+          "output": {
+            "nodeId": "HJht83lX8",
+            "pinKey": "HyIlI6zfI"
+          }
+        },
+        "rJZcxiNXL": {
+          "id": "rJZcxiNXL",
+          "input": {
+            "nodeId": "H13KeiEXL",
+            "pinKey": "rkQD46-m8"
+          },
+          "output": {
+            "nodeId": "Bym-eoNm8",
+            "pinKey": "Syh_A3xQ8"
+          }
+        },
+        "rJlF0o4QL": {
+          "id": "rJlF0o4QL",
+          "input": {
+            "nodeId": "Hkn_RoEX8",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "B1P69iVmL",
+            "pinKey": "SyJdVa-mI"
+          }
+        },
+        "rkd7gjVQL": {
+          "id": "rkd7gjVQL",
+          "input": {
+            "nodeId": "Bym-eoNm8",
+            "pinKey": "S1Vtw2gmU-$1"
+          },
+          "output": {
+            "nodeId": "Hkl5L3lm8",
+            "pinKey": "HyIlI6zfI"
+          }
+        }
+      },
+      "nodes": {
+        "B1P69iVmL": {
+          "id": "B1P69iVmL",
+          "position": {
+            "x": 13,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/multimoveto"
+        },
+        "B1eCdpZ7U": {
+          "id": "B1eCdpZ7U",
+          "position": {
+            "x": 12,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/setmaxspeed"
+        },
+        "BJ2w0oNXI": {
+          "id": "BJ2w0oNXI",
+          "position": {
+            "x": 13,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "@/multirun"
+        },
+        "BkEkt6bmU": {
+          "id": "BkEkt6bmU",
+          "position": {
+            "x": 19,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/setmaxspeed"
+        },
+        "By6Jbj4mL": {
+          "boundLiterals": {
+            "BJvr9T-QI": "On Boot",
+            "Bynl92bXL": "2"
+          },
+          "id": "By6Jbj4mL",
+          "position": {
+            "x": 21,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/multiposition"
+        },
+        "Bym-eoNm8": {
+          "arityLevel": 2,
+          "id": "Bym-eoNm8",
+          "position": {
+            "x": 13,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/multistepper-addstepper"
+        },
+        "H13KeiEXL": {
+          "id": "H13KeiEXL",
+          "position": {
+            "x": 13,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/multimoveto"
+        },
+        "H1h2qsNm8": {
+          "arityLevel": 2,
+          "boundLiterals": {
+            "B1gCAhb7L": "-100",
+            "B1gCAhb7L-$1": "100"
+          },
+          "id": "H1h2qsNm8",
+          "position": {
+            "x": 21,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/multiposition-add"
+        },
+        "HJFYCiVXL": {
+          "id": "HJFYCiVXL",
+          "position": {
+            "x": 18,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "HJht83lX8": {
+          "boundLiterals": {
+            "HJUu7Tff8": "D0",
+            "SyhPmTMf8": "D0",
+            "rJd8maff8": "D5"
+          },
+          "id": "HJht83lX8",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/accelstepper-device"
+        },
+        "HJpXVc4Q8": {
+          "id": "HJpXVc4Q8",
+          "position": {
+            "x": 15,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "Hk3ZRiN7U": {
+          "id": "Hk3ZRiN7U",
+          "position": {
+            "x": 22,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/multiposition-reset"
+        },
+        "Hkl5L3lm8": {
+          "boundLiterals": {
+            "HJUu7Tff8": "D0",
+            "S1-IQ6fGU": "D3",
+            "SyhPmTMf8": "D0",
+            "rJd8maff8": "D6"
+          },
+          "id": "Hkl5L3lm8",
+          "position": {
+            "x": 19,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/accelstepper-device"
+        },
+        "HkmWWsN78": {
+          "arityLevel": 2,
+          "boundLiterals": {
+            "B1gCAhb7L": "1000",
+            "B1gCAhb7L-$1": "-500"
+          },
+          "id": "HkmWWsN78",
+          "position": {
+            "x": 21,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/multiposition-add"
+        },
+        "Hkn_RoEX8": {
+          "id": "Hkn_RoEX8",
+          "position": {
+            "x": 14,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "HyurEq4XI": {
+          "id": "HyurEq4XI",
+          "position": {
+            "x": 13,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/multirunspeedtoposition"
+        },
+        "rkl_Cc4XL": {
+          "id": "rkl_Cc4XL",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/multistepper-device"
+        },
+        "rysYYpbmU": {
+          "boundLiterals": {
+            "rJjXFA9JQ": "D8"
+          },
+          "id": "rysYYpbmU",
+          "position": {
+            "x": 25,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/gpio/digital-write"
+        }
+      },
+      "path": "@/example-multistepper"
+    },
+    "@/example-proportional-control": {
+      "comments": {
+        "S1AO05JX8": {
+          "content": "Make a single stepper follow the analog value read from a pot or whatever\nThe stepper will move at a constant speed to each newly set posiiton, \ndepending on the value of the pot.",
+          "id": "S1AO05JX8",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 2,
+            "width": 9,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "Make a single stepper follow the analog value read from a pot or whatever\nThe stepper will move at a constant speed to each newly set posiiton, \ndepending on the value of the pot.",
+      "links": {
+        "BJFG6Uym8": {
+          "id": "BJFG6Uym8",
+          "input": {
+            "nodeId": "rJJ7n8JQU",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "rJBG68JXL",
+            "pinKey": "S1K8wUY9b"
+          }
+        },
+        "BJzjj81XL": {
+          "id": "BJzjj81XL",
+          "input": {
+            "nodeId": "BkKco8JXI",
+            "pinKey": "BJlCIj7MI"
+          },
+          "output": {
+            "nodeId": "Bk4KsU1Q8",
+            "pinKey": "S1rzvoXfU"
+          }
+        },
+        "Bkg23IyXL": {
+          "id": "Bkg23IyXL",
+          "input": {
+            "nodeId": "Hy2oh8k7I",
+            "pinKey": "ryWBaGEz8"
+          },
+          "output": {
+            "nodeId": "SyDYh81Q8",
+            "pinKey": "S1Qe9jXzU"
+          }
+        },
+        "ByCB3IJmU": {
+          "id": "ByCB3IJmU",
+          "input": {
+            "nodeId": "r1brnI1X8",
+            "pinKey": "HkPueeK9m"
+          },
+          "output": {
+            "nodeId": "SJkE38JQU",
+            "pinKey": "SJ-pb1IyQL"
+          }
+        },
+        "ByzD2ysJ78": {
+          "id": "ByzD2ysJ78",
+          "input": {
+            "nodeId": "Hy2oh8k7I",
+            "pinKey": "Sy_A3GVG8"
+          },
+          "output": {
+            "nodeId": "B1WP31sJQU",
+            "pinKey": "__out__"
+          }
+        },
+        "H1Sm3Ikm8": {
+          "id": "H1Sm3Ikm8",
+          "input": {
+            "nodeId": "rJJ7n8JQU",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "BkKco8JXI",
+            "pinKey": "H1alEjmGI"
+          }
+        },
+        "H1TVp8JQ8": {
+          "id": "H1TVp8JQ8",
+          "input": {
+            "nodeId": "BkHVpLymU",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "r1brnI1X8",
+            "pinKey": "ry7swlgY9Q"
+          }
+        },
+        "H1fcnI1QL": {
+          "id": "H1fcnI1QL",
+          "input": {
+            "nodeId": "SyDYh81Q8",
+            "pinKey": "B1Y6tomMI"
+          },
+          "output": {
+            "nodeId": "r1brnI1X8",
+            "pinKey": "ry7swlgY9Q"
+          }
+        },
+        "HkEP31skX8": {
+          "id": "HkEP31skX8",
+          "input": {
+            "nodeId": "SyDYh81Q8",
+            "pinKey": "Bk53Yi7ML"
+          },
+          "output": {
+            "nodeId": "HyXw31j17L",
+            "pinKey": "__out__"
+          }
+        },
+        "HyxDhJiJXU": {
+          "id": "HyxDhJiJXU",
+          "input": {
+            "nodeId": "rkw2kjkQ8",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Bk4KsU1Q8",
+            "pinKey": "HyIlI6zfI"
+          }
+        },
+        "SJ5c2LyQU": {
+          "id": "SJ5c2LyQU",
+          "input": {
+            "nodeId": "SyDYh81Q8",
+            "pinKey": "r1ZJciQGL"
+          },
+          "output": {
+            "nodeId": "rJJ7n8JQU",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "SkXEnIkXU": {
+          "id": "SkXEnIkXU",
+          "input": {
+            "nodeId": "SJkE38JQU",
+            "pinKey": "BJTW1LyXI"
+          },
+          "output": {
+            "nodeId": "rJJ7n8JQU",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "Skaf68y7U": {
+          "id": "Skaf68y7U",
+          "input": {
+            "nodeId": "rJBG68JXL",
+            "pinKey": "Hk-UvIK9b"
+          },
+          "output": {
+            "nodeId": "SyBe6Iym8",
+            "pinKey": "Bksc_IkQU"
+          }
+        },
+        "r1CqsLJmI": {
+          "id": "r1CqsLJmI",
+          "input": {
+            "nodeId": "BkKco8JXI",
+            "pinKey": "HkL1EimML"
+          },
+          "output": {
+            "nodeId": "Bk4KsU1Q8",
+            "pinKey": "HyIlI6zfI"
+          }
+        },
+        "r1kZaIJ7U": {
+          "id": "r1kZaIJ7U",
+          "input": {
+            "nodeId": "SyBe6Iym8",
+            "pinKey": "B1FddU17L"
+          },
+          "output": {
+            "nodeId": "Hy2oh8k7I",
+            "pinKey": "SybE6MEzL"
+          }
+        },
+        "r1u5VwyQU": {
+          "id": "r1u5VwyQU",
+          "input": {
+            "nodeId": "Skg9EDkXL",
+            "pinKey": "HyJ_mvkQI"
+          },
+          "output": {
+            "nodeId": "SJkE38JQU",
+            "pinKey": "SJ-pb1IyQL"
+          }
+        },
+        "rJ8P2JsJmL": {
+          "id": "rJ8P2JsJmL",
+          "input": {
+            "nodeId": "SyBe6Iym8",
+            "pinKey": "r1mS_I17L"
+          },
+          "output": {
+            "nodeId": "SJSD2ks17U",
+            "pinKey": "__out__"
+          }
+        },
+        "rJN94vk7I": {
+          "id": "rJN94vk7I",
+          "input": {
+            "nodeId": "Skg9EDkXL",
+            "pinKey": "BkcD7v1XU"
+          },
+          "output": {
+            "nodeId": "SJkE38JQU",
+            "pinKey": "B1gTWJ8J78"
+          }
+        },
+        "rJ_1vPy7L": {
+          "id": "rJ_1vPy7L",
+          "input": {
+            "nodeId": "Hy2oh8k7I",
+            "pinKey": "Hyy4f8wzL"
+          },
+          "output": {
+            "nodeId": "Skg9EDkXL",
+            "pinKey": "ByI_XD1XL"
+          }
+        },
+        "rknHnUy78": {
+          "id": "rknHnUy78",
+          "input": {
+            "nodeId": "r1brnI1X8",
+            "pinKey": "BkljwelY9m"
+          },
+          "output": {
+            "nodeId": "SJkE38JQU",
+            "pinKey": "B1gTWJ8J78"
+          }
+        },
+        "ryDsEDy7U": {
+          "id": "ryDsEDy7U",
+          "input": {
+            "nodeId": "S1GiEv1X8",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "Skg9EDkXL",
+            "pinKey": "ByI_XD1XL"
+          }
+        }
+      },
+      "nodes": {
+        "B1WP31sJQU": {
+          "id": "B1WP31sJQU",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "Bk4KsU1Q8": {
+          "boundLiterals": {
+            "HJ4JVpfzL": "4"
+          },
+          "id": "Bk4KsU1Q8",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/accelstepper-device"
+        },
+        "BkHVpLymU": {
+          "id": "BkHVpLymU",
+          "label": "Count",
+          "position": {
+            "x": 5,
+            "y": 8,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "BkKco8JXI": {
+          "boundLiterals": {
+            "SymAQi7M8": "500.0"
+          },
+          "id": "BkKco8JXI",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/setmaxspeed"
+        },
+        "Hy2oh8k7I": {
+          "boundLiterals": {
+            "SJr-6fNM8": "100"
+          },
+          "id": "Hy2oh8k7I",
+          "position": {
+            "x": 1,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "@/setspeed"
+        },
+        "HyXw31j17L": {
+          "id": "HyXw31j17L",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1GiEv1X8": {
+          "id": "S1GiEv1X8",
+          "label": "Direction",
+          "position": {
+            "x": 10,
+            "y": 8,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "SJSD2ks17U": {
+          "id": "SJSD2ks17U",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJkE38JQU": {
+          "boundLiterals": {
+            "Hy76-JUk78": "D10",
+            "S1f6byI17U": "D9"
+          },
+          "id": "SJkE38JQU",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "ivanmason/ecw-digital-contacting-encoder/encoder"
+        },
+        "Skg9EDkXL": {
+          "id": "Skg9EDkXL",
+          "position": {
+            "x": 10,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/direction"
+        },
+        "SyBe6Iym8": {
+          "id": "SyBe6Iym8",
+          "position": {
+            "x": 1,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "@/runspeedtoposition"
+        },
+        "SyDYh81Q8": {
+          "id": "SyDYh81Q8",
+          "position": {
+            "x": 1,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/moveto"
+        },
+        "r1brnI1X8": {
+          "id": "r1brnI1X8",
+          "position": {
+            "x": 5,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "nkrkv/encoder/count"
+        },
+        "rJBG68JXL": {
+          "id": "rJBG68JXL",
+          "position": {
+            "x": 9,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/defer(pulse)"
+        },
+        "rJJ7n8JQU": {
+          "id": "rJJ7n8JQU",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "rkw2kjkQ8": {
+          "id": "rkw2kjkQ8",
+          "label": "DEV",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        }
+      },
+      "path": "@/example-proportional-control"
+    },
+    "@/isrunning": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n    bool running = stepper->isRunning();\n\n    emitValue<output_Running>(ctx, running ? 1 : 0);\n    \n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Checks to see if the motor is currently running to a target ",
+      "nodes": {
+        "BJ9aFze7L": {
+          "id": "BJ9aFze7L",
+          "label": "DONE",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BygpKzgXL": {
+          "description": "true if the speed is not zero or not at the target position ",
+          "id": "BygpKzgXL",
+          "label": "Running",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "Hkj2YMlX8": {
+          "id": "Hkj2YMlX8",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJrhtfgQL": {
+          "id": "SJrhtfgQL",
+          "label": "UPD",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r11iFflQI": {
+          "id": "r11iFflQI",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        }
+      },
+      "path": "@/isrunning"
+    },
+    "@/main": {
+      "links": {
+        "B12Cf6IfU": {
+          "id": "B12Cf6IfU",
+          "input": {
+            "nodeId": "BJcBf6UfU",
+            "pinKey": "rJgLbnXf8"
+          },
+          "output": {
+            "nodeId": "S1b0FQNf8",
+            "pinKey": "HyIlI6zfI"
+          }
+        },
+        "B1qsJQEM8": {
+          "id": "B1qsJQEM8",
+          "input": {
+            "nodeId": "Hy04JmNfU",
+            "pinKey": "Sy_A3GVG8"
+          },
+          "output": {
+            "nodeId": "ryuPRazML",
+            "pinKey": "HyIlI6zfI"
+          }
+        },
+        "BJUTyXVM8": {
+          "id": "BJUTyXVM8",
+          "input": {
+            "nodeId": "rJ1TJ7Ez8",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "Hy04JmNfU",
+            "pinKey": "SybE6MEzL"
+          }
+        },
+        "BJcGKn8zU": {
+          "id": "BJcGKn8zU",
+          "input": {
+            "nodeId": "Hk8-F38MI",
+            "pinKey": "ryOYvomf8"
+          },
+          "output": {
+            "nodeId": "S1b0FQNf8",
+            "pinKey": "HyIlI6zfI"
+          }
+        },
+        "BkMifpUzI": {
+          "id": "BkMifpUzI",
+          "input": {
+            "nodeId": "Sku5fpLfI",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BJcBf6UfU",
+            "pinKey": "B10KWnQzI"
+          }
+        },
+        "By7BDa8f8": {
+          "id": "By7BDa8f8",
+          "input": {
+            "nodeId": "SJKgvTLG8",
+            "pinKey": "Hy5GCh8MI"
+          },
+          "output": {
+            "nodeId": "BkLO8pIzI",
+            "pinKey": "S13xLCuHvkW"
+          }
+        },
+        "BytPP6Lz8": {
+          "id": "BytPP6Lz8",
+          "input": {
+            "nodeId": "HksXtn8zU",
+            "pinKey": "B14Jc3QMI"
+          },
+          "output": {
+            "nodeId": "SyxNZTIGI",
+            "pinKey": "ryHzaoQfI"
+          }
+        },
+        "H1x8-a8zI": {
+          "id": "H1x8-a8zI",
+          "input": {
+            "nodeId": "SyxNZTIGI",
+            "pinKey": "rJUJai7MU"
+          },
+          "output": {
+            "nodeId": "rkQW0t74zI",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "H1xCzm4zU": {
+          "id": "H1xCzm4zU",
+          "input": {
+            "nodeId": "ryBVJ7VfL",
+            "pinKey": "r1oF0MVMU"
+          },
+          "output": {
+            "nodeId": "ryuPRazML",
+            "pinKey": "HyIlI6zfI"
+          }
+        },
+        "HJ7YumNzU": {
+          "id": "HJ7YumNzU",
+          "input": {
+            "nodeId": "rJ1TJ7Ez8",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "rJeY_XEGU",
+            "pinKey": "S1K8wUY9b"
+          }
+        },
+        "HkBbCt74MU": {
+          "id": "HkBbCt74MU",
+          "input": {
+            "nodeId": "B1e-0Y7NG8",
+            "pinKey": "HkL1EimML"
+          },
+          "output": {
+            "nodeId": "S1b0FQNf8",
+            "pinKey": "HyIlI6zfI"
+          }
+        },
+        "Hk_ZtpIM8": {
+          "id": "Hk_ZtpIM8",
+          "input": {
+            "nodeId": "rkQW0t74zI",
+            "pinKey": "ByU7LRuSPkW-$1"
+          },
+          "output": {
+            "nodeId": "r1KeKa8MI",
+            "pinKey": "S1K8wUY9b"
+          }
+        },
+        "Hkq_U6IfI": {
+          "id": "Hkq_U6IfI",
+          "input": {
+            "nodeId": "BkLO8pIzI",
+            "pinKey": "S1yZIA_rDJZ"
+          },
+          "output": {
+            "nodeId": "BkIL868GL",
+            "pinKey": "H1E8AuSPkZ"
+          }
+        },
+        "Hy6TuT8f8": {
+          "id": "Hy6TuT8f8",
+          "input": {
+            "nodeId": "H1fzuTIGU",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BkIL868GL",
+            "pinKey": "H1E8AuSPkZ"
+          }
+        },
+        "HyDtu74zL": {
+          "id": "HyDtu74zL",
+          "input": {
+            "nodeId": "rJeY_XEGU",
+            "pinKey": "Hk-UvIK9b"
+          },
+          "output": {
+            "nodeId": "ryBVJ7VfL",
+            "pinKey": "HJDh0fEzI"
+          }
+        },
+        "S15EuMVf8": {
+          "id": "S15EuMVf8",
+          "input": {
+            "nodeId": "ryboIsmGL",
+            "pinKey": "BJlCIj7MI"
+          },
+          "output": {
+            "nodeId": "ryuPRazML",
+            "pinKey": "S1rzvoXfU"
+          }
+        },
+        "SJCULaUzU": {
+          "id": "SJCULaUzU",
+          "input": {
+            "nodeId": "BkIL868GL",
+            "pinKey": "HJG8C_SPkb"
+          },
+          "output": {
+            "nodeId": "SyxNZTIGI",
+            "pinKey": "S12lTjXf8"
+          }
+        },
+        "SJI-0KmNM8": {
+          "id": "SJI-0KmNM8",
+          "input": {
+            "nodeId": "B1e-0Y7NG8",
+            "pinKey": "BJlCIj7MI"
+          },
+          "output": {
+            "nodeId": "S1b0FQNf8",
+            "pinKey": "S1rzvoXfU"
+          }
+        },
+        "SJXvYh8GI": {
+          "id": "SJXvYh8GI",
+          "input": {
+            "nodeId": "rkQW0t74zI",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "HyiUKnIGU",
+            "pinKey": "S1Qe9jXzU"
+          }
+        },
+        "SJ_wFhUM8": {
+          "id": "SJ_wFhUM8",
+          "input": {
+            "nodeId": "HyiUKnIGU",
+            "pinKey": "Bk53Yi7ML"
+          },
+          "output": {
+            "nodeId": "S1b0FQNf8",
+            "pinKey": "HyIlI6zfI"
+          }
+        },
+        "SJdakmNMU": {
+          "id": "SJdakmNMU",
+          "input": {
+            "nodeId": "ryBVJ7VfL",
+            "pinKey": "SJjoRzVfI"
+          },
+          "output": {
+            "nodeId": "rJ1TJ7Ez8",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "SJkSv6LG8": {
+          "id": "SJkSv6LG8",
+          "input": {
+            "nodeId": "BkLO8pIzI",
+            "pinKey": "ryTeUROHD1b"
+          },
+          "output": {
+            "nodeId": "HkPNvaUML",
+            "pinKey": "VAL"
+          }
+        },
+        "Sk4fYn8GL": {
+          "id": "Sk4fYn8GL",
+          "input": {
+            "nodeId": "Hk8-F38MI",
+            "pinKey": "SyBvviQzL"
+          },
+          "output": {
+            "nodeId": "B1e-0Y7NG8",
+            "pinKey": "H1alEjmGI"
+          }
+        },
+        "SkX-Fp8M8": {
+          "id": "SkX-Fp8M8",
+          "input": {
+            "nodeId": "r1KeKa8MI",
+            "pinKey": "Hk-UvIK9b"
+          },
+          "output": {
+            "nodeId": "SJKgvTLG8",
+            "pinKey": "S1Qe9jXzU"
+          }
+        },
+        "Sy3ZCFXNzU": {
+          "id": "Sy3ZCFXNzU",
+          "input": {
+            "nodeId": "rkQW0t74zI",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "rkEZCtQVGU",
+            "pinKey": "S1K8wUY9b"
+          }
+        },
+        "Sy6IwTLfI": {
+          "id": "Sy6IwTLfI",
+          "input": {
+            "nodeId": "SJKgvTLG8",
+            "pinKey": "r1ZJciQGL"
+          },
+          "output": {
+            "nodeId": "BJcBf6UfU",
+            "pinKey": "SyXqZ2mf8"
+          }
+        },
+        "r1AjJmEML": {
+          "id": "r1AjJmEML",
+          "input": {
+            "nodeId": "Hy04JmNfU",
+            "pinKey": "ryWBaGEz8"
+          },
+          "output": {
+            "nodeId": "ryboIsmGL",
+            "pinKey": "H1alEjmGI"
+          }
+        },
+        "r1Alwa8zL": {
+          "id": "r1Alwa8zL",
+          "input": {
+            "nodeId": "SJKgvTLG8",
+            "pinKey": "B1Y6tomMI"
+          },
+          "output": {
+            "nodeId": "BJcBf6UfU",
+            "pinKey": "B10KWnQzI"
+          }
+        },
+        "r1oIdTUfU": {
+          "id": "r1oIdTUfU",
+          "input": {
+            "nodeId": "SJKgvTLG8",
+            "pinKey": "Bk53Yi7ML"
+          },
+          "output": {
+            "nodeId": "S1b0FQNf8",
+            "pinKey": "HyIlI6zfI"
+          }
+        },
+        "rJYNt2UMI": {
+          "id": "rJYNt2UMI",
+          "input": {
+            "nodeId": "rkEZCtQVGU",
+            "pinKey": "Hk-UvIK9b"
+          },
+          "output": {
+            "nodeId": "HksXtn8zU",
+            "pinKey": "HyLh7hmGL"
+          }
+        },
+        "rk2BWaUML": {
+          "id": "rk2BWaUML",
+          "input": {
+            "nodeId": "SyxNZTIGI",
+            "pinKey": "B1kA3imf8"
+          },
+          "output": {
+            "nodeId": "S1b0FQNf8",
+            "pinKey": "HyIlI6zfI"
+          }
+        },
+        "rkSGda8GU": {
+          "id": "rkSGda8GU",
+          "input": {
+            "nodeId": "BJcBf6UfU",
+            "pinKey": "HJiuW3mfU"
+          },
+          "output": {
+            "nodeId": "H1fzuTIGU",
+            "pinKey": "__out__"
+          }
+        },
+        "rkzSthLf8": {
+          "id": "rkzSthLf8",
+          "input": {
+            "nodeId": "HksXtn8zU",
+            "pinKey": "r1f573QML"
+          },
+          "output": {
+            "nodeId": "S1b0FQNf8",
+            "pinKey": "HyIlI6zfI"
+          }
+        },
+        "ryAKHm4f8": {
+          "id": "ryAKHm4f8",
+          "input": {
+            "nodeId": "rJ8KH7EG8",
+            "pinKey": "BygApTqym"
+          },
+          "output": {
+            "nodeId": "ryuPRazML",
+            "pinKey": "S1rzvoXfU"
+          }
+        },
+        "ryJDY2Uf8": {
+          "id": "ryJDY2Uf8",
+          "input": {
+            "nodeId": "HyiUKnIGU",
+            "pinKey": "r1ZJciQGL"
+          },
+          "output": {
+            "nodeId": "Hk8-F38MI",
+            "pinKey": "SJMdDi7ML"
+          }
+        },
+        "rySoUsQMU": {
+          "id": "rySoUsQMU",
+          "input": {
+            "nodeId": "ryboIsmGL",
+            "pinKey": "HkL1EimML"
+          },
+          "output": {
+            "nodeId": "ryuPRazML",
+            "pinKey": "HyIlI6zfI"
+          }
+        },
+        "rygKbaIG8": {
+          "id": "rygKbaIG8",
+          "input": {
+            "nodeId": "BJudW68f8",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "SyxNZTIGI",
+            "pinKey": "S12lTjXf8"
+          }
+        }
+      },
+      "nodes": {
+        "B1e-0Y7NG8": {
+          "boundLiterals": {
+            "SymAQi7M8": "1000.0"
+          },
+          "id": "B1e-0Y7NG8",
+          "position": {
+            "x": 16,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/setmaxspeed"
+        },
+        "BJcBf6UfU": {
+          "id": "BJcBf6UfU",
+          "position": {
+            "x": 24,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "@/currentposition"
+        },
+        "BJudW68f8": {
+          "id": "BJudW68f8",
+          "position": {
+            "x": 13,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "BkIL868GL": {
+          "id": "BkIL868GL",
+          "position": {
+            "x": 23,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/equal(number)"
+        },
+        "BkLO8pIzI": {
+          "id": "BkLO8pIzI",
+          "position": {
+            "x": 23,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/if-else"
+        },
+        "H1fzuTIGU": {
+          "id": "H1fzuTIGU",
+          "position": {
+            "x": 25,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-true"
+        },
+        "Hk8-F38MI": {
+          "id": "Hk8-F38MI",
+          "position": {
+            "x": 16,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/setacceleration"
+        },
+        "HkPNvaUML": {
+          "id": "HkPNvaUML",
+          "position": {
+            "x": 26,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-boolean"
+        },
+        "HksXtn8zU": {
+          "id": "HksXtn8zU",
+          "position": {
+            "x": 16,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "@/run"
+        },
+        "Hy04JmNfU": {
+          "boundLiterals": {
+            "SJr-6fNM8": "50"
+          },
+          "id": "Hy04JmNfU",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/setspeed"
+        },
+        "HyiUKnIGU": {
+          "boundLiterals": {
+            "B1Y6tomMI": "300",
+            "Hy5GCh8MI": "False"
+          },
+          "id": "HyiUKnIGU",
+          "position": {
+            "x": 16,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/moveto"
+        },
+        "S1b0FQNf8": {
+          "boundLiterals": {
+            "HJ4JVpfzL": "1",
+            "HJUu7Tff8": "D0",
+            "S1-IQ6fGU": "D3",
+            "SyhPmTMf8": "D0",
+            "rJd8maff8": "D6"
+          },
+          "id": "S1b0FQNf8",
+          "position": {
+            "x": 15,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/accelstepper-device"
+        },
+        "SJKgvTLG8": {
+          "id": "SJKgvTLG8",
+          "position": {
+            "x": 23,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "@/moveto"
+        },
+        "Sku5fpLfI": {
+          "id": "Sku5fpLfI",
+          "position": {
+            "x": 27,
+            "y": 8,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "SyxNZTIGI": {
+          "id": "SyxNZTIGI",
+          "position": {
+            "x": 16,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/distancetogo"
+        },
+        "r1KeKa8MI": {
+          "id": "r1KeKa8MI",
+          "position": {
+            "x": 21,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/core/defer(pulse)"
+        },
+        "rJ1TJ7Ez8": {
+          "id": "rJ1TJ7Ez8",
+          "position": {
+            "x": 3,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "rJ8KH7EG8": {
+          "boundLiterals": {
+            "rJjXFA9JQ": "D8"
+          },
+          "id": "rJ8KH7EG8",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/gpio/digital-write"
+        },
+        "rJeY_XEGU": {
+          "id": "rJeY_XEGU",
+          "position": {
+            "x": 6,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/defer(pulse)"
+        },
+        "rkEZCtQVGU": {
+          "id": "rkEZCtQVGU",
+          "position": {
+            "x": 19,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/core/defer(pulse)"
+        },
+        "rkQW0t74zI": {
+          "arityLevel": 2,
+          "id": "rkQW0t74zI",
+          "position": {
+            "x": 16,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "ryBVJ7VfL": {
+          "id": "ryBVJ7VfL",
+          "position": {
+            "x": 3,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/runspeed"
+        },
+        "ryboIsmGL": {
+          "boundLiterals": {
+            "SymAQi7M8": "1000.0"
+          },
+          "id": "ryboIsmGL",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/setmaxspeed"
+        },
+        "ryuPRazML": {
+          "boundLiterals": {
+            "HJ4JVpfzL": "1",
+            "HJUu7Tff8": "D0",
+            "SyhPmTMf8": "D0",
+            "rJd8maff8": "D5"
+          },
+          "id": "ryuPRazML",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/accelstepper-device"
+        }
+      },
+      "path": "@/main"
+    },
+    "@/maxspeed": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n\n    emitValue<output_MSpeed>(ctx,(long)stepper->maxSpeed());\n    emitValue<output_DONE>(ctx, 1);\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "returns the maximum speed configured for this stepper that was previously set by setMaxSpeed(); ",
+      "nodes": {
+        "Hy906rvGI": {
+          "id": "Hy906rvGI",
+          "label": "DONE",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SJxp6rPML": {
+          "id": "SJxp6rPML",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        },
+        "SkrRarPfU": {
+          "description": "The currently configured maximum speed ",
+          "id": "SkrRarPfU",
+          "label": "MSpeed",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "Sky7CrPf8": {
+          "id": "Sky7CrPf8",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ry266rDz8": {
+          "id": "ry266rDz8",
+          "label": "UPD",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/maxspeed"
+    },
+    "@/move": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n    long position = getValue<input_Position>(ctx);\n    if(getValue<input_Dir>(ctx))\n        stepper->move(position);\n    else stepper->move(-position);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Set the target position relative to the current position",
+      "nodes": {
+        "H1sD5rwMU": {
+          "description": "clockwise = TRUE\nanticlockwise = False\n",
+          "id": "H1sD5rwMU",
+          "label": "Dir",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "HJce9BDzL": {
+          "id": "HJce9BDzL",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        },
+        "SkFYqSPfU": {
+          "id": "SkFYqSPfU",
+          "label": "DONE",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SkR_qBPGL": {
+          "id": "SkR_qBPGL",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SyHv5HPzU": {
+          "description": "The desired position relative to the current position",
+          "id": "SyHv5HPzU",
+          "label": "Position",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SyluqBwz8": {
+          "id": "SyluqBwz8",
+          "label": "UPD",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/move"
+    },
+    "@/moveto": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n    long position = getValue<input_position>(ctx);\n    if(getValue<input_Dir>(ctx))\n        stepper->moveTo(position);\n    else stepper->moveTo(-position);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Set the target position. The run() function will try to move the motor (at most one step per call) from the current position to the target position set by the most recent call to this function. Caution: moveTo() also recalculates the speed for the next step. If you are trying to use constant speed movements, you should call setSpeed() after calling moveTo(). ",
+      "nodes": {
+        "B1Y6tomMI": {
+          "boundLiterals": {
+            "__out__": "100"
+          },
+          "description": "The desired absolute position. Negative is anticlockwise from the 0 position. ",
+          "id": "B1Y6tomMI",
+          "label": "position",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Bk53Yi7ML": {
+          "id": "Bk53Yi7ML",
+          "label": "DEV",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        },
+        "HJFk5jXMI": {
+          "id": "HJFk5jXMI",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Hy5GCh8MI": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "clockwise = TRUE\nanticlockwise = False",
+          "id": "Hy5GCh8MI",
+          "label": "Dir",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "S1Qe9jXzU": {
+          "id": "S1Qe9jXzU",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r1ZJciQGL": {
+          "id": "r1ZJciQGL",
+          "label": "UPD",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/moveto"
+    },
+    "@/multimoveto": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto _positions = getValue<input_MPOSI>(ctx);\n    auto multistepper = getValue<input_MDEV>(ctx);\n\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n    \n    multistepper->moveTo(_positions.position);\n    \n    emitValue<output_DONE>(ctx, 1);\n\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Set the target positions of all managed steppers according to a coordinate array. New speeds will be computed for each stepper so they will all arrive at their respective targets at very close to the same time. ",
+      "nodes": {
+        "BJVG4abm8": {
+          "description": "An array of desired absolute stepper positions. absolute[0] will be used to set the absolute position of the first stepper added by addStepper() etc. The array must be at least as long as the number of steppers that have been added by addStepper, else results are undefined. ",
+          "id": "BJVG4abm8",
+          "label": "MPOSI",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-multiposition"
+        },
+        "HyFzE6WmI": {
+          "id": "HyFzE6WmI",
+          "label": "MDEV",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-multistepper-device"
+        },
+        "S1tw4a-QL": {
+          "id": "S1tw4a-QL",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SyJdVa-mI": {
+          "id": "SyJdVa-mI",
+          "label": "DONE",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rkQD46-m8": {
+          "id": "rkQD46-m8",
+          "label": "UPD",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/multimoveto"
+    },
+    "@/multiposition": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n    long* position;\n    uint8_t numstepper;\n    uint8_t idx;\n};\n\nstruct Type {\n    long* position;\n    uint8_t numstepper;\n    uint8_t idx;\n};\n\n{{ GENERATED_CODE }}\n\n\nvoid evaluate(Context ctx) {\n    auto state = getState(ctx);\n\n    if (isSettingUp()) {\n        state->numstepper = getValue<input_NUM>(ctx);\n        state->position = new long[state->numstepper - 1];\n        state->idx = 0;\n    }\n\n    Type positions;\n\n    positions.numstepper = state->numstepper;\n    positions.position = state->position;\n    positions.idx = state->idx;\n    emitValue<output_MPOSI>(ctx, positions);\n\n\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Position array to be used by multistepper\n",
+      "nodes": {
+        "Bynl92bXL": {
+          "description": "Number of stepper max of 10",
+          "id": "Bynl92bXL",
+          "label": "NUM",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H1aZ92W7L": {
+          "id": "H1aZ92W7L",
+          "label": "MPOSI",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "rJmbc3-XU": {
+          "id": "rJmbc3-XU",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/multiposition"
+    },
+    "@/multiposition-add": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto _positions = getValue<input_MPOSI>(ctx);\n\n    if (_positions.idx >= _positions.numstepper){\n        return;\n    }\n    long position = getValue<input_mposi>(ctx);\n    if(getValue<input_mdir>(ctx))\n        _positions.position[_positions.idx] = position;\n    else _positions.position[_positions.idx] = -position;\n    _positions.idx++;\n    \n    emitValue<output_OUT>(ctx, _positions);\n\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Add positions to position array. Must match number of stepper in multistepper-addstepper\n",
+      "nodes": {
+        "B1gCAhb7L": {
+          "description": "Number of steps",
+          "id": "B1gCAhb7L",
+          "label": "mposi",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BkJkkT-XU": {
+          "description": "Direction of move\nclockwise = True\nanticlockwise = False",
+          "id": "BkJkkT-XU",
+          "label": "mdir",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "Bkm6AhWQ8": {
+          "id": "Bkm6AhWQ8",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/output-multiposition"
+        },
+        "Hk5nRhWQU": {
+          "id": "Hk5nRhWQU",
+          "label": "MPOSI",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-multiposition"
+        },
+        "SJMg1T-XL": {
+          "id": "SJMg1T-XL",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/variadic-2"
+        },
+        "SyOk1aZXU": {
+          "id": "SyOk1aZXU",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/multiposition-add"
+    },
+    "@/multiposition-reset": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_RTS>(ctx))\n        return;\n\n    auto _positions = getValue<input_MPOSI>(ctx);\n    _positions.idx = 0;\n\n    emitValue<output_OUT>(ctx, _positions);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1oPIsEQL": {
+          "id": "B1oPIsEQL",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJd88oE78": {
+          "id": "HJd88oE78",
+          "label": "MPOSI",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-multiposition"
+        },
+        "rJxPLsNXU": {
+          "id": "rJxPLsNXU",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/output-multiposition"
+        },
+        "rkeO8iEXU": {
+          "id": "rkeO8iEXU",
+          "label": "RTS",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/multiposition-reset"
+    },
+    "@/multirun": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_MDEV>(ctx);\n    bool runing = stepper->run();\n\n    //emitValue<output_RUNING>(ctx, runing ? 1 : 0);\n    \n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Calls runSpeed() on all the managed steppers that have not acheived their target position. ",
+      "nodes": {
+        "H1WOodf7L": {
+          "id": "H1WOodf7L",
+          "label": "MDEV",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-multistepper-device"
+        },
+        "HkOKjuzm8": {
+          "id": "HkOKjuzm8",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Sye9suGXU": {
+          "id": "Sye9suGXU",
+          "label": "DONE",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r14Fo_GXL": {
+          "id": "r14Fo_GXL",
+          "label": "UPD",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/multirun"
+    },
+    "@/multirunspeedtoposition": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto multistepper = getValue<input_MDEV>(ctx);\n\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    multistepper->runSpeedToPosition();\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Runs all managed steppers until they acheived their target position. Blocks until all that position is acheived. If you dont want blocking consider using multirun instead. ",
+      "nodes": {
+        "Byc1Pp-Q8": {
+          "id": "Byc1Pp-Q8",
+          "label": "MDEV",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-multistepper-device"
+        },
+        "SkmbwaZQU": {
+          "id": "SkmbwaZQU",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SykZwabm8": {
+          "id": "SykZwabm8",
+          "label": "UPD",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJqZvT-m8": {
+          "id": "rJqZvT-m8",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/multirunspeedtoposition"
+    },
+    "@/multistepper-addstepper": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n\n\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n    auto multistepper = getValue<input_MDEV>(ctx);\n\n    multistepper->addStepper( *stepper );\n\n\n    emitValue<output_MDEVU0027>(ctx, multistepper);\n    emitValue<output_DONE>(ctx, 1);\n\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Add a stepper to the set of managed steppers There is an upper limit of MULTISTEPPER_MAX_STEPPERS = 10 to the number of steppers that can be managed \n",
+      "nodes": {
+        "B10MR2lQI": {
+          "id": "B10MR2lQI",
+          "label": "UPD",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "B1Bhw2lXL": {
+          "id": "B1Bhw2lXL",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1NLJsEX8": {
+          "id": "H1NLJsEX8",
+          "label": "MDEV'",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/output-multistepper-device"
+        },
+        "HJryliN7U": {
+          "id": "HJryliN7U",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/variadic-1"
+        },
+        "HyuOD3g7L": {
+          "id": "HyuOD3g7L",
+          "label": "MDEV",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-multistepper-device"
+        },
+        "S1Vtw2gmU": {
+          "description": "Reference to a stepper to add to the managed list ",
+          "id": "S1Vtw2gmU",
+          "label": "DEV",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        },
+        "Syh_A3xQ8": {
+          "id": "Syh_A3xQ8",
+          "label": "DONE",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/multistepper-addstepper"
+    },
+    "@/multistepper-device": {
+      "attachments": [
+        {
+          "content": "// Include C++ library:\n{{#global}}\n#include <MultiStepper.h>\n#include <AccelStepper.h>\n{{/global}}\n\nstruct State {\n   uint8_t mem[sizeof(MultiStepper)];\n};\n\nusing Type = MultiStepper*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n   if (!isSettingUp())\n        return;\n\n    auto state = getState(ctx);\n\n    Type Mstepper = new (state->mem) MultiStepper();\n    \n    emitValue<output_MDEV>(ctx, Mstepper);\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "This class can manage multiple AccelSteppers (up to MULTISTEPPER_MAX_STEPPERS = 10), and cause them all to move to selected positions at such a (constant) speed that they all arrive at their target position at the same time. This can be used to support devices with multiple steppers on say multiple axes to cause linear diagonal motion. Suitable for use with X-Y plotters, flatbeds, 3D printers etc to get linear straight line movement between arbitrary 2d (or 3d or ...) positions.\nCaution: only constant speed stepper motion is supported: acceleration and deceleration is not supported All the steppers managed by MultiStepper will step at a constant speed to their target (albeit perhaps different speeds for each stepper). ",
+      "nodes": {
+        "B1rI4nxXI": {
+          "id": "B1rI4nxXI",
+          "label": "DONE",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hkp1NneQ8": {
+          "id": "Hkp1NneQ8",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1EeN2gQ8": {
+          "id": "r1EeN2gQ8",
+          "label": "MDEV",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/multistepper-device"
+    },
+    "@/run": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n    bool runing = stepper->run();\n\n    emitValue<output_RUNING>(ctx, runing ? 1 : 0);\n    \n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Poll the motor and step it if a step is due, implementing accelerations and decelerations to acheive the target position. You must call this as frequently as possible, but at least once per minimum step time interval, preferably in your main loop. Note that each call to run() will make at most one step, and then only when a step is due, based on the current speed and the time since the last step.",
+      "nodes": {
+        "B14Jc3QMI": {
+          "id": "B14Jc3QMI",
+          "label": "UPD",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkU84hXfU": {
+          "description": "true if the motor is still running to the target position.",
+          "id": "HkU84hXfU",
+          "label": "RUNING",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "HyLh7hmGL": {
+          "id": "HyLh7hmGL",
+          "label": "DONE",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SJ13Xh7GL": {
+          "id": "SJ13Xh7GL",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1f573QML": {
+          "id": "r1f573QML",
+          "label": "DEV",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        }
+      },
+      "path": "@/run"
+    },
+    "@/runspeed": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n    bool runing = stepper->runSpeed();\n\n    emitValue<output_RUNING>(ctx, runing ? 1 : 0);\n    \n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Poll the motor and step it if a step is due, implementing a constant speed as set by the most recent call to setSpeed(). You must call this as frequently as possible, but at least once per step interval, ",
+      "nodes": {
+        "BJwa0G4GU": {
+          "description": "true if the motor was stepped.",
+          "id": "BJwa0G4GU",
+          "label": "RUNING",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "By-n0M4zI": {
+          "id": "By-n0M4zI",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJDh0fEzI": {
+          "id": "HJDh0fEzI",
+          "label": "DONE",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SJjoRzVfI": {
+          "id": "SJjoRzVfI",
+          "label": "UPD",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1oF0MVMU": {
+          "id": "r1oF0MVMU",
+          "label": "DEV",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        }
+      },
+      "path": "@/runspeed"
+    },
+    "@/runspeedtoposition": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n    bool stepped = stepper->runSpeedToPosition();\n\n    emitValue<output_Stepped>(ctx, stepped ? 1 : 0);\n    \n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Runs at the currently selected speed until the target position is reached Does not implement accelerations.",
+      "nodes": {
+        "B1FddU17L": {
+          "id": "B1FddU17L",
+          "label": "UPD",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Bksc_IkQU": {
+          "id": "Bksc_IkQU",
+          "label": "DONE",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HyN5OIyXU": {
+          "description": "true if it stepped ",
+          "id": "HyN5OIyXU",
+          "label": "Stepped",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "r1mS_I17L": {
+          "id": "r1mS_I17L",
+          "label": "DEV",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        },
+        "rk6YdU1mU": {
+          "id": "rk6YdU1mU",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/runspeedtoposition"
+    },
+    "@/runtonewposition": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n   if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n    long position = getValue<input_Position>(ctx);\n    if(getValue<input_Dir>(ctx))\n        stepper->runToNewPosition(position);\n    else stepper->runToNewPosition(-position);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Moves the motor (with acceleration/deceleration) to the new target position and blocks until it is at position. Dont use this in event loops, since it blocks. ",
+      "nodes": {
+        "B1VSLGgmL": {
+          "id": "B1VSLGgmL",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        },
+        "HkDL8zgQL": {
+          "description": "The new target position. ",
+          "id": "HkDL8zgQL",
+          "label": "Position",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1JvUfeX8": {
+          "id": "S1JvUfeX8",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1s88feQ8": {
+          "id": "r1s88feQ8",
+          "label": "UPD",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJUvIfxmI": {
+          "id": "rJUvIfxmI",
+          "label": "DONE",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rygDdfeQ8": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "clockwise = TRUE\nanticlockwise = False",
+          "id": "rygDdfeQ8",
+          "label": "DIR",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        }
+      },
+      "path": "@/runtonewposition"
+    },
+    "@/runtoposition": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n    stepper->runToPosition();\n    \n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Moves the motor (with acceleration/deceleration) to the target position and blocks until it is at position. Dont use this in event loops, since it blocks.",
+      "nodes": {
+        "BkhpZfeQI": {
+          "id": "BkhpZfeQI",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HyXh-zlmI": {
+          "id": "HyXh-zlmI",
+          "label": "DEV",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        },
+        "SyGTWzgm8": {
+          "id": "SyGTWzgm8",
+          "label": "UPD",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rk_TWGxX8": {
+          "id": "rk_TWGxX8",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/runtoposition"
+    },
+    "@/setacceleration": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n    float accel = getValue<input_accel>(ctx);\n\n    stepper->setAcceleration(accel);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Sets the acceleration/deceleration rate.",
+      "nodes": {
+        "SJMdDi7ML": {
+          "id": "SJMdDi7ML",
+          "label": "DONE",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SyBvviQzL": {
+          "id": "SyBvviQzL",
+          "label": "UPD",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SyKOvimG8": {
+          "id": "SyKOvimG8",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1iDDj7GU": {
+          "boundLiterals": {
+            "__out__": "50.0"
+          },
+          "description": "The desired acceleration in steps per second . Must be > 0.0.",
+          "id": "r1iDDj7GU",
+          "label": "accel",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryOYvomf8": {
+          "id": "ryOYvomf8",
+          "label": "DEV",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        }
+      },
+      "path": "@/setacceleration"
+    },
+    "@/setcurrentposition": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n     if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n    long position = getValue<input_position>(ctx);\n    stepper->setCurrentPosition(position);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Resets the current position of the motor, so that wherever the motor happens to be right now is considered to be the new 0 position. Useful for setting a zero position on a stepper after an initial hardware positioning move. Has the side effect of setting the current motor speed to 0. ",
+      "nodes": {
+        "SJ1E7zlQ8": {
+          "id": "SJ1E7zlQ8",
+          "label": "DEV",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        },
+        "rJ2SQzxXU": {
+          "id": "rJ2SQzxXU",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJerQfl78": {
+          "id": "rJerQfl78",
+          "label": "UPD",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkHBmzlQI": {
+          "id": "rkHBmzlQI",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ry2EQfe78": {
+          "description": "The position in steps of wherever the motor happens to be right now.",
+          "id": "ry2EQfe78",
+          "label": "Position",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/setcurrentposition"
+    },
+    "@/setmaxspeed": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n    float speed = getValue<input_speed>(ctx);\n\n    stepper->setMaxSpeed(speed);\n    \n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Sets the maximum permitted speed. The run() function will accelerate up to the speed set by this function. Caution: the maximum speed achievable depends on your processor and clock speed. The default maxSpeed is 1.0 steps per second. ",
+      "nodes": {
+        "BJlCIj7MI": {
+          "id": "BJlCIj7MI",
+          "label": "UPD",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1alEjmGI": {
+          "id": "H1alEjmGI",
+          "label": "DONE",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HkL1EimML": {
+          "id": "HkL1EimML",
+          "label": "DEV",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        },
+        "SymAQi7M8": {
+          "boundLiterals": {
+            "__out__": "100.0"
+          },
+          "description": "The desired maximum speed in steps per second. Must be > 0.",
+          "id": "SymAQi7M8",
+          "label": "speed",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ry7Z4jXGI": {
+          "id": "ry7Z4jXGI",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/setmaxspeed"
+    },
+    "@/setspeed": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n    float speed = getValue<input_SPD>(ctx);\n\n   // stepper->setSpeed(speed);\n    if(getValue<input_Dir>(ctx))\n        stepper->setSpeed(speed);\n    else stepper->setSpeed(-speed);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Sets the desired constant speed for use with runSpeed(). ",
+      "nodes": {
+        "B1BmTz4MU": {
+          "id": "B1BmTz4MU",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Bk1AswyXU": {
+          "id": "Bk1AswyXU",
+          "label": "speed",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "Hyy4f8wzL": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "clockwise = TRUE\nanticlockwise = False",
+          "id": "Hyy4f8wzL",
+          "label": "Dir",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "SJr-6fNM8": {
+          "description": "The desired constant speed in steps per second. Positive is clockwise. Speeds of more than 1000 steps per second are unreliable. Very slow speeds may be set (eg 0.00027777 for once per hour, approximately. Speed accuracy depends on the Arduino crystal. Jitter depends on how frequently you call the runSpeed() function. The speed will be limited by the current value of setMaxSpeed()",
+          "id": "SJr-6fNM8",
+          "label": "SPD",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Sy_A3GVG8": {
+          "id": "Sy_A3GVG8",
+          "label": "DEV",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        },
+        "SybE6MEzL": {
+          "id": "SybE6MEzL",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ryWBaGEz8": {
+          "id": "ryWBaGEz8",
+          "label": "UPD",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/setspeed"
+    },
+    "@/speed": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n   if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n\n    emitValue<output_Speed>(ctx,(float)stepper->speed());\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "The most recently set speed ",
+      "nodes": {
+        "B1W61IDzL": {
+          "id": "B1W61IDzL",
+          "label": "DONE",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Bk8jkIvzU": {
+          "id": "Bk8jkIvzU",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        },
+        "ByDnk8vzU": {
+          "id": "ByDnk8vzU",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ByG31LPzL": {
+          "id": "ByG31LPzL",
+          "label": "UPD",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Skp2JLvzI": {
+          "description": "the most recent speed in steps per second",
+          "id": "Skp2JLvzI",
+          "label": "Speed",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/speed"
+    },
+    "@/stop": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n    stepper->stop();\n\n    emitValue<output_DONE>(ctx, 1);\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Sets a new target position that causes the stepper to stop as quickly as possible, using the current speed and acceleration parameters. ",
+      "nodes": {
+        "Skk3UzlmI": {
+          "id": "Skk3UzlmI",
+          "label": "UPD",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJPn8GxQU": {
+          "id": "rJPn8GxQU",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rkt6UfemI": {
+          "id": "rkt6UfemI",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        },
+        "ryAhLfeXU": {
+          "id": "ryAhLfeXU",
+          "label": "DONE",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/stop"
+    },
+    "@/targetposition": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n   if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto stepper = getValue<input_DEV>(ctx);\n\n    emitValue<output_TPos>(ctx,(long)stepper->targetPosition());\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "The most recently set target position.",
+      "nodes": {
+        "B1Tm7IPMI": {
+          "id": "B1Tm7IPMI",
+          "label": "DONE",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BkEGQ8DGI": {
+          "id": "BkEGQ8DGI",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-accelstepper-device"
+        },
+        "HkL4mLDzU": {
+          "id": "HkL4mLDzU",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HyBQ78wzL": {
+          "id": "HyBQ78wzL",
+          "label": "UPD",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1Z4XLPG8": {
+          "description": "the target position in steps. Positive is clockwise from the 0 position.",
+          "id": "r1Z4XLPG8",
+          "label": "TPos",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/targetposition"
+    }
+  },
+  "version": "0.1.2"
+}

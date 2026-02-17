@@ -1,0 +1,239 @@
+{
+  "description": "Library provides a single node for calculating the simple moving average (https://en.wikipedia.org/wiki/Moving_average#Simple_moving_average).  Based on https://github.com/ThingEngineer/movingAvgFloat which in turn is derived from https://github.com/JChristensen/movingAvg",
+  "license": "GNU General Public License v3.0",
+  "version": "0.0.1",
+  "patches": {
+    "@/moving-average": {
+      "nodes": {
+        "ryY8VxPUY": {
+          "id": "ryY8VxPUY",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update. Push a new value into the moving average routine."
+        },
+        "rynwExP8t": {
+          "id": "rynwExP8t",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "N",
+          "description": "Number of data points for the moving average."
+        },
+        "BJZu4gD8t": {
+          "id": "BJZu4gD8t",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "New",
+          "description": "New reading to be fed into moving average routine."
+        },
+        "SyktEewUt": {
+          "id": "SyktEewUt",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "Avg",
+          "description": "Moving average."
+        },
+        "S1mAwxDUt": {
+          "id": "S1mAwxDUt",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "S10gOxPIK": {
+          "id": "S10gOxPIK",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Reset",
+          "description": "Restart moving average. Internally, delete all stored readings."
+        },
+        "Bkm4AxD8t": {
+          "id": "Bkm4AxD8t",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "Done",
+          "description": "Pulse each time moving average (Avg) is updated."
+        }
+      },
+      "path": "@/moving-average",
+      "description": "Calculate moving average. ",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "// Based on https://github.com/ThingEngineer/movingAvgFloat which in turn is derived from https://github.com/JChristensen/movingAvg\n\nnode {\n    // Internal state variables defined at this level persists across evaluations\n\n    uint16_t m_interval;       // number of data points for the moving average\n    Number m_nbrReadings;  // number of readings\n    Number m_sum;          // sum of the m_readings array\n    uint16_t m_next;           // index to the next reading\n    Number *m_readings;    // pointer to the dynamically allocated interval array\n    \n    // initialize - allocate the interval array\n    void init()\n    {\n        m_readings = new Number[m_interval];\n    }\n\n    // add a new reading and return the new moving average\n    Number reading(Number newReading)\n    {\n        // add each new data point to the sum until the m_readings array is filled\n        if (m_nbrReadings < m_interval)\n        {\n            (Number)++m_nbrReadings;\n            m_sum = m_sum + newReading;\n        }\n        // once the array is filled, subtract the oldest data point and add the new one\n        else\n        {\n            m_sum = (Number)m_sum - m_readings[m_next] + newReading;\n        }\n\n        m_readings[m_next] = newReading;\n        if (++m_next >= m_interval) m_next = 0;\n        return (Number)(m_sum / m_nbrReadings);\n    }\n\n    // just return the current moving average\n    //float getAvg()\n    //{\n    //    return (Number)(m_sum / m_nbrReadings);\n    //}\n\n    // start the moving average over again\n    void reset()\n    {\n        m_nbrReadings = 0.0;\n        m_sum = 0.0;\n        m_next = 0;\n    }\n\n    void evaluate(Context ctx) {\n\n        if (isSettingUp()) {\n            m_interval = getValue<input_N>(ctx);\n            init();\n        }\n\n        if (isInputDirty<input_UPD>(ctx)) {\n            emitValue<output_Avg>(ctx, reading(getValue<input_New>(ctx)));\n            emitValue<output_Done>(ctx, 1);\n        }\n\n        if (isInputDirty<input_Reset>(ctx)) {\n            reset();\n        }\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example": {
+      "nodes": {
+        "H1Ry1WwUY": {
+          "id": "H1Ry1WwUY",
+          "type": "@/moving-average",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "rynwExP8t": "3"
+          }
+        },
+        "S1pxkbPUK": {
+          "id": "S1pxkbPUK",
+          "type": "xod/debug/tweak-number",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ByfGSDjQE": "10"
+          }
+        },
+        "HJRZ1WD8Y": {
+          "id": "HJRZ1WD8Y",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "H1ZfJ-PIY": {
+          "id": "H1ZfJ-PIY",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "HJqf1-wUt": {
+          "id": "HJqf1-wUt",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "By7XyZP8t": {
+          "id": "By7XyZP8t",
+          "type": "xod/core/count",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "ByjQ1ZP8Y": {
+          "id": "ByjQ1ZP8Y",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 1,
+            "y": 4,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "Sk-b1-D8F": {
+          "id": "Sk-b1-D8F",
+          "output": {
+            "nodeId": "S1pxkbPUK",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "H1Ry1WwUY",
+            "pinKey": "BJZu4gD8t"
+          }
+        },
+        "Hk7fyZDLF": {
+          "id": "Hk7fyZDLF",
+          "output": {
+            "nodeId": "H1ZfJ-PIY",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "H1Ry1WwUY",
+            "pinKey": "S10gOxPIK"
+          }
+        },
+        "B14z1bP8F": {
+          "id": "B14z1bP8F",
+          "output": {
+            "nodeId": "HJRZ1WD8Y",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "H1Ry1WwUY",
+            "pinKey": "ryY8VxPUY"
+          }
+        },
+        "SJAfJZvIY": {
+          "id": "SJAfJZvIY",
+          "output": {
+            "nodeId": "H1Ry1WwUY",
+            "pinKey": "SyktEewUt"
+          },
+          "input": {
+            "nodeId": "HJqf1-wUt",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "BkKmyZDLK": {
+          "id": "BkKmyZDLK",
+          "output": {
+            "nodeId": "H1Ry1WwUY",
+            "pinKey": "Bkm4AxD8t"
+          },
+          "input": {
+            "nodeId": "By7XyZP8t",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "ryC7J-wUF": {
+          "id": "ryC7J-wUF",
+          "output": {
+            "nodeId": "By7XyZP8t",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "ByjQ1ZP8Y",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/example",
+      "description": "Demonstration of moving-average node. Run in simulator or debugger."
+    }
+  },
+  "name": "moving-average"
+}

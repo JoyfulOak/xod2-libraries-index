@@ -1,0 +1,72 @@
+{
+  "apiKey": "af818bc0-0596-4aec-9fe5-715243c8fa15",
+  "name": "mlx90614",
+  "patches": {
+    "@/main": {
+      "nodes": {
+        "HkPw63S-D": {
+          "id": "HkPw63S-D",
+          "type": "@/mlx90614-1b",
+          "position": {
+            "x": -2,
+            "y": 0,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/main"
+    },
+    "@/mlx90614-1b": {
+      "nodes": {
+        "r1j16nBWw": {
+          "id": "r1j16nBWw",
+          "label": "ObjectTempC",
+          "position": {
+            "x": 1,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "B1xoJ6hH-w": {
+          "id": "B1xoJ6hH-w",
+          "label": "AmbientTempC",
+          "position": {
+            "x": 0,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "H1Zs1ahr-P": {
+          "id": "H1Zs1ahr-P",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1fiJ62SWD": {
+          "description": "Get Reading",
+          "id": "S1fiJ62SWD",
+          "label": "INIT",
+          "position": {
+            "x": 0,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/mlx90614-1b",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/gilcabral/Adafruit-MLX90614-Library-master-GC\"\n{{#global}}\n#include <Adafruit_MLX90614.h>\n{{/global}}\n\n\nstruct State {\n    uint8_t mem[sizeof(Adafruit_MLX90614)];\n};\n\n// Define our custom type as a pointer on the class instance.\nusing Type = Adafruit_MLX90614*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // It should be evaluated only once on the first (setup) transaction\n    if (isSettingUp()){\n    auto state = getState(ctx);\n    Type MLX90614 = new (state->mem) Adafruit_MLX90614();\n    MLX90614->begin();\n    delay(100);\n    }\n\n    if (isInputDirty<input_INIT>(ctx)){\n    auto state = getState(ctx);\n    auto MLX90614 = reinterpret_cast<Adafruit_MLX90614*>(state->mem);\n    emitValue<output_AmbientTempC>(ctx, MLX90614->readAmbientTempC());\n    emitValue<output_ObjectTempC>(ctx, MLX90614->readObjectTempC());\n    }\n}\n"
+        }
+      ]
+    }
+  }
+}

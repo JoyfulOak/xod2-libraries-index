@@ -1,0 +1,179 @@
+{
+  "description": "Enhanced servo implementations to detach servo and allow it to free-wheel (or allow other nodes to control the servo)",
+  "name": "servo",
+  "patches": {
+    "@/servo-enable": {
+      "attachments": [
+        {
+          "content": "\n{{#global}}\n#include <Servo.h>\n{{/global}}\n\nstruct State {\n    Servo servo;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    auto port = (int)getValue<input_PORT>(ctx);\n    auto En = getValue<input_En>(ctx);\n \n    if (En) {\n        state->servo.attach(port);\n        state->servo.write(getValue<input_VAL>(ctx) * 180);\n    } else {\n        state->servo.detach();\n    }\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Standard servo node with Enable pin added. Detach servo when En is false and allow to free-wheel (or allow other node to control the servo).",
+      "nodes": {
+        "BJx9NdAGHz": {
+          "description": "Desired servo angle or value in unit range [0.0, 1.0]. For standard servo 0.0 would be mapped to 0° and 1.0 would be 180°.",
+          "id": "BJx9NdAGHz",
+          "label": "VAL",
+          "position": {
+            "x": 58,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Bk9E_AfSz": {
+          "description": "Enable servo. Detach servo if this is false.",
+          "id": "Bk9E_AfSz",
+          "label": "En",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "SkzqNuRMBM": {
+          "description": "Standard servo with enable pin added. Servo will detach if En is false. This is needed if servo with same PORT appears on multiple patches of a state-machine project.",
+          "id": "SkzqNuRMBM",
+          "position": {
+            "x": 67,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rk-5EuCzrz": {
+          "description": "Board port number the servo is connected to.",
+          "id": "rk-5EuCzrz",
+          "label": "PORT",
+          "position": {
+            "x": -1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/servo-enable"
+    },
+    "@/servo-pulse": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "{{#global}}\n#include <Servo.h>\n{{/global}}\n\nstruct State {\n    Servo servo;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    auto port = (int)getValue<input_PORT>(ctx);\n\n    if (isInputDirty<input_Start>(ctx)) {\n        auto pVal = getValue<input_pVal>(ctx);\n        auto nVal = getValue<input_nVal>(ctx);\n        auto minT = getValue<input_MinT>(ctx);\n        auto maxT = getValue<input_MaxT>(ctx);\n        state->servo.attach(port);\n        state->servo.write(nVal * 180);\n        TimeMs dt = maxT * 1000;\n        if (pVal > 0) {\n            nVal = nVal < 0 ? 0 : nVal > 1 ? 1 : nVal;\n            pVal = pVal > 1 ? 1 : pVal;\n            dt = ((abs(pVal - nVal) * (maxT - minT)) + minT) * 1000;\n        }\n        setTimeout(ctx, dt);\n        emitValue<output_ACT>(ctx, true);\n        //emitValue<output_Val>(ctx, nVal);\n        emitValue<output_Val>(ctx, dt);\n    } else if (isTimedOut(ctx)) {\n        state->servo.detach();\n        emitValue<output_Done>(ctx, true);\n        emitValue<output_ACT>(ctx, false);\n    }\n}"
+        }
+      ],
+      "description": "Merge servo and delay nodes to activate servo just long enough to move to new position based on previous position. Detach servo when timer is done.",
+      "nodes": {
+        "H17w7KAMHf": {
+          "description": "Board port number the servo is connected to.",
+          "id": "H17w7KAMHf",
+          "label": "PORT",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H1EvXK0zBz": {
+          "boundValues": {
+            "__out__": 0.1
+          },
+          "description": "Minimum Time to move servo a very short distance",
+          "id": "H1EvXK0zBz",
+          "label": "MinT",
+          "position": {
+            "x": 67,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H1lPQtCMSM": {
+          "description": "Copy of nVal that can be used to feed next call to servo-pulse.",
+          "id": "H1lPQtCMSM",
+          "label": "Val",
+          "position": {
+            "x": 204,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HJ8DXYCfrz": {
+          "description": "Start servo move and timer where delay time is calculated based of min/max times and previous/new position.",
+          "id": "HJ8DXYCfrz",
+          "label": "Start",
+          "position": {
+            "x": 271,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkPwXYCzrz": {
+          "id": "HkPwXYCzrz",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HyHvQYAzSG": {
+          "description": "Outputs true when delay is in progress and servo is moving.",
+          "id": "HyHvQYAzSG",
+          "label": "ACT",
+          "position": {
+            "x": 135,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "Hy_DXYAMBG": {
+          "description": "New servo Value in unit range [0.0, 1.0]. For standard servo 0.0 would be mapped to 0° and 1.0 would be 180°.",
+          "id": "Hy_DXYAMBG",
+          "label": "nVal",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Sy-PXtRGrG": {
+          "boundValues": {
+            "__out__": -1
+          },
+          "description": "Previous servo position (expected  position when we get pulse). -1 for position unknown and force MaxT travel time.",
+          "id": "Sy-PXtRGrG",
+          "label": "pVal",
+          "position": {
+            "x": 169,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1GwQtRMrz": {
+          "boundValues": {
+            "__out__": 0.5
+          },
+          "description": "Maximum Time to move servo 180 degrees",
+          "id": "r1GwQtRMrz",
+          "label": "MaxT",
+          "position": {
+            "x": 101,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkwmFRMBG": {
+          "description": "Pulses when timer has expired and servo should be done moving (and has been detached).",
+          "id": "rkwmFRMBG",
+          "label": "Done",
+          "position": {
+            "x": 67,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/servo-pulse"
+    }
+  },
+  "version": "0.0.4"
+}

@@ -1,0 +1,553 @@
+{
+  "patches": {
+    "@/analog-read": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkGpcpcJQ": {
+          "boundLiterals": {},
+          "description": "Fires on reading complete",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkGpcpcJQ",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "H1vY0E2xb": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1vY0E2xb",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "SkuhqCqym": {
+          "boundLiterals": {
+            "__out__": "A0"
+          },
+          "description": "Analog port to read from. Should start with `A` to succeed.\n",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkuhqCqym",
+          "position": {
+            "x": 1,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "SyBtREhlW": {
+          "boundLiterals": {},
+          "description": "The latest read value in range 0.0 … 1.0",
+          "label": "VAL",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyBtREhlW",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "SyKd0E2x-": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers new read",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyKd0E2x-",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/analog-read",
+      "description": "Reads analog signal value from board ADC port.\n\nPossible errors:\n— Invalid port",
+      "attachments": [
+        {
+          "filename": "README.md",
+          "encoding": "utf8",
+          "content": "Previously known as `xod/core/analog-input`.\n"
+        },
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n// reading from analog input too frequently may affect WiFi connection on ESP8266\n// see https://github.com/krzychb/EspScopeA0/tree/master/Bravo#results\n#ifdef ESP8266\n    TimeMs lastReadTime = 0;\n#endif\n\n    void evaluate(Context ctx) {\n        static_assert(isValidAnalogPort(constant_input_PORT), \"must be a valid analog port\");\n\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        ::pinMode(constant_input_PORT, INPUT);\n#ifdef ESP8266\n        if (transactionTime() - lastReadTime > 4) {\n            lastReadTime = transactionTime();\n            emitValue<output_VAL>(ctx, ::analogRead(constant_input_PORT) / 1023.);\n        }\n#else\n        emitValue<output_VAL>(ctx, ::analogRead(constant_input_PORT) / 1023.);\n#endif\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/digital-read": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B143qAq1Q": {
+          "boundLiterals": {},
+          "description": "Board port to read from",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B143qAq1Q",
+          "position": {
+            "x": 1,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "B1gI0urv1W": {
+          "boundLiterals": {
+            "__in__": "False"
+          },
+          "description": "The last read signal value",
+          "label": "SIG",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1gI0urv1W",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "SyLCdSwJZ": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers new read",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyLCdSwJZ",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "noNativeImpl": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "noNativeImpl",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "rkw3cp9k7": {
+          "boundLiterals": {},
+          "description": "Fires on reading complete",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkw3cp9k7",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/digital-read",
+      "description": "Reads digital signal value from board GPIO port.\n\nPossible errors:\n— Invalid port",
+      "attachments": [
+        {
+          "filename": "README.md",
+          "encoding": "utf8",
+          "content": "Previously known as `xod/core/digital-input`.\n"
+        },
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        static_assert(isValidDigitalPort(constant_input_PORT), \"must be a valid digital port\");\n\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        ::pinMode(constant_input_PORT, INPUT);\n        emitValue<output_SIG>(ctx, ::digitalRead(constant_input_PORT));\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/digital-read-pullup": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "H1uO0eV8S": {
+          "boundLiterals": {},
+          "description": "Board port to read from",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1uO0eV8S",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "Hkx__ReNIr": {
+          "boundLiterals": {
+            "__in__": "False"
+          },
+          "description": "The last read signal value",
+          "label": "SIG",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hkx__ReNIr",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "r1bOdCeEIH": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers new read",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1bOdCeEIH",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rJmdOReVIB": {
+          "boundLiterals": {},
+          "description": "Fires on reading complete",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJmdOReVIB",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "ryf_dCxVIH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryf_dCxVIH",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/digital-read-pullup",
+      "description": "Reads a digital signal value from a board GPIO port with the internal built-in pull-up resistor enabled. It forces the resulting signal to be True if the wire on the port floats (is disconnected).\n\nPossible errors:\n— Invalid port",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        static_assert(isValidDigitalPort(constant_input_PORT), \"must be a valid digital port\");\n\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        ::pinMode(constant_input_PORT, INPUT_PULLUP);\n        emitValue<output_SIG>(ctx, ::digitalRead(constant_input_PORT));\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/digital-write": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BygApTqym": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers new write",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BygApTqym",
+          "position": {
+            "x": 5,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HJ6HsEngZ": {
+          "boundLiterals": {},
+          "description": "State to write",
+          "label": "SIG",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJ6HsEngZ",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "rJjXFA9JQ": {
+          "boundLiterals": {},
+          "description": "Board port to write to",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJjXFA9JQ",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "rkwUj42xb": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkwUj42xb",
+          "position": {
+            "x": 3,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "ry3pcpqyX": {
+          "boundLiterals": {},
+          "description": "Fires on writing complete",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ry3pcpqyX",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/digital-write",
+      "description": "Outputs high or low signal on a board port.\n\nPossible errors:\n— Invalid port",
+      "attachments": [
+        {
+          "filename": "README.md",
+          "encoding": "utf8",
+          "content": "Previously known as `xod/core/digital-output`.\n"
+        },
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        static_assert(isValidDigitalPort(constant_input_PORT), \"must be a valid digital port\");\n\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        ::pinMode(constant_input_PORT, OUTPUT);\n        const bool val = getValue<input_SIG>(ctx);\n        ::digitalWrite(constant_input_PORT, val);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/pwm-write": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B14R6TcyQ": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers new write",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B14R6TcyQ",
+          "position": {
+            "x": 5,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "ByXnYHPyb": {
+          "boundLiterals": {},
+          "description": "Duty cycle value in range 0.0 … 1.0",
+          "label": "DUTY",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByXnYHPyb",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "SkwRqaq17": {
+          "boundLiterals": {},
+          "description": "Fires on writing complete",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkwRqaq17",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Syro9C9yQ": {
+          "boundLiterals": {},
+          "description": "Board port to write to. If the port supports hardware PWM it will be used. If not, it will be set high for values greater than 0.5 and set low otherwise.",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Syro9C9yQ",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "noNativeImpl": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "noNativeImpl",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/pwm-write",
+      "description": "Outputs hardware-supported PWM signal on a board port.\n\nPossible errors:\n— Invalid port",
+      "attachments": [
+        {
+          "filename": "README.md",
+          "encoding": "utf8",
+          "content": "Previously known as `xod/core/pwm-output`.\n"
+        },
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\n#ifdef ESP32\n#include <analogWrite.h>\n#endif\n\nnode {\n    #ifdef PWMRANGE\n    static constexpr Number pwmRange = PWMRANGE;\n    #else\n    static constexpr Number pwmRange = 255.0;\n    #endif\n\n    void evaluate(Context ctx) {\n        static_assert(isValidDigitalPort(constant_input_PORT), \"must be a valid digital port\");\n\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto duty = getValue<input_DUTY>(ctx);\n        duty = duty > 1 ? 1 : (duty < 0 ? 0 : duty);\n        int val = (int)(duty * pwmRange);\n\n        pinMode(constant_input_PORT, OUTPUT);\n        analogWrite(constant_input_PORT, val);\n\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "authors": [
+    "XOD"
+  ],
+  "license": "AGPL-3.0",
+  "version": "0.37.3",
+  "description": "Nodes of XOD to deal with GPIO (hardware pins)",
+  "apiKey": "",
+  "name": "gpio"
+}

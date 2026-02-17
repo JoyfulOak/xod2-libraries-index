@@ -1,0 +1,164 @@
+{
+  "description": "Drives stepper motors connected through a step/dir driver board",
+  "license": "AGPL-3.0",
+  "name": "stepdir",
+  "patches": {
+    "@/example": {
+      "links": {
+        "S1ESyxWgV": {
+          "id": "S1ESyxWgV",
+          "input": {
+            "nodeId": "HypJ1lbgE",
+            "pinKey": "SJbu6y-g4"
+          },
+          "output": {
+            "nodeId": "S1zSJg-g4",
+            "pinKey": "BJ--G1tI-"
+          }
+        }
+      },
+      "nodes": {
+        "HypJ1lbgE": {
+          "boundLiterals": {
+            "HJQe6kWeN": "D9",
+            "Hko1TyZxE": "D8",
+            "rk4L6JWx4": "400",
+            "HknMpkbxN": "800"
+          },
+          "id": "HypJ1lbgE",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "@/stepper"
+        },
+        "S1zSJg-g4": {
+          "boundLiterals": {
+            "ByNiWkt8Z": "D10"
+          },
+          "id": "S1zSJg-g4",
+          "position": {
+            "x": 170,
+            "y": -204
+          },
+          "type": "xod/common-hardware/button"
+        }
+      },
+      "path": "@/example"
+    },
+    "@/stepper": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto stepPort = getValue<input_STEP>(ctx);\n    auto dirPort = getValue<input_DIR>(ctx);\n    auto nSteps = getValue<input_N>(ctx);\n    auto pps = getValue<input_PPS>(ctx);\n\n    if (isInputDirty<input_RST>(ctx)) {\n        noTone(stepPort);\n        clearTimeout(ctx);\n        return;\n    }\n\n    if (isTimedOut(ctx)) {\n        emitValue<output_DONE>(ctx, 1);\n    }\n\n    if (!isInputDirty<input_GO>(ctx)) {\n        return;\n    }\n\n    if (pps == 0) {\n        emitValue<output_ERR>(ctx, 1);\n        return;\n    }\n\n    if (pps < 0) {\n        // swap direction if PPS is negative\n        pps = -pps;\n        nSteps = -nSteps;\n    }\n\n    // In case the in-progress rotation is finite and the upcoming\n    // one will be infinite\n    clearTimeout(ctx);\n\n    pinMode(stepPort, OUTPUT);\n    pinMode(dirPort, OUTPUT);\n    digitalWrite(dirPort, nSteps < 0);\n\n    if (isfinite(nSteps)) {\n        unsigned long durationMs = abs(nSteps) / pps * 1000;\n        tone(stepPort, pps, durationMs);\n        setTimeout(ctx, durationMs);\n    } else {\n        tone(stepPort, pps);\n    }\n}\n"
+        }
+      ],
+      "description": "Drives a stepper motor connected through a driver with step/direction interface. Uses hardware timer to generate a pulse train of the required frequency. Depending on the board model several motors can be in conflict.",
+      "nodes": {
+        "HJIqpkWxN": {
+          "id": "HJIqpkWxN",
+          "position": {
+            "x": 68,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJQe6kWeN": {
+          "boundLiterals": {
+            "__out__": "D2"
+          },
+          "description": "A board port to which the direction port of the driver is connected.",
+          "id": "HJQe6kWeN",
+          "label": "DIR",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HJwdTJWe4": {
+          "description": "Reset. Cancels the current rotation. Neither `DONE` nor `ERR` will fire after a pulse on `RST`.",
+          "id": "HJwdTJWe4",
+          "label": "RST",
+          "position": {
+            "x": 306,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkeCxlWe4": {
+          "description": "Fires when the rotation is impossible. For example, if the value of `PPS` is wrong.",
+          "id": "HkeCxlWe4",
+          "label": "ERR",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HknMpkbxN": {
+          "boundLiterals": {
+            "__out__": "200"
+          },
+          "description": "Pulses per second. Defines the rotation speed: number of steps a motor is expected to perform in one second. Should not be zero. The upper limit is defined by characteristics of the connected motor.",
+          "id": "HknMpkbxN",
+          "label": "PPS",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Hko1TyZxE": {
+          "boundLiterals": {
+            "__out__": "D3"
+          },
+          "description": "A board port to which the step port of the driver is connected.",
+          "id": "Hko1TyZxE",
+          "label": "STEP",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SJbu6y-g4": {
+          "description": "Starts a new rotation which will make `N` steps at `PPS` rate.",
+          "id": "SJbu6y-g4",
+          "label": "GO",
+          "position": {
+            "x": 272,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkdYTy-x4": {
+          "description": "Fires when `N` steps complete successfully.",
+          "id": "SkdYTy-x4",
+          "label": "DONE",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rk4L6JWx4": {
+          "boundLiterals": {
+            "__out__": "+Inf"
+          },
+          "description": "Number of steps to make. Many motors have 200 or 400 steps per revolution. Pass a negative value to rotate in the backward direction. Set to `+Inf` or `-Inf` to run an infinite rotation.",
+          "id": "rk4L6JWx4",
+          "label": "N",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/stepper"
+    }
+  },
+  "version": "1.0.0"
+}

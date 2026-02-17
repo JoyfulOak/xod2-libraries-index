@@ -1,0 +1,552 @@
+{
+  "description": "Node for scan i2c device address ",
+  "name": "i2c-scanner",
+  "patches": {
+    "@/i2c-scan": {
+      "comments": {
+        "BJdziZjuN": {
+          "content": "Adafruit - the list\n-\n*Special cases:*\nPCA9685 can be used by any address between 0x40 to 0x7F\n\n**0x00 - 0x07** and **0x78 - 0x7F** are reserved I2C addresses\n\n*0x00 - 0x0F*\n*0x00* - Reserved - General Call Address\n*0x01* - Reserved for CBUS Compatibility\n*0x02* - Reserved for I2C-compatible Bus Variants\n*0x03* - Reserved for Future Use\n*0x04, 0x05, 0x06, 0x07* - Reserved for Hs-mode Master\n*0x0E*\nMAG3110 3-Axis Magnetometer (0x0E only)\n0x10 - 0x1F\n \n*0x10*\nVEML6075 UV sensor (0x10 only)\nVEML7700 Ambient Light sensor (0x10 only)\n*0x11*\nSi4713 FM Transmitter with RDS (0x11 or 0x63)\n*0x13*\nVCNL40x0 proximity sensor (0x13 only)\n*0x18*\nMCP9808 temp sensor (0x18 - 0x1F)\nLIS3DH 3-axis accelerometer (0x18 or 0x19)\nLSM303 Accelerometer & Magnetometer (0x19 for accelerometer and 0x1E for magnetometer)\n*0x19*\nMCP9808 temp sensor (0x18 - 0x1F)\nLIS3DH 3-axis accelerometer (0x18 or 0x19)\n*0x1A*\nMCP9808 temp sensor (0x18 - 0x1F)\n*0x1B\nMCP9808 temp sensor (0x18 - 0x1F)\n*0x1C*\nMCP9808 temp sensor (0x18 - 0x1F)\nMMA845x 3-axis Accelerometer (0x1C or 0x1D)\nFXOS8700 Accelerometer/Magnetometer (0x1C, 0x1D, 0x1E or 0x1F)\nMMA7455L (0x1C or 0x1D)\n*0x1D*\nMCP9808 temp sensor (0x18 - 0x1F)\nMMA845x 3-axis Accelerometer (0x1C or 0x1D)\nFXOS8700 Accelerometer/Magnetometer (0x1C, 0x1D, 0x1E or 0x1F)\nLSM9DS0 9-axis IMU (0x1D or 0x1E for Accel/Mag, 0x6A or 0x6B for Gyro)\nADXL345 3-axis accelerometer (0x1D or 0x53)\nMMA7455L (0x1C or 0x1D)\n*0x1E*\nMCP9808 temp sensor (0x18 - 0x1F)\nFXOS8700 Accelerometer/Magnetometer (0x1C, 0x1D, 0x1E or 0x1F)\nLSM303 Accelerometer & Magnetometer (0x19 for accelerometer and 0x1E for magnetometer)\nLSM9DS0 9-axis IMU (0x1D or 0x1E for Accel/Mag, 0x6A or 0x6B for Gyro)\nHMC5883 Magnetometer (0x1E only)\n*0x1F*\nMCP9808 temp sensor (0x18 - 0x1F)\nFXOS8700 Accelerometer/Magnetometer (0x1C, 0x1D, 0x1E or 0x1F)\n0x20-0x2F\n*0x20*\nFXAS21002 Gyroscope (0x20 or 0x21)\nChirp! Water sensor (0x20)\nMCP23008 I2C GPIO expander (0x20 - 0x27)\nMCP23017 I2C GPIO expander (0x20 - 0x27)\n*0x21*\nFXAS21002 Gyroscope (0x20 or 0x21)\nMCP23008 I2C GPIO expander (0x20 - 0x27)\nMCP23017 I2C GPIO expander (0x20 - 0x27)\n*0x22*\nMCP23008 I2C GPIO expander (0x20 - 0x27)\nMCP23017 I2C GPIO expander (0x20 - 0x27)\n*0x23*\nMCP23008 I2C GPIO expander (0x20 - 0x27)\nMCP23017 I2C GPIO expander (0x20 - 0x27)\n*0x24*\nMCP23008 I2C GPIO expander (0x20 - 0x27)\nMCP23017 I2C GPIO expander (0x20 - 0x27)\n*0x25*\nMCP23008 I2C GPIO expander (0x20 - 0x27)\nMCP23017 I2C GPIO expander (0x20 - 0x27)\n*0x26*\nMCP23008 I2C GPIO expander (0x20 - 0x27)\nMCP23017 I2C GPIO expander (0x20 - 0x27)\n*0x27*\nMCP23008 I2C GPIO expander (0x20 - 0x27)\nMCP23017 I2C GPIO expander (0x20 - 0x27)\n*0x28*\nBNO055 IMU (0x28 or 0x29)\nCAP1188 8-channel Capacitive Touch (0x28 - 0x2D )\n*0x29*\nBNO055 IMU (0x28 or 0x29)\nTCS34725 color sensor (0x29 only)\nTSL2561 light sensor (0x29, 0x39 or 0x49)\nTSL2591 light sensor (0x29 only)\nVL53L0x ToF distance (0x29, software selectable)\nVL6180X ToF sensor (0x29)\nCAP1188 8-channel Capacitive Touch (0x28 - 0x2D )\n*0x2A*\nCAP1188 8-channel Capacitive Touch (0x28 - 0x2D )\n*0x2B*\nCAP1188 8-channel Capacitive Touch (0x28 - 0x2D )\n*0x2C*\nCAP1188 8-channel Capacitive Touch (0x28 - 0x2D )\n*0x2D*\nCAP1188 8-channel Capacitive Touch (0x28 - 0x2D )\n0x30 - 0x3F\n*0x34*\n*0x38*\nVEML6070 UV Index (0x38 and 0x39)\nFT6x06 Capacitive Touch Driver (0x38 only)\nCJMCU-1745 Ambient light sensor\n*0x39*\nTSL2561 light sensor (0x29, 0x39 or 0x49)\nVEML6070 UV Index (0x38 and 0x39)\nAPDS-9960 IR/Color/Proximity Sensor (0x39 only)\n*0x3C*\nSSD1305 monochrome OLED (0x3C or 0x3D, hardware selectable on some displays with a solder connection)\nSSD1306 monochrome OLED (0x3C or 0x3D, hardware selectable on some displays with a solder connection)\n*0x3D*\nSSD1305 monochrome OLED (0x3C or 0x3D, hardware selectable on some displays with a solder connection)\nSSD1306 monochrome OLED (0x3C or 0x3D, hardware selectable on some displays with a solder connection)\n0x40 - 0x4F\n*0x40*\nSi7021 Humidity/Temp sensor (0x40 only)\nHTU21D-F Humidity/Temp Sensor (0x40 only)\nHDC1008 Humidity/Temp sensor (0x40, 0x41, 0x42 or 0x43)\nTMP007 IR Temperature sensor (0x40 - 0x47)\nTMP006 IR Temperature sensor (0x40 - 0x47)\nPCA9685 16-channel PWM driver default address (0x40 - 0x7F)\nINA219 High-Side DC Current/Voltage sensor (0x40 - 0x4F)\n*0x41*\nHDC1008 Humidity/Temp sensor (0x40, 0x41, 0x42 or 0x43)\nTMP007 IR Temperature sensor (0x40 - 0x47)\nTMP006 IR Temperature sensor (0x40 - 0x47)\nINA219 High-Side DC Current/Voltage sensor (0x40 - 0x4F)\nSTMPE610/STMPE811 Resistive Touch controller (0x41 or 0x44)\n0x42\nHDC1008 Humidity/Temp sensor (0x40, 0x41, 0x42 or 0x43)\nTMP007 IR Temperature sensor (0x40 - 0x47)\nTMP006 IR Temperature sensor (0x40 - 0x47)\nINA219 High-Side DC Current/Voltage sensor (0x40 - 0x4F)\n*0x43*\nHDC1008 Humidity/Temp sensor (0x40, 0x41, 0x42 or 0x43)\nTMP007 IR Temperature sensor (0x40 - 0x47)\nTMP006 IR Temperature sensor (0x40 - 0x47)\nINA219 High-Side DC Current/Voltage sensor (0x40 - 0x4F)\n*0x44*\nSHT31 Humidity/Temp sensor (0x44 or 0x45 selectable)\nTMP007 IR Temperature sensor (0x40 - 0x47)\nTMP006 IR Temperature sensor (0x40 - 0x47)\nISL29125 Color Sensor (0x44 only)\nINA219 High-Side DC Current/Voltage sensor (0x40 - 0x4F)\nSTMPE610/STMPE811 Resistive Touch controller (0x41 or 0x44)\n*0x45*\nSHT31 Humidity/Temp sensor (0x44 or 0x45 selectable)\nTMP007 IR Temperature sensor (0x40 - 0x47)\nTMP006 IR Temperature sensor (0x40 - 0x47)\nINA219 High-Side DC Current/Voltage sensor (0x40 - 0x4F)\n*0x46*\nTMP007 IR Temperature sensor (0x40 - 0x47)\nTMP006 IR Temperature sensor (0x40 - 0x47)\nINA219 High-Side DC Current/Voltage sensor (0x40 - 0x4F)\n*0x47*\nTMP007 IR Temperature sensor (0x40 - 0x47)\nTMP006 IR Temperature sensor (0x40 - 0x47)\nINA219 High-Side DC Current/Voltage sensor (0x40 - 0x4F)\n*0x48*\nTMP102 Temperature sensor (0x48 0x49 0x4A or 0x4B)\nPN532 NFC/RFID reader (0x48 only)\nADS1115 4-channel 16-bit ADC (0x48 0x49 0x4A or 0x4B)\nINA219 High-Side DC Current/Voltage sensor (0x40 - 0x4F)\n*0x49*\nTSL2561 light sensor (0x29, 0x39 or 0x49)\nTMP102 Temperature sensor (0x48 0x49 0x4A or 0x4B)\nADS1115 4-channel 16-bit ADC (0x48 0x49 0x4A or 0x4B)\nINA219 High-Side DC Current/Voltage sensor (0x40 - 0x4F)\n*0x4A*\nTMP102 Temperature sensor (0x48 0x49 0x4A or 0x4B)\nADS1115 4-channel 16-bit ADC (0x48 0x49 0x4A or 0x4B)\nINA219 High-Side DC Current/Voltage sensor (0x40 - 0x4F)\n*0x4B*\nTMP102 Temperature sensor (0x48 0x49 0x4A or 0x4B)\nADS1115 4-channel 16-bit ADC (0x48 0x49 0x4A or 0x4B)\nINA219 High-Side DC Current/Voltage sensor (0x40 - 0x4F)\n*0x4C*\nINA219 High-Side DC Current/Voltage sensor (0x40 - 0x4F)\n*0x4D*\nINA219 High-Side DC Current/Voltage sensor (0x40 - 0x4F)\n*0x4E*\nINA219 High-Side DC Current/Voltage sensor (0x40 - 0x4F)\n*0x4F*\nINA219 High-Side DC Current/Voltage sensor (0x40 - 0x4F)\n0x50 - 0x5F\n*0x50*\nMB85RC I2C FRAM (0x50 - 0x57)\n*0x51*\nMB85RC I2C FRAM (0x50 - 0x57)\n*0x52*\nMB85RC I2C FRAM (0x50 - 0x57)\nNintendo Nunchuck controller (0x52 only)\n*0x53*\nADXL345 3-axis accelerometer (0x1D or 0x53)\nMB85RC I2C FRAM (0x50 - 0x57)\n*0x54*\nMB85RC I2C FRAM (0x50 - 0x57)\n*0x55*\nMB85RC I2C FRAM (0x50 - 0x57)\n*0x56*\nMB85RC I2C FRAM (0x50 - 0x57)\n*0x57*\nMB85RC I2C FRAM (0x50 - 0x57)\nMAX3010x Pulse & Oximetry sensor (0x57)\n*0x58*\nTPA2016 I2C-controlled Amplifier (0x58 only)\nSGP30 Gas Sensor (0x58 only)\n*0x5A*\nMPR121 12-point capacitive touch sensor (0x5A, 0x5B, 0x5C, 0x5D)\nCCS811 VOC sensor (0x5A or 0x5B)\nMLX9061x IR temperature sensor (0x5A only)\nDRV2605 Haptic Motor Driver (0x5A only)\n*0x5B*\nMPR121 12-point capacitive touch sensor (0x5A, 0x5B, 0x5C, 0x5D)\nCCS811 VOC sensor (0x5A or 0x5B)\n*0x5C*\nAM2315 Humidity/Temp sensor (0x5C only)\nMPR121 12-point capacitive touch sensor (0x5A, 0x5B, 0x5C, 0x5D)\n*0x5D*\nMPR121 12-point capacitive touch sensor (0x5A, 0x5B, 0x5C, 0x5D)\n0x60 - 0x6F\n*0x60*\nMPL115A2 Barometric Pressure (0x60 only)\nMPL3115A2 Barometric Pressure (0x60 only)\nSi5351A Clock Generator (0x60 or 0x61)\nSi1145 Light/IR Sensor (0x60 only)\nMCP4725A0 12-bit DAC (0x60 or 0x61)\nTEA5767 Radio receiver (0x60 only)\nVCNL4040 Proximity and Ambient Light sensor (0x60 only)\n*0x61*\nSi5351A Clock Generator (0x60 or 0x61)\nMCP4725A0 12-bit DAC (0x60 or 0x61)\n*0x62*\nMCP4725A1 12-bit DAC (0x62 or 0x63)\n*0x63*\nMCP4725A1 12-bit DAC (0x62 or 0x63)\nSi4713 FM Transmitter with RDS (0x11 or 0x63)\n*0x64*\nMCP4725A2 12-bit DAC (0x64 or 0x65)\n*0x65*\nMCP4725A2 12-bit DAC (0x64 or 0x65)\n*0x66*\nMCP4725A3 12-bit DAC (0x66 or 0x67)\n*0x67*\nMCP4725A3 12-bit DAC (0x66 or 0x67)\n*0x68*\nThis address is really popular with real time clocks, almost all of them use 0x68!\n\nAMG8833 IR Thermal Camera Breakout (0x68 or 0x69)\nDS1307 RTC (0x68 only)\nPCF8523 RTC (0x68 only)\nDS3231 RTC (0x68 only)\nMPU-9250 9-DoF IMU (0x68 or 0x69)\nMPU-60X0 Accel+Gyro (0x68 or 0x69)\nITG3200 Gyro (0x68 or 0x69)\n*0x69*\nAMG8833 IR Thermal Camera Breakout (0x68 or 0x69)\nMPU-9250 (0x68 or 0x69)\nMPU-60X0 Accel+Gyro (0x68 or 0x69)\nITG3200 Gyro (0x68 or 0x69)\n*0x6A*\nL3GD20H gyroscope (0x6A or 0x6B)\nLSM9DS0 9-axis IMU (0x1D or 0x1E for Accel/Mag, 0x6A or 0x6B for Gyro)\n*0x6B*\nL3GD20H gyroscope (0x6A or 0x6B)\nLSM9DS0 9-axis IMU (0x1D or 0x1E for Accel/Mag, 0x6A or 0x6B for Gyro)\n0x70 - 0x7F\n*0x70*\nTCA9548 1-to-8 I2C Multiplexer (0x70 - 0x77)\nHT16K33 LED Matrix Driver (0x70 - 0x77)\n*0x71*\nTCA9548 1-to-8 I2C Multiplexer (0x70 - 0x77)\nHT16K33 LED Matrix Driver (0x70 - 0x77)\n*0x72*\nTCA9548 1-to-8 I2C Multiplexer (0x70 - 0x77)\nHT16K33 LED Matrix Driver (0x70 - 0x77)\n*0x73*\nTCA9548 1-to-8 I2C Multiplexer (0x70 - 0x77)\nHT16K33 LED Matrix Driver (0x70 - 0x77)\n*0x74*\nIS31FL3731 144-LED CharliePlex driver (0x74 0x75 0x66 or 0x77)\nTCA9548 1-to-8 I2C Multiplexer (0x70 - 0x77)\nHT16K33 LED Matrix Driver (0x70 - 0x77)\n*0x75*\nIS31FL3731 144-LED CharliePlex driver (0x74 0x75 0x66 or 0x77)\nTCA9548 1-to-8 I2C Multiplexer (0x70 - 0x77)\nHT16K33 LED Matrix Driver (0x70 - 0x77)\n*0x76*\nBME280 Temp/Barometric/Humidity (0x76 or 0x77)\nBMP280 Temp/Barometric (0x76 or 0x77)\nIS31FL3731 144-LED CharliePlex driver (0x74 0x75 0x66 or 0x77)\nTCA9548 1-to-8 I2C Multiplexer (0x70 - 0x77)\nHT16K33 LED Matrix Driver (0x70 - 0x77)\nMS5607/MS5611 Barometric Pressure (0x76 or 0x77)\n*0x77*\nBME280 Temp/Barometric/Humidity (0x76 or 0x77)\nBMP280 Temp/Barometric (0x76 or 0x77)\nBMP180 Temp/Barometric (0x77 only)\nBMP085 Temp/Barometric (0x77 only)\nTCA9548 1-to-8 I2C Multiplexer (0x70 - 0x77)\nIS31FL3731 144-LED CharliePlex driver (0x74 0x75 0x66 or 0x77)\nHT16K33 LED Matrix Driver (0x70 - 0x77)\nBMA180 Accelerometer (0x77 only)\nMS5607/MS5611 Barometric Pressure (0x76 or 0x77)\n\n*0x78 0x79 0x7A 0x7B* - Reserved for 10-bit I2C Addressing\n*0x7C 0x7D 0x7E 0x7F* - Reserved for Future Purposes",
+          "id": "BJdziZjuN",
+          "position": {
+            "x": -3,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 52,
+            "width": 20,
+            "units": "slots"
+          }
+        },
+        "Byf7HH8Ou4": {
+          "content": "Upload and debug, use **START** to scan",
+          "id": "Byf7HH8Ou4",
+          "position": {
+            "x": 0,
+            "y": -2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 7,
+            "units": "slots"
+          }
+        },
+        "rk77Hr8__E": {
+          "content": "If scanner no start, remains at zero or wait, you may need 2 resistors of **10k**, from VCC to lines in SCL and SDA.",
+          "id": "rk77Hr8__E",
+          "position": {
+            "x": 0,
+            "y": -1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 8,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "Upload this patch to scan i2c (Upload and Debug)",
+      "links": {
+        "H1S8B8d_4": {
+          "id": "H1S8B8d_4",
+          "input": {
+            "nodeId": "r1gXSHI_u4",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "HynHSL__V",
+            "pinKey": "H14PEBUuOE"
+          }
+        },
+        "r1ioS3qrv": {
+          "id": "r1ioS3qrv",
+          "input": {
+            "nodeId": "HynHSL__V",
+            "pinKey": "rkI5rh9Bv"
+          },
+          "output": {
+            "nodeId": "Bytir3qBP",
+            "pinKey": "HyvnPf3kQ"
+          }
+        },
+        "ryVaJj9rv": {
+          "id": "ryVaJj9rv",
+          "input": {
+            "nodeId": "HynHSL__V",
+            "pinKey": "S1bHyj5Sv"
+          },
+          "output": {
+            "nodeId": "rJCnkoqHv",
+            "pinKey": "Bkf4BDsmV"
+          }
+        }
+      },
+      "nodes": {
+        "Bytir3qBP": {
+          "id": "Bytir3qBP",
+          "position": {
+            "x": -3,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/i2c/i2c"
+        },
+        "HynHSL__V": {
+          "boundLiterals": {
+            "Hy_PNHId_4": "0.1"
+          },
+          "description": "i2c scan node",
+          "id": "HynHSL__V",
+          "position": {
+            "x": -3,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "@/i2c-scanner"
+        },
+        "r1gXSHI_u4": {
+          "id": "r1gXSHI_u4",
+          "position": {
+            "x": -3,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 7,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "rJCnkoqHv": {
+          "id": "rJCnkoqHv",
+          "label": "START",
+          "position": {
+            "x": -2,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        }
+      },
+      "path": "@/i2c-scan"
+    },
+    "@/i2c-scanner": {
+      "description": "i2c scan node",
+      "links": {
+        "B1xd2n5HD": {
+          "id": "B1xd2n5HD",
+          "input": {
+            "nodeId": "ryMwhnqrw",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "SyASn29rP",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "By8gD4BId_4": {
+          "id": "By8gD4BId_4",
+          "input": {
+            "nodeId": "H14PEBUuOE",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkbDVBUOdV",
+            "pinKey": "HJrBNr4dG"
+          }
+        },
+        "BySwWyoSP": {
+          "id": "BySwWyoSP",
+          "input": {
+            "nodeId": "rkbDVBUOdV",
+            "pinKey": "rJJHNrVuM-$3"
+          },
+          "output": {
+            "nodeId": "BkXurLO_V",
+            "pinKey": "BJNpWHLuOE"
+          }
+        },
+        "H1Dv229Sw": {
+          "id": "H1Dv229Sw",
+          "input": {
+            "nodeId": "H1p8nncHv",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "ryMwhnqrw",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "H1xF2n5SD": {
+          "id": "H1xF2n5SD",
+          "input": {
+            "nodeId": "BkXurLO_V",
+            "pinKey": "SJcN3n9SD"
+          },
+          "output": {
+            "nodeId": "S1bHyj5Sv",
+            "pinKey": "__out__"
+          }
+        },
+        "HJ8FWJoSP": {
+          "id": "HJ8FWJoSP",
+          "input": {
+            "nodeId": "rkbDVBUOdV",
+            "pinKey": "HynENHNOz"
+          },
+          "output": {
+            "nodeId": "BkXurLO_V",
+            "pinKey": "SJNnvacHv"
+          }
+        },
+        "HJEPZkoSv": {
+          "id": "HJEPZkoSv",
+          "input": {
+            "nodeId": "rkbDVBUOdV",
+            "pinKey": "rJJHNrVuM-$4"
+          },
+          "output": {
+            "nodeId": "BkXurLO_V",
+            "pinKey": "rJ5BJmokI"
+          }
+        },
+        "Hy1DWkorv": {
+          "id": "Hy1DWkorv",
+          "input": {
+            "nodeId": "rkbDVBUOdV",
+            "pinKey": "rJJHNrVuM-$7"
+          },
+          "output": {
+            "nodeId": "BkXurLO_V",
+            "pinKey": "HkxhHJQok8"
+          }
+        },
+        "SkKP2hqHv": {
+          "id": "SkKP2hqHv",
+          "input": {
+            "nodeId": "H1p8nncHv",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "S1bHyj5Sv",
+            "pinKey": "__out__"
+          }
+        },
+        "SkxvWyjBv": {
+          "id": "SkxvWyjBv",
+          "input": {
+            "nodeId": "rkbDVBUOdV",
+            "pinKey": "rJJHNrVuM-$6"
+          },
+          "output": {
+            "nodeId": "BkXurLO_V",
+            "pinKey": "Bk2BkmoJI"
+          }
+        },
+        "SyG9bkoSP": {
+          "id": "SyG9bkoSP",
+          "input": {
+            "nodeId": "rkbDVBUOdV",
+            "pinKey": "rJJHNrVuM-$1"
+          },
+          "output": {
+            "nodeId": "BkXurLO_V",
+            "pinKey": "S1pbHUd_V"
+          }
+        },
+        "SyzwWJoBv": {
+          "id": "SyzwWJoBv",
+          "input": {
+            "nodeId": "rkbDVBUOdV",
+            "pinKey": "rJJHNrVuM-$5"
+          },
+          "output": {
+            "nodeId": "BkXurLO_V",
+            "pinKey": "BksSk7ikI"
+          }
+        },
+        "r1HO335rw": {
+          "id": "r1HO335rw",
+          "input": {
+            "nodeId": "BkXurLO_V",
+            "pinKey": "SJMpZrUOdE"
+          },
+          "output": {
+            "nodeId": "SyASn29rP",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "ryOqB35Bw": {
+          "id": "ryOqB35Bw",
+          "input": {
+            "nodeId": "BkXurLO_V",
+            "pinKey": "SJ7TbrLdO4"
+          },
+          "output": {
+            "nodeId": "rkI5rh9Bv",
+            "pinKey": "__out__"
+          }
+        },
+        "ryaP3hcHD": {
+          "id": "ryaP3hcHD",
+          "input": {
+            "nodeId": "SyASn29rP",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "H1p8nncHv",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        }
+      },
+      "nodes": {
+        "BkXurLO_V": {
+          "boundLiterals": {
+            "HJAZkljtV": "\"❌\"",
+            "Hy56-B8OdV": "\"⌛\"",
+            "SkLT-H8d_E": "\"📟\"",
+            "r1xp-SUu_V": "\"✔️\""
+          },
+          "id": "BkXurLO_V",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/scan-a"
+        },
+        "H14PEBUuOE": {
+          "description": "Output of string join.",
+          "id": "H14PEBUuOE",
+          "label": "🔍",
+          "position": {
+            "x": -1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "H1p8nncHv": {
+          "id": "H1p8nncHv",
+          "position": {
+            "x": 6,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "HkWMZVsJ8": {
+          "id": "HkWMZVsJ8",
+          "position": {
+            "x": -1,
+            "y": 14,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/utility"
+        },
+        "S1bHyj5Sv": {
+          "id": "S1bHyj5Sv",
+          "label": "SCAN",
+          "position": {
+            "x": 4,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SyASn29rP": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "0.2"
+          },
+          "id": "SyASn29rP",
+          "position": {
+            "x": 3,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "rkI5rh9Bv": {
+          "id": "rkI5rh9Bv",
+          "label": "I2C",
+          "position": {
+            "x": 2,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/i2c/input-i2c"
+        },
+        "rkbDVBUOdV": {
+          "arityLevel": 8,
+          "boundLiterals": {
+            "rJGQNB4df": "\"  \"",
+            "rJJHNrVuM": "\".\"",
+            "rJJHNrVuM-$1": "\"\"",
+            "rJJHNrVuM-$11": "\"\"",
+            "rJJHNrVuM-$2": "\".\"",
+            "rJJHNrVuM-$6": "\"\"",
+            "rJJHNrVuM-$7": "\"\"",
+            "rJJHNrVuM-$9": "\"\""
+          },
+          "id": "rkbDVBUOdV",
+          "position": {
+            "x": -1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/join"
+        },
+        "ryMwhnqrw": {
+          "id": "ryMwhnqrw",
+          "position": {
+            "x": 8,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        }
+      },
+      "path": "@/i2c-scanner"
+    },
+    "@/scan-a": {
+      "attachments": [
+        {
+          "content": "\nnode {\n\n    CStringView _wait = \"⌛\";\n    CStringView _device = \"📟\";\n    CStringView _ok = \"✔️\";\n    CStringView _error = \"❌\";\n    char str[16];\n    CStringView view = CStringView(str);\n\n    uint8_t addr = 0; //Address start\n    uint8_t dev = 0;\n    uint8_t _res = -1; //flag device found\n    int8_t count = 0;\n\n    void evaluate(Context ctx) {\n\n        if(isInputDirty<input_RST>(ctx)) {\n            addr = 0;\n            emitValue<output_DEV1>(ctx, 0);\n            emitValue<output_DEV2>(ctx, 0);\n            emitValue<output_DEV3>(ctx, 0);\n            emitValue<output_DEV4>(ctx, 0);\n            emitValue<output_DEV5>(ctx, 0);\n        }\n\n        if (!isInputDirty<input_SCAN>(ctx)){return;}\n\n        auto dev1 = getValue<output_DEV1>(ctx);\n        auto dev2 = getValue<output_DEV2>(ctx);\n        auto dev3 = getValue<output_DEV3>(ctx);\n        auto dev4 = getValue<output_DEV4>(ctx);\n\n        addr++;\n        if(_res == 0)\n            delay(1500);\n\n        if (addr > 127) {\n            if(dev > 0){\n                emitValue<output_OUT1>(ctx, XString(&_ok));\n                addr = 127;\n            }else{\n                emitValue<output_OUT1>(ctx, XString(&_error));\n            }return;}\n\n            formatNumber(addr, 0, str);\n            emitValue<output_Scanning>(ctx, XString(&view)); // 0 to 127\n            auto wire = getValue<input_I2C>(ctx);\n            wire->beginTransmission(addr);\n            auto res = wire->endTransmission();\n            if (res == 0) {\n                _res = res;\n                emitValue<output_OUT1>(ctx, XString(&_device)); //I2C found\n                emitValue<output_DEV5>(ctx, dev4);\n                emitValue<output_DEV4>(ctx, dev3);\n                emitValue<output_DEV3>(ctx, dev2);\n                emitValue<output_DEV2>(ctx, dev1);\n                emitValue<output_DEV1>(ctx, addr);\n                dev++;\n            }else{\n                _res = res;\n                emitValue<output_OUT1>(ctx, XString(&_wait)); //Wait\n            }\n    }\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJNpWHLuOE": {
+          "id": "BJNpWHLuOE",
+          "label": "DEV1",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-byte"
+        },
+        "BJUHlVoJL": {
+          "id": "BJUHlVoJL",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/utility"
+        },
+        "Bk2BkmoJI": {
+          "id": "Bk2BkmoJI",
+          "label": "DEV4",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-byte"
+        },
+        "BksSk7ikI": {
+          "id": "BksSk7ikI",
+          "label": "DEV3",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-byte"
+        },
+        "HkxhHJQok8": {
+          "id": "HkxhHJQok8",
+          "label": "DEV5",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-byte"
+        },
+        "S1pbHUd_V": {
+          "id": "S1pbHUd_V",
+          "label": "OUT1",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "SJ7TbrLdO4": {
+          "id": "SJ7TbrLdO4",
+          "label": "I2C",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/i2c/input-i2c"
+        },
+        "SJMpZrUOdE": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "id": "SJMpZrUOdE",
+          "label": "SCAN",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJNnvacHv": {
+          "id": "SJNnvacHv",
+          "label": "Scanning",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "SJcN3n9SD": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "id": "SJcN3n9SD",
+          "label": "RST",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJ5BJmokI": {
+          "id": "rJ5BJmokI",
+          "label": "DEV2",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-byte"
+        },
+        "rkSpbBU__N": {
+          "id": "rkSpbBU__N",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/scan-a"
+    }
+  },
+  "version": "0.2.0"
+}

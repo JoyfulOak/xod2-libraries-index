@@ -1,0 +1,3599 @@
+{
+  "patches": {
+    "@/close": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1MPz-TvKX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1MPz-TvKX",
+          "position": {
+            "x": -0.05,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "ByPfZaPKQ": {
+          "boundLiterals": {},
+          "description": "Pulses when the connection is closed",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByPfZaPKQ",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SJVrb8cCU": {
+          "boundLiterals": {},
+          "description": "An internet connection",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJVrb8cCU",
+          "position": {
+            "x": -2,
+            "y": 0
+          },
+          "type": "@/input-esp8266-mcu-inet",
+          "@@type": "xod-project/Node"
+        },
+        "SJiGWTPKm": {
+          "boundLiterals": {},
+          "description": "A socket",
+          "label": "SOCK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJiGWTPKm",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/net/input-socket",
+          "@@type": "xod-project/Node"
+        },
+        "r18LZIqCL": {
+          "boundLiterals": {},
+          "description": "An internet connection",
+          "label": "INET'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r18LZIqCL",
+          "position": {
+            "x": -2,
+            "y": 2
+          },
+          "type": "@/output-esp8266-mcu-inet",
+          "@@type": "xod-project/Node"
+        },
+        "r1eDMb6vKm": {
+          "boundLiterals": {},
+          "description": "Close the connection",
+          "label": "CLS",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1eDMb6vKm",
+          "position": {
+            "x": 2,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/close",
+      "description": "Closes an open TCP connection",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_CLS\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_CLS>(ctx))\n            return;\n\n        auto socketIdx = getValue<input_SOCK>(ctx);\n        auto inet = getValue<input_INET>(ctx);\n        auto client = inet.sockets[socketIdx];\n\n        client->stop();\n        emitValue<output_DONE>(ctx, 1);\n        emitValue<output_INETU0027>(ctx, inet);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/esp8266-mcu-device": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1xU-WjUFX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1xU-WjUFX",
+          "position": {
+            "x": -0.05,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "HkUZ-iLYm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkUZ-iLYm",
+          "position": {
+            "x": -0.05,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/output-self",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/esp8266-mcu-device",
+      "description": "Represents an ESP8266-based MCU",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#include <ESP8266WiFi.h>\n\nnode {\n    meta {\n        using Type = ESP8266WiFiClass*;\n    }\n\n    void evaluate(Context ctx) {\n        emitValue<output_OUT>(ctx, &WiFi);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/connect": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJxASTtLYm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJxASTtLYm",
+          "position": {
+            "x": -0.05,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "H1Gd15UFQ": {
+          "boundLiterals": {},
+          "description": "An internet connection",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1Gd15UFQ",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/output-esp8266-mcu-inet",
+          "@@type": "xod-project/Node"
+        },
+        "H1z0HpF8Km": {
+          "boundLiterals": {},
+          "description": "Wi-Fi network password",
+          "label": "PWD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1z0HpF8Km",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "HJZCrpKLYX": {
+          "boundLiterals": {},
+          "description": "Name of the Wi-Fi network",
+          "label": "SSID",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJZCrpKLYX",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "HyLAraK8Km": {
+          "boundLiterals": {},
+          "description": "Pulses on a successful connection\n",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyLAraK8Km",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HyOPzjUK7": {
+          "boundLiterals": {},
+          "description": "An ESP8266-based MCU",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyOPzjUK7",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-esp8266-mcu-device",
+          "@@type": "xod-project/Node"
+        },
+        "S1qvRYMe4": {
+          "boundLiterals": {
+            "__out__": "10"
+          },
+          "description": "Connection timeout (in seconds)",
+          "label": "TO",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1qvRYMe4",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "ryRHTFItQ": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Establish the connection",
+          "label": "CONN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryRHTFItQ",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/connect",
+      "description": "Connect to a WiFi network with a given SSID and password\n\nPossible errors:\n— Connection failed",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD error_raise enable\n\nnode {\n  static const uint8_t RECEHCK_DURATION_MS = 30;\n  uint16_t rechecksLeft;\n\n  void evaluate(Context ctx) {\n      auto device = getValue<input_DEV>(ctx);\n\n      if (isInputDirty<input_CONN>(ctx)) {\n          auto ssid = getValue<input_SSID>(ctx);\n          auto ssidLength = length(ssid);\n          char _ssid[ssidLength + 1];\n          dump(ssid, _ssid);\n          _ssid[ssidLength] = '\\0';\n\n          auto password = getValue<input_PWD>(ctx);\n          auto passwordLength = length(password);\n          char _password[passwordLength + 1];\n          dump(password, _password);\n          _password[passwordLength] = '\\0';\n\n          /* Explicitly set the ESP8266 to be a WiFi-client, otherwise, it by default,\n             would try to act as both a client and an access-point and could cause\n             network-issues with your other WiFi-devices on your WiFi-network. */\n          device->mode(WIFI_STA);\n          device->begin(_ssid, _password);\n\n          auto timeout = getValue<input_TO>(ctx);\n          rechecksLeft = ceil(timeout * 1000.0 / RECEHCK_DURATION_MS);\n          setTimeout(ctx, RECEHCK_DURATION_MS);\n      }\n\n      if (isTimedOut(ctx)) {\n          if (device->status() != WL_CONNECTED) {\n              rechecksLeft -= 1;\n\n              if (rechecksLeft == 0) {\n                  raiseError(ctx); // Connection failed\n              } else {\n                  setTimeout(ctx, RECEHCK_DURATION_MS);\n              }\n          } else {\n              emitValue<output_DONE>(ctx, true);\n              typeof_INET inet;\n              inet.wifi = device;\n              emitValue<output_INET>(ctx, inet);\n          }\n      }\n  }\n}\n"
+        }
+      ]
+    },
+    "@/esp8266-mcu-inet": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "By7tuY8YX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "By7tuY8YX",
+          "position": {
+            "x": 3,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "SyJt_KUF7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyJt_KUF7",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "SyqdOtLYX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyqdOtLYX",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-self",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/esp8266-mcu-inet",
+      "description": "Represents an internet connection",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#include <ESP8266WiFi.h>\n\nnode {\n    meta {\n        struct Type {\n          ESP8266WiFiClass* wifi;\n          WiFiClient *sockets[5];\n        };\n    }\n\n    void evaluate(Context ctx) {\n        Type inet = { &WiFi, { nullptr, nullptr, nullptr, nullptr, nullptr } };\n        emitValue<output_OUT>(ctx, inet);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/http-request(esp8266-mcu-inet)": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1U0CH2PFQ": {
+          "boundLiterals": {
+            "BkeKcj6ZZ": "\":\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 2,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1U0CH2PFQ",
+          "position": {
+            "x": 13,
+            "y": 2
+          },
+          "type": "xod/core/concat",
+          "@@type": "xod-project/Node"
+        },
+        "BJO382PtQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJO382PtQ",
+          "position": {
+            "x": 0,
+            "y": 5
+          },
+          "type": "@/send",
+          "@@type": "xod-project/Node"
+        },
+        "BJaqmQ0cm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJaqmQ0cm",
+          "position": {
+            "x": 7,
+            "y": 1
+          },
+          "type": "xod/core/branch",
+          "@@type": "xod-project/Node"
+        },
+        "BJcR0ShvYQ": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "description": "Additional headers",
+          "label": "HDRS",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJcR0ShvYQ",
+          "position": {
+            "x": 16,
+            "y": -2
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "BJpCRr2vt7": {
+          "boundLiterals": {},
+          "description": "Pulses when all response data is received and the connection is closed",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJpCRr2vt7",
+          "position": {
+            "x": 4,
+            "y": 7
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "BkXgHvhwtX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "HOST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkXgHvhwtX",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "BkZeBwhvYm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "HOST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkZeBwhvYm",
+          "position": {
+            "x": 13,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "ByWlRArnDFQ": {
+          "boundLiterals": {
+            "__out__": "\"GET\""
+          },
+          "description": "An HTTP method (e.g., GET, POST, PUT, or DELETE)",
+          "label": "METH",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByWlRArnDFQ",
+          "position": {
+            "x": 12,
+            "y": -2
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "H1ACr2vFX": {
+          "boundLiterals": {
+            "HkcCKGYZ7": "\"/\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1ACr2vFX",
+          "position": {
+            "x": 12,
+            "y": 3
+          },
+          "type": "xod/net/format-http-request",
+          "@@type": "xod-project/Node"
+        },
+        "H1lBv2wF7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "HOST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1lBv2wF7",
+          "position": {
+            "x": 2,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/to-bus",
+          "@@type": "xod-project/Node"
+        },
+        "HJjCAB2DF7": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "description": "The domain name of the server",
+          "label": "HOST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJjCAB2DF7",
+          "position": {
+            "x": 2,
+            "y": -2
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "HkT4BXC9X": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "lock",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkT4BXC9X",
+          "position": {
+            "x": 1,
+            "y": 4
+          },
+          "type": "xod/patch-nodes/to-bus",
+          "@@type": "xod-project/Node"
+        },
+        "Hku0ArhDYX": {
+          "boundLiterals": {},
+          "description": "The last received character from the response",
+          "label": "CHAR",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hku0ArhDYX",
+          "position": {
+            "x": -0.05,
+            "y": 7
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "Hkv0CrnPYQ": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "description": "The request body (optional)",
+          "label": "BODY",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hkv0CrnPYQ",
+          "position": {
+            "x": 18,
+            "y": -2
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "HyW3SD3vF7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyW3SD3vF7",
+          "position": {
+            "x": 15,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "Hyg00BnPK7": {
+          "boundLiterals": {
+            "HJTIija-W": "0"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hyg00BnPK7",
+          "position": {
+            "x": 15,
+            "y": 1
+          },
+          "type": "xod/core/format-number",
+          "@@type": "xod-project/Node"
+        },
+        "S1Tl8hwFQ": {
+          "boundLiterals": {},
+          "description": "An internet connection",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1Tl8hwFQ",
+          "position": {
+            "x": 0,
+            "y": -2
+          },
+          "type": "@/input-esp8266-mcu-inet",
+          "@@type": "xod-project/Node"
+        },
+        "S1xGBmCq7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "lock",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1xGBmCq7",
+          "position": {
+            "x": 9,
+            "y": -2
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "SJRQBmR5Q": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "unlock",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJRQBmR5Q",
+          "position": {
+            "x": 2,
+            "y": 7
+          },
+          "type": "xod/patch-nodes/to-bus",
+          "@@type": "xod-project/Node"
+        },
+        "SJSC3hDKQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJSC3hDKQ",
+          "position": {
+            "x": 0,
+            "y": 6
+          },
+          "type": "@/receive",
+          "@@type": "xod-project/Node"
+        },
+        "Sk7VL7R97": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk7VL7R97",
+          "position": {
+            "x": 7,
+            "y": 2
+          },
+          "type": "xod/core/defer",
+          "@@type": "xod-project/Node"
+        },
+        "Ski5GQAqm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Ski5GQAqm",
+          "position": {
+            "x": 7,
+            "y": 0
+          },
+          "type": "xod/core/flip-flop",
+          "@@type": "xod-project/Node"
+        },
+        "SyM00ShDY7": {
+          "boundLiterals": {
+            "__out__": "80"
+          },
+          "description": "A port number on which the server is listening. In most configurations, HTTP web servers listen at port 80.",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyM00ShDY7",
+          "position": {
+            "x": 4,
+            "y": -2
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "r1E0RH3vYQ": {
+          "boundLiterals": {},
+          "description": "Pulses when a new response character is received",
+          "label": "RCV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1E0RH3vYQ",
+          "position": {
+            "x": 1,
+            "y": 7
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "r1QnBD2vFm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1QnBD2vFm",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "rknSDnPYQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rknSDnPYQ",
+          "position": {
+            "x": 4,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/to-bus",
+          "@@type": "xod-project/Node"
+        },
+        "ryE1I3vFm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryE1I3vFm",
+          "position": {
+            "x": 0,
+            "y": 3
+          },
+          "type": "@/open-tcp",
+          "@@type": "xod-project/Node"
+        },
+        "ryYRCBhvFX": {
+          "boundLiterals": {
+            "__out__": "\"/\""
+          },
+          "description": "A path to the requested resource",
+          "label": "PATH",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryYRCBhvFX",
+          "position": {
+            "x": 14,
+            "y": -2
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "ryYxr7A5X": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "unlock",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryYxr7A5X",
+          "position": {
+            "x": 7,
+            "y": -2
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "rygl0RH3wtm": {
+          "boundLiterals": {},
+          "description": "Begin the request",
+          "label": "INIT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rygl0RH3wtm",
+          "position": {
+            "x": 20,
+            "y": -2
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "ryuJH7CcX": {
+          "boundLiterals": {
+            "ByU7LRuSPkW": "On Boot"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryuJH7CcX",
+          "position": {
+            "x": 7,
+            "y": -1
+          },
+          "type": "xod/core/any",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B1MJahPFm": {
+          "id": "B1MJahPFm",
+          "input": {
+            "nodeId": "Hku0ArhDYX",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJSC3hDKQ",
+            "pinKey": "HyNOn3vt7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJaEfIc0I": {
+          "id": "BJaEfIc0I",
+          "input": {
+            "nodeId": "SJSC3hDKQ",
+            "pinKey": "SkVJM890I"
+          },
+          "output": {
+            "nodeId": "BJO382PtQ",
+            "pinKey": "Sk6-zIqRU"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkLW0AS3wK7": {
+          "id": "BkLW0AS3wK7",
+          "input": {
+            "nodeId": "H1ACr2vFX",
+            "pinKey": "SkQFtMKZm"
+          },
+          "output": {
+            "nodeId": "ByWlRArnDFQ",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Bk_eCCrnDKm": {
+          "id": "Bk_eCCrnDKm",
+          "input": {
+            "nodeId": "B1U0CH2PFQ",
+            "pinKey": "BkeKcj6ZZ-$1"
+          },
+          "output": {
+            "nodeId": "Hyg00BnPK7",
+            "pinKey": "r1H_oipZb"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Bkh0n3vtm": {
+          "id": "Bkh0n3vtm",
+          "input": {
+            "nodeId": "SJSC3hDKQ",
+            "pinKey": "B1WEdh3Ptm"
+          },
+          "output": {
+            "nodeId": "BJO382PtQ",
+            "pinKey": "HyQ6rIhDtX"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkxaErmA57": {
+          "id": "BkxaErmA57",
+          "input": {
+            "nodeId": "HkT4BXC9X",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ryE1I3vFm",
+            "pinKey": "r1EpRjDYQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ByzgSDnPKQ": {
+          "id": "ByzgSDnPKQ",
+          "input": {
+            "nodeId": "B1U0CH2PFQ",
+            "pinKey": "Hkqu9oaWb"
+          },
+          "output": {
+            "nodeId": "BkZeBwhvYm",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H13gv3Dt7": {
+          "id": "H13gv3Dt7",
+          "input": {
+            "nodeId": "BJO382PtQ",
+            "pinKey": "SJf6BU2PKQ"
+          },
+          "output": {
+            "nodeId": "ryE1I3vFm",
+            "pinKey": "r1EpRjDYQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1ExHP2wtX": {
+          "id": "H1ExHP2wtX",
+          "input": {
+            "nodeId": "ryE1I3vFm",
+            "pinKey": "ryQ46CovFm"
+          },
+          "output": {
+            "nodeId": "BkXgHvhwtX",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1dCKSC57": {
+          "id": "H1dCKSC57",
+          "input": {
+            "nodeId": "ryE1I3vFm",
+            "pinKey": "ByZE6AjDt7"
+          },
+          "output": {
+            "nodeId": "Sk7VL7R97",
+            "pinKey": "HJhXDIY9-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1egBvhDY7": {
+          "id": "H1egBvhDY7",
+          "input": {
+            "nodeId": "H1lBv2wF7",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HJjCAB2DF7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJ9CTOnAL": {
+          "id": "HJ9CTOnAL",
+          "input": {
+            "nodeId": "SJSC3hDKQ",
+            "pinKey": "SyKY2nPtQ"
+          },
+          "output": {
+            "nodeId": "BJO382PtQ",
+            "pinKey": "S1lTWGI50I"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJCgARrnPKm": {
+          "id": "HJCgARrnPKm",
+          "input": {
+            "nodeId": "H1ACr2vFX",
+            "pinKey": "Hyd95MK-m"
+          },
+          "output": {
+            "nodeId": "BJcR0ShvYQ",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJU0YrR57": {
+          "id": "HJU0YrR57",
+          "input": {
+            "nodeId": "Sk7VL7R97",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "BJaqmQ0cm",
+            "pinKey": "SJUl8Aurv1W"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJXk6nvF7": {
+          "id": "HJXk6nvF7",
+          "input": {
+            "nodeId": "r1E0RH3vYQ",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJSC3hDKQ",
+            "pinKey": "BktNOnnDYQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HklnrDhvt7": {
+          "id": "HklnrDhvt7",
+          "input": {
+            "nodeId": "rknSDnPYQ",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SyM00ShDY7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkwZRRB3wYX": {
+          "id": "HkwZRRB3wYX",
+          "input": {
+            "nodeId": "H1ACr2vFX",
+            "pinKey": "Sy5v9zFZ7"
+          },
+          "output": {
+            "nodeId": "Hkv0CrnPYQ",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HyNnrDhwt7": {
+          "id": "HyNnrDhwt7",
+          "input": {
+            "nodeId": "ryE1I3vFm",
+            "pinKey": "ryL4pAjPKX"
+          },
+          "output": {
+            "nodeId": "r1QnBD2vFm",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HyZ0FH0c7": {
+          "id": "HyZ0FH0c7",
+          "input": {
+            "nodeId": "Ski5GQAqm",
+            "pinKey": "B1RU0OrDkb"
+          },
+          "output": {
+            "nodeId": "S1xGBmCq7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HyoVfL9CL": {
+          "id": "HyoVfL9CL",
+          "input": {
+            "nodeId": "BJO382PtQ",
+            "pinKey": "r1v-ML9CU"
+          },
+          "output": {
+            "nodeId": "ryE1I3vFm",
+            "pinKey": "BkytZ89AU"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HyqkSQRq7": {
+          "id": "HyqkSQRq7",
+          "input": {
+            "nodeId": "Ski5GQAqm",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "ryuJH7CcX",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1eCXSmRq7": {
+          "id": "S1eCXSmRq7",
+          "input": {
+            "nodeId": "SJRQBmR5Q",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJSC3hDKQ",
+            "pinKey": "rkANu2hwtQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1gFerm0c7": {
+          "id": "S1gFerm0c7",
+          "input": {
+            "nodeId": "ryuJH7CcX",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "ryYxr7A5X",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJ0nI2DKX": {
+          "id": "SJ0nI2DKX",
+          "input": {
+            "nodeId": "BJO382PtQ",
+            "pinKey": "rJX8L2vKQ"
+          },
+          "output": {
+            "nodeId": "ryE1I3vFm",
+            "pinKey": "H1mYNnvY7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJ7682vFm": {
+          "id": "SJ7682vFm",
+          "input": {
+            "nodeId": "BJO382PtQ",
+            "pinKey": "BkW6rLnwFQ"
+          },
+          "output": {
+            "nodeId": "H1ACr2vFX",
+            "pinKey": "H1leYGFbm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJQdPrC5m": {
+          "id": "SJQdPrC5m",
+          "input": {
+            "nodeId": "BJaqmQ0cm",
+            "pinKey": "HkDgIRdrv1W"
+          },
+          "output": {
+            "nodeId": "rygl0RH3wtm",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJzhrwnvtQ": {
+          "id": "SJzhrwnvtQ",
+          "input": {
+            "nodeId": "Hyg00BnPK7",
+            "pinKey": "BJlHojaWZ"
+          },
+          "output": {
+            "nodeId": "HyW3SD3vF7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkTgA0B3vYQ": {
+          "id": "SkTgA0B3vYQ",
+          "input": {
+            "nodeId": "H1ACr2vFX",
+            "pinKey": "BJqntfKbm"
+          },
+          "output": {
+            "nodeId": "B1U0CH2PFQ",
+            "pinKey": "rksccsp-W"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyxjX7R9m": {
+          "id": "SyxjX7R9m",
+          "input": {
+            "nodeId": "BJaqmQ0cm",
+            "pinKey": "S1OlUAuBD1-"
+          },
+          "output": {
+            "nodeId": "Ski5GQAqm",
+            "pinKey": "HkyxURuSPyW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1EWInDFQ": {
+          "id": "r1EWInDFQ",
+          "input": {
+            "nodeId": "ryE1I3vFm",
+            "pinKey": "SkEJyhvFQ"
+          },
+          "output": {
+            "nodeId": "S1Tl8hwFQ",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ry5l0RS2vYX": {
+          "id": "ry5l0RS2vYX",
+          "input": {
+            "nodeId": "H1ACr2vFX",
+            "pinKey": "HkcCKGYZ7"
+          },
+          "output": {
+            "nodeId": "ryYRCBhvFX",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ry8yT2wt7": {
+          "id": "ry8yT2wt7",
+          "input": {
+            "nodeId": "BJpCRr2vt7",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJSC3hDKQ",
+            "pinKey": "rkANu2hwtQ"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {
+        "Sy0J_rC9m": {
+          "content": "Do not accept another INIT until current request is complete",
+          "id": "Sy0J_rC9m",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "size": {
+            "height": 2,
+            "width": 4
+          }
+        }
+      },
+      "path": "@/http-request(esp8266-mcu-inet)",
+      "description": "Performs an HTTP request and returns the response as a stream of characters\n\nPossible errors:\n— Can't open TCP connection\n— Can't send the data to the socket\n",
+      "attachments": []
+    },
+    "@/example-get-data-from-dweet": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1-gRSUVYYX": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "5"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1-gRSUVYYX",
+          "position": {
+            "x": 18,
+            "y": 6
+          },
+          "type": "xod/core/delay",
+          "@@type": "xod-project/Node"
+        },
+        "B19RHUNYt7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "RST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B19RHUNYt7",
+          "position": {
+            "x": 11,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "BJCSI4tYQ": {
+          "boundLiterals": {
+            "rkZ8oIj0-m": "\"\"lum\":\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJCSI4tYQ",
+          "position": {
+            "x": 8,
+            "y": 6
+          },
+          "type": "xod/stream/pass-from-sequence",
+          "@@type": "xod-project/Node"
+        },
+        "ByXASI4FKm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "RST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByXASI4FKm",
+          "position": {
+            "x": 12,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/to-bus",
+          "@@type": "xod-project/Node"
+        },
+        "Byj0rUNKKQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Byj0rUNKKQ",
+          "position": {
+            "x": 12,
+            "y": 2
+          },
+          "type": "xod/core/any",
+          "@@type": "xod-project/Node"
+        },
+        "H1BCFNKKm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "AGAIN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1BCFNKKm",
+          "position": {
+            "x": 17,
+            "y": 8
+          },
+          "type": "xod/patch-nodes/to-bus",
+          "@@type": "xod-project/Node"
+        },
+        "H1KUREbJr": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1KUREbJr",
+          "position": {
+            "x": 16,
+            "y": 5
+          },
+          "type": "xod/core/pulse-on-error",
+          "@@type": "xod-project/Node"
+        },
+        "Hk6RBINtYX": {
+          "boundLiterals": {
+            "HJjCAB2DF7": "\"dweet.io\"",
+            "ryYRCBhvFX": "\"/get/latest/dweet/for/xod-esp8266-iot\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hk6RBINtYX",
+          "position": {
+            "x": 8,
+            "y": 4
+          },
+          "type": "@/http-request(esp8266-mcu-inet)",
+          "@@type": "xod-project/Node"
+        },
+        "HydRr8NttQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HydRr8NttQ",
+          "position": {
+            "x": 8,
+            "y": 8
+          },
+          "type": "xod/stream/parse-integer",
+          "@@type": "xod-project/Node"
+        },
+        "Sy2CBUNYt7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "RST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sy2CBUNYt7",
+          "position": {
+            "x": 10,
+            "y": 7
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "SyETcEtKm": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyETcEtKm",
+          "position": {
+            "x": 14,
+            "y": 6
+          },
+          "type": "xod/core/delay",
+          "@@type": "xod-project/Node"
+        },
+        "SyFdPQqtQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyFdPQqtQ",
+          "position": {
+            "x": 15,
+            "y": 7
+          },
+          "type": "xod/core/any",
+          "@@type": "xod-project/Node"
+        },
+        "r1F8u4ttm": {
+          "boundLiterals": {
+            "B1rSeJlnZ": "100",
+            "HkFBgJehW": "1"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1F8u4ttm",
+          "position": {
+            "x": 8,
+            "y": 9
+          },
+          "type": "xod/math/map-clip",
+          "@@type": "xod-project/Node"
+        },
+        "rkMCr8EtYX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "AGAIN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkMCr8EtYX",
+          "position": {
+            "x": 13,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "rkWAH8EYtQ": {
+          "boundLiterals": {
+            "B1oqkTnIb": "A2"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkWAH8EYtQ",
+          "position": {
+            "x": 7,
+            "y": 10
+          },
+          "type": "xod/common-hardware/led",
+          "@@type": "xod-project/Node"
+        },
+        "rkv29jyc7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkv29jyc7",
+          "position": {
+            "x": 17,
+            "y": 7
+          },
+          "type": "xod/core/defer",
+          "@@type": "xod-project/Node"
+        },
+        "ryJlRBU4FYQ": {
+          "boundLiterals": {
+            "H1z0HpF8Km": "\"password\"",
+            "HJZCrpKLYX": "\"ssid\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryJlRBU4FYQ",
+          "position": {
+            "x": 8,
+            "y": 1
+          },
+          "type": "@/connect",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B1NbRrIEFFm": {
+          "id": "B1NbRrIEFFm",
+          "input": {
+            "nodeId": "BJCSI4tYQ",
+            "pinKey": "B18iIoA-m"
+          },
+          "output": {
+            "nodeId": "Hk6RBINtYX",
+            "pinKey": "Hku0ArhDYX"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "B1cW0HI4YtQ": {
+          "id": "B1cW0HI4YtQ",
+          "input": {
+            "nodeId": "BJCSI4tYQ",
+            "pinKey": "rklUo8jA-Q"
+          },
+          "output": {
+            "nodeId": "Hk6RBINtYX",
+            "pinKey": "r1E0RH3vYQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJwbCrI4FtQ": {
+          "id": "BJwbCrI4FtQ",
+          "input": {
+            "nodeId": "Byj0rUNKKQ",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "ryJlRBU4FYQ",
+            "pinKey": "HyLAraK8Km"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkSeRHLVKtX": {
+          "id": "BkSeRHLVKtX",
+          "input": {
+            "nodeId": "BJCSI4tYQ",
+            "pinKey": "BJhHwoRb7"
+          },
+          "output": {
+            "nodeId": "B19RHUNYt7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ByLx0SIVYtQ": {
+          "id": "ByLx0SIVYtQ",
+          "input": {
+            "nodeId": "Hk6RBINtYX",
+            "pinKey": "S1Tl8hwFQ"
+          },
+          "output": {
+            "nodeId": "ryJlRBU4FYQ",
+            "pinKey": "H1Gd15UFQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ByXvONKY7": {
+          "id": "ByXvONKY7",
+          "input": {
+            "nodeId": "r1F8u4ttm",
+            "pinKey": "HJjEe1lnb"
+          },
+          "output": {
+            "nodeId": "HydRr8NttQ",
+            "pinKey": "Sk6oKXA-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Bya29sy5Q": {
+          "id": "Bya29sy5Q",
+          "input": {
+            "nodeId": "H1BCFNKKm",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkv29jyc7",
+            "pinKey": "HJhXDIY9-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1Lw_NtYm": {
+          "id": "H1Lw_NtYm",
+          "input": {
+            "nodeId": "rkWAH8EYtQ",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "r1F8u4ttm",
+            "pinKey": "rJFmgJehW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hk4wAV-JS": {
+          "id": "Hk4wAV-JS",
+          "input": {
+            "nodeId": "B1-gRSUVYYX",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "H1KUREbJr",
+            "pinKey": "HkPQCTHiE"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hk7lASLEKtm": {
+          "id": "Hk7lASLEKtm",
+          "input": {
+            "nodeId": "Byj0rUNKKQ",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "rkMCr8EtYX",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkYgCH8NFKX": {
+          "id": "HkYgCH8NFKX",
+          "input": {
+            "nodeId": "HydRr8NttQ",
+            "pinKey": "rJ55KmC-X"
+          },
+          "output": {
+            "nodeId": "BJCSI4tYQ",
+            "pinKey": "SkSGwoAZQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hy5e0SIEKYX": {
+          "id": "Hy5e0SIEKYX",
+          "input": {
+            "nodeId": "HydRr8NttQ",
+            "pinKey": "Sy1it7R-m"
+          },
+          "output": {
+            "nodeId": "BJCSI4tYQ",
+            "pinKey": "SkYZwiRbm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hyh3csycm": {
+          "id": "Hyh3csycm",
+          "input": {
+            "nodeId": "rkv29jyc7",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "SyFdPQqtQ",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkMjwQqtQ": {
+          "id": "SkMjwQqtQ",
+          "input": {
+            "nodeId": "SyFdPQqtQ",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "SyETcEtKm",
+            "pinKey": "Bk4gU0drwJ-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyC65NFKQ": {
+          "id": "SyC65NFKQ",
+          "input": {
+            "nodeId": "SyETcEtKm",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "Hk6RBINtYX",
+            "pinKey": "BJpCRr2vt7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1jIR4-JS": {
+          "id": "r1jIR4-JS",
+          "input": {
+            "nodeId": "H1KUREbJr",
+            "pinKey": "BypMC6riE"
+          },
+          "output": {
+            "nodeId": "Hk6RBINtYX",
+            "pinKey": "BJpCRr2vt7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1u9Ys19X": {
+          "id": "r1u9Ys19X",
+          "input": {
+            "nodeId": "ByXASI4FKm",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Byj0rUNKKQ",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJQn9okcQ": {
+          "id": "rJQn9okcQ",
+          "input": {
+            "nodeId": "Hk6RBINtYX",
+            "pinKey": "rygl0RH3wtm"
+          },
+          "output": {
+            "nodeId": "Byj0rUNKKQ",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkEsw7cYQ": {
+          "id": "rkEsw7cYQ",
+          "input": {
+            "nodeId": "SyFdPQqtQ",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "B1-gRSUVYYX",
+            "pinKey": "Bk4gU0drwJ-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkzbRBIVKY7": {
+          "id": "rkzbRBIVKY7",
+          "input": {
+            "nodeId": "HydRr8NttQ",
+            "pinKey": "r1JWmAxzQ"
+          },
+          "output": {
+            "nodeId": "Sy2CBUNYt7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {
+        "BJnIU4Kt7": {
+          "content": "If request succeeds, request fresh value after 1 second\nIf request fails, retry after 5 seconds",
+          "id": "BJnIU4Kt7",
+          "position": {
+            "x": 17,
+            "y": 5
+          },
+          "size": {
+            "height": 1,
+            "width": 10
+          }
+        },
+        "H1hkLF9Fm": {
+          "content": "⚠️ Make sure to specify SSID and password of your WiFi network",
+          "id": "H1hkLF9Fm",
+          "position": {
+            "x": 8,
+            "y": 0
+          },
+          "size": {
+            "height": 1,
+            "width": 7
+          }
+        },
+        "SkhZRSUVFY7": {
+          "content": "tip: use `https://dweet.io/dweet/for/xod-esp8266-iot?lum=100` to put desired values\n",
+          "id": "SkhZRSUVFY7",
+          "position": {
+            "x": 16,
+            "y": 4
+          },
+          "size": {
+            "height": 1,
+            "width": 11
+          }
+        }
+      },
+      "path": "@/example-get-data-from-dweet",
+      "description": "",
+      "attachments": []
+    },
+    "@/example-get-external-ip": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "H1uamCnqm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1uamCnqm",
+          "position": {
+            "x": 4,
+            "y": 5
+          },
+          "type": "xod/stream/accumulate-string",
+          "@@type": "xod-project/Node"
+        },
+        "Hy7K7awF7": {
+          "boundLiterals": {
+            "HJjCAB2DF7": "\"api.xod.io\"",
+            "ryYRCBhvFX": "\"/httpbin/ip\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hy7K7awF7",
+          "position": {
+            "x": 5,
+            "y": 2
+          },
+          "type": "@/http-request(esp8266-mcu-inet)",
+          "@@type": "xod-project/Node"
+        },
+        "SJlyTMpPYX": {
+          "boundLiterals": {
+            "S1a8PX0Wm": "On Boot",
+            "S1bGvmAWQ": "'\"'"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJlyTMpPYX",
+          "position": {
+            "x": 5,
+            "y": 4
+          },
+          "type": "xod/stream/pass-until",
+          "@@type": "xod-project/Node"
+        },
+        "SJtk4RhqX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "height": 1,
+            "width": 6
+          },
+          "id": "SJtk4RhqX",
+          "position": {
+            "x": 4,
+            "y": 6
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "SkMy6faPFQ": {
+          "boundLiterals": {
+            "rkZ8oIj0-m": "\"origin\":\"\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkMy6faPFQ",
+          "position": {
+            "x": 5,
+            "y": 3
+          },
+          "type": "xod/stream/pass-from-sequence",
+          "@@type": "xod-project/Node"
+        },
+        "r1ArzjUFm": {
+          "boundLiterals": {
+            "H1z0HpF8Km": "\"password\"",
+            "HJZCrpKLYX": "\"ssid\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1ArzjUFm",
+          "position": {
+            "x": 5,
+            "y": 1
+          },
+          "type": "@/connect",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "Bk8t7TwKX": {
+          "id": "Bk8t7TwKX",
+          "input": {
+            "nodeId": "SkMy6faPFQ",
+            "pinKey": "rklUo8jA-Q"
+          },
+          "output": {
+            "nodeId": "Hy7K7awF7",
+            "pinKey": "r1E0RH3vYQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ByiJEAnqm": {
+          "id": "ByiJEAnqm",
+          "input": {
+            "nodeId": "SJtk4RhqX",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H1uamCnqm",
+            "pinKey": "S1s7pCDbQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJByazTvY7": {
+          "id": "HJByazTvY7",
+          "input": {
+            "nodeId": "SJlyTMpPYX",
+            "pinKey": "BJYbP7CZm"
+          },
+          "output": {
+            "nodeId": "SkMy6faPFQ",
+            "pinKey": "SkSGwoAZQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJXeNTwKm": {
+          "id": "HJXeNTwKm",
+          "input": {
+            "nodeId": "Hy7K7awF7",
+            "pinKey": "rygl0RH3wtm"
+          },
+          "output": {
+            "nodeId": "r1ArzjUFm",
+            "pinKey": "HyLAraK8Km"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S11C7C39Q": {
+          "id": "S11C7C39Q",
+          "input": {
+            "nodeId": "H1uamCnqm",
+            "pinKey": "r1NYhRDZ7"
+          },
+          "output": {
+            "nodeId": "SJlyTMpPYX",
+            "pinKey": "r1XBwQCWQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1HtmpPt7": {
+          "id": "S1HtmpPt7",
+          "input": {
+            "nodeId": "SkMy6faPFQ",
+            "pinKey": "B18iIoA-m"
+          },
+          "output": {
+            "nodeId": "Hy7K7awF7",
+            "pinKey": "Hku0ArhDYX"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r16pm029Q": {
+          "id": "r16pm029Q",
+          "input": {
+            "nodeId": "H1uamCnqm",
+            "pinKey": "HJi_30PZX"
+          },
+          "output": {
+            "nodeId": "SJlyTMpPYX",
+            "pinKey": "By5Vv7C-7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1Kk6GpDYX": {
+          "id": "r1Kk6GpDYX",
+          "input": {
+            "nodeId": "SJlyTMpPYX",
+            "pinKey": "r1CWwm0b7"
+          },
+          "output": {
+            "nodeId": "SkMy6faPFQ",
+            "pinKey": "SkYZwiRbm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryfo7pwFm": {
+          "id": "ryfo7pwFm",
+          "input": {
+            "nodeId": "Hy7K7awF7",
+            "pinKey": "S1Tl8hwFQ"
+          },
+          "output": {
+            "nodeId": "r1ArzjUFm",
+            "pinKey": "H1Gd15UFQ"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {
+        "BklorYcYX": {
+          "content": "⚠️ Make sure to specify SSID and password of your WiFi network",
+          "id": "BklorYcYX",
+          "position": {
+            "x": 10,
+            "y": 1
+          },
+          "size": {
+            "height": 1,
+            "width": 7
+          }
+        }
+      },
+      "path": "@/example-get-external-ip",
+      "description": "",
+      "attachments": []
+    },
+    "@/lan-ip": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJW3uVtwYm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJW3uVtwYm",
+          "position": {
+            "x": -0.05,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "SkGtVFvY7": {
+          "boundLiterals": {},
+          "description": "An internet connection",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkGtVFvY7",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-esp8266-mcu-inet",
+          "@@type": "xod-project/Node"
+        },
+        "ryxn_NYPKX": {
+          "boundLiterals": {},
+          "description": "The IP address",
+          "label": "IP",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryxn_NYPKX",
+          "position": {
+            "x": -0.05,
+            "y": 2
+          },
+          "type": "xod/net/output-ip-address",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/lan-ip",
+      "description": "Gets a local IP address",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    void evaluate(Context ctx) {\n        auto inet = getValue<input_INET>(ctx);\n        emitValue<output_IP>(ctx, (typeof_IP)inet.wifi->localIP());\n    }\n}\n"
+        }
+      ]
+    },
+    "@/is-connected": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1_v46V2Q": {
+          "boundLiterals": {},
+          "description": "An ESP8266-based MCU",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1_v46V2Q",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "@/input-esp8266-mcu-device",
+          "@@type": "xod-project/Node"
+        },
+        "Bk-Lr6Ap4": {
+          "boundLiterals": {},
+          "description": "Emits a pulse when a check is performed",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bk-Lr6Ap4",
+          "position": {
+            "x": 5,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HyKm4aEhm": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Initiate the check",
+          "label": "CHK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyKm4aEhm",
+          "position": {
+            "x": 5,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SJp3VpE2Q": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJp3VpE2Q",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "rkZQE6Eh7": {
+          "boundLiterals": {},
+          "description": "True if device is connected to a WiFi network",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkZQE6Eh7",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-boolean",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/is-connected",
+      "description": "Checks if the device is connected to a WiFi network",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    void evaluate(Context ctx) {\n        auto device = getValue<input_DEV>(ctx);\n\n        emitValue<output_OUT>(ctx, device->status() == WL_CONNECTED);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/is-open": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkXkhxTDt7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkXkhxTDt7",
+          "position": {
+            "x": -0.05,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "HkEhxaDYX": {
+          "boundLiterals": {},
+          "description": "A socket",
+          "label": "SOCK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkEhxaDYX",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/net/input-socket",
+          "@@type": "xod-project/Node"
+        },
+        "Hkkhe6vYX": {
+          "boundLiterals": {},
+          "description": "Pulses if the connection is open",
+          "label": "Y",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hkkhe6vYX",
+          "position": {
+            "x": -0.05,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "r1f1heaDtQ": {
+          "boundLiterals": {},
+          "description": "Perform the check",
+          "label": "CHK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1f1heaDtQ",
+          "position": {
+            "x": 3,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rJgkhxTvKX": {
+          "boundLiterals": {},
+          "description": "Pulses if the connection is closed",
+          "label": "N",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJgkhxTvKX",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "ry4YMYoC8": {
+          "boundLiterals": {},
+          "description": "An internet connection",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ry4YMYoC8",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-esp8266-mcu-inet",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/is-open",
+      "description": "Checks if a TCP connection is open",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_CHK\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_CHK>(ctx))\n            return;\n\n        auto socketIdx = getValue<input_SOCK>(ctx);\n        auto inet = getValue<input_INET>(ctx);\n        auto client = inet.sockets[socketIdx];\n\n        if (client->connected()) {\n            emitValue<output_Y>(ctx, 1);\n        } else {\n            emitValue<output_N>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/read-byte": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJX3fx6vtm": {
+          "boundLiterals": {},
+          "description": "Pulses when the byte is read",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJX3fx6vtm",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Hyz3GeTPY7": {
+          "boundLiterals": {},
+          "description": "The last read byte",
+          "label": "B",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hyz3GeTPY7",
+          "position": {
+            "x": -0.05,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "S1-3MlpwKm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1-3MlpwKm",
+          "position": {
+            "x": -0.05,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "rJQtld157": {
+          "boundLiterals": {},
+          "description": "Pulses when there is no byte to read",
+          "label": "NA",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJQtld157",
+          "position": {
+            "x": 4,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rJhfg6wYm": {
+          "boundLiterals": {},
+          "description": "Read the byte",
+          "label": "READ",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJhfg6wYm",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rJjSTdiAI": {
+          "boundLiterals": {},
+          "description": "An internet connection",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJjSTdiAI",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-esp8266-mcu-inet",
+          "@@type": "xod-project/Node"
+        },
+        "ry4QlaDYQ": {
+          "boundLiterals": {},
+          "description": "A socket",
+          "label": "SOCK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ry4QlaDYQ",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/net/input-socket",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/read-byte",
+      "description": "Read a single byte of the response from an opened connection",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_READ\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_READ>(ctx))\n            return;\n\n        auto socketIdx = getValue<input_SOCK>(ctx);\n        auto inet = getValue<input_INET>(ctx);\n        auto client = inet.sockets[socketIdx];\n\n        int b = client->read();\n        if (b < 0) {\n            emitValue<output_NA>(ctx, 1);\n            return;\n        }\n\n        emitValue<output_B>(ctx, (uint8_t)b);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/open-tcp": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkytZ89AU": {
+          "boundLiterals": {},
+          "description": "An internet connection",
+          "label": "INET'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkytZ89AU",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/output-esp8266-mcu-inet",
+          "@@type": "xod-project/Node"
+        },
+        "ByZE6AjDt7": {
+          "boundLiterals": {},
+          "description": "Open the connection",
+          "label": "CONN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByZE6AjDt7",
+          "position": {
+            "x": 9,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "H1BNpCiPK7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1BNpCiPK7",
+          "position": {
+            "x": -0.05,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "H1mYNnvY7": {
+          "boundLiterals": {},
+          "description": "A socket",
+          "label": "SOCK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1mYNnvY7",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/net/output-socket",
+          "@@type": "xod-project/Node"
+        },
+        "SkEJyhvFQ": {
+          "boundLiterals": {},
+          "description": "An internet connection",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkEJyhvFQ",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-esp8266-mcu-inet",
+          "@@type": "xod-project/Node"
+        },
+        "r1EpRjDYQ": {
+          "boundLiterals": {},
+          "description": "Pulses when the connection is successfully open",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1EpRjDYQ",
+          "position": {
+            "x": 6,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "ryL4pAjPKX": {
+          "boundLiterals": {
+            "__out__": "80"
+          },
+          "description": "A destination server port number",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryL4pAjPKX",
+          "position": {
+            "x": 6,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "ryQ46CovFm": {
+          "boundLiterals": {
+            "__out__": "\"www.google.com\""
+          },
+          "description": "Server name",
+          "label": "HOST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryQ46CovFm",
+          "position": {
+            "x": 3,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/open-tcp",
+      "description": "Open a TCP connection to the specified server\n\nPossible errors:\n— Can't open TCP connection",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_CONN\n#pragma XOD error_raise enable\n\n#include <ESP8266WiFi.h>\n\nnode {\n    WiFiClient client;\n\n    void evaluate(Context ctx) {\n        if (isSettingUp()) {\n            // Put the pointer to WiFiClient in the sockets array once on the setup\n            auto inet = getValue<input_INET>(ctx);\n            // Find a free index\n            uint8_t socketIdx = 0;\n            uint8_t maxIdx = sizeof(inet.sockets) / sizeof(*inet.sockets);\n            while (socketIdx < maxIdx) {\n                auto curPointer = inet.sockets[socketIdx];\n                if (curPointer == nullptr || curPointer == &client) break;\n                socketIdx++;\n            }\n            if (socketIdx >= maxIdx) {\n                // No free sockets available\n                raiseError(ctx);\n            } else {\n                // Store the pointer\n                inet.sockets[socketIdx] = &client;\n                // And emit the index and updated INET once\n                emitValue<output_SOCK>(ctx, socketIdx);\n                emitValue<output_INETU0027>(ctx, inet);\n            }\n            return;\n        }\n\n        if (!isInputDirty<input_CONN>(ctx))\n            return;\n\n        auto serverName = getValue<input_HOST>(ctx);\n        auto len = length(serverName);\n        char serverNameBuff[len + 1];\n        dump(serverName, serverNameBuff);\n        serverNameBuff[len] = '\\0';\n\n        auto port = getValue<input_PORT>(ctx);\n\n        if (client.connect(serverNameBuff, port)) {\n            emitValue<output_DONE>(ctx, 1);\n        } else {\n            raiseError(ctx);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/send": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkW6rLnwFQ": {
+          "boundLiterals": {},
+          "description": "The message to send",
+          "label": "MSG",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkW6rLnwFQ",
+          "position": {
+            "x": 3,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "HyQ6rIhDtX": {
+          "boundLiterals": {},
+          "description": "Pulses when the message is successfully  sent",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyQ6rIhDtX",
+          "position": {
+            "x": -0.05,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "S1lTWGI50I": {
+          "boundLiterals": {},
+          "description": "A socket",
+          "label": "SOCK'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1lTWGI50I",
+          "position": {
+            "x": -1,
+            "y": 2
+          },
+          "type": "xod/net/output-socket",
+          "@@type": "xod-project/Node"
+        },
+        "SJf6BU2PKQ": {
+          "boundLiterals": {},
+          "description": "Send the message",
+          "label": "SEND",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJf6BU2PKQ",
+          "position": {
+            "x": 6,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Sk6-zIqRU": {
+          "boundLiterals": {},
+          "description": "An internet connection",
+          "label": "INET'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk6-zIqRU",
+          "position": {
+            "x": -2,
+            "y": 2
+          },
+          "type": "@/output-esp8266-mcu-inet",
+          "@@type": "xod-project/Node"
+        },
+        "r1v-ML9CU": {
+          "boundLiterals": {},
+          "description": "An internet connection",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1v-ML9CU",
+          "position": {
+            "x": -2,
+            "y": 0
+          },
+          "type": "@/input-esp8266-mcu-inet",
+          "@@type": "xod-project/Node"
+        },
+        "rJX8L2vKQ": {
+          "boundLiterals": {},
+          "description": "A socket",
+          "label": "SOCK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJX8L2vKQ",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/net/input-socket",
+          "@@type": "xod-project/Node"
+        },
+        "rJeprU3vYX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJeprU3vYX",
+          "position": {
+            "x": -0.05,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/send",
+      "description": "Send a message through an opened TCP connection\n\nPossible errors:\n— Can't send the data to the socket",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_SEND\n#pragma XOD error_raise enable\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_SEND>(ctx))\n            return;\n\n        auto socketIdx = getValue<input_SOCK>(ctx);\n        auto inet = getValue<input_INET>(ctx);\n        auto msg = getValue<input_MSG>(ctx);\n        auto client = inet.sockets[socketIdx];\n        if (client == nullptr) {\n            raiseError(ctx);\n            return;\n        }\n\n        size_t lastWriteSize;\n\n        for (auto it = msg.iterate(); it; ++it) {\n            lastWriteSize = client->write((char)*it);\n            if (lastWriteSize == 0) {\n                raiseError(ctx);\n                return;\n            }\n        }\n\n        client->flush();\n\n        emitValue<output_DONE>(ctx, 1);\n        emitValue<output_SOCKU0027>(ctx, socketIdx);\n        emitValue<output_INETU0027>(ctx, inet);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/receive": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1WEdh3Ptm": {
+          "boundLiterals": {},
+          "description": "Begin reading",
+          "label": "BGN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1WEdh3Ptm",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "B1aUTOoR8": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1aUTOoR8",
+          "position": {
+            "x": -1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "B1b8WpvKm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1b8WpvKm",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/core/any",
+          "@@type": "xod-project/Node"
+        },
+        "BkUg-awK7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "SOCK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkUg-awK7",
+          "position": {
+            "x": 5,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "BktNOnnDYQ": {
+          "boundLiterals": {},
+          "description": "Pulses when a new byte is read",
+          "label": "RCV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BktNOnnDYQ",
+          "position": {
+            "x": 2,
+            "y": 6
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "By60xaPYQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "By60xaPYQ",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "ByW-eM8908": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByW-eM8908",
+          "position": {
+            "x": -3,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "HkwNGhk5m": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "AGAIN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkwNGhk5m",
+          "position": {
+            "x": 6,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/to-bus",
+          "@@type": "xod-project/Node"
+        },
+        "Hy0U-TPKQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hy0U-TPKQ",
+          "position": {
+            "x": 4,
+            "y": 4
+          },
+          "type": "xod/core/any",
+          "@@type": "xod-project/Node"
+        },
+        "HyDIuKJ9m": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "SOCK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyDIuKJ9m",
+          "position": {
+            "x": 8,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "HyNOn3vt7": {
+          "boundLiterals": {},
+          "description": "The last read byte",
+          "label": "CHAR",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyNOn3vt7",
+          "position": {
+            "x": 1,
+            "y": 6
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "Hyd9hnvYm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "SOCK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hyd9hnvYm",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/to-bus",
+          "@@type": "xod-project/Node"
+        },
+        "SJT1-TwtQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJT1-TwtQ",
+          "position": {
+            "x": 6,
+            "y": 3
+          },
+          "type": "@/is-open",
+          "@@type": "xod-project/Node"
+        },
+        "SkKr-6PYm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkKr-6PYm",
+          "position": {
+            "x": 9,
+            "y": 5
+          },
+          "type": "@/close",
+          "@@type": "xod-project/Node"
+        },
+        "SkNefUq0L": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkNefUq0L",
+          "position": {
+            "x": 7,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "SkP8WpPKX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkP8WpPKX",
+          "position": {
+            "x": 6,
+            "y": 4
+          },
+          "type": "xod/core/defer",
+          "@@type": "xod-project/Node"
+        },
+        "SkVJM890I": {
+          "boundLiterals": {},
+          "description": "An internet connection",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkVJM890I",
+          "position": {
+            "x": -2,
+            "y": 0
+          },
+          "type": "@/input-esp8266-mcu-inet",
+          "@@type": "xod-project/Node"
+        },
+        "SyKY2nPtQ": {
+          "boundLiterals": {},
+          "description": "A socket",
+          "label": "SOCK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyKY2nPtQ",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/net/input-socket",
+          "@@type": "xod-project/Node"
+        },
+        "Syme-6wFm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "SOCK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Syme-6wFm",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "r19gRu3CL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r19gRu3CL",
+          "position": {
+            "x": 4,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "r1CVz3ycQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "AGAIN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1CVz3ycQ",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "r1WeGU9CL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1WeGU9CL",
+          "position": {
+            "x": -2,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/to-bus",
+          "@@type": "xod-project/Node"
+        },
+        "rkANu2hwtQ": {
+          "boundLiterals": {},
+          "description": "Pulses when the connection is closed",
+          "label": "CLS",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkANu2hwtQ",
+          "position": {
+            "x": 9,
+            "y": 6
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "ryJCZ8qRI": {
+          "boundLiterals": {},
+          "description": "An internet connection",
+          "label": "INET'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryJCZ8qRI",
+          "position": {
+            "x": -3,
+            "y": 6
+          },
+          "type": "@/output-esp8266-mcu-inet",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B1eclCO3CL": {
+          "id": "B1eclCO3CL",
+          "input": {
+            "nodeId": "SJT1-TwtQ",
+            "pinKey": "ry4YMYoC8"
+          },
+          "output": {
+            "nodeId": "r19gRu3CL",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "B1lWxfLcA8": {
+          "id": "B1lWxfLcA8",
+          "input": {
+            "nodeId": "r1WeGU9CL",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SkVJM890I",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "B1xvVG3Jc7": {
+          "id": "B1xvVG3Jc7",
+          "input": {
+            "nodeId": "HkwNGhk5m",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SkP8WpPKX",
+            "pinKey": "HJhXDIY9-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkgmeWavtm": {
+          "id": "BkgmeWavtm",
+          "input": {
+            "nodeId": "By60xaPYQ",
+            "pinKey": "ry4QlaDYQ"
+          },
+          "output": {
+            "nodeId": "Syme-6wFm",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ByYW4Yy5m": {
+          "id": "ByYW4Yy5m",
+          "input": {
+            "nodeId": "By60xaPYQ",
+            "pinKey": "rJhfg6wYm"
+          },
+          "output": {
+            "nodeId": "B1b8WpvKm",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H18vWTwKm": {
+          "id": "H18vWTwKm",
+          "input": {
+            "nodeId": "SkP8WpPKX",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "Hy0U-TPKQ",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJGWxGI9AI": {
+          "id": "HJGWxGI9AI",
+          "input": {
+            "nodeId": "ryJCZ8qRI",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ByW-eM8908",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJwxMIqAI": {
+          "id": "HJwxMIqAI",
+          "input": {
+            "nodeId": "SkKr-6PYm",
+            "pinKey": "SJVrb8cCU"
+          },
+          "output": {
+            "nodeId": "SkNefUq0L",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkMPbaPFm": {
+          "id": "HkMPbaPFm",
+          "input": {
+            "nodeId": "Hy0U-TPKQ",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "By60xaPYQ",
+            "pinKey": "BJX3fx6vtm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hy__bpwY7": {
+          "id": "Hy__bpwY7",
+          "input": {
+            "nodeId": "BktNOnnDYQ",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "By60xaPYQ",
+            "pinKey": "BJX3fx6vtm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1RrWpvFm": {
+          "id": "S1RrWpvFm",
+          "input": {
+            "nodeId": "SkKr-6PYm",
+            "pinKey": "r1eDMb6vKm"
+          },
+          "output": {
+            "nodeId": "SJT1-TwtQ",
+            "pinKey": "rJgkhxTvKX"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1gdq2nwKm": {
+          "id": "S1gdq2nwKm",
+          "input": {
+            "nodeId": "Hyd9hnvYm",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SyKY2nPtQ",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1oP-TPF7": {
+          "id": "S1oP-TPF7",
+          "input": {
+            "nodeId": "B1b8WpvKm",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "B1WEdh3Ptm",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkNv-TDtQ": {
+          "id": "SkNv-TDtQ",
+          "input": {
+            "nodeId": "Hy0U-TPKQ",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "SJT1-TwtQ",
+            "pinKey": "Hkkhe6vYX"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Sy5u-TPK7": {
+          "id": "Sy5u-TPK7",
+          "input": {
+            "nodeId": "HyNOn3vt7",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "By60xaPYQ",
+            "pinKey": "Hyz3GeTPY7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyepUpOo0I": {
+          "id": "SyepUpOo0I",
+          "input": {
+            "nodeId": "By60xaPYQ",
+            "pinKey": "rJjSTdiAI"
+          },
+          "output": {
+            "nodeId": "B1aUTOoR8",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Symd-Tvt7": {
+          "id": "Symd-Tvt7",
+          "input": {
+            "nodeId": "rkANu2hwtQ",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SkKr-6PYm",
+            "pinKey": "ByPfZaPKQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1xLxWaPF7": {
+          "id": "r1xLxWaPF7",
+          "input": {
+            "nodeId": "SJT1-TwtQ",
+            "pinKey": "HkEhxaDYX"
+          },
+          "output": {
+            "nodeId": "BkUg-awK7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJx0Vfh19X": {
+          "id": "rJx0Vfh19X",
+          "input": {
+            "nodeId": "B1b8WpvKm",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "r1CVz3ycQ",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkewIOt19X": {
+          "id": "rkewIOt19X",
+          "input": {
+            "nodeId": "SkKr-6PYm",
+            "pinKey": "SJiGWTPKm"
+          },
+          "output": {
+            "nodeId": "HyDIuKJ9m",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkib4Ykcm": {
+          "id": "rkib4Ykcm",
+          "input": {
+            "nodeId": "SJT1-TwtQ",
+            "pinKey": "r1f1heaDtQ"
+          },
+          "output": {
+            "nodeId": "By60xaPYQ",
+            "pinKey": "rJQtld157"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/receive",
+      "description": "Read a response from an opened connection as a stream of bytes until it closes",
+      "attachments": []
+    }
+  },
+  "authors": [
+    "XOD"
+  ],
+  "license": "AGPL-3.0",
+  "version": "0.37.3",
+  "description": "Support for ESP8266-based MCUs.",
+  "apiKey": "",
+  "name": "esp8266-mcu"
+}

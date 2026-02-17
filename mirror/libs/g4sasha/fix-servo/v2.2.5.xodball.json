@@ -1,0 +1,433 @@
+{
+  "patches": {
+    "@/servo-rotate-pulse": {
+      "description": "Instead of a True or False signal, you can use Pulse. One signal is enough for the servo to have time to turn",
+      "links": {
+        "SkHNEWA2K": {
+          "id": "SkHNEWA2K",
+          "output": {
+            "nodeId": "Hk744ZChF",
+            "pinKey": "S1eutvQPJ8"
+          },
+          "input": {
+            "nodeId": "r1aW4b0hK",
+            "pinKey": "H1l4wgMvnt"
+          }
+        },
+        "ry7rVW03Y": {
+          "id": "ry7rVW03Y",
+          "output": {
+            "nodeId": "r1-rV-ChY",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "Hk744ZChF",
+            "pinKey": "HyuYw7PyI"
+          }
+        },
+        "SyjTB4-ChF": {
+          "id": "SyjTB4-ChF",
+          "output": {
+            "nodeId": "H1sBNWRnt",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "r1aW4b0hK",
+            "pinKey": "SyzEwgfv3K"
+          }
+        },
+        "r1jeDN-03K": {
+          "id": "r1jeDN-03K",
+          "output": {
+            "nodeId": "By0IEZA3K",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "r1aW4b0hK",
+            "pinKey": "SJEDeGD3t"
+          }
+        },
+        "SyxFyCW6F": {
+          "id": "SyxFyCW6F",
+          "output": {
+            "nodeId": "r1-rV-ChY",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJRdk0bpF",
+            "pinKey": "SkSuD6LMb"
+          }
+        },
+        "H1pK1RW6F": {
+          "id": "H1pK1RW6F",
+          "output": {
+            "nodeId": "rJRdk0bpF",
+            "pinKey": "Bk4gU0drwJ-"
+          },
+          "input": {
+            "nodeId": "H12KkAWTt",
+            "pinKey": "__in__"
+          }
+        }
+      },
+      "nodes": {
+        "r1aW4b0hK": {
+          "id": "r1aW4b0hK",
+          "type": "@/servo-rotate-true",
+          "position": {
+            "x": 14,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "Hk744ZChF": {
+          "boundLiterals": {
+            "SJGuFDQPkL": "0.5"
+          },
+          "id": "Hk744ZChF",
+          "type": "cesars/utils/pulse-timed",
+          "position": {
+            "x": 16,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "r1-rV-ChY": {
+          "label": "UPD",
+          "id": "r1-rV-ChY",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 18,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "H1sBNWRnt": {
+          "label": "PORT",
+          "id": "H1sBNWRnt",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 14,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "By0IEZA3K": {
+          "label": "VAL",
+          "id": "By0IEZA3K",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 15,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rJRdk0bpF": {
+          "id": "rJRdk0bpF",
+          "type": "xod/core/delay",
+          "position": {
+            "x": 18,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "Skre8ROSv1-": "0.5"
+          }
+        },
+        "H12KkAWTt": {
+          "id": "H12KkAWTt",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 18,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "DONE"
+        }
+      },
+      "path": "@/servo-rotate-pulse"
+    },
+    "@/servo-rotate-true": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\n{{#global}}\n#include <Servo.h>\n{{/global}}\n\nstruct State {\n    Servo servo;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    auto port = (uint8_t)getValue<input_PORT>(ctx);\n    auto EN = getValue<input_EN>(ctx);\n\n    if (EN) {\n        state->servo.attach(port);\n        state->servo.write(getValue<input_VAL>(ctx) * 180);\n    } else {\n        state->servo.detach();\n    }\n}\n"
+        }
+      ],
+      "description": "Turns on and turns the servo when the True signal is applied to it",
+      "links": {
+        "BkBf-AbpK": {
+          "id": "BkBf-AbpK",
+          "output": {
+            "nodeId": "H1l4wgMvnt",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJXfZCbpY",
+            "pinKey": "__in__"
+          }
+        },
+        "HkjDfbR-at": {
+          "id": "HkjDfbR-at",
+          "output": {
+            "nodeId": "HJXfZCbpY",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "H16W-CZpY",
+            "pinKey": "SkSuD6LMb"
+          }
+        },
+        "SyaQWRWpF": {
+          "id": "SyaQWRWpF",
+          "output": {
+            "nodeId": "H16W-CZpY",
+            "pinKey": "Bk4gU0drwJ-"
+          },
+          "input": {
+            "nodeId": "HkiQZC-aY",
+            "pinKey": "__in__"
+          }
+        }
+      },
+      "nodes": {
+        "SJEDeGD3t": {
+          "description": "Desired servo angle or value in unit range [0.0, 1.0]. For standard servo 0.0 would be mapped to 0° and 1.0 would be 180°.",
+          "label": "VAL",
+          "id": "SJEDeGD3t",
+          "position": {
+            "x": 25,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H1l4wgMvnt": {
+          "description": "Enable servo. Detach servo if this is false.",
+          "label": "EN",
+          "id": "H1l4wgMvnt",
+          "position": {
+            "x": 27,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "SkWEweGPhK": {
+          "description": "This program rotates the servo if the port is set, the value is from 0 to 1 and the state is EN = True",
+          "label": "Rotate",
+          "id": "SkWEweGPhK",
+          "position": {
+            "x": 25,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SyzEwgfv3K": {
+          "label": "PORT",
+          "id": "SyzEwgfv3K",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 23,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "H16W-CZpY": {
+          "id": "H16W-CZpY",
+          "type": "xod/core/delay",
+          "position": {
+            "x": 26,
+            "y": 7,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "Skre8ROSv1-": "0.5"
+          }
+        },
+        "HJXfZCbpY": {
+          "id": "HJXfZCbpY",
+          "type": "xod/core/pulse-on-true",
+          "position": {
+            "x": 27,
+            "y": 6,
+            "units": "slots"
+          }
+        },
+        "HkiQZC-aY": {
+          "id": "HkiQZC-aY",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 26,
+            "y": 8,
+            "units": "slots"
+          },
+          "label": "DONE"
+        }
+      },
+      "path": "@/servo-rotate-true"
+    },
+    "@/example": {
+      "description": "Every 3 seconds, it turns the servo first by 0 degrees, and then by 180",
+      "links": {
+        "H1kyVGw2K": {
+          "id": "H1kyVGw2K",
+          "output": {
+            "nodeId": "rkORQGw2K",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "H1TA7zD3t",
+            "pinKey": "ryTIROHwkW"
+          }
+        },
+        "r1dkVGw3t": {
+          "id": "r1dkVGw3t",
+          "output": {
+            "nodeId": "rkHkEzw3F",
+            "pinKey": "r1if8ROSDJ-"
+          },
+          "input": {
+            "nodeId": "rJGA7GD3K",
+            "pinKey": "H1l4wgMvnt"
+          }
+        },
+        "rJt1VGw2K": {
+          "id": "rJt1VGw2K",
+          "output": {
+            "nodeId": "H1TA7zD3t",
+            "pinKey": "HkyxURuSPyW"
+          },
+          "input": {
+            "nodeId": "rkHkEzw3F",
+            "pinKey": "ry3zLA_Bv1Z"
+          }
+        },
+        "SyckVMvhK": {
+          "id": "SyckVMvhK",
+          "output": {
+            "nodeId": "H1TA7zD3t",
+            "pinKey": "HkyxURuSPyW"
+          },
+          "input": {
+            "nodeId": "HJzCzMwhK",
+            "pinKey": "H1l4wgMvnt"
+          }
+        }
+      },
+      "nodes": {
+        "HJzCzMwhK": {
+          "boundLiterals": {
+            "SyzEwgfv3K": "D3",
+            "SJEDeGD3t": "0",
+            "H1l4wgMvnt": "True"
+          },
+          "id": "HJzCzMwhK",
+          "type": "@/servo-rotate-true",
+          "position": {
+            "x": 10,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "rJGA7GD3K": {
+          "boundLiterals": {
+            "SyzEwgfv3K": "D3",
+            "SJEDeGD3t": "1",
+            "H1l4wgMvnt": "True"
+          },
+          "id": "rJGA7GD3K",
+          "type": "@/servo-rotate-true",
+          "position": {
+            "x": 14,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "rkORQGw2K": {
+          "boundLiterals": {
+            "B13SCNhl-": "3"
+          },
+          "id": "rkORQGw2K",
+          "type": "xod/core/clock",
+          "position": {
+            "x": 14,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "H1TA7zD3t": {
+          "id": "H1TA7zD3t",
+          "type": "xod/core/flip-flop",
+          "position": {
+            "x": 13,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rkHkEzw3F": {
+          "description": "Inverts the signal to comply with the FIX",
+          "id": "rkHkEzw3F",
+          "type": "xod/core/not",
+          "position": {
+            "x": 15,
+            "y": 3,
+            "units": "slots"
+          }
+        }
+      },
+      "comments": {
+        "HkDkXMPht": {
+          "id": "HkDkXMPht",
+          "position": {
+            "x": 18,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "width": 7,
+            "height": 2,
+            "units": "slots"
+          },
+          "content": "**FIX**\nWith this library, you can use several nodes at the same time, as well as rotate the servo not only with the help of a condition, but also with the help of a pulse signal!"
+        },
+        "SJLQVMP2Y": {
+          "id": "SJLQVMP2Y",
+          "position": {
+            "x": 18,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 7,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "**Thanks**\nThe *gweimer/servo* library is taken as a basis and slightly modified by me."
+        },
+        "SJI94Gw3Y": {
+          "id": "SJI94Gw3Y",
+          "position": {
+            "x": 18,
+            "y": 4,
+            "units": "slots"
+          },
+          "size": {
+            "width": 7,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "**This programm**\nEvery 3 seconds, it turns the servo first by 0 degrees, and then by 180"
+        }
+      },
+      "path": "@/example"
+    }
+  },
+  "license": "gweimer/servo",
+  "version": "2.2.5",
+  "description": "With this library, you can use several nodes at the same time, as well as rotate the servo not only with the help of a condition, but also with the help of a pulse signal!",
+  "apiKey": "8f31b88a-b8f7-4df5-a295-e8931b34375e",
+  "name": "fix-servo"
+}

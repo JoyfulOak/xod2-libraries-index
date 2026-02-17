@@ -1,0 +1,66 @@
+{
+  "description": "Hardware sleep to save battery on AVR-based boards.",
+  "license": "GPLv3",
+  "name": "avr-sleep",
+  "patches": {
+    "@/sleep-until-switch": {
+      "nodes": {
+        "HkfCZZa2H": {
+          "id": "HkfCZZa2H",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "SLP",
+          "description": "Put the board to the deep sleep."
+        },
+        "r12RZWahr": {
+          "id": "r12RZWahr",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "WAKE",
+          "description": "The board port to use for sleep exit. The port should support hardware interrupts. For example, Arduino Uno and Nano only support interrupts on D2 and D3.",
+          "boundLiterals": {
+            "__out__": "D2"
+          }
+        },
+        "B1zbMbThH": {
+          "id": "B1zbMbThH",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "Sy0xlfp2r": {
+          "id": "Sy0xlfp2r",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Triggers when the board exits the sleep mode."
+        }
+      },
+      "path": "@/sleep-until-switch",
+      "description": "Puts the mictrocontroller to deep sleep until the signal changes on a port either from high to low or from low to high.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "// Based on https://github.com/RalphBacon/Arduino-Deep-Sleep/blob/master/Sleep_ATMEGA328P.ino\n\n{{#global}}\n#include <avr/sleep.h>\n{{/global}}\n\nstruct State { };\n\n{{ GENERATED_CODE }}\n\n// To transfer the context to the ISR function, we have to keep the\n// interrupt number global. Will set it in `evaluate`\nvolatile uint8_t g_interruptNum = NOT_AN_INTERRUPT;\n\n// Also store the ADC state to bring it back\nvolatile uint8_t g_prevADCSRA;\n\nvoid wakeISR() {\n    // Prevent sleep mode, so we don't enter it again,\n    // except deliberately, by code\n    sleep_disable();\n\n    // Detach the interrupt that brought us out of sleep\n    detachInterrupt(g_interruptNum);\n    g_interruptNum = NOT_AN_INTERRUPT;\n\n    // Restore ADC state\n    ADCSRA = g_prevADCSRA;\n}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_SLP>(ctx))\n        return;\n\n    auto wakePort = getValue<input_WAKE>(ctx);\n    g_interruptNum = digitalPinToInterrupt(wakePort); // save globally\n    if (g_interruptNum == NOT_AN_INTERRUPT) {\n        // The pin does not support interrupts\n        raiseError(ctx);\n        return;\n    }\n\n    // Disable the ADC (Analog to digital converter, pins A0 [14] to A5 [19])\n    g_prevADCSRA = ADCSRA;\n    ADCSRA = 0;\n\n    // Ensure we can wake up again by first disabling interupts (temporarily) so\n    // the wakeISR does not run before we are asleep and then prevent interrupts,\n    // and then defining the ISR (Interrupt Service Routine) to run when poked awake\n    noInterrupts();\n    attachInterrupt(g_interruptNum, wakeISR, CHANGE);\n\n    // Clear pending external interrupts on the pin if any\n    EIFR |= (1 << g_interruptNum);\n\n    set_sleep_mode(SLEEP_MODE_PWR_DOWN);\n    sleep_enable();\n    sleep_bod_disable();\n    interrupts();\n    sleep_cpu();\n\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    }
+  },
+  "version": "1.0.0"
+}

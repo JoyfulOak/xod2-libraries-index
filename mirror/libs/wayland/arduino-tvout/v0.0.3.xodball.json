@@ -1,0 +1,3253 @@
+{
+  "description": "Library for generating composite video on Arduino. Wraps Arduino-TVout (https://github.com/Avamander/arduino-tvout). Information on hardware connections can be found here: https://playground.arduino.cc/Main/TVout/",
+  "license": "AGPL-3.0",
+  "name": "arduino-tvout",
+  "patches": {
+    "@/clear-screen": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `TVout` class instance\n    auto tv = getValue<input_DEV>(ctx);\n\n    tv->fill(0);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Clear screen. Fills screen with black pixels.",
+      "nodes": {
+        "B1lb1yPir": {
+          "description": "Pulse on completion.",
+          "id": "B1lb1yPir",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SJRL1yDiB": {
+          "description": "Update. Triggers clear display.",
+          "id": "SJRL1yDiB",
+          "label": "UPD",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkiK0CIsS": {
+          "id": "SkiK0CIsS",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1WsCRLjB": {
+          "description": "A tvout device.",
+          "id": "r1WsCRLjB",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-tvout-device"
+        }
+      },
+      "path": "@/clear-screen"
+    },
+    "@/delay": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `TVout` class instance\n    auto tv = getValue<input_DEV>(ctx);\n    unsigned int t = getValue<input_T>(ctx);\n\n    tv->delay(t);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Delays screen update for specified number of milliseconds.",
+      "nodes": {
+        "ByQcrCrvsS": {
+          "description": "Time to delay in milliseconds.",
+          "id": "ByQcrCrvsS",
+          "label": "T",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HkW5H0HwiH": {
+          "description": "Pulse on completion.",
+          "id": "HkW5H0HwiH",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hkxqr0SDiB": {
+          "description": "A tvout device.",
+          "id": "Hkxqr0SDiB",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-tvout-device"
+        },
+        "HyfqHRrvsr": {
+          "description": "Update. Triggers delay.",
+          "id": "HyfqHRrvsr",
+          "label": "UPD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Sy9HRBDsB": {
+          "id": "Sy9HRBDsB",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/delay"
+    },
+    "@/delay-n-frames": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `TVout` class instance\n    auto tv = getValue<input_DEV>(ctx);\n    unsigned int n = getValue<input_N>(ctx);\n\n    tv->delay_frame(n);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Delay for specified number of frames.",
+      "nodes": {
+        "By14WLwoB": {
+          "id": "By14WLwoB",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJZJ4Z8vsB": {
+          "description": "Pulse on completion.",
+          "id": "HJZJ4Z8vsB",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HyfyVWUviB": {
+          "description": "Update. Triggers delay.",
+          "id": "HyfyVWUviB",
+          "label": "UPD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJmJE-UvjB": {
+          "description": "Number of frames.",
+          "id": "rJmJE-UvjB",
+          "label": "N",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkxJVWUDiB": {
+          "description": "A tvout device.",
+          "id": "rkxJVWUDiB",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-tvout-device"
+        }
+      },
+      "path": "@/delay-n-frames"
+    },
+    "@/draw-circle": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `TVout` class instance\n    auto tv = getValue<input_DEV>(ctx);\n    uint8_t x = getValue<input_X>(ctx);\n    uint8_t y = getValue<input_Y>(ctx);\n    uint8_t r = getValue<input_R>(ctx);\n    char color = getValue<input_COLOR>(ctx);\n    char fill = getValue<input_FILL>(ctx);\n\n    tv->draw_circle(x, y, r, color, fill);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Draw a circle at X, Y with a specified radius.",
+      "nodes": {
+        "BJZ5VxPor": {
+          "description": "The x coordinate of the center of the circle.",
+          "id": "BJZ5VxPor",
+          "label": "X",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ByEYtSviB": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "The color of the circle. Options:\n0 = black;\n1 = white;\n2 = invert.",
+          "id": "ByEYtSviB",
+          "label": "COLOR",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1F5NewoH": {
+          "description": "The y coordinate of the center of the circle.",
+          "id": "S1F5NewoH",
+          "label": "Y",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Sk9cVePjH": {
+          "description": "The radius of the circle.",
+          "id": "Sk9cVePjH",
+          "label": "R",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkgvzZgvsS": {
+          "description": "A tvout device.",
+          "id": "SkgvzZgvsS",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-tvout-device"
+        },
+        "SyDM-xvsS": {
+          "id": "SyDM-xvsS",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Syy2trwoH": {
+          "description": "Circle will be filled with this color. Options:\n-1 = no fill;\n0 = black;\n1 = white;\n2 = invert.\n",
+          "id": "Syy2trwoH",
+          "label": "FILL",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1zDfWevsB": {
+          "description": "Update. Triggers draw circle.",
+          "id": "r1zDfWevsB",
+          "label": "UPD",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rybwMbxDsS": {
+          "description": "Pulse on completion.",
+          "id": "rybwMbxDsS",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/draw-circle"
+    },
+    "@/draw-column": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `TVout` class instance\n    auto tv = getValue<input_DEV>(ctx);\n    uint16_t x0 = getValue<input_Y0>(ctx);\n    uint16_t x1 = getValue<input_Y1>(ctx);\n    uint8_t column = getValue<input_COLUMN>(ctx);\n    char color = getValue<input_COLOR>(ctx);\n\n    tv->draw_column(column, x0, x1, color);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Fill a column between two rows.",
+      "nodes": {
+        "B1BH3KBdiB": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "The color of the fill. Options:\n0 = black;\n1 = white;\n2 = invert.",
+          "id": "B1BH3KBdiB",
+          "label": "COLOR",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Bk4S3KrOiH": {
+          "description": "The column that fill will be performed on.",
+          "id": "Bk4S3KrOiH",
+          "label": "COLUMN",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BybH3trujB": {
+          "description": "Pulse on completion.",
+          "id": "BybH3trujB",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SkxBhYHOiH": {
+          "description": "A tvout device.",
+          "id": "SkxBhYHOiH",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-tvout-device"
+        },
+        "r1GHnKHdir": {
+          "description": "Update. Triggers draw column.",
+          "id": "r1GHnKHdir",
+          "label": "UPD",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1mHnYrdsH": {
+          "description": "Edge 0 of the fill. Start fill from this row.",
+          "id": "r1mHnYrdsH",
+          "label": "Y0",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rk8r2YrOor": {
+          "description": "Edge 1 of the fill. End fill at this row.",
+          "id": "rk8r2YrOor",
+          "label": "Y1",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkHhFBOsB": {
+          "id": "rkHhFBOsB",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/draw-column"
+    },
+    "@/draw-line": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `TVout` class instance\n    auto tv = getValue<input_DEV>(ctx);\n    uint8_t x0 = getValue<input_X0>(ctx);\n    uint8_t y0 = getValue<input_Y0>(ctx);\n    uint8_t x1 = getValue<input_X1>(ctx);\n    uint8_t y1 = getValue<input_Y1>(ctx);\n    char color = getValue<input_COLOR>(ctx);\n\n    tv->draw_line(x0, y0, x1, y1, color);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Draw a line between two points.",
+      "nodes": {
+        "B1gT0BrdiB": {
+          "description": "A tvout device.",
+          "id": "B1gT0BrdiB",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-tvout-device"
+        },
+        "H1aArB_sH": {
+          "id": "H1aArB_sH",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1vaRBHdiH": {
+          "description": "The x coordinate of point 1.",
+          "id": "H1vaRBHdiH",
+          "label": "X1",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HySpABr_sr": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "The color of the line. Options:\n0 = black;\n1 = white;\n2 = invert.",
+          "id": "HySpABr_sr",
+          "label": "COLOR",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HyuaCHHOsS": {
+          "description": "The y coordinate of point 1.",
+          "id": "HyuaCHHOsS",
+          "label": "Y1",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1N60SBusr": {
+          "description": "The y coordinate of point 0.",
+          "id": "S1N60SBusr",
+          "label": "Y0",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJmTCHBdor": {
+          "description": "The x coordinate of point 0.",
+          "id": "SJmTCHBdor",
+          "label": "X0",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkM60rHdoS": {
+          "description": "Update. Triggers draw line.",
+          "id": "SkM60rHdoS",
+          "label": "UPD",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkbTRBSuoS": {
+          "description": "Pulse on completion.",
+          "id": "rkbTRBSuoS",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/draw-line"
+    },
+    "@/draw-pixel": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `TVout` class instance\n    auto tv = getValue<input_DEV>(ctx);\n    uint8_t x = getValue<input_X>(ctx);\n    uint8_t y = getValue<input_Y>(ctx);\n    char color = getValue<input_COLOR>(ctx);\n\n    tv->set_pixel(x, y, color);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Set the color of a pixel.",
+      "nodes": {
+        "B1lUWeLdsH": {
+          "description": "A tvout device.",
+          "id": "B1lUWeLdsH",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-tvout-device"
+        },
+        "BJz8ZeI_iS": {
+          "description": "Update. Triggers set pixel.",
+          "id": "BJz8ZeI_iS",
+          "label": "UPD",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HyZ8We8_jB": {
+          "description": "Pulse on completion.",
+          "id": "HyZ8We8_jB",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SyBU-l8_oS": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "The color of the pixel. Options:\n0 = black;\n1 = white;\n2 = invert.",
+          "id": "SyBU-l8_oS",
+          "label": "COLOR",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJ4UWl8dor": {
+          "description": "The y coordinate of the pixel.",
+          "id": "rJ4UWl8dor",
+          "label": "Y",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJ7UWe8_iB": {
+          "description": "The x coordinate of the pixel.",
+          "id": "rJ7UWe8_iB",
+          "label": "X",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryIbx8_ir": {
+          "id": "ryIbx8_ir",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/draw-pixel"
+    },
+    "@/draw-rectangle": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `TVout` class instance\n    auto tv = getValue<input_DEV>(ctx);\n    uint8_t x = getValue<input_X>(ctx);\n    uint8_t y = getValue<input_Y>(ctx);\n    uint8_t w = getValue<input_W>(ctx);\n    uint8_t h = getValue<input_H>(ctx);\n    char color = getValue<input_COLOR>(ctx);\n    char fill = getValue<input_FILL>(ctx);\n\n    tv->draw_rect(x, y, w, h, color, fill);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Draw a rectangle at X, Y with a specified width and height.",
+      "nodes": {
+        "H1VbmfUPjH": {
+          "description": "The y coordinate of upper left corner of the rectangle.",
+          "id": "H1VbmfUPjH",
+          "label": "Y",
+          "position": {
+            "x": -7,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1KPfUwsH": {
+          "description": "The height of the rectangle.",
+          "id": "S1KPfUwsH",
+          "label": "H",
+          "position": {
+            "x": -5,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1zZXG8Por": {
+          "description": "Update. Triggers draw circle.",
+          "id": "S1zZXG8Por",
+          "label": "UPD",
+          "position": {
+            "x": -2,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJD-Qz8DoS": {
+          "description": "Rectangle will be filled with this color. Options:\n-1 = no fill;\n0 = black;\n1 = white;\n2 = invert.\n",
+          "id": "SJD-Qz8DoS",
+          "label": "FILL",
+          "position": {
+            "x": -3,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Skb7MIvjr": {
+          "id": "Skb7MIvjr",
+          "position": {
+            "x": -9,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Sy8-mMIviB": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "The color of the rectangle. Options:\n0 = black;\n1 = white;\n2 = invert.",
+          "id": "Sy8-mMIviB",
+          "label": "COLOR",
+          "position": {
+            "x": -4,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r17W7zIDiH": {
+          "description": "The x coordinate of upper left corner of the rectangle.",
+          "id": "r17W7zIDiH",
+          "label": "X",
+          "position": {
+            "x": -8,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJ-b7G8wor": {
+          "description": "Pulse on completion.",
+          "id": "rJ-b7G8wor",
+          "label": "DONE",
+          "position": {
+            "x": -9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJkvMLPiS": {
+          "description": "The width of the rectangle.",
+          "id": "rJkvMLPiS",
+          "label": "W",
+          "position": {
+            "x": -6,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rylb7fUvsH": {
+          "description": "A tvout device.",
+          "id": "rylb7fUvsH",
+          "label": "DEV",
+          "position": {
+            "x": -9,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "@/input-tvout-device"
+        }
+      },
+      "path": "@/draw-rectangle"
+    },
+    "@/draw-row": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `TVout` class instance\n    auto tv = getValue<input_DEV>(ctx);\n    uint16_t x0 = getValue<input_X0>(ctx);\n    uint16_t x1 = getValue<input_X1>(ctx);\n    uint8_t row = getValue<input_ROW>(ctx);\n    char color = getValue<input_COLOR>(ctx);\n\n    tv->draw_row(row, x0, x1, color);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Fill a row between two columns.",
+      "nodes": {
+        "BkQK_dSOsS": {
+          "description": "Edge 0 of the fill. Start fill from this column.",
+          "id": "BkQK_dSOsS",
+          "label": "X0",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H1GK_OBOjr": {
+          "description": "Update. Triggers draw row.",
+          "id": "H1GK_OBOjr",
+          "label": "UPD",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1rKOuBuir": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "The color of the fill. Options:\n0 = black;\n1 = white;\n2 = invert.",
+          "id": "H1rKOuBuir",
+          "label": "COLOR",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJUtddSOiS": {
+          "description": "Edge 1 of fill. End fill at this column.",
+          "id": "HJUtddSOiS",
+          "label": "X1",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HyKd_B_iH": {
+          "id": "HyKd_B_iH",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HyetOOHOiB": {
+          "description": "A tvout device.",
+          "id": "HyetOOHOiB",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-tvout-device"
+        },
+        "rkVFudHuiS": {
+          "description": "The row that fill will be performed on.",
+          "id": "rkVFudHuiS",
+          "label": "ROW",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkbKuur_jr": {
+          "description": "Pulse on completion.",
+          "id": "rkbKuur_jr",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/draw-row"
+    },
+    "@/draw-text": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `TVout` class instance\n    auto tv = getValue<input_DEV>(ctx);\n    auto xString = getValue<input_TEXT>(ctx);\n    auto font = getValue<input_FONT>(ctx);\n    uint8_t x = getValue<input_X>(ctx);\n    uint8_t y = getValue<input_Y>(ctx);\n    auto xy = getValue<input_XY>(ctx);\n\n    int N=length(xString) + 1;\n    char cString[N];\n    for(int i=0;i<N;i++)\n    cString[i]=0;\n    // move the data from XString to the plain C string\n    dump(xString, cString);\n\n    if (font==0) {\n        tv->select_font(font4x6);\n    }\n    else if(font==1) {\n        tv->select_font(font6x8);\n    }\n    else if(font==2) {\n        tv->select_font(font8x8);\n    }\n    else if(font==3) {\n        tv->select_font(font8x8ext);\n    }\n    else {\n      raiseError(ctx);\n      return;\n    }\n    \n    if (xy) {\n        tv->println(x, y, cString);\n    } else {\n        tv->println(cString);\n    }\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Draw text.",
+      "nodes": {
+        "B1QTiGO_oS": {
+          "description": "The x coordinate of the cursor.",
+          "id": "B1QTiGO_oS",
+          "label": "X",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJgTsMu_iH": {
+          "description": "A tvout device.",
+          "id": "BJgTsMu_iH",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-tvout-device"
+        },
+        "HJfaoGOdjH": {
+          "description": "Update. Triggers draw text.",
+          "id": "HJfaoGOdjH",
+          "label": "UPD",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkasM__oH": {
+          "id": "HkasM__oH",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HkwTjzOOjS": {
+          "description": "Font. Options:\n0 = font4x6;\n1 = font6x8;\n2 = font8x8;\n3 = font8x8ext.",
+          "id": "HkwTjzOOjS",
+          "label": "FONT",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HyETjMOOiH": {
+          "description": "The y coordinate of the cursor.",
+          "id": "HyETjMOOiH",
+          "label": "Y",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJzLV_doH": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Set cursor position. If true cursor will be moved to the coordinates specified by X and Y. If false text will be printed at current cursor position. ",
+          "id": "SJzLV_doH",
+          "label": "XY",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "r1Z6ozu_sB": {
+          "description": "Pulse on completion.",
+          "id": "r1Z6ozu_sB",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJVt4OOoS": {
+          "boundLiterals": {
+            "__out__": "\"text\""
+          },
+          "description": "String to print. Use \\n for new line.",
+          "id": "rJVt4OOoS",
+          "label": "TEXT",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        }
+      },
+      "path": "@/draw-text"
+    },
+    "@/example-draw-lines": {
+      "description": "Example to demonstrate drawing lines using draw-line, draw-column and draw-row nodes.",
+      "links": {
+        "BJ75_PpsS": {
+          "id": "BJ75_PpsS",
+          "input": {
+            "nodeId": "SJvdvD6iS",
+            "pinKey": "H1vaRBHdiH"
+          },
+          "output": {
+            "nodeId": "H1H_dwajH",
+            "pinKey": "__out__"
+          }
+        },
+        "BJ9U_v6iS": {
+          "id": "BJ9U_v6iS",
+          "input": {
+            "nodeId": "ryTJRU6iH",
+            "pinKey": "Bk4S3KrOiH"
+          },
+          "output": {
+            "nodeId": "ByZ8uP6oB",
+            "pinKey": "__out__"
+          }
+        },
+        "BJtETdpsS": {
+          "id": "BJtETdpsS",
+          "input": {
+            "nodeId": "HywlOD6jH",
+            "pinKey": "H1vaRBHdiH"
+          },
+          "output": {
+            "nodeId": "BymiuDTor",
+            "pinKey": "__out__"
+          }
+        },
+        "ByWDeOw6jr": {
+          "id": "ByWDeOw6jr",
+          "input": {
+            "nodeId": "HywlOD6jH",
+            "pinKey": "B1gT0BrdiB"
+          },
+          "output": {
+            "nodeId": "HJgPxuw6iS",
+            "pinKey": "__out__"
+          }
+        },
+        "H1VXkvTjr": {
+          "id": "H1VXkvTjr",
+          "input": {
+            "nodeId": "SJaMkwpsS",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "B19yJwToH",
+            "pinKey": "HyRmUCdBDkZ"
+          }
+        },
+        "HJulyDair": {
+          "id": "HJulyDair",
+          "input": {
+            "nodeId": "B19yJwToH",
+            "pinKey": "BypX80uSD1Z"
+          },
+          "output": {
+            "nodeId": "HJJkCUpjS",
+            "pinKey": "S1-D-lwsB"
+          }
+        },
+        "HkFMyvpor": {
+          "id": "HkFMyvpor",
+          "input": {
+            "nodeId": "rJRZ1P6iH",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkEyJPpsH",
+            "pinKey": "HyRmUCdBDkZ"
+          }
+        },
+        "HkeOT_6oH": {
+          "id": "HkeOT_6oH",
+          "input": {
+            "nodeId": "SyAAUP6oB",
+            "pinKey": "SkdIRuBD1b"
+          },
+          "output": {
+            "nodeId": "HJJkCUpjS",
+            "pinKey": "ryFUWgPsH"
+          }
+        },
+        "HkojwP6iB": {
+          "id": "HkojwP6iB",
+          "input": {
+            "nodeId": "SJvdvD6iS",
+            "pinKey": "B1gT0BrdiB"
+          },
+          "output": {
+            "nodeId": "HJWovPToS",
+            "pinKey": "__out__"
+          }
+        },
+        "HyjQDvaoH": {
+          "id": "HyjQDvaoH",
+          "input": {
+            "nodeId": "HkJXPwajS",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ryEyPPaor",
+            "pinKey": "BkqLCOSw1W"
+          }
+        },
+        "HyomOv6sS": {
+          "id": "HyomOv6sS",
+          "input": {
+            "nodeId": "rkWgRLaor",
+            "pinKey": "rkVFudHuiS"
+          },
+          "output": {
+            "nodeId": "SyIQOvaiH",
+            "pinKey": "__out__"
+          }
+        },
+        "S1DxJP6iB": {
+          "id": "S1DxJP6iB",
+          "input": {
+            "nodeId": "rkEyJPpsH",
+            "pinKey": "BypX80uSD1Z"
+          },
+          "output": {
+            "nodeId": "HJJkCUpjS",
+            "pinKey": "ryFUWgPsH"
+          }
+        },
+        "S1hfDD6oH": {
+          "id": "S1hfDD6oH",
+          "input": {
+            "nodeId": "rkefvDajB",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SyAAUP6oB",
+            "pinKey": "BkqLCOSw1W"
+          }
+        },
+        "SJaAAI6jB": {
+          "id": "SJaAAI6jB",
+          "input": {
+            "nodeId": "HJJkCUpjS",
+            "pinKey": "rkxHrWxPsB"
+          },
+          "output": {
+            "nodeId": "rkc368piB",
+            "pinKey": "SyyJUCHoH"
+          }
+        },
+        "SJijODajr": {
+          "id": "SJijODajr",
+          "input": {
+            "nodeId": "HywlOD6jH",
+            "pinKey": "S1N60SBusr"
+          },
+          "output": {
+            "nodeId": "BkxXjOPpjH",
+            "pinKey": "__out__"
+          }
+        },
+        "SJyouDpjH": {
+          "id": "SJyouDpjH",
+          "input": {
+            "nodeId": "SJvdvD6iS",
+            "pinKey": "HyuaCHHOsS"
+          },
+          "output": {
+            "nodeId": "r1eB_OvpjS",
+            "pinKey": "__out__"
+          }
+        },
+        "Sk891PpiH": {
+          "id": "Sk891PpiH",
+          "input": {
+            "nodeId": "ryTJRU6iH",
+            "pinKey": "SkxBhYHOiH"
+          },
+          "output": {
+            "nodeId": "SkYFkvair",
+            "pinKey": "__out__"
+          }
+        },
+        "SybvkPaoS": {
+          "id": "SybvkPaoS",
+          "input": {
+            "nodeId": "HkiLkD6iS",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkc368piB",
+            "pinKey": "SyyJUCHoH"
+          }
+        },
+        "r1Yiwvpir": {
+          "id": "r1Yiwvpir",
+          "input": {
+            "nodeId": "ryjFPPpjS",
+            "pinKey": "B1gT0BrdiB"
+          },
+          "output": {
+            "nodeId": "HJloDwpjS",
+            "pinKey": "__out__"
+          }
+        },
+        "r1pDTOpsB": {
+          "id": "r1pDTOpsB",
+          "input": {
+            "nodeId": "ryEyPPaor",
+            "pinKey": "SkdIRuBD1b"
+          },
+          "output": {
+            "nodeId": "HJJkCUpjS",
+            "pinKey": "S1-D-lwsB"
+          }
+        },
+        "rJw01P6sB": {
+          "id": "rJw01P6sB",
+          "input": {
+            "nodeId": "rkWgRLaor",
+            "pinKey": "HJUtddSOiS"
+          },
+          "output": {
+            "nodeId": "BJMpkD6jB",
+            "pinKey": "__out__"
+          }
+        },
+        "rkj1xDTiB": {
+          "id": "rkj1xDTiB",
+          "input": {
+            "nodeId": "ryTJRU6iH",
+            "pinKey": "rk8r2YrOor"
+          },
+          "output": {
+            "nodeId": "SJWJew6iS",
+            "pinKey": "__out__"
+          }
+        },
+        "rywdyPaiB": {
+          "id": "rywdyPaiB",
+          "input": {
+            "nodeId": "rkWgRLaor",
+            "pinKey": "HyetOOHOiB"
+          },
+          "output": {
+            "nodeId": "rJTDyvTiS",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "B19yJwToH": {
+          "boundLiterals": {
+            "rkJ4URuHDJ-": "1"
+          },
+          "id": "B19yJwToH",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/subtract"
+        },
+        "BJMpkD6jB": {
+          "id": "BJMpkD6jB",
+          "label": "X-1",
+          "position": {
+            "x": 5,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "BkxXjOPpjH": {
+          "id": "BkxXjOPpjH",
+          "label": "Y-1",
+          "position": {
+            "x": 26,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "ByZ8uP6oB": {
+          "id": "ByZ8uP6oB",
+          "label": "half-X",
+          "position": {
+            "x": 10,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "BymiuDTor": {
+          "id": "BymiuDTor",
+          "label": "X-1",
+          "position": {
+            "x": 27,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "H1H_dwajH": {
+          "id": "H1H_dwajH",
+          "label": "X-1",
+          "position": {
+            "x": 19,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJJkCUpjS": {
+          "id": "HJJkCUpjS",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/get-resolution"
+        },
+        "HJWovPToS": {
+          "id": "HJWovPToS",
+          "label": "DEV",
+          "position": {
+            "x": 15,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJgPxuw6iS": {
+          "id": "HJgPxuw6iS",
+          "label": "DEV",
+          "position": {
+            "x": 23,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJloDwpjS": {
+          "id": "HJloDwpjS",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 10,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HkJXPwajS": {
+          "id": "HkJXPwajS",
+          "label": "half-Y",
+          "position": {
+            "x": 8,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "HkiLkD6iS": {
+          "id": "HkiLkD6iS",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "HywlOD6jH": {
+          "boundLiterals": {
+            "SkM60rHdoS": "On Boot"
+          },
+          "id": "HywlOD6jH",
+          "position": {
+            "x": 24,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/draw-line"
+        },
+        "SJWJew6iS": {
+          "id": "SJWJew6iS",
+          "label": "Y-1",
+          "position": {
+            "x": 12,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJaMkwpsS": {
+          "id": "SJaMkwpsS",
+          "label": "Y-1",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "SJvdvD6iS": {
+          "boundLiterals": {
+            "SkM60rHdoS": "On Boot"
+          },
+          "id": "SJvdvD6iS",
+          "position": {
+            "x": 16,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/draw-line"
+        },
+        "SkYFkvair": {
+          "id": "SkYFkvair",
+          "label": "DEV",
+          "position": {
+            "x": 8,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SyAAUP6oB": {
+          "boundLiterals": {
+            "BytUCdHD1-": "2"
+          },
+          "id": "SyAAUP6oB",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/divide"
+        },
+        "SyIQOvaiH": {
+          "id": "SyIQOvaiH",
+          "label": "half-Y",
+          "position": {
+            "x": 3,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "r1eB_OvpjS": {
+          "id": "r1eB_OvpjS",
+          "label": "Y-1",
+          "position": {
+            "x": 20,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rJRZ1P6iH": {
+          "id": "rJRZ1P6iH",
+          "label": "X-1",
+          "position": {
+            "x": 2,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "rJTDyvTiS": {
+          "id": "rJTDyvTiS",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rkEyJPpsH": {
+          "boundLiterals": {
+            "rkJ4URuHDJ-": "1"
+          },
+          "id": "rkEyJPpsH",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/subtract"
+        },
+        "rkWgRLaor": {
+          "boundLiterals": {
+            "H1GK_OBOjr": "On Boot"
+          },
+          "id": "rkWgRLaor",
+          "position": {
+            "x": 2,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/draw-row"
+        },
+        "rkc368piB": {
+          "id": "rkc368piB",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/tvout-device"
+        },
+        "rkefvDajB": {
+          "id": "rkefvDajB",
+          "label": "half-X",
+          "position": {
+            "x": 4,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "ryEyPPaor": {
+          "boundLiterals": {
+            "BytUCdHD1-": "2"
+          },
+          "id": "ryEyPPaor",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/divide"
+        },
+        "ryTJRU6iH": {
+          "boundLiterals": {
+            "r1GHnKHdir": "On Boot"
+          },
+          "id": "ryTJRU6iH",
+          "position": {
+            "x": 9,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/draw-column"
+        },
+        "ryjFPPpjS": {
+          "id": "ryjFPPpjS",
+          "position": {
+            "x": 2,
+            "y": 10,
+            "units": "slots"
+          },
+          "type": "@/draw-line"
+        }
+      },
+      "path": "@/example-draw-lines"
+    },
+    "@/example-draw-shapes": {
+      "comments": {
+        "HyDfw86iB": {
+          "content": "Draw white rectangle covering left half of screen.",
+          "id": "HyDfw86iB",
+          "position": {
+            "x": 10,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "SJOAvL6sS": {
+          "content": "Wait for 2 seconds.",
+          "id": "SJOAvL6sS",
+          "position": {
+            "x": 5,
+            "y": 6,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "rJrViIpsB": {
+          "content": "Colour of outline of circle will be inverted (COLOR pin set to 2). Circle will be filled with white (FILL pin set to 1).",
+          "id": "rJrViIpsB",
+          "position": {
+            "x": 9,
+            "y": 8,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 8,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "Example to show use of draw-rectangle and draw-circle nodes.",
+      "links": {
+        "B1zTwLpsr": {
+          "id": "B1zTwLpsr",
+          "input": {
+            "nodeId": "rJRoPUTiB",
+            "pinKey": "Hkxqr0SDiB"
+          },
+          "output": {
+            "nodeId": "r1eWYB8pjr",
+            "pinKey": "__out__"
+          }
+        },
+        "BJmtc_pjB": {
+          "id": "BJmtc_pjB",
+          "input": {
+            "nodeId": "r1_u9uajB",
+            "pinKey": "SkdIRuBD1b"
+          },
+          "output": {
+            "nodeId": "HJi8B8TsS",
+            "pinKey": "S1-D-lwsB"
+          }
+        },
+        "BkCd5U6sB": {
+          "id": "BkCd5U6sB",
+          "input": {
+            "nodeId": "BJOOcUpsr",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Hkxv5I6jr",
+            "pinKey": "BkqLCOSw1W"
+          }
+        },
+        "ByTXqLTjr": {
+          "id": "ByTXqLTjr",
+          "input": {
+            "nodeId": "SywXcUpiS",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJD_DLaoH",
+            "pinKey": "BkqLCOSw1W"
+          }
+        },
+        "H11z5I6jS": {
+          "id": "H11z5I6jS",
+          "input": {
+            "nodeId": "BJ7BBIToS",
+            "pinKey": "S1KPfUwsH"
+          },
+          "output": {
+            "nodeId": "HJi8B8TsS",
+            "pinKey": "S1-D-lwsB"
+          }
+        },
+        "H1TacLaoS": {
+          "id": "H1TacLaoS",
+          "input": {
+            "nodeId": "Hy8P_8aoH",
+            "pinKey": "S1F5NewoH"
+          },
+          "output": {
+            "nodeId": "r1EncLaoH",
+            "pinKey": "__out__"
+          }
+        },
+        "H1VP5U6jB": {
+          "id": "H1VP5U6jB",
+          "input": {
+            "nodeId": "Hkxv5I6jr",
+            "pinKey": "SkdIRuBD1b"
+          },
+          "output": {
+            "nodeId": "HJi8B8TsS",
+            "pinKey": "S1-D-lwsB"
+          }
+        },
+        "HJ9eIIpjB": {
+          "id": "HJ9eIIpjB",
+          "input": {
+            "nodeId": "BJ7BBIToS",
+            "pinKey": "rylb7fUvsH"
+          },
+          "output": {
+            "nodeId": "rkWKrLToH",
+            "pinKey": "__out__"
+          }
+        },
+        "HJQr46UajB": {
+          "id": "HJQr46UajB",
+          "input": {
+            "nodeId": "rkH4pIpsB",
+            "pinKey": "rkgivylvsS"
+          },
+          "output": {
+            "nodeId": "BJZBEpUTjS",
+            "pinKey": "__out__"
+          }
+        },
+        "HJcM98psH": {
+          "id": "HJcM98psH",
+          "input": {
+            "nodeId": "rJD_DLaoH",
+            "pinKey": "SkdIRuBD1b"
+          },
+          "output": {
+            "nodeId": "HJi8B8TsS",
+            "pinKey": "ryFUWgPsH"
+          }
+        },
+        "HJxKP86iH": {
+          "id": "HJxKP86iH",
+          "input": {
+            "nodeId": "BJ7BBIToS",
+            "pinKey": "rJkvMLPiS"
+          },
+          "output": {
+            "nodeId": "rJD_DLaoH",
+            "pinKey": "BkqLCOSw1W"
+          }
+        },
+        "HkSSN6LajH": {
+          "id": "HkSSN6LajH",
+          "input": {
+            "nodeId": "HyeH46I6jH",
+            "pinKey": "Hkxqr0SDiB"
+          },
+          "output": {
+            "nodeId": "S1zBEpLTsS",
+            "pinKey": "__out__"
+          }
+        },
+        "HyC6wUpsr": {
+          "id": "HyC6wUpsr",
+          "input": {
+            "nodeId": "rJRoPUTiB",
+            "pinKey": "HyfqHRrvsr"
+          },
+          "output": {
+            "nodeId": "BJ7BBIToS",
+            "pinKey": "rJ-b7G8wor"
+          }
+        },
+        "HyP9q_aoH": {
+          "id": "HyP9q_aoH",
+          "input": {
+            "nodeId": "ryy9c_6jS",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1_u9uajB",
+            "pinKey": "BkqLCOSw1W"
+          }
+        },
+        "Hyepqu6jH": {
+          "id": "Hyepqu6jH",
+          "input": {
+            "nodeId": "Hy8P_8aoH",
+            "pinKey": "Sk9cVePjH"
+          },
+          "output": {
+            "nodeId": "Bk829uToS",
+            "pinKey": "__out__"
+          }
+        },
+        "S15UKLaoS": {
+          "id": "S15UKLaoS",
+          "input": {
+            "nodeId": "Hy8P_8aoH",
+            "pinKey": "r1zDfWevsB"
+          },
+          "output": {
+            "nodeId": "rJRoPUTiB",
+            "pinKey": "HkW5H0HwiH"
+          }
+        },
+        "SJEBETIpjS": {
+          "id": "SJEBETIpjS",
+          "input": {
+            "nodeId": "rkH4pIpsB",
+            "pinKey": "rkfjvkgPsr"
+          },
+          "output": {
+            "nodeId": "HyeH46I6jH",
+            "pinKey": "HkW5H0HwiH"
+          }
+        },
+        "SkUKr86sS": {
+          "id": "SkUKr86sS",
+          "input": {
+            "nodeId": "HJi8B8TsS",
+            "pinKey": "rkxHrWxPsB"
+          },
+          "output": {
+            "nodeId": "ryMOB8pjr",
+            "pinKey": "__out__"
+          }
+        },
+        "SkfOOIajS": {
+          "id": "SkfOOIajS",
+          "input": {
+            "nodeId": "Hy8P_8aoH",
+            "pinKey": "SkgvzZgvsS"
+          },
+          "output": {
+            "nodeId": "SyZWKBLasr",
+            "pinKey": "__out__"
+          }
+        },
+        "r10DBI6sr": {
+          "id": "r10DBI6sr",
+          "input": {
+            "nodeId": "BkXDSUToB",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkIuhRIjr",
+            "pinKey": "SyyJUCHoH"
+          }
+        },
+        "rJMBp8aiH": {
+          "id": "rJMBp8aiH",
+          "input": {
+            "nodeId": "HyeH46I6jH",
+            "pinKey": "HyfqHRrvsr"
+          },
+          "output": {
+            "nodeId": "Hy8P_8aoH",
+            "pinKey": "rybwMbxDsS"
+          }
+        },
+        "rycaq8poB": {
+          "id": "rycaq8poB",
+          "input": {
+            "nodeId": "Hy8P_8aoH",
+            "pinKey": "BJZ5VxPor"
+          },
+          "output": {
+            "nodeId": "Sk7jcU6sr",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "BJ7BBIToS": {
+          "boundLiterals": {
+            "S1zZXG8Por": "On Boot",
+            "SJD-Qz8DoS": "1"
+          },
+          "id": "BJ7BBIToS",
+          "position": {
+            "x": 2,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/draw-rectangle"
+        },
+        "BJOOcUpsr": {
+          "id": "BJOOcUpsr",
+          "label": "half-Y",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "BJZBEpUTjS": {
+          "id": "BJZBEpUTjS",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 10,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "Bk829uToS": {
+          "id": "Bk829uToS",
+          "label": "quar-Y",
+          "position": {
+            "x": 5,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "BkXDSUToB": {
+          "id": "BkXDSUToB",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "HJi8B8TsS": {
+          "id": "HJi8B8TsS",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/get-resolution"
+        },
+        "Hkxv5I6jr": {
+          "boundLiterals": {
+            "BytUCdHD1-": "2"
+          },
+          "id": "Hkxv5I6jr",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/divide"
+        },
+        "Hy8P_8aoH": {
+          "boundLiterals": {
+            "ByEYtSviB": "2",
+            "Syy2trwoH": "1"
+          },
+          "id": "Hy8P_8aoH",
+          "position": {
+            "x": 2,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "@/draw-circle"
+        },
+        "HyeH46I6jH": {
+          "boundLiterals": {
+            "ByQcrCrvsS": "2000"
+          },
+          "id": "HyeH46I6jH",
+          "position": {
+            "x": 2,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "@/delay"
+        },
+        "S1zBEpLTsS": {
+          "id": "S1zBEpLTsS",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "Sk7jcU6sr": {
+          "id": "Sk7jcU6sr",
+          "label": "half-X",
+          "position": {
+            "x": 3,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SyZWKBLasr": {
+          "id": "SyZWKBLasr",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SywXcUpiS": {
+          "id": "SywXcUpiS",
+          "label": "half-X",
+          "position": {
+            "x": 2,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "r1EncLaoH": {
+          "id": "r1EncLaoH",
+          "label": "half-Y",
+          "position": {
+            "x": 4,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "r1_u9uajB": {
+          "boundLiterals": {
+            "BytUCdHD1-": "4"
+          },
+          "id": "r1_u9uajB",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/divide"
+        },
+        "r1eWYB8pjr": {
+          "id": "r1eWYB8pjr",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rJD_DLaoH": {
+          "boundLiterals": {
+            "BytUCdHD1-": "2"
+          },
+          "id": "rJD_DLaoH",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/divide"
+        },
+        "rJRoPUTiB": {
+          "boundLiterals": {
+            "ByQcrCrvsS": "2000"
+          },
+          "id": "rJRoPUTiB",
+          "position": {
+            "x": 2,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/delay"
+        },
+        "rkH4pIpsB": {
+          "id": "rkH4pIpsB",
+          "position": {
+            "x": 2,
+            "y": 10,
+            "units": "slots"
+          },
+          "type": "@/invert-color"
+        },
+        "rkIuhRIjr": {
+          "boundLiterals": {
+            "ByZo9eJLoB": "80",
+            "S1ej5e1Isr": "120",
+            "SJicgJIoB": "1d"
+          },
+          "id": "rkIuhRIjr",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/tvout-device"
+        },
+        "rkWKrLToH": {
+          "id": "rkWKrLToH",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "ryMOB8pjr": {
+          "id": "ryMOB8pjr",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "ryy9c_6jS": {
+          "id": "ryy9c_6jS",
+          "label": "quar-Y",
+          "position": {
+            "x": 8,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        }
+      },
+      "path": "@/example-draw-shapes"
+    },
+    "@/example-draw-text": {
+      "description": "Example shows the font sizes available on the draw-text node.",
+      "links": {
+        "BkMs-2noH": {
+          "id": "BkMs-2noH",
+          "input": {
+            "nodeId": "SJrrlh3jB",
+            "pinKey": "BJgTsMu_iH"
+          },
+          "output": {
+            "nodeId": "rJoyghnjB",
+            "pinKey": "SyyJUCHoH"
+          }
+        },
+        "Bkd5Zhnor": {
+          "id": "Bkd5Zhnor",
+          "input": {
+            "nodeId": "Hy_Me33jH",
+            "pinKey": "BJgTsMu_iH"
+          },
+          "output": {
+            "nodeId": "rJoyghnjB",
+            "pinKey": "SyyJUCHoH"
+          }
+        },
+        "ByI_-nhsS": {
+          "id": "ByI_-nhsS",
+          "input": {
+            "nodeId": "rkzNl22sr",
+            "pinKey": "HJfaoGOdjH"
+          },
+          "output": {
+            "nodeId": "SysXg2hoS",
+            "pinKey": "r1Z6ozu_sB"
+          }
+        },
+        "HJcq-33or": {
+          "id": "HJcq-33or",
+          "input": {
+            "nodeId": "SysXg2hoS",
+            "pinKey": "BJgTsMu_iH"
+          },
+          "output": {
+            "nodeId": "rJoyghnjB",
+            "pinKey": "SyyJUCHoH"
+          }
+        },
+        "r1o_Z23jS": {
+          "id": "r1o_Z23jS",
+          "input": {
+            "nodeId": "SJrrlh3jB",
+            "pinKey": "HJfaoGOdjH"
+          },
+          "output": {
+            "nodeId": "rkzNl22sr",
+            "pinKey": "r1Z6ozu_sB"
+          }
+        },
+        "r1p5ZnnoB": {
+          "id": "r1p5ZnnoB",
+          "input": {
+            "nodeId": "rkzNl22sr",
+            "pinKey": "BJgTsMu_iH"
+          },
+          "output": {
+            "nodeId": "rJoyghnjB",
+            "pinKey": "SyyJUCHoH"
+          }
+        },
+        "ryDhg3nsB": {
+          "id": "ryDhg3nsB",
+          "input": {
+            "nodeId": "SysXg2hoS",
+            "pinKey": "HJfaoGOdjH"
+          },
+          "output": {
+            "nodeId": "Hy_Me33jH",
+            "pinKey": "r1Z6ozu_sB"
+          }
+        }
+      },
+      "nodes": {
+        "Hy_Me33jH": {
+          "boundLiterals": {
+            "HJfaoGOdjH": "On Boot",
+            "HkwTjzOOjS": "2",
+            "rJVt4OOoS": "\"TVout\\n\\nFont sizes:\\n\""
+          },
+          "id": "Hy_Me33jH",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/draw-text"
+        },
+        "SJrrlh3jB": {
+          "boundLiterals": {
+            "HkwTjzOOjS": "2",
+            "SJzLV_doH": "False",
+            "rJVt4OOoS": "\"font8x8\""
+          },
+          "id": "SJrrlh3jB",
+          "position": {
+            "x": 3,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/draw-text"
+        },
+        "SysXg2hoS": {
+          "boundLiterals": {
+            "SJzLV_doH": "False",
+            "rJVt4OOoS": "\"font4x6\\n\""
+          },
+          "id": "SysXg2hoS",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/draw-text"
+        },
+        "rJoyghnjB": {
+          "id": "rJoyghnjB",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/tvout-device"
+        },
+        "rkzNl22sr": {
+          "boundLiterals": {
+            "HkwTjzOOjS": "1",
+            "SJzLV_doH": "False",
+            "rJVt4OOoS": "\"font6x8\\n\""
+          },
+          "id": "rkzNl22sr",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/draw-text"
+        }
+      },
+      "path": "@/example-draw-text"
+    },
+    "@/example-fill-clear": {
+      "description": "Test of fill, clear and delay-n-frames nodes.",
+      "links": {
+        "B16UL9ajH": {
+          "id": "B16UL9ajH",
+          "input": {
+            "nodeId": "SysmVqTir",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "rkTHLq6sr",
+            "pinKey": "HJZJ4Z8vsB"
+          }
+        },
+        "B1JyN5piH": {
+          "id": "B1JyN5piH",
+          "input": {
+            "nodeId": "HkSRX5asS",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "S1CjQ5pjH",
+            "pinKey": "ryVmUAOrvkb"
+          }
+        },
+        "B1VUIq6jS": {
+          "id": "B1VUIq6jS",
+          "input": {
+            "nodeId": "rkTHLq6sr",
+            "pinKey": "rkxJVWUDiB"
+          },
+          "output": {
+            "nodeId": "ryRJIcaoB",
+            "pinKey": "__out__"
+          }
+        },
+        "BkfJEqajr": {
+          "id": "BkfJEqajr",
+          "input": {
+            "nodeId": "HJpcfqajH",
+            "pinKey": "ByMf1bwusr"
+          },
+          "output": {
+            "nodeId": "HkSRX5asS",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "By6sf9aoB": {
+          "id": "By6sf9aoB",
+          "input": {
+            "nodeId": "SymsG9poB",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "B1V9zcToH",
+            "pinKey": "SyyJUCHoH"
+          }
+        },
+        "H1xg496or": {
+          "id": "H1xg496or",
+          "input": {
+            "nodeId": "HJpcfqajH",
+            "pinKey": "SklzkWPOiS"
+          },
+          "output": {
+            "nodeId": "B1V9zcToH",
+            "pinKey": "SyyJUCHoH"
+          }
+        },
+        "HkwIUqTjB": {
+          "id": "HkwIUqTjB",
+          "input": {
+            "nodeId": "rkTHLq6sr",
+            "pinKey": "HyfyVWUviB"
+          },
+          "output": {
+            "nodeId": "r1h6G9pjr",
+            "pinKey": "B1lb1yPir"
+          }
+        },
+        "S1uHIqpjH": {
+          "id": "S1uHIqpjH",
+          "input": {
+            "nodeId": "SJWHLcasH",
+            "pinKey": "HyfyVWUviB"
+          },
+          "output": {
+            "nodeId": "HJpcfqajH",
+            "pinKey": "S1-G1bwOiH"
+          }
+        },
+        "rJ4EVqpjS": {
+          "id": "rJ4EVqpjS",
+          "input": {
+            "nodeId": "HkSRX5asS",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "SysmVqTir",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "rk21Qqpjr": {
+          "id": "rk21Qqpjr",
+          "input": {
+            "nodeId": "r1h6G9pjr",
+            "pinKey": "r1WsCRLjB"
+          },
+          "output": {
+            "nodeId": "Hkwy7qaoB",
+            "pinKey": "__out__"
+          }
+        },
+        "rkoBLcTir": {
+          "id": "rkoBLcTir",
+          "input": {
+            "nodeId": "r1h6G9pjr",
+            "pinKey": "SJRL1yDiB"
+          },
+          "output": {
+            "nodeId": "SJWHLcasH",
+            "pinKey": "HJZJ4Z8vsB"
+          }
+        },
+        "ryUS89aor": {
+          "id": "ryUS89aor",
+          "input": {
+            "nodeId": "SJWHLcasH",
+            "pinKey": "rkxJVWUDiB"
+          },
+          "output": {
+            "nodeId": "SJDzEqToS",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "B1V9zcToH": {
+          "id": "B1V9zcToH",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/tvout-device"
+        },
+        "HJpcfqajH": {
+          "boundLiterals": {
+            "ByMf1bwusr": "On Boot"
+          },
+          "id": "HJpcfqajH",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/fill-screen"
+        },
+        "HkSRX5asS": {
+          "id": "HkSRX5asS",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "Hkwy7qaoB": {
+          "id": "Hkwy7qaoB",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1CjQ5pjH": {
+          "id": "S1CjQ5pjH",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/boot"
+        },
+        "SJDzEqToS": {
+          "id": "SJDzEqToS",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJWHLcasH": {
+          "boundLiterals": {
+            "rJmJE-UvjB": "200"
+          },
+          "id": "SJWHLcasH",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/delay-n-frames"
+        },
+        "SymsG9poB": {
+          "id": "SymsG9poB",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "SysmVqTir": {
+          "id": "SysmVqTir",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "r1h6G9pjr": {
+          "id": "r1h6G9pjr",
+          "position": {
+            "x": 0,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/clear-screen"
+        },
+        "rkTHLq6sr": {
+          "boundLiterals": {
+            "rJmJE-UvjB": "100"
+          },
+          "id": "rkTHLq6sr",
+          "position": {
+            "x": 0,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/delay-n-frames"
+        },
+        "ryRJIcaoB": {
+          "id": "ryRJIcaoB",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        }
+      },
+      "path": "@/example-fill-clear"
+    },
+    "@/example-shift-screen": {
+      "description": "Example to demonstrate shifting screen buffer.",
+      "links": {
+        "B1FbkuTsB": {
+          "id": "B1FbkuTsB",
+          "input": {
+            "nodeId": "Skmx1OpsS",
+            "pinKey": "BypX80uSD1Z"
+          },
+          "output": {
+            "nodeId": "S1evyIojB",
+            "pinKey": "ryFUWgPsH"
+          }
+        },
+        "B1NriDTiB": {
+          "id": "B1NriDTiB",
+          "input": {
+            "nodeId": "ByeSjPaoS",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Sk3zjwaoB",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "BJSI4O6jH": {
+          "id": "BJSI4O6jH",
+          "input": {
+            "nodeId": "S1XFZLijB",
+            "pinKey": "HJGt4c4iiH"
+          },
+          "output": {
+            "nodeId": "SkqrNu6jr",
+            "pinKey": "__out__"
+          }
+        },
+        "BJfcwdpoS": {
+          "id": "BJfcwdpoS",
+          "input": {
+            "nodeId": "rJkvXO6sS",
+            "pinKey": "S1yZIA_rDJZ"
+          },
+          "output": {
+            "nodeId": "SkVHD_psS",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "Bkmdvuaor": {
+          "id": "Bkmdvuaor",
+          "input": {
+            "nodeId": "SkVHD_psS",
+            "pinKey": "ryTIROHwkW"
+          },
+          "output": {
+            "nodeId": "B1TdVOpoH",
+            "pinKey": "__out__"
+          }
+        },
+        "H1971O6sS": {
+          "id": "H1971O6sS",
+          "input": {
+            "nodeId": "BJrQkdpor",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Skmx1OpsS",
+            "pinKey": "HyRmUCdBDkZ"
+          }
+        },
+        "H1LW1OaoH": {
+          "id": "H1LW1OaoH",
+          "input": {
+            "nodeId": "Skmx1OpsS",
+            "pinKey": "rkJ4URuHDJ-"
+          },
+          "output": {
+            "nodeId": "Sk3zjwaoB",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "HJXcZIjir": {
+          "id": "HJXcZIjir",
+          "input": {
+            "nodeId": "S1XFZLijB",
+            "pinKey": "rkxYEqNojS"
+          },
+          "output": {
+            "nodeId": "HyFK-8ioH",
+            "pinKey": "__out__"
+          }
+        },
+        "S16vGO6or": {
+          "id": "S16vGO6or",
+          "input": {
+            "nodeId": "rkn4x_TsS",
+            "pinKey": "HJbACN3gb"
+          },
+          "output": {
+            "nodeId": "rk0ZlO6ir",
+            "pinKey": "__out__"
+          }
+        },
+        "S1YtlOTjS": {
+          "id": "S1YtlOTjS",
+          "input": {
+            "nodeId": "H1mtxd6sB",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "S169WIsiS",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "S1ooRPTiH": {
+          "id": "S1ooRPTiH",
+          "input": {
+            "nodeId": "BJ52TwpsB",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "S169WIsiS",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "SJWHJIsjB": {
+          "id": "SJWHJIsjB",
+          "input": {
+            "nodeId": "BJT4JLooH",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r16zJ8ijH",
+            "pinKey": "SyyJUCHoH"
+          }
+        },
+        "SJrw1LosS": {
+          "id": "SJrw1LosS",
+          "input": {
+            "nodeId": "S1evyIojB",
+            "pinKey": "rkxHrWxPsB"
+          },
+          "output": {
+            "nodeId": "H1HUJIosB",
+            "pinKey": "__out__"
+          }
+        },
+        "SyG5E_pjS": {
+          "id": "SyG5E_pjS",
+          "input": {
+            "nodeId": "BJ9SWOpjS",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "B1TdVOpoH",
+            "pinKey": "__out__"
+          }
+        },
+        "SyUZovpoB": {
+          "id": "SyUZovpoB",
+          "input": {
+            "nodeId": "BJzK9PasH",
+            "pinKey": "S1KPfUwsH"
+          },
+          "output": {
+            "nodeId": "S1evyIojB",
+            "pinKey": "S1-D-lwsB"
+          }
+        },
+        "SycvjvajH": {
+          "id": "SycvjvajH",
+          "input": {
+            "nodeId": "BJzK9PasH",
+            "pinKey": "rylb7fUvsH"
+          },
+          "output": {
+            "nodeId": "r16zJ8ijH",
+            "pinKey": "SyyJUCHoH"
+          }
+        },
+        "rkLLW_aiH": {
+          "id": "rkLLW_aiH",
+          "input": {
+            "nodeId": "BJ52TwpsB",
+            "pinKey": "SkUjZA_L-"
+          },
+          "output": {
+            "nodeId": "BJ9SWOpjS",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "ryMrN_TiS": {
+          "id": "ryMrN_TiS",
+          "input": {
+            "nodeId": "S1XFZLijB",
+            "pinKey": "H1wln4jiS"
+          },
+          "output": {
+            "nodeId": "rJkvXO6sS",
+            "pinKey": "S13xLCuHvkW"
+          }
+        },
+        "ryV_fdpoB": {
+          "id": "ryV_fdpoB",
+          "input": {
+            "nodeId": "rkn4x_TsS",
+            "pinKey": "rJg00Nhe-"
+          },
+          "output": {
+            "nodeId": "BJ52TwpsB",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "rygq4_asS": {
+          "id": "rygq4_asS",
+          "input": {
+            "nodeId": "B1TdVOpoH",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkn4x_TsS",
+            "pinKey": "B19RYS3lW"
+          }
+        }
+      },
+      "nodes": {
+        "B1TdVOpoH": {
+          "id": "B1TdVOpoH",
+          "position": {
+            "x": 11,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-true"
+        },
+        "BJ52TwpsB": {
+          "id": "BJ52TwpsB",
+          "position": {
+            "x": 11,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "BJ9SWOpjS": {
+          "id": "BJ9SWOpjS",
+          "position": {
+            "x": 14,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "BJT4JLooH": {
+          "id": "BJT4JLooH",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "BJrQkdpor": {
+          "id": "BJrQkdpor",
+          "label": "RANGE",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "BJzK9PasH": {
+          "boundLiterals": {
+            "S1zZXG8Por": "On Boot",
+            "SJD-Qz8DoS": "1",
+            "rJkvMLPiS": "10"
+          },
+          "id": "BJzK9PasH",
+          "position": {
+            "x": -1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/draw-rectangle"
+        },
+        "ByeSjPaoS": {
+          "id": "ByeSjPaoS",
+          "label": "W",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "H1HUJIosB": {
+          "id": "H1HUJIosB",
+          "label": "DEV",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "H1mtxd6sB": {
+          "id": "H1mtxd6sB",
+          "label": "TICK",
+          "position": {
+            "x": 14,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "HyFK-8ioH": {
+          "id": "HyFK-8ioH",
+          "label": "DEV",
+          "position": {
+            "x": 8,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S169WIsiS": {
+          "boundLiterals": {
+            "B13SCNhl-": ".01"
+          },
+          "id": "S169WIsiS",
+          "position": {
+            "x": 12,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "S1XFZLijB": {
+          "boundLiterals": {
+            "ryXYN9Ejjr": "1"
+          },
+          "id": "S1XFZLijB",
+          "position": {
+            "x": 9,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "@/shift-screen"
+        },
+        "S1evyIojB": {
+          "id": "S1evyIojB",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/get-resolution"
+        },
+        "Sk3zjwaoB": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "10"
+          },
+          "id": "Sk3zjwaoB",
+          "label": "W",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-number"
+        },
+        "SkVHD_psS": {
+          "boundLiterals": {
+            "HkyxURuSPyW": "False"
+          },
+          "id": "SkVHD_psS",
+          "position": {
+            "x": 10,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "Skmx1OpsS": {
+          "id": "Skmx1OpsS",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/subtract"
+        },
+        "SkqrNu6jr": {
+          "id": "SkqrNu6jr",
+          "label": "TICK",
+          "position": {
+            "x": 13,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "r16zJ8ijH": {
+          "boundLiterals": {
+            "ByZo9eJLoB": "80"
+          },
+          "id": "r16zJ8ijH",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/tvout-device"
+        },
+        "rJkvXO6sS": {
+          "boundLiterals": {
+            "r1AgIROHDJW": "3",
+            "ryTeUROHD1b": "2"
+          },
+          "id": "rJkvXO6sS",
+          "position": {
+            "x": 10,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/core/if-else"
+        },
+        "rk0ZlO6ir": {
+          "id": "rk0ZlO6ir",
+          "label": "RANGE",
+          "position": {
+            "x": 12,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rkn4x_TsS": {
+          "id": "rkn4x_TsS",
+          "position": {
+            "x": 11,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/greater"
+        }
+      },
+      "path": "@/example-shift-screen"
+    },
+    "@/fill-screen": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `TVout` class instance\n    auto tv = getValue<input_DEV>(ctx);\n    char color = getValue<input_COLOR>(ctx);\n\n    tv->fill(color);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Fill the screen with specified color. ",
+      "nodes": {
+        "B1SMybDdjH": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "The color of the fill. Options:\n0 = black;\n1 = white;\n2 = invert.",
+          "id": "B1SMybDdjH",
+          "label": "COLOR",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ByMf1bwusr": {
+          "description": "Update. Triggers draw circle.",
+          "id": "ByMf1bwusr",
+          "label": "UPD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Hkz1bwOiS": {
+          "id": "Hkz1bwOiS",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1-G1bwOiH": {
+          "description": "Pulse on completion.",
+          "id": "S1-G1bwOiH",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SklzkWPOiS": {
+          "description": "A tvout device.",
+          "id": "SklzkWPOiS",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-tvout-device"
+        }
+      },
+      "path": "@/fill-screen"
+    },
+    "@/get-resolution": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // Get a pointer to the `TVout` class instance\n    auto tv = getValue<input_DEV>(ctx);\n\n    unsigned char x, y;\n    x = tv->hres();\n    y = tv->vres();\n    emitValue<output_X>(ctx, x);\n    emitValue<output_Y>(ctx, y);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Report resolution of display.",
+      "nodes": {
+        "S1-D-lwsB": {
+          "description": "Vertical resolution.",
+          "id": "S1-D-lwsB",
+          "label": "Y",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "r1HBWxvjr": {
+          "id": "r1HBWxvjr",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rkxHrWxPsB": {
+          "description": "A tvout device.",
+          "id": "rkxHrWxPsB",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-tvout-device"
+        },
+        "ryFUWgPsH": {
+          "description": "Horizontal resolution.",
+          "id": "ryFUWgPsH",
+          "label": "X",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/get-resolution"
+    },
+    "@/invert-color": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `TVout` class instance\n    auto tv = getValue<input_DEV>(ctx);\n\n    tv->fill(2);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Invert screen color.",
+      "nodes": {
+        "B1ov1lvjr": {
+          "id": "B1ov1lvjr",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rkZjvkgwsH": {
+          "description": "Pulse on completion.",
+          "id": "rkZjvkgwsH",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rkfjvkgPsr": {
+          "description": "Update. Triggers color inversion.",
+          "id": "rkfjvkgPsr",
+          "label": "UPD",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkgivylvsS": {
+          "description": "A tvout device.",
+          "id": "rkgivylvsS",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-tvout-device"
+        }
+      },
+      "path": "@/invert-color"
+    },
+    "@/shift-screen": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `TVout` class instance\n    auto tv = getValue<input_DEV>(ctx);\n    uint8_t dir, dist;\n    dir = getValue<input_DIR>(ctx);\n    dist = getValue<input_DIST>(ctx);\n\n    tv->shift(dist, dir);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Shift screen up, down, left or right by a specified distance.",
+      "nodes": {
+        "By-YEcEoir": {
+          "description": "Pulse on completion.",
+          "id": "By-YEcEoir",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "H1wln4jiS": {
+          "description": "Direction. Options:\n0 = up;\n1 = down;\n2 = left;\n3 = right.",
+          "id": "H1wln4jiS",
+          "label": "DIR",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJGt4c4iiH": {
+          "description": "Update. Triggers delay.",
+          "id": "HJGt4c4iiH",
+          "label": "UPD",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HJY49NosS": {
+          "id": "HJY49NosS",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rkxYEqNojS": {
+          "description": "A tvout device.",
+          "id": "rkxYEqNojS",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-tvout-device"
+        },
+        "ryXYN9Ejjr": {
+          "description": "Distance in pixels.",
+          "id": "ryXYN9Ejjr",
+          "label": "DIST",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/shift-screen"
+    },
+    "@/tvout-device": {
+      "attachments": [
+        {
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/WaylandM/MTW-arduino-tvout\"\n\n//Include C++ libraries\n{{#global}}\n#include <TVout.h>\n#include <fontALL.h>\n{{/global}}\n\n// Reserve memory to store an instance of the TVout class,\n// and create the instance later:\nstruct State {\n    uint8_t mem[sizeof(TVout)];\n};\n\n// Define our custom type as a pointer on the class instance.\nusing Type = TVout*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // It should be evaluated only once on the first (setup) transaction\n    if (!isSettingUp())\n        return;\n\n    auto state = getState(ctx);\n    uint8_t mode = getValue<input_MODE>(ctx);\n    uint8_t x = getValue<input_X>(ctx);\n    uint8_t y = getValue<input_Y>(ctx);\n\n    // Create a new object in the memory area reserved previously.\n    Type tv = new (state->mem) TVout();\n\n    if (tv->begin(mode,x,y) != 0) {\n      raiseError(ctx);\n      return;\n    }\n\n    emitValue<output_DEV>(ctx, tv);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Create a tvout device with specified MODE (PAL or NTSC) and resolution.",
+      "nodes": {
+        "By0OfCriB": {
+          "id": "By0OfCriB",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ByZo9eJLoB": {
+          "boundLiterals": {
+            "__out__": "80"
+          },
+          "description": "Vertical resolution.",
+          "id": "ByZo9eJLoB",
+          "label": "Y",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1ej5e1Isr": {
+          "boundLiterals": {
+            "__out__": "120"
+          },
+          "description": "Horizontal resolution (must be divisible by 8).",
+          "id": "S1ej5e1Isr",
+          "label": "X",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJicgJIoB": {
+          "boundLiterals": {
+            "__out__": "1d"
+          },
+          "description": "Video mode:\n0d - NTSC;\n1d - PAL.",
+          "id": "SJicgJIoB",
+          "label": "MODE",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SyyJUCHoH": {
+          "description": "A tvout device.",
+          "id": "SyyJUCHoH",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/tvout-device"
+    }
+  },
+  "version": "0.0.3"
+}

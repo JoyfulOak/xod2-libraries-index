@@ -1,0 +1,520 @@
+{
+  "description": "Read´s the temperature from LM75A i2c temperatursensor with 11 bit (0.125°C) resolution\n 0.30.0 ready",
+  "license": "Mit",
+  "name": "lm75atempsensor",
+  "patches": {
+    "@/average": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n      // Number a;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n // State* state = getState(ctx);\n    Number a = a;\n   \n    Number average = average;\n    average = getValue<output_OUT>(ctx);\n    Number sum = getValue<output_SUMOUT>(ctx);\n    int incist = getValue<output_INCOUT>(ctx);\n    incist ++;\n   //emitValue<output_inc_out>(ctx, incist);\n    Number Step = getValue<input_STEP>(ctx);\n   \n    if (incist >= Step)\n    {\n        incist = 0;\n        sum = (sum / Step);\n        average = sum;\n    }\n        else if (isInputDirty<input_INC>(ctx))\n        sum += getValue<input_IN>(ctx);\n    emitValue<output_INCOUT>(ctx, incist);\n    emitValue<output_OUT>(ctx, average);\n    emitValue<output_SUMOUT>(ctx, sum);\n   // state->a = a;\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1OjlaOZE": {
+          "id": "B1OjlaOZE",
+          "label": "OUT",
+          "position": {
+            "x": 10,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "H1BbhcP-N": {
+          "id": "H1BbhcP-N",
+          "label": "IN",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H1RXpBqWN": {
+          "id": "H1RXpBqWN",
+          "label": "SUMOUT",
+          "position": {
+            "x": 12,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "S1TwUhPb4": {
+          "id": "S1TwUhPb4",
+          "label": "INC",
+          "position": {
+            "x": 14,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Sk3szp_ZE": {
+          "id": "Sk3szp_ZE",
+          "label": "INCOUT",
+          "position": {
+            "x": 13,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SyHM25v-E": {
+          "id": "SyHM25v-E",
+          "label": "STEP",
+          "position": {
+            "x": 12,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1kgn5Db4": {
+          "id": "r1kgn5Db4",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/average"
+    },
+    "@/lm75a-temp-sensor": {
+      "comments": {
+        "B1ly1P7bE": {
+          "content": "Double-click to edit comment",
+          "id": "B1ly1P7bE",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "Bk5_yrb-E": {
+          "id": "Bk5_yrb-E",
+          "input": {
+            "nodeId": "BkvuBzlb4",
+            "pinKey": "B13SCNhl-"
+          },
+          "output": {
+            "nodeId": "r1d_kH-WN",
+            "pinKey": "__out__"
+          }
+        },
+        "By4-MzIbN": {
+          "id": "By4-MzIbN",
+          "input": {
+            "nodeId": "SkQJGf8bE",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "S1igU4ZW4",
+            "pinKey": "rypZF_Nub"
+          }
+        },
+        "HJt7oVbWE": {
+          "id": "HJt7oVbWE",
+          "input": {
+            "nodeId": "Hk7KPEWb4",
+            "pinKey": "B1GfLR_SPk-"
+          },
+          "output": {
+            "nodeId": "rytMi4-b4",
+            "pinKey": "rJ2LddxlG"
+          }
+        },
+        "HkQKrGxbN": {
+          "id": "HkQKrGxbN",
+          "input": {
+            "nodeId": "SyUmhbx-E",
+            "pinKey": "SJjmdOVOW"
+          },
+          "output": {
+            "nodeId": "BkvuBzlb4",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "S1JQ64WZN": {
+          "id": "S1JQ64WZN",
+          "input": {
+            "nodeId": "rktaR-gZE",
+            "pinKey": "rJvDQd-Jm"
+          },
+          "output": {
+            "nodeId": "S1igU4ZW4",
+            "pinKey": "SJeoE43JQ"
+          }
+        },
+        "SJGPKNWW4": {
+          "id": "SJGPKNWW4",
+          "input": {
+            "nodeId": "S1igU4ZW4",
+            "pinKey": "SkylK_Ed-"
+          },
+          "output": {
+            "nodeId": "SJXQ2WxZE",
+            "pinKey": "rypZF_Nub"
+          }
+        },
+        "SJcjJHWb4": {
+          "id": "SJcjJHWb4",
+          "input": {
+            "nodeId": "SyUmhbx-E",
+            "pinKey": "BkRw4E3kX"
+          },
+          "output": {
+            "nodeId": "SJOjkr--E",
+            "pinKey": "__out__"
+          }
+        },
+        "Sk53LNZZV": {
+          "id": "Sk53LNZZV",
+          "input": {
+            "nodeId": "rktaR-gZE",
+            "pinKey": "B1gEDm_W1Q"
+          },
+          "output": {
+            "nodeId": "SJXQ2WxZE",
+            "pinKey": "SJeoE43JQ"
+          }
+        },
+        "rJ1wFNZbV": {
+          "id": "rJ1wFNZbV",
+          "input": {
+            "nodeId": "SJXQ2WxZE",
+            "pinKey": "SkylK_Ed-"
+          },
+          "output": {
+            "nodeId": "SyUmhbx-E",
+            "pinKey": "Sk7BudNdZ"
+          }
+        },
+        "rJM7iN--4": {
+          "id": "rJM7iN--4",
+          "input": {
+            "nodeId": "rytMi4-b4",
+            "pinKey": "rkXLOulgz"
+          },
+          "output": {
+            "nodeId": "rktaR-gZE",
+            "pinKey": "r1WVwX_W1Q"
+          }
+        },
+        "rJvSyBZ-V": {
+          "id": "rJvSyBZ-V",
+          "input": {
+            "nodeId": "BJ4r1HW-N",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Hk7KPEWb4",
+            "pinKey": "BkQzLCurwJZ"
+          }
+        }
+      },
+      "nodes": {
+        "BJ4r1HW-N": {
+          "id": "BJ4r1HW-N",
+          "label": "Temp.out",
+          "position": {
+            "x": 3,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BkvuBzlb4": {
+          "id": "BkvuBzlb4",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "Hk7KPEWb4": {
+          "boundLiterals": {
+            "SJ4zUC_BD1-": "0.125"
+          },
+          "id": "Hk7KPEWb4",
+          "position": {
+            "x": 3,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/multiply"
+        },
+        "S1igU4ZW4": {
+          "id": "S1igU4ZW4",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/i2c/read-byte"
+        },
+        "SJOjkr--E": {
+          "id": "SJOjkr--E",
+          "label": "ADDR",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SJXQ2WxZE": {
+          "id": "SJXQ2WxZE",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/i2c/read-byte"
+        },
+        "SkQJGf8bE": {
+          "id": "SkQJGf8bE",
+          "label": "DONE",
+          "position": {
+            "x": 8,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SyUmhbx-E": {
+          "boundLiterals": {
+            "BkRw4E3kX": "01001000b",
+            "r1NONEn1m": "2"
+          },
+          "id": "SyUmhbx-E",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/i2c/request"
+        },
+        "r1d_kH-WN": {
+          "id": "r1d_kH-WN",
+          "label": "IVAL",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rktaR-gZE": {
+          "id": "rktaR-gZE",
+          "position": {
+            "x": 3,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/bits/i16-to-number"
+        },
+        "rytMi4-b4": {
+          "boundLiterals": {
+            "BkvUuuleG": "5"
+          },
+          "id": "rytMi4-b4",
+          "position": {
+            "x": 3,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/bits/shift-right"
+        }
+      },
+      "path": "@/lm75a-temp-sensor"
+    },
+    "@/main": {
+      "links": {
+        "BJ4rh4CbH": {
+          "id": "BJ4rh4CbH",
+          "input": {
+            "nodeId": "Hy6GhER-S",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rJ1f3hOWN",
+            "pinKey": "B1OjlaOZE"
+          }
+        },
+        "BJRHnVRZS": {
+          "id": "BJRHnVRZS",
+          "input": {
+            "nodeId": "r1Cf2EA-H",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rJ1f3hOWN",
+            "pinKey": "H1RXpBqWN"
+          }
+        },
+        "BkOfQa_bV": {
+          "id": "BkOfQa_bV",
+          "input": {
+            "nodeId": "HkrG7aubV",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "ryr0JrbZ4",
+            "pinKey": "SkQJGf8bE"
+          }
+        },
+        "ByKSnEC-H": {
+          "id": "ByKSnEC-H",
+          "input": {
+            "nodeId": "rJyQhE0ZS",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "HkrG7aubV",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "H12B2V0-r": {
+          "id": "H12B2V0-r",
+          "input": {
+            "nodeId": "HkgRf2NCZS",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rJ1f3hOWN",
+            "pinKey": "Sk3szp_ZE"
+          }
+        },
+        "HJ3N2EC-H": {
+          "id": "HJ3N2EC-H",
+          "input": {
+            "nodeId": "BJHG3V0-H",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "ryr0JrbZ4",
+            "pinKey": "BJ4r1HW-N"
+          }
+        },
+        "HycCRn_ZV": {
+          "id": "HycCRn_ZV",
+          "input": {
+            "nodeId": "rJ1f3hOWN",
+            "pinKey": "H1BbhcP-N"
+          },
+          "output": {
+            "nodeId": "ryr0JrbZ4",
+            "pinKey": "BJ4r1HW-N"
+          }
+        },
+        "ry6yJpO-E": {
+          "id": "ry6yJpO-E",
+          "input": {
+            "nodeId": "rJ1f3hOWN",
+            "pinKey": "S1TwUhPb4"
+          },
+          "output": {
+            "nodeId": "ryr0JrbZ4",
+            "pinKey": "SkQJGf8bE"
+          }
+        }
+      },
+      "nodes": {
+        "BJHG3V0-H": {
+          "id": "BJHG3V0-H",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "HkgRf2NCZS": {
+          "id": "HkgRf2NCZS",
+          "position": {
+            "x": 13,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "HkrG7aubV": {
+          "id": "HkrG7aubV",
+          "position": {
+            "x": 15,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "Hy6GhER-S": {
+          "id": "Hy6GhER-S",
+          "position": {
+            "x": 11,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "r1Cf2EA-H": {
+          "id": "r1Cf2EA-H",
+          "position": {
+            "x": 12,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "rJ1f3hOWN": {
+          "boundLiterals": {
+            "SyHM25v-E": "10"
+          },
+          "id": "rJ1f3hOWN",
+          "position": {
+            "x": 11,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/average"
+        },
+        "rJyQhE0ZS": {
+          "id": "rJyQhE0ZS",
+          "position": {
+            "x": 15,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "ryr0JrbZ4": {
+          "boundLiterals": {
+            "SJOjkr--E": "01001000b",
+            "r1d_kH-WN": "0.3"
+          },
+          "id": "ryr0JrbZ4",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/lm75a-temp-sensor"
+        }
+      },
+      "path": "@/main"
+    }
+  },
+  "version": "1.2.0"
+}

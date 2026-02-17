@@ -1,0 +1,217 @@
+{
+  "patches": {
+    "@/random": {
+      "nodes": {
+        "ryegt8FwM": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "A new seed value for the generator in range [0; 1]. Used only on `RST` pulse.",
+          "label": "SEED",
+          "id": "ryegt8FwM",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Sy7Zt8YDz": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Initializes the generator with a new `SEED` value. You should initialize with a truly random value at least once (usually on boot), otherwise you’ll get the same number sequence on each program run.",
+          "label": "RST",
+          "id": "Sy7Zt8YDz",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HywfKIYPG": {
+          "id": "HywfKIYPG",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rkJ7YItPM": {
+          "description": "The last pseudo-random value in range [0; 1)",
+          "id": "rkJ7YItPM",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ByP7F8FPG": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers output update, that is generates the next pseudo-random number.",
+          "label": "UPD",
+          "id": "ByP7F8FPG",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/random",
+      "description": "Generates pseudo-random numbers in range [0; 1). Uses a linear congruential generator algorithm.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\n{{#global}}\n#include <limits.h>\n{{/global}}\n\nusing State = long unsigned int;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    long unsigned int* seedp = getState(ctx);\n    if (isInputDirty<input_RST>(ctx))\n        *seedp = (long unsigned int)(getValue<input_SEED>(ctx) * ULONG_MAX);\n\n    if (isInputDirty<input_UPD>(ctx)) {\n        int rnd = rand_r(seedp);\n        emitValue<output_OUT>(ctx, (Number)rnd / ((Number)RAND_MAX + 1.0));\n    }\n}\n"
+        }
+      ]
+    },
+    "@/random-example": {
+      "nodes": {
+        "Hyx43UkM9s": {
+          "boundLiterals": {
+            "SyKd0E2x-": "On Boot"
+          },
+          "id": "Hyx43UkM9s",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/gpio/analog-read"
+        },
+        "S1-NnIyz5i": {
+          "id": "S1-NnIyz5i",
+          "position": {
+            "x": 5,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        },
+        "B1fNhL1Gco": {
+          "id": "B1fNhL1Gco",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "ByuAPyzcs": {
+          "id": "ByuAPyzcs",
+          "type": "@/random",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "rJR0wkMqs": {
+          "id": "rJR0wkMqs",
+          "output": {
+            "nodeId": "Hyx43UkM9s",
+            "pinKey": "SyBtREhlW"
+          },
+          "input": {
+            "nodeId": "ByuAPyzcs",
+            "pinKey": "ryegt8FwM"
+          }
+        },
+        "SkgkdJM5o": {
+          "id": "SkgkdJM5o",
+          "output": {
+            "nodeId": "ByuAPyzcs",
+            "pinKey": "rkJ7YItPM"
+          },
+          "input": {
+            "nodeId": "B1fNhL1Gco",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "SJVld1fqj": {
+          "id": "SJVld1fqj",
+          "output": {
+            "nodeId": "S1-NnIyz5i",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "ByuAPyzcs",
+            "pinKey": "ByP7F8FPG"
+          }
+        },
+        "r1T9OyMqs": {
+          "id": "r1T9OyMqs",
+          "output": {
+            "nodeId": "Hyx43UkM9s",
+            "pinKey": "BkGpcpcJQ"
+          },
+          "input": {
+            "nodeId": "ByuAPyzcs",
+            "pinKey": "Sy7Zt8YDz"
+          }
+        }
+      },
+      "comments": {
+        "HJIE381Mci": {
+          "content": "A pulse to UPD generates a new pseudo random number.",
+          "id": "HJIE381Mci",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 6,
+            "units": "slots"
+          }
+        },
+        "BJw4nU1z9j": {
+          "content": "Analog port A0 is used on boot to initialize the pseudo-random number generator. Connect a floating wire to it or an analog sensor providing some sort of random data.",
+          "id": "BJw4nU1z9j",
+          "position": {
+            "x": -5,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 2,
+            "width": 6,
+            "units": "slots"
+          }
+        },
+        "H1TZukzci": {
+          "id": "H1TZukzci",
+          "position": {
+            "x": 7,
+            "y": -1,
+            "units": "slots"
+          },
+          "size": {
+            "width": 7,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "Use tweak-pulse node to send a pulse to the UPD input of the random node."
+        }
+      },
+      "path": "@/random-example",
+      "description": "Demonstration. Run in debugger. "
+    }
+  },
+  "license": "AGPL-3",
+  "version": "1.0.0",
+  "description": "Random numbers generation. Based on https://xod.io/libs/nkrkv/random/",
+  "name": "random"
+}

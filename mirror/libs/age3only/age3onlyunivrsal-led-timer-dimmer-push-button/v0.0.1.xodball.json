@@ -1,0 +1,81 @@
+{
+  "description": "It’s a Push switch operated universal timer dimmer. Where time period, duty cycle & dimming Could be decided by the user.",
+  "name": "age3onlyunivrsal-led-timer-dimmer-push-button",
+  "patches": {
+    "@/butten-led-flash": {
+      "attachments": [
+        {
+          "content": "struct State {\n    bool wasEnabled;\n    TimeMs timeToSwitch;\n    TimeMs nextSwitchTime;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    State* state = getState(ctx);\n    TimeMs t = transactionTime();\n\n    bool enabled = getValue<input_EN>(ctx);\n    bool reset = isInputDirty<input_RST>(ctx);\n    Number period = getValue<input_T>(ctx);\n    Number duty = getValue<input_DUTY>(ctx);\n\n    if (reset) {\n        emitValue<output_OUT>(ctx, enabled);\n        emitValue<output_N>(ctx, 0);\n        clearTimeout(ctx);\n        // enforce rescheduling at the next stage if enabled\n        state->wasEnabled = false;\n    }\n\n    if (enabled && !state->wasEnabled) {\n        // just enabled/resumed\n        state->timeToSwitch = (period * duty) * 1000.0;\n        setTimeout(ctx, state->timeToSwitch);\n        state->nextSwitchTime = t + state->timeToSwitch;\n        emitValue<output_OUT>(ctx, true);\n    } else if (!enabled && state->wasEnabled) {\n        // just paused\n        // TODO: we can get rid of storing nextSwitchTime if API would\n        // have a function to fetch current scheduled time for a ctx\n        state->timeToSwitch = state->nextSwitchTime - t;\n        clearTimeout(ctx);\n    } else if (isTimedOut(ctx)) {\n        // switch time\n        auto newValue = !getValue<output_OUT>(ctx);\n        auto k = newValue ? duty : (1.0 - duty);\n        state->timeToSwitch = period * k * 1000.0;\n\n        setTimeout(ctx, state->timeToSwitch);\n        state->nextSwitchTime = t + state->timeToSwitch;\n\n        emitValue<output_OUT>(ctx, newValue);\n        if (newValue)\n            emitValue<output_N>(ctx, getValue<output_N>(ctx) + 1);\n    }\n\n    state->wasEnabled = enabled;\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "links": {
+        "r1ZJQ8XIoz": {
+          "id": "r1ZJQ8XIoz",
+          "output": {
+            "nodeId": "H11QLmLsf",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "rJg1QLXIjM",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "nodes": {
+        "HkpkYT4sz": {
+          "id": "HkpkYT4sz",
+          "position": {
+            "x": 816,
+            "y": 510
+          },
+          "type": "age3only/univrsal-led-timer-dimmer-push-button/led-timer-dimmer"
+        },
+        "H11QLmLsf": {
+          "id": "H11QLmLsf",
+          "type": "xod/core/count",
+          "position": {
+            "x": 1088,
+            "y": 510
+          }
+        },
+        "rJg1QLXIjM": {
+          "id": "rJg1QLXIjM",
+          "type": "xod/core/watch",
+          "position": {
+            "x": 1088,
+            "y": 612
+          }
+        }
+      },
+      "path": "@/butten-led-flash"
+    },
+    "@/main": {
+      "nodes": {
+        "rkvhO5EoM": {
+          "boundValues": {
+            "BkphGiVof": 2,
+            "H1BTgj4jG": 11,
+            "HyPBJd94jM": 1,
+            "SkxnvloVjM": 13,
+            "SySSk_qEjz": 13,
+            "r1IBkd9VjG": 0.5,
+            "rkNB1_5Njz": 11
+          },
+          "id": "rkvhO5EoM",
+          "position": {
+            "x": 952,
+            "y": 918
+          },
+          "type": "@/butten-led-flash"
+        }
+      },
+      "path": "@/main"
+    },
+    "@/univrsal-led-timer-dimmer-push-button": {
+      "path": "@/univrsal-led-timer-dimmer-push-button"
+    }
+  },
+  "version": "0.0.1"
+}

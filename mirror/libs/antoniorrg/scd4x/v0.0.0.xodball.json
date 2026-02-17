@@ -1,0 +1,221 @@
+{
+  "patches": {
+    "@/scdx": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n\n      if (!isInputDirty<input_UPD>(ctx))\n  return;\n\n   auto mySensor = getValue<input_IN>(ctx);\n\n    if (mySensor->readMeasurement()) // readMeasurement will return true when fresh data is available\n  {\n\n\n    emitValue<output_CO2>(ctx, mySensor->getCO2());\n    emitValue<output_Temperature>(ctx, mySensor->getTemperature());\n    emitValue<output_Humidity>(ctx, mySensor->getHumidity());\n        \n    emitValue<output_DONE>(ctx, 1);\n  }\n\n        \n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "ByW59xBx9": {
+          "id": "ByW59xBx9",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SJ59qeSx9": {
+          "description": "Connect to scd4x-device",
+          "id": "SJ59qeSx9",
+          "type": "@/input-scd4x-device",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "BkdyieSl9": {
+          "description": "Updates the node.",
+          "label": "UPD",
+          "id": "BkdyieSl9",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "rJmWngBx5": {
+          "description": "Outputs CO2 gas concentration (in ppm).",
+          "label": "CO2",
+          "id": "rJmWngBx5",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "Hk8-nlBx9": {
+          "description": "Outputs environmental temperature (in oC).",
+          "label": "Temperature",
+          "id": "Hk8-nlBx9",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "HJPZnlHg5": {
+          "description": "Outputs environmental humidity (%RH).",
+          "label": "Humidity",
+          "id": "HJPZnlHg5",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "H1z9Txre9": {
+          "description": "Outputs 1 when the node has been executed",
+          "label": "DONE",
+          "id": "H1z9Txre9",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/scdx"
+    },
+    "@/example": {
+      "links": {
+        "S1h7nxHxc": {
+          "id": "S1h7nxHxc",
+          "output": {
+            "nodeId": "SJi7nerx9",
+            "pinKey": "BJ37clrg5"
+          },
+          "input": {
+            "nodeId": "SJ4mnxSlc",
+            "pinKey": "SJ59qeSx9"
+          }
+        },
+        "HJg2hergc": {
+          "id": "HJg2hergc",
+          "output": {
+            "nodeId": "SJ4mnxSlc",
+            "pinKey": "rJmWngBx5"
+          },
+          "input": {
+            "nodeId": "ryho3grx9",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "SkXhngSlc": {
+          "id": "SkXhngSlc",
+          "output": {
+            "nodeId": "SJ4mnxSlc",
+            "pinKey": "Hk8-nlBx9"
+          },
+          "input": {
+            "nodeId": "HyWn3lHx9",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "H14nnxHec": {
+          "id": "H14nnxHec",
+          "output": {
+            "nodeId": "SJ4mnxSlc",
+            "pinKey": "HJPZnlHg5"
+          },
+          "input": {
+            "nodeId": "rkzhngBg5",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "nodes": {
+        "SJ4mnxSlc": {
+          "boundLiterals": {
+            "BkdyieSl9": "Continuously"
+          },
+          "id": "SJ4mnxSlc",
+          "type": "@/scdx",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SJi7nerx9": {
+          "description": "This node sets up the scd4x device. Connect to the scdx node",
+          "id": "SJi7nerx9",
+          "type": "@/scd4x-device",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "ryho3grx9": {
+          "id": "ryho3grx9",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "HyWn3lHx9": {
+          "id": "HyWn3lHx9",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rkzhngBg5": {
+          "id": "rkzhngBg5",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example"
+    },
+    "@/scd4x-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/sparkfun/SparkFun_SCD4x_Arduino_Library\"\n#include <Wire.h>\n#include \"SparkFun_SCD4x_Arduino_Library.h\"\n\n\nnode {\n\n        meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = SCD4x*;\n    }\n\n    // Create an object of class Adafruit_TSL2591\n    SCD4x mySensor = SCD4x();\n\n\n    \n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n\n        Wire.begin();\n        mySensor.begin();\n        \n        emitValue<output_OUT>(ctx, &mySensor);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "Bk30xxre9": {
+          "id": "Bk30xxre9",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "BJ37clrg5": {
+          "id": "BJ37clrg5",
+          "type": "xod/patch-nodes/output-self",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/scd4x-device"
+    }
+  },
+  "name": "scd4x"
+}

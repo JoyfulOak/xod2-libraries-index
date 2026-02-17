@@ -1,0 +1,81 @@
+{
+  "description": "Reads analog signal value from ADC port. Does not check if port is a valid analog port. Arduino Unos with DIP ICs typically only have six analog ports broken out to headers: A0-A5. SMD Unos (such as the Grove Beginner Kit) also have headers for ports A6 and A7, however the function isValidAnalogPort does not consider A6 and A7 to be valid ports and so the inbuilt analog-read node cannot be used with these ports. This library provides an alternative analog-read node which doesn't check if the analog port is valid.",
+  "license": "AGPL-3.0",
+  "version": "0.0.2",
+  "patches": {
+    "@/analog-read-no-port-check": {
+      "nodes": {
+        "HybKdYJrw": {
+          "description": "Fires on reading complete",
+          "id": "HybKdYJrw",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BJeWK_tyrD": {
+          "description": "Reads analog signal value from board ADC port. Does not check if port is valid.",
+          "id": "BJeWK_tyrD",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJWWFdt1BP": {
+          "boundLiterals": {
+            "__out__": "A6"
+          },
+          "description": "Analog port to read from. Should start with `A` to succeed.\n",
+          "id": "SJWWFdt1BP",
+          "label": "PORT",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rkfbK_t1rw": {
+          "description": "The latest read value in range 0.0 … 1.0",
+          "id": "rkfbK_t1rw",
+          "label": "VAL",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SJ7ZtuY1BP": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers new read",
+          "id": "SJ7ZtuY1BP",
+          "label": "UPD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/analog-read-no-port-check",
+      "description": "Reads analog signal value from board ADC port. Does not check if port is valid.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        //static_assert(isValidAnalogPort(constant_input_PORT), \"must be a valid analog port\");\n\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        ::pinMode(constant_input_PORT, INPUT);\n        emitValue<output_VAL>(ctx, ::analogRead(constant_input_PORT) / 1023.);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "name": "analog-read-no-port-check"
+}

@@ -1,0 +1,315 @@
+{
+  "description": "Added node to work with nazarijtipusak080/buffer1@0.0.1 library\n\n",
+  "version": "0.0.1",
+  "patches": {
+    "@/byte-address": {
+      "nodes": {
+        "rk8kxUGRR": {
+          "id": "rk8kxUGRR",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 1,
+            "y": 0.75,
+            "units": "slots"
+          }
+        },
+        "rkeU1xIz0A": {
+          "label": "buffer1",
+          "id": "rkeU1xIz0A",
+          "type": "nazarijtipusak080/buffer1/input-buffer1",
+          "position": {
+            "x": 0,
+            "y": -0.25,
+            "units": "slots"
+          }
+        },
+        "rk-Ukg8MRR": {
+          "label": "len",
+          "id": "rk-Ukg8MRR",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 4,
+            "y": -0.25,
+            "units": "slots"
+          }
+        },
+        "H1GI1xUM0A": {
+          "label": "trigger",
+          "id": "H1GI1xUM0A",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 6,
+            "y": -0.25,
+            "units": "slots"
+          }
+        },
+        "S178klUGR0": {
+          "label": "done",
+          "id": "S178klUGR0",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "Hk4LkxLf0A": {
+          "label": "ERR",
+          "id": "Hk4LkxLf0A",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "ryH8ygLfAC": {
+          "label": "value",
+          "id": "ryH8ygLfAC",
+          "position": {
+            "x": 2,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "S1I81eLG00": {
+          "id": "S1I81eLG00",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "i"
+        }
+      },
+      "path": "@/byte-address",
+      "description": "Outputs the address of the specified byte in the buffer (you can check part of the buffer by specifying the length limit in \"len\"). If the byte is repeated in the buffer, output the last of the addresses. If the specified byte is not in the buffer, outputs -1.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n    // не використовується\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_trigger>(ctx)) return;\n if (isInputDirty<input_trigger>(ctx)) emitValue<output_i>(ctx,(-1));\n    // Отримуємо об'єкт буфера\n    auto _object = getValue<input_buffer1>(ctx); // буфер\n    uint16_t len = static_cast<uint16_t>(getValue<input_len>(ctx));\n    char value = getValue<input_value>(ctx); // char\n    // Перевірка, чи існує буфер і чи є правильна довжина\n    if (!_object->buffer || len > _object->len) {\n        emitValue<output_ERR>(ctx, 1);  // видаємо помилку\n        return;\n    }\n\n    // Зсув байтів вліво\n    for (int16_t i = 0; i < len; i++) {\n      if ( _object->buffer[i] == value){\n         emitValue<output_i>(ctx, i)  ;}\n    }\n    \n   \n    // Виводимо успіх\n    emitValue<output_done>(ctx, 1);\n}"
+        }
+      ]
+    },
+    "@/main": {
+      "nodes": {
+        "HJeMlIMCA": {
+          "id": "HJeMlIMCA",
+          "type": "@/byte-address",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SkWQxUzAA": {
+          "id": "SkWQxUzAA",
+          "type": "nazarijtipusak080/buffer1/buffer1",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "Sy-S_uF26C": "12"
+          }
+        },
+        "BJi7l8z00": {
+          "id": "BJi7l8z00",
+          "type": "xod/debug/tweak-byte",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "SykJ8wjXN": "34h"
+          }
+        },
+        "SkK4e8G0A": {
+          "id": "SkK4e8G0A",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "r1RElLzRA": {
+          "id": "r1RElLzRA",
+          "type": "xod/debug/tweak-number",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ByfGSDjQE": "5"
+          }
+        },
+        "H1qIxUGCR": {
+          "id": "H1qIxUGCR",
+          "type": "nazarijtipusak080/buffer1/set-byte",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "B1HPxUzRA": {
+          "id": "B1HPxUzRA",
+          "type": "xod/debug/tweak-byte",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "SykJ8wjXN": "34h"
+          }
+        },
+        "BJlBPeUG00": {
+          "id": "BJlBPeUG00",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "BkZrPg8fCC": {
+          "id": "BkZrPg8fCC",
+          "type": "xod/debug/tweak-number",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ByfGSDjQE": "4"
+          }
+        },
+        "S1h_l8GRA": {
+          "id": "S1h_l8GRA",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "size": {
+            "width": 3,
+            "height": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "H1rmxUMCR": {
+          "id": "H1rmxUMCR",
+          "output": {
+            "nodeId": "SkWQxUzAA",
+            "pinKey": "rymHO_t3pC"
+          },
+          "input": {
+            "nodeId": "HJeMlIMCA",
+            "pinKey": "rkeU1xIz0A"
+          }
+        },
+        "S1IHeUzRR": {
+          "id": "S1IHeUzRR",
+          "output": {
+            "nodeId": "BJi7l8z00",
+            "pinKey": "SykJ8wjXN"
+          },
+          "input": {
+            "nodeId": "HJeMlIMCA",
+            "pinKey": "ryH8ygLfAC"
+          }
+        },
+        "Sk9rgIGRA": {
+          "id": "Sk9rgIGRA",
+          "output": {
+            "nodeId": "r1RElLzRA",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "HJeMlIMCA",
+            "pinKey": "rk-Ukg8MRR"
+          }
+        },
+        "Sk1LxLzCA": {
+          "id": "Sk1LxLzCA",
+          "output": {
+            "nodeId": "SkK4e8G0A",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "HJeMlIMCA",
+            "pinKey": "H1GI1xUM0A"
+          }
+        },
+        "HyfPgIfCC": {
+          "id": "HyfPgIfCC",
+          "output": {
+            "nodeId": "SkWQxUzAA",
+            "pinKey": "rymHO_t3pC"
+          },
+          "input": {
+            "nodeId": "H1qIxUGCR",
+            "pinKey": "H1jZYY3pA"
+          }
+        },
+        "BJdDgLzAA": {
+          "id": "BJdDgLzAA",
+          "output": {
+            "nodeId": "B1HPxUzRA",
+            "pinKey": "SykJ8wjXN"
+          },
+          "input": {
+            "nodeId": "H1qIxUGCR",
+            "pinKey": "rJxPbFt2TA"
+          }
+        },
+        "S1FwxLGR0": {
+          "id": "S1FwxLGR0",
+          "output": {
+            "nodeId": "BkZrPg8fCC",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "H1qIxUGCR",
+            "pinKey": "H1bvbYK36R"
+          }
+        },
+        "SJ5DlUfRR": {
+          "id": "SJ5DlUfRR",
+          "output": {
+            "nodeId": "BJlBPeUG00",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "H1qIxUGCR",
+            "pinKey": "SkGvbKKnTC"
+          }
+        },
+        "HJeKlUMRA": {
+          "id": "HJeKlUMRA",
+          "output": {
+            "nodeId": "HJeMlIMCA",
+            "pinKey": "S1I81eLG00"
+          },
+          "input": {
+            "nodeId": "S1h_l8GRA",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/main"
+    }
+  },
+  "name": "buffer1-byte-address"
+}

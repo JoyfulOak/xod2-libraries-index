@@ -1,0 +1,957 @@
+{
+  "patches": {
+    "@/measure-raw": {
+      "nodes": {
+        "rkbccBsER": {
+          "description": "An SGP40 device.",
+          "label": "DEV",
+          "id": "rkbccBsER",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sgp40-device"
+        },
+        "BJSs9SiN0": {
+          "id": "BJSs9SiN0",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rkjn5BsEA": {
+          "description": "The current raw gas measurement",
+          "label": "Raw",
+          "id": "rkjn5BsEA",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "r1_6cSiNC": {
+          "description": "Pulse on measurement.",
+          "label": "Done",
+          "id": "r1_6cSiNC",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ryR-iroEA": {
+          "boundLiterals": {
+            "__out__": "25"
+          },
+          "description": "Temperature (Celsius). Used in temperature compensation. Connect to a temperature sensor or specify a value a temperature sensor is not available.",
+          "label": "TempC",
+          "id": "ryR-iroEA",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1kmoBsVA": {
+          "boundLiterals": {
+            "__out__": "50"
+          },
+          "description": "Relative humidity (%). Used in humidity compensation. Connect to a relative humidity sensor or specify a value if a sensor is not available.",
+          "label": "RH",
+          "id": "S1kmoBsVA",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rk_CaSjEC": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "rk_CaSjEC",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/measure-raw",
+      "description": "Make a raw gas measurement.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sensor = getValue<input_DEV>(ctx);\n\n        float tempC = getValue<input_TempC>(ctx);\n        float rh = getValue<input_RH>(ctx);\n        auto raw = sensor->measureRaw(tempC, rh);\n\n        emitValue<output_Raw>(ctx, raw);\n        emitValue<output_Done>(ctx, 1);\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/air-quality-sensor": {
+      "nodes": {
+        "H1YP5IjVA": {
+          "id": "H1YP5IjVA",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/sgp40-device"
+        },
+        "Hk3PcLiV0": {
+          "id": "Hk3PcLiV0",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/init"
+        },
+        "BkNej8s40": {
+          "description": "I²C bus",
+          "label": "I2C",
+          "id": "BkNej8s40",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/i2c/input-i2c"
+        },
+        "BJeExiIiVA": {
+          "description": "Update. Triggers measurement.",
+          "label": "UPD",
+          "id": "BJeExiIiVA",
+          "position": {
+            "x": 10,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BJbExj8sN0": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Initialize sensor.",
+          "label": "INIT",
+          "id": "BJbExj8sN0",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryfNxjUs40": {
+          "label": "init",
+          "id": "ryfNxjUs40",
+          "position": {
+            "x": 11,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SkOboUsE0": {
+          "label": "DEV",
+          "id": "SkOboUsE0",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1ldboUo4R": {
+          "label": "DEV",
+          "id": "S1ldboUo4R",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HyW_-sLoN0": {
+          "id": "HyW_-sLoN0",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/gate"
+        },
+        "rkffo8oVA": {
+          "label": "DEV",
+          "id": "rkffo8oVA",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "B1UNiLjNA": {
+          "id": "B1UNiLjNA",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "HJx8Ej8o4A": {
+          "label": "init",
+          "id": "HJx8Ej8o4A",
+          "position": {
+            "x": 3,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "r1yIiUjEA": {
+          "id": "r1yIiUjEA",
+          "position": {
+            "x": 11,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/measure-voc-index"
+        },
+        "rkwIiIoVC": {
+          "id": "rkwIiIoVC",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/measure-raw"
+        },
+        "rJDtjUoER": {
+          "description": "The current raw gas measurement",
+          "label": "Raw",
+          "id": "rJDtjUoER",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ryeDYiLj40": {
+          "description": "Pulse on measurement.",
+          "label": "Done",
+          "id": "ryeDYiLj40",
+          "position": {
+            "x": 12,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJwa2IsNC": {
+          "description": "The volatile organic compound (VOC) index.",
+          "label": "VOC",
+          "id": "HJwa2IsNC",
+          "position": {
+            "x": 11,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HyGyycTrR": {
+          "id": "HyGyycTrR",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "TempC",
+          "description": "Temperature (Celsius). Used in temperature compensation. Connect to a temperature sensor or specify a value a temperature sensor is not available.",
+          "boundLiterals": {
+            "__out__": "25"
+          }
+        },
+        "BJIkkc6HC": {
+          "id": "BJIkkc6HC",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "RH",
+          "description": "Relative humidity (%). Used in humidity compensation. Connect to a relative humidity sensor or specify a value if a sensor is not available.",
+          "boundLiterals": {
+            "__out__": "50"
+          }
+        }
+      },
+      "links": {
+        "HJJO5IjVC": {
+          "id": "HJJO5IjVC",
+          "input": {
+            "nodeId": "Hk3PcLiV0",
+            "pinKey": "BJkFuSiN0"
+          },
+          "output": {
+            "nodeId": "H1YP5IjVA",
+            "pinKey": "BkfrdBsN0"
+          }
+        },
+        "Bk2WoIiV0": {
+          "id": "Bk2WoIiV0",
+          "input": {
+            "nodeId": "HyW_-sLoN0",
+            "pinKey": "SJ-1mZPTz"
+          },
+          "output": {
+            "nodeId": "BJeExiIiVA",
+            "pinKey": "__out__"
+          }
+        },
+        "r1jMi8jVC": {
+          "id": "r1jMi8jVC",
+          "input": {
+            "nodeId": "rkffo8oVA",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "H1YP5IjVA",
+            "pinKey": "BkfrdBsN0"
+          }
+        },
+        "BJazsLj40": {
+          "id": "BJazsLj40",
+          "input": {
+            "nodeId": "Hk3PcLiV0",
+            "pinKey": "rJXd_rs4C"
+          },
+          "output": {
+            "nodeId": "BkNej8s40",
+            "pinKey": "__out__"
+          }
+        },
+        "SymXjUs40": {
+          "id": "SymXjUs40",
+          "input": {
+            "nodeId": "HyW_-sLoN0",
+            "pinKey": "B1P1nFwaM"
+          },
+          "output": {
+            "nodeId": "ryfNxjUs40",
+            "pinKey": "__out__"
+          }
+        },
+        "S1ZUNoLj4C": {
+          "id": "S1ZUNoLj4C",
+          "input": {
+            "nodeId": "HJx8Ej8o4A",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "B1UNiLjNA",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "HylBiUiVC": {
+          "id": "HylBiUiVC",
+          "input": {
+            "nodeId": "B1UNiLjNA",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "Hk3PcLiV0",
+            "pinKey": "r16xKBsNC"
+          }
+        },
+        "SJ4PoIs40": {
+          "id": "SJ4PoIs40",
+          "input": {
+            "nodeId": "r1yIiUjEA",
+            "pinKey": "HkKJGUo40"
+          },
+          "output": {
+            "nodeId": "S1ldboUo4R",
+            "pinKey": "__out__"
+          }
+        },
+        "H1wwi8sVC": {
+          "id": "H1wwi8sVC",
+          "input": {
+            "nodeId": "rkwIiIoVC",
+            "pinKey": "rkbccBsER"
+          },
+          "output": {
+            "nodeId": "SkOboUsE0",
+            "pinKey": "__out__"
+          }
+        },
+        "H1KDsUi4R": {
+          "id": "H1KDsUi4R",
+          "input": {
+            "nodeId": "rkwIiIoVC",
+            "pinKey": "rk_CaSjEC"
+          },
+          "output": {
+            "nodeId": "HyW_-sLoN0",
+            "pinKey": "OkPg7GDaW"
+          }
+        },
+        "SypvsUs4A": {
+          "id": "SypvsUs4A",
+          "input": {
+            "nodeId": "r1yIiUjEA",
+            "pinKey": "ByrFJfIoV0"
+          },
+          "output": {
+            "nodeId": "rkwIiIoVC",
+            "pinKey": "r1_6cSiNC"
+          }
+        },
+        "HJaKiIiNC": {
+          "id": "HJaKiIiNC",
+          "input": {
+            "nodeId": "ryeDYiLj40",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1yIiUjEA",
+            "pinKey": "r1MKJfUsVA"
+          }
+        },
+        "Bye9sLoEC": {
+          "id": "Bye9sLoEC",
+          "input": {
+            "nodeId": "rJDtjUoER",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkwIiIoVC",
+            "pinKey": "rkjn5BsEA"
+          }
+        },
+        "SJ55j8sNC": {
+          "id": "SJ55j8sNC",
+          "input": {
+            "nodeId": "Hk3PcLiV0",
+            "pinKey": "B1Op_rj4R"
+          },
+          "output": {
+            "nodeId": "BJbExj8sN0",
+            "pinKey": "__out__"
+          }
+        },
+        "SJqan8jN0": {
+          "id": "SJqan8jN0",
+          "input": {
+            "nodeId": "HJwa2IsNC",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1yIiUjEA",
+            "pinKey": "HJWYJGUiVR"
+          }
+        },
+        "Sytfkc6HC": {
+          "id": "Sytfkc6HC",
+          "output": {
+            "nodeId": "HyGyycTrR",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rkwIiIoVC",
+            "pinKey": "ryR-iroEA"
+          }
+        },
+        "BkoGk9ar0": {
+          "id": "BkoGk9ar0",
+          "output": {
+            "nodeId": "HyGyycTrR",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "r1yIiUjEA",
+            "pinKey": "H1Qt1GUiNA"
+          }
+        },
+        "Sy64k9pSR": {
+          "id": "Sy64k9pSR",
+          "output": {
+            "nodeId": "BJIkkc6HC",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rkwIiIoVC",
+            "pinKey": "S1kmoBsVA"
+          }
+        },
+        "SJyrkqaHR": {
+          "id": "SJyrkqaHR",
+          "output": {
+            "nodeId": "BJIkkc6HC",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "r1yIiUjEA",
+            "pinKey": "H14FyMUsNA"
+          }
+        }
+      },
+      "path": "@/air-quality-sensor",
+      "description": "Combines low level nodes to create a simple to use air quality sensor."
+    },
+    "@/init": {
+      "nodes": {
+        "rJXd_rs4C": {
+          "description": "I²C bus",
+          "label": "I2C",
+          "id": "rJXd_rs4C",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/i2c/input-i2c"
+        },
+        "BJkFuSiN0": {
+          "description": "An SGP40 device.",
+          "label": "DEV",
+          "id": "BJkFuSiN0",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sgp40-device"
+        },
+        "rkD2OHoER": {
+          "id": "rkD2OHoER",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "B1Op_rj4R": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Initialize.",
+          "label": "INIT",
+          "id": "B1Op_rj4R",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r16xKBsNC": {
+          "description": "Pulse on initialization.",
+          "label": "OK",
+          "id": "r16xKBsNC",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/init",
+      "description": "Initialize SGP40 device.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_INIT\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_INIT>(ctx))\n            return;\n\n        auto sensor = getValue<input_DEV>(ctx);\n        auto wire = getValue<input_I2C>(ctx);\n\n        // Attempt to initialize sgp40 module; if attempt fails emit error\n        if (!sensor->begin(wire)) {\n            raiseError(ctx);\n            return;\n        }\n\n        emitValue<output_OK>(ctx, 1);\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/01-example": {
+      "nodes": {
+        "Byyn3Lo4A": {
+          "id": "Byyn3Lo4A",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/air-quality-sensor"
+        },
+        "rywlT8sER": {
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "id": "rywlT8sER",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "H1lDepLi40": {
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "id": "H1lDepLi40",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "S1-Pla8jVA": {
+          "id": "S1-Pla8jVA",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "HyfDeaLiVC": {
+          "id": "HyfDeaLiVC",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "ryu-6Ls4C": {
+          "boundLiterals": {
+            "B13SCNhl-": "2"
+          },
+          "id": "ryu-6Ls4C",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        }
+      },
+      "links": {
+        "SkXwea8oEA": {
+          "id": "SkXwea8oEA",
+          "input": {
+            "nodeId": "HyfDeaLiVC",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "S1-Pla8jVA",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "S1pl6UjE0": {
+          "id": "S1pl6UjE0",
+          "input": {
+            "nodeId": "rywlT8sER",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "Byyn3Lo4A",
+            "pinKey": "rJDtjUoER"
+          }
+        },
+        "S10gaLoVC": {
+          "id": "S10gaLoVC",
+          "input": {
+            "nodeId": "H1lDepLi40",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "Byyn3Lo4A",
+            "pinKey": "HJwa2IsNC"
+          }
+        },
+        "ryeZTIiEC": {
+          "id": "ryeZTIiEC",
+          "input": {
+            "nodeId": "S1-Pla8jVA",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "Byyn3Lo4A",
+            "pinKey": "ryeDYiLj40"
+          }
+        },
+        "Syib6LiEC": {
+          "id": "Syib6LiEC",
+          "input": {
+            "nodeId": "Byyn3Lo4A",
+            "pinKey": "BJeExiIiVA"
+          },
+          "output": {
+            "nodeId": "ryu-6Ls4C",
+            "pinKey": "HJU8CE2lW"
+          }
+        }
+      },
+      "path": "@/01-example",
+      "description": "Patch to test air-quality-sensor node."
+    },
+    "@/measure-voc-index": {
+      "nodes": {
+        "HkKJGUo40": {
+          "description": "An SGP40 device.",
+          "label": "DEV",
+          "id": "HkKJGUo40",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sgp40-device"
+        },
+        "S1ltJGUoE0": {
+          "id": "S1ltJGUoE0",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJWYJGUiVR": {
+          "description": "The volatile organic compound (VOC) index.",
+          "label": "VOC",
+          "id": "HJWYJGUiVR",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "r1MKJfUsVA": {
+          "description": "Pulse on measurement.",
+          "label": "Done",
+          "id": "r1MKJfUsVA",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "H1Qt1GUiNA": {
+          "boundLiterals": {
+            "__out__": "25"
+          },
+          "description": "Temperature (Celsius). Used in temperature compensation. Connect to a temperature sensor or specify a value a temperature sensor is not available.",
+          "label": "TempC",
+          "id": "H1Qt1GUiNA",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H14FyMUsNA": {
+          "boundLiterals": {
+            "__out__": "50"
+          },
+          "description": "Relative humidity (%). Used in humidity compensation. Connect to a relative humidity sensor or specify a value if a sensor is not available.",
+          "label": "RH",
+          "id": "H14FyMUsNA",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ByrFJfIoV0": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "ByrFJfIoV0",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/measure-voc-index",
+      "description": "Measure volatile organic compound index.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sensor = getValue<input_DEV>(ctx);\n\n        float tempC = getValue<input_TempC>(ctx);\n        float rh = getValue<input_RH>(ctx);\n        auto voc = sensor->measureVocIndex(tempC, rh);\n\n        emitValue<output_VOC>(ctx, voc);\n        emitValue<output_Done>(ctx, 1);\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/reset": {
+      "nodes": {
+        "rJjXlPi4R": {
+          "description": "An SGP40 device.",
+          "label": "DEV",
+          "id": "rJjXlPi4R",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sgp40-device"
+        },
+        "BJejXxwi4A": {
+          "id": "BJejXxwi4A",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rk-j7xviNA": {
+          "description": "Pulse on successful reset.",
+          "label": "OK",
+          "id": "rk-j7xviNA",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ByGimePsNR": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "ByGimePsNR",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/reset",
+      "description": "Perform a soft reset using the \"General Call\" mode. N.B. this is not sensor specific and all devices that support the General Call mode on the on the same I²C bus will perform this.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sensor = getValue<input_DEV>(ctx);\n\n        // Attempt to reset; if rest fails emit error\n        if (!sensor->softReset()) {\n            raiseError(ctx);\n            return;\n        }\n\n        emitValue<output_OK>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/switch-heater-off": {
+      "nodes": {
+        "HyFXkDj4R": {
+          "description": "An SGP40 device.",
+          "label": "DEV",
+          "id": "HyFXkDj4R",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sgp40-device"
+        },
+        "HyxK7kvoE0": {
+          "description": "Turn off heater to lower current consumption. Launching a measurement automatically wakes up the sensor again.",
+          "id": "HyxK7kvoE0",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SkzYmkDs4A": {
+          "description": "Pulse if heater successfully switched off.",
+          "label": "OK",
+          "id": "SkzYmkDs4A",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HySK7kPoER": {
+          "description": "Update.",
+          "label": "UPD",
+          "id": "HySK7kPoER",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/switch-heater-off",
+      "description": "Turn off heater to lower curent consumption. Next measurement will automatically reactivate the heater.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sensor = getValue<input_DEV>(ctx);\n\n        // Attempt to switch off heater; if attempt fails emit error\n        if (!sensor->heaterOff()) {\n            raiseError(ctx);\n            return;\n        }\n\n        emitValue<output_OK>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/sgp40-device": {
+      "nodes": {
+        "SyA1t7sNR": {
+          "id": "SyA1t7sNR",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BkfrdBsN0": {
+          "description": "An SGP40 device.",
+          "label": "DEV",
+          "id": "BkfrdBsN0",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/sgp40-device",
+      "description": "Create an SGP40 device.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "// Tell XOD where it can download the libraries:\n#pragma XOD require \"https://github.com/adafruit/Adafruit_BusIO\"\n#pragma XOD require \"https://github.com/adafruit/Adafruit_Sensor\"\n#pragma XOD require \"https://github.com/adafruit/Adafruit_SGP40\"\n\n//Include C++ libraries\n#include <Adafruit_SGP40.h>\n\nnode {\n\n    meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = Adafruit_SGP40*;\n    }\n\n    // Keep Adafruit_SGP30 object in state\n    Adafruit_SGP40 sensor = Adafruit_SGP40();\n\n\n    void evaluate(Context ctx) {\n        emitValue<output_DEV>(ctx, &sensor);\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "license": "BSD",
+  "version": "0.0.3",
+  "description": "SGP air quality sensor. Wraps https://github.com/adafruit/Adafruit_SGP40",
+  "name": "sgp40-air-quality-sensor"
+}

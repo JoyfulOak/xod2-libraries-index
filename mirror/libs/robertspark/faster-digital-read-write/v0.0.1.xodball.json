@@ -1,0 +1,301 @@
+{
+  "description": "faster read and write example using the digitalWriteFast.h library",
+  "license": "AGPL-3.0",
+  "name": "faster-digital-read-write",
+  "patches": {
+    "@/fastread": {
+      "nodes": {
+        "H1emHA3Y2r": {
+          "id": "H1emHA3Y2r",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BkZXrAnFnS": {
+          "description": "Triggers new read",
+          "id": "BkZXrAnFnS",
+          "label": "UPD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ByzQrCnthB": {
+          "description": "Fires on writing complete",
+          "id": "ByzQrCnthB",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SkWr4pYnB": {
+          "id": "SkWr4pYnB",
+          "type": "xod/patch-nodes/output-boolean",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "SIG",
+          "description": "The last read signal value"
+        },
+        "ryjGrpF3S": {
+          "id": "ryjGrpF3S",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "PORT",
+          "description": "Board port to write to"
+        }
+      },
+      "path": "@/fastread",
+      "description": "Faster read of digital signal value from board GPIO port.\n\nPossible errors:\n— Invalid port",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD error_raise enable\n#pragma XOD require \"https://github.com/robertspark/FastDigitalWrite\"\n\n{{#global}}\n#include <digitalWriteFast.h>\n{{/global}}\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    const uint8_t port = getValue<input_PORT>(ctx);\n    if (!isValidDigitalPort(port)) {\n        raiseError<output_DONE>(ctx);\n        return;\n    }\n\n    pinModeFast(port, INPUT);\n    emitValue<output_SIG>(ctx, digitalReadFast(port));\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/fastwrite": {
+      "nodes": {
+        "B1tju6Y3H": {
+          "id": "B1tju6Y3H",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rkxKi_aF3r": {
+          "description": "Triggers new write",
+          "id": "rkxKi_aF3r",
+          "label": "UPD",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJbYiuaFhH": {
+          "description": "Fires on writing complete",
+          "id": "rJbYiuaFhH",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "B17FouTYhB": {
+          "id": "B17FouTYhB",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "PORT",
+          "description": "Board port to write to"
+        },
+        "r1yCOTYnr": {
+          "id": "r1yCOTYnr",
+          "type": "xod/patch-nodes/input-boolean",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "SIG",
+          "description": "State to write"
+        }
+      },
+      "path": "@/fastwrite",
+      "description": "Faster outputs high or low signal on a board port.\n\nPossible errors:\n— Invalid port",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/robertspark/FastDigitalWrite\"\n\n{{#global}}\n#include <digitalWriteFast.h>\n{{/global}}\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    const uint8_t port = getValue<input_PORT>(ctx);\n    if (!isValidDigitalPort(port)) {\n        raiseError<output_DONE>(ctx);\n        return;\n    }\n\n    pinModeFast(port, OUTPUT);\n    const bool val = getValue<input_SIG>(ctx);\n    digitalWriteFast(port, val);\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/fastread-pullup": {
+      "nodes": {
+        "HJgN3Rt2S": {
+          "id": "HJgN3Rt2S",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "B1egEnRtnH": {
+          "description": "Triggers new read",
+          "id": "B1egEnRtnH",
+          "label": "UPD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkZl42RF3S": {
+          "description": "Fires on writing complete",
+          "id": "SkZl42RF3S",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ryfeV3CF3S": {
+          "id": "ryfeV3CF3S",
+          "type": "xod/patch-nodes/output-boolean",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "SIG",
+          "description": "The last read signal value"
+        },
+        "rJXlE2AFhH": {
+          "id": "rJXlE2AFhH",
+          "type": "xod/patch-nodes/input-port",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "PORT",
+          "description": "Board port to write to"
+        }
+      },
+      "path": "@/fastread-pullup",
+      "description": "Faster read of a digital signal value from a board GPIO port with the internal built-in pull-up resistor enabled. It forces the resulting signal to be True if the wire on the port floats (is disconnected).\n\nPossible errors:\n— Invalid port",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD error_raise enable\n#pragma XOD require \"https://github.com/robertspark/FastDigitalWrite\"\n\n{{#global}}\n#include <digitalWriteFast.h>\n{{/global}}\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    const uint8_t port = getValue<input_PORT>(ctx);\n    if (!isValidDigitalPort(port)) {\n        raiseError<output_DONE>(ctx);\n        return;\n    }\n\n    pinModeFast(port, INPUT_PULLUP);\n    emitValue<output_SIG>(ctx, digitalReadFast(port));\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/example": {
+      "description": "faster read and write example using the digitalWriteFast.h library",
+      "links": {
+        "SJ6uSaK2B": {
+          "id": "SJ6uSaK2B",
+          "output": {
+            "nodeId": "SJvNgTYhH",
+            "pinKey": "SkWr4pYnB"
+          },
+          "input": {
+            "nodeId": "BJiOBptnr",
+            "pinKey": "SJMVU0urvkZ"
+          }
+        },
+        "r11KSpFnr": {
+          "id": "r11KSpFnr",
+          "output": {
+            "nodeId": "HJUIHaKhr",
+            "pinKey": "SkWr4pYnB"
+          },
+          "input": {
+            "nodeId": "BJiOBptnr",
+            "pinKey": "r1bVLR_BPJW"
+          }
+        },
+        "SyZ5hAK3r": {
+          "id": "SyZ5hAK3r",
+          "output": {
+            "nodeId": "HyYYnAKhB",
+            "pinKey": "ryfeV3CF3S"
+          },
+          "input": {
+            "nodeId": "SJpXPCY3r",
+            "pinKey": "r1yCOTYnr"
+          }
+        }
+      },
+      "nodes": {
+        "SJvNgTYhH": {
+          "id": "SJvNgTYhH",
+          "type": "@/fastread",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "HJUIHaKhr": {
+          "id": "HJUIHaKhr",
+          "type": "@/fastread",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ryjGrpF3S": "D1"
+          }
+        },
+        "BJiOBptnr": {
+          "id": "BJiOBptnr",
+          "type": "xod/core/and",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SJpXPCY3r": {
+          "id": "SJpXPCY3r",
+          "type": "@/fastwrite",
+          "position": {
+            "x": -5,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B17FouTYhB": "D5"
+          }
+        },
+        "HyYYnAKhB": {
+          "id": "HyYYnAKhB",
+          "type": "@/fastread-pullup",
+          "position": {
+            "x": -4,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "rJXlE2AFhH": "D7"
+          }
+        }
+      },
+      "path": "@/example"
+    }
+  },
+  "version": "0.0.1"
+}

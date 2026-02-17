@@ -1,0 +1,501 @@
+{
+  "patches": {
+    "@/mutex": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "HJAPJgcFE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJAPJgcFE",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-self",
+          "@@type": "xod-project/Node"
+        },
+        "HJNdye9FN": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJNdye9FN",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/mutex",
+      "description": "Describes a mutually exclusive resource. Used to avoid conflicts between nodes controlling long-running processes. No two processes may lock a mutex at the same time.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "namespace xod {\nnamespace mutex {\n    using NodeId = uint16_t;\n    /*\n      Represents some resource that should be owned/controlled exclusively by a node\n      to perform a non-instant task.\n\n      An example is a node which slowly rotates a motor shaft. The process is long\n      (several seconds) and a particular rotation node can lock the motor resource\n      so that other sibling rotation nodes can’t cause a conflict until the job is\n      done and the motor resource is unlocked.\n    */\n    class Mutex {\n      public:\n        static constexpr NodeId NO_LOCK = 0xFFFF;\n\n        bool lockFor(NodeId nodeId) {\n            if (isLocked())\n                return false;\n\n            _lockedFor = nodeId;\n            return true;\n        }\n\n        bool unlock(NodeId nodeId) {\n            if (!isLockedFor(nodeId))\n                return false;\n\n            forceUnlock();\n            return true;\n        }\n\n        void forceUnlock() {\n            _lockedFor = NO_LOCK;\n        }\n\n        bool isLocked() const {\n            return _lockedFor != NO_LOCK;\n        }\n\n        bool isLockedFor(NodeId nodeId) const {\n            return _lockedFor == nodeId;\n        }\n\n      protected:\n        NodeId _lockedFor = NO_LOCK;\n    };\n} // namespace mutex\n} // namespace xod\n\nnode {\n    meta {\n      using Type = xod::mutex::Mutex*;\n    }\n\n    xod::mutex::Mutex mux;\n\n    void evaluate(Context ctx) {\n        emitValue<output_OUT>(ctx, &mux);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/mutex-break": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1WNKGgqFV": {
+          "boundLiterals": {},
+          "description": "Do break",
+          "label": "DO",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1WNKGgqFV",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "H1GNKfg5tE": {
+          "boundLiterals": {},
+          "description": "The mutex",
+          "label": "MUX",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1GNKfg5tE",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-mutex",
+          "@@type": "xod-project/Node"
+        },
+        "HkEKMl5Y4": {
+          "boundLiterals": {},
+          "description": "Fires when the mutex is free. In practice immediatelly after `DO`.",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkEKMl5Y4",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HygNtGx9t4": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HygNtGx9t4",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "rJmVtze9YV": {
+          "boundLiterals": {},
+          "description": "The mutex",
+          "label": "MUX'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJmVtze9YV",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/output-mutex",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/mutex-break",
+      "description": "Forces mutex release/unlock regardless of who owns it currently.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_DO\n\nnode {\n    void evaluate(Context ctx) {\n        auto mux = getValue<input_MUX>(ctx);\n\n        if (isSettingUp()) {\n            // Short-circuit RES and RES'\n            emitValue<output_MUXU0027>(ctx, mux);\n        }\n\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        mux->forceUnlock();\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/mutex-gate": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJsBc5FHE": {
+          "boundLiterals": {},
+          "description": "Follows a pulse on `IN` if the mutex is acquired by this particular instance of the node",
+          "label": "OUT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJsBc5FHE",
+          "position": {
+            "x": 4,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Bk-GcqKrN": {
+          "boundLiterals": {},
+          "description": "Release the mutex lock",
+          "label": "RLS",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bk-GcqKrN",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "BkMOqqtSE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkMOqqtSE",
+          "position": {
+            "x": 3,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "H1OMflcK4": {
+          "boundLiterals": {},
+          "description": "The mutex",
+          "label": "MUX",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1OMflcK4",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "@/input-mutex",
+          "@@type": "xod-project/Node"
+        },
+        "H1jVq9FrE": {
+          "boundLiterals": {},
+          "description": "Pulses if the mutex lock acquired successfully, that is, it was free at the moment of `ACQ` pulse",
+          "label": "ACQd",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1jVq9FrE",
+          "position": {
+            "x": 5,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HJAMzx9KN": {
+          "boundLiterals": {},
+          "description": "The mutex",
+          "label": "MUX'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJAMzx9KN",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "@/output-mutex",
+          "@@type": "xod-project/Node"
+        },
+        "HyESq9FHN": {
+          "boundLiterals": {},
+          "description": "Pulses if the mutex lock released successfully, that is, it belonged to this particular node instance at the moment of `RLS` pulse",
+          "label": "RLSd",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyESq9FHN",
+          "position": {
+            "x": 6,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "S15-cqKrV": {
+          "boundLiterals": {},
+          "description": "Acquire the mutex lock",
+          "label": "ACQ",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S15-cqKrV",
+          "position": {
+            "x": 5,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "S1KM9qFBE": {
+          "boundLiterals": {},
+          "description": "A pulse to pass or reject",
+          "label": "IN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1KM9qFBE",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/mutex-gate",
+      "description": "Locks/unlocks a mutex and passes/rejects pulses through itself depending on the mutex lock state",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    void evaluate(Context ctx) {\n        auto mux = getValue<input_MUX>(ctx);\n\n        if (isSettingUp()) {\n            // Short-circuit RES and RES'\n            emitValue<output_MUXU0027>(ctx, mux);\n        }\n\n        bool justEntered = false;\n        auto nodeId = getNodeId(ctx);\n\n        if (isInputDirty<input_ACQ>(ctx) && mux->lockFor(nodeId)) {\n            justEntered = true;\n        }\n\n        if (isInputDirty<input_RLS>(ctx) && mux->unlock(nodeId)) {\n            justEntered = false;\n            emitValue<output_RLSd>(ctx, 1);\n        }\n\n        if (justEntered)\n            emitValue<output_ACQd>(ctx, 1);\n\n        if (isInputDirty<input_IN>(ctx) && mux->isLockedFor(nodeId))\n            emitValue<output_OUT>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/mutex-state": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkeRUbQ5YV": {
+          "boundLiterals": {},
+          "description": "Release the mutex lock",
+          "label": "RLS",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkeRUbQ5YV",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "By4C8Z7cK4": {
+          "boundLiterals": {},
+          "description": "The mutex",
+          "label": "MUX'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "By4C8Z7cK4",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/output-mutex",
+          "@@type": "xod-project/Node"
+        },
+        "H1L08Z7cKE": {
+          "boundLiterals": {},
+          "description": "Acquire the mutex lock",
+          "label": "ACQ",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1L08Z7cKE",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HJW0LZQcKE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJW0LZQcKE",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "HkG0UbX9FV": {
+          "boundLiterals": {},
+          "description": "The mutex",
+          "label": "MUX",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkG0UbX9FV",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-mutex",
+          "@@type": "xod-project/Node"
+        },
+        "SJJlGmqKE": {
+          "boundLiterals": {},
+          "description": "Pulses continuously (with maximal possible rate) whenever the mutex is locked by this particular node instance",
+          "label": "LOOP",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJJlGmqKE",
+          "position": {
+            "x": 4,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SkBCLZ7qYE": {
+          "boundLiterals": {},
+          "description": "Pulses if the mutex lock released successfully, that is, it belonged to this particular node instance at the moment of `RLS` pulse",
+          "label": "RLSd",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkBCLZ7qYE",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "r1XA8bQ5tE": {
+          "boundLiterals": {},
+          "description": "Pulses if the mutex lock acquired successfully, that is, it was free at the moment of `ACQ` pulse",
+          "label": "ACQd",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1XA8bQ5tE",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "r1wJGQ5YN": {
+          "boundLiterals": {},
+          "description": "Outputs whether the mutex is locked by this particular node instance",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1wJGQ5YN",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-boolean",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/mutex-state",
+      "description": "Locks/unlocks a mutex and exposes its activity state. Useful to create state machines.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    void evaluate(Context ctx) {\n        auto mux = getValue<input_MUX>(ctx);\n\n        if (isSettingUp()) {\n            // Short-circuit RES and RES'\n            emitValue<output_MUXU0027>(ctx, mux);\n        }\n\n        bool justEntered = false;\n        auto nodeId = getNodeId(ctx);\n\n        if (isInputDirty<input_ACQ>(ctx) && mux->lockFor(nodeId)) {\n            justEntered = true;\n        }\n\n        if (isInputDirty<input_RLS>(ctx) && mux->unlock(nodeId)) {\n            justEntered = false;\n            emitValue<output_RLSd>(ctx, 1);\n        }\n\n        if (justEntered)\n            emitValue<output_ACQd>(ctx, 1);\n\n        auto active = mux->isLockedFor(nodeId);\n        emitValue<output_ACT>(ctx, active);\n\n        if (active) {\n            emitValue<output_LOOP>(ctx, 1);\n            setImmediate();\n        }\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "authors": [
+    "XOD"
+  ],
+  "license": "AGPL-3.0",
+  "version": "0.37.3",
+  "description": "Library to work with mutually exclusive resources. Useful to avoid conflicts between nodes controlling long-running processes.",
+  "apiKey": "",
+  "name": "mutex"
+}

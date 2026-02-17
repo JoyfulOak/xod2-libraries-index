@@ -1,0 +1,100 @@
+{
+  "description": "digital-read with selectable PullUp",
+  "name": "digital-read-pullup",
+  "patches": {
+    "@/digital-read-pullup": {
+      "attachments": [
+        {
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n   if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    const uint8_t port = getValue<input_PORT>(ctx);\n    if (!isValidDigitalPort(port)) {\n        emitValue<output_ERR>(ctx, 1);\n        return;\n    }\n\n    ::pinMode(port, INPUT);\n    ::digitalWrite(port, getValue<input_PULLUP>(ctx));\n    emitValue<output_SIG>(ctx, ::digitalRead(port));\n    emitValue<output_DONE>(ctx, 1);\n}",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "Bkh5Sxtgr": {
+          "id": "Bkh5Sxtgr",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ByWcl8gFeH": {
+          "boundLiterals": {
+            "__in__": "False"
+          },
+          "description": "The last read signal value",
+          "id": "ByWcl8gFeH",
+          "label": "SIG",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "H1GcxUlFxH": {
+          "description": "Fires if update failed. E.g. `PORT` does not exist.",
+          "id": "H1GcxUlFxH",
+          "label": "ERR",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HkcxLeKxr": {
+          "description": "Board port to read from",
+          "id": "HkcxLeKxr",
+          "label": "PORT",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SkX5xIeteH": {
+          "description": "Fires on reading complete",
+          "id": "SkX5xIeteH",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SksbUeKer": {
+          "description": "True enables PullUp\nFalse disable PullUp",
+          "id": "SksbUeKer",
+          "label": "PULLUP",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rye5gLlKxr": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers new read",
+          "id": "rye5gLlKxr",
+          "label": "UPD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/digital-read-pullup"
+    }
+  },
+  "version": "1.0.0"
+}

@@ -1,0 +1,400 @@
+{
+  "description": "This takes the temp and relative humidity from a dht11 and  converts the information to a \"feels like temp\".  the humidity , temp and \"feels like temp\" are displayed on an lcd (i2c).  the \"feels like temp\" is  also mapped to a nrgb led.  the led turns blue when cold, green when comfortable and red when hot.",
+  "license": "none",
+  "version": "1.0.0",
+  "patches": {
+    "@/feels-like-temp-lcd-rgb-dht11": {
+      "nodes": {
+        "rJGir6eDB": {
+          "id": "rJGir6eDB",
+          "type": "xod/common-hardware/dht11-thermometer",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "SkUQV5wIb": "D7"
+          }
+        },
+        "Bymb8Tlvr": {
+          "id": "Bymb8Tlvr",
+          "type": "xod/core/square-wave",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SkRNvaevB": {
+          "id": "SkRNvaevB",
+          "type": "timothymknapp/rgb-led/feels-like-temp",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "H1D-d6eDr": {
+          "id": "H1D-d6eDr",
+          "type": "xod/common-hardware/text-lcd-16x2-i2c",
+          "position": {
+            "x": -1,
+            "y": 3,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "rJlYT7EfW": "63d"
+          }
+        },
+        "B1pud6gwH": {
+          "id": "B1pud6gwH",
+          "type": "xod/core/concat",
+          "position": {
+            "x": -1,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "Hkqu9oaWb": "\"T\"",
+            "BkeKcj6ZZ-$1": "\"C H\"",
+            "BkeKcj6ZZ-$3": "\"%\""
+          },
+          "arityLevel": 4
+        },
+        "r1OYuTgwB": {
+          "id": "r1OYuTgwB",
+          "type": "xod/core/multiply",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "SJ4zUC_BD1-": "100"
+          }
+        },
+        "r1yZFTgPr": {
+          "id": "r1yZFTgPr",
+          "type": "xod/core/concat",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "Hkqu9oaWb": "\"feels like\"",
+            "BkeKcj6ZZ-$1": "\"C\""
+          },
+          "arityLevel": 2
+        },
+        "rJQFlx-vS": {
+          "id": "rJQFlx-vS",
+          "type": "xod/math/clip",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "Clip Red",
+          "boundLiterals": {
+            "H1WURCknW": "22",
+            "Hy_U0013b": "35"
+          }
+        },
+        "SJcFxgZPH": {
+          "id": "SJcFxgZPH",
+          "type": "xod/math/clip",
+          "position": {
+            "x": 17,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "Clip Blue",
+          "boundLiterals": {
+            "H1WURCknW": "12",
+            "Hy_U0013b": "21"
+          }
+        },
+        "ryoYxxbvB": {
+          "id": "ryoYxxbvB",
+          "type": "xod/math/clip",
+          "position": {
+            "x": 12,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "Clip Green",
+          "boundLiterals": {
+            "H1WURCknW": "19",
+            "Hy_U0013b": "26"
+          }
+        },
+        "BJBtWx-wB": {
+          "id": "BJBtWx-wB",
+          "type": "timothymknapp/rgb-led/rgb-led",
+          "position": {
+            "x": 10,
+            "y": 5,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "Sk--j3gDS": "D11",
+            "r1SGj2xwH": "D10",
+            "B1Uzj3eDH": "D9"
+          }
+        },
+        "rJi3-gWPB": {
+          "id": "rJi3-gWPB",
+          "type": "xod/math/map",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "label": "R map",
+          "boundLiterals": {
+            "ry1z8CuBDy-": "22",
+            "HJCWLAdSwyW": "35",
+            "rJbGU0_Hv1Z": "0.0",
+            "rkpbU0OrwyZ": "1.0"
+          }
+        },
+        "HyzR-ebPS": {
+          "id": "HyzR-ebPS",
+          "type": "xod/math/map",
+          "position": {
+            "x": 11,
+            "y": 4,
+            "units": "slots"
+          },
+          "label": "G map",
+          "boundLiterals": {
+            "rJbGU0_Hv1Z": "0.0",
+            "rkpbU0OrwyZ": "1.0",
+            "ry1z8CuBDy-": "19",
+            "HJCWLAdSwyW": "26"
+          }
+        },
+        "B17CZeZvH": {
+          "id": "B17CZeZvH",
+          "type": "xod/math/map",
+          "position": {
+            "x": 16,
+            "y": 4,
+            "units": "slots"
+          },
+          "label": "B Map",
+          "boundLiterals": {
+            "rJbGU0_Hv1Z": "0.0",
+            "rkpbU0OrwyZ": "1.0",
+            "ry1z8CuBDy-": "12",
+            "HJCWLAdSwyW": "21"
+          }
+        }
+      },
+      "links": {
+        "SJYb86gvH": {
+          "id": "SJYb86gvH",
+          "output": {
+            "nodeId": "Bymb8Tlvr",
+            "pinKey": "S1aYu6KJf"
+          },
+          "input": {
+            "nodeId": "rJGir6eDB",
+            "pinKey": "ryeE45PLZ"
+          }
+        },
+        "SyVSvTgDS": {
+          "id": "SyVSvTgDS",
+          "output": {
+            "nodeId": "rJGir6eDB",
+            "pinKey": "BJ244qwLZ"
+          },
+          "input": {
+            "nodeId": "SkRNvaevB",
+            "pinKey": "rJrn5sgvS"
+          }
+        },
+        "rJuSwTgwH": {
+          "id": "rJuSwTgwH",
+          "output": {
+            "nodeId": "rJGir6eDB",
+            "pinKey": "HkgBE9D8Z"
+          },
+          "input": {
+            "nodeId": "SkRNvaevB",
+            "pinKey": "r1fCqilvB"
+          }
+        },
+        "Hyu5_pevB": {
+          "id": "Hyu5_pevB",
+          "output": {
+            "nodeId": "rJGir6eDB",
+            "pinKey": "HkgBE9D8Z"
+          },
+          "input": {
+            "nodeId": "r1OYuTgwB",
+            "pinKey": "B1GfLR_SPk-"
+          }
+        },
+        "HyXndpxPS": {
+          "id": "HyXndpxPS",
+          "output": {
+            "nodeId": "rJGir6eDB",
+            "pinKey": "BJ244qwLZ"
+          },
+          "input": {
+            "nodeId": "B1pud6gwH",
+            "pinKey": "BkeKcj6ZZ"
+          }
+        },
+        "BkkeKpevH": {
+          "id": "BkkeKpevH",
+          "output": {
+            "nodeId": "B1pud6gwH",
+            "pinKey": "rksccsp-W"
+          },
+          "input": {
+            "nodeId": "H1D-d6eDr",
+            "pinKey": "B1TSE9tZ-"
+          }
+        },
+        "rJEZKaxDH": {
+          "id": "rJEZKaxDH",
+          "output": {
+            "nodeId": "r1yZFTgPr",
+            "pinKey": "rksccsp-W"
+          },
+          "input": {
+            "nodeId": "H1D-d6eDr",
+            "pinKey": "H1bLN9F-b"
+          }
+        },
+        "ByPWtTlPr": {
+          "id": "ByPWtTlPr",
+          "output": {
+            "nodeId": "SkRNvaevB",
+            "pinKey": "SyOLojgwr"
+          },
+          "input": {
+            "nodeId": "r1yZFTgPr",
+            "pinKey": "BkeKcj6ZZ"
+          }
+        },
+        "r1bylx-DS": {
+          "id": "r1bylx-DS",
+          "output": {
+            "nodeId": "r1OYuTgwB",
+            "pinKey": "BkQzLCurwJZ"
+          },
+          "input": {
+            "nodeId": "B1pud6gwH",
+            "pinKey": "BkeKcj6ZZ-$2"
+          }
+        },
+        "B149xlbvH": {
+          "id": "B149xlbvH",
+          "output": {
+            "nodeId": "SkRNvaevB",
+            "pinKey": "SyOLojgwr"
+          },
+          "input": {
+            "nodeId": "rJQFlx-vS",
+            "pinKey": "Hk2H0A13-"
+          }
+        },
+        "BJwqlebwH": {
+          "id": "BJwqlebwH",
+          "output": {
+            "nodeId": "SkRNvaevB",
+            "pinKey": "SyOLojgwr"
+          },
+          "input": {
+            "nodeId": "ryoYxxbvB",
+            "pinKey": "Hk2H0A13-"
+          }
+        },
+        "S1Yqxg-wr": {
+          "id": "S1Yqxg-wr",
+          "output": {
+            "nodeId": "SkRNvaevB",
+            "pinKey": "SyOLojgwr"
+          },
+          "input": {
+            "nodeId": "SJcFxgZPH",
+            "pinKey": "Hk2H0A13-"
+          }
+        },
+        "ryRgMgbDB": {
+          "id": "ryRgMgbDB",
+          "output": {
+            "nodeId": "rJQFlx-vS",
+            "pinKey": "BJRURA1nW"
+          },
+          "input": {
+            "nodeId": "rJi3-gWPB",
+            "pinKey": "BJlzICOSv1-"
+          }
+        },
+        "rkx-GlbDB": {
+          "id": "rkx-GlbDB",
+          "output": {
+            "nodeId": "ryoYxxbvB",
+            "pinKey": "BJRURA1nW"
+          },
+          "input": {
+            "nodeId": "HyzR-ebPS",
+            "pinKey": "BJlzICOSv1-"
+          }
+        },
+        "r1GWzeWvB": {
+          "id": "r1GWzeWvB",
+          "output": {
+            "nodeId": "SJcFxgZPH",
+            "pinKey": "BJRURA1nW"
+          },
+          "input": {
+            "nodeId": "B17CZeZvH",
+            "pinKey": "BJlzICOSv1-"
+          }
+        },
+        "H1hHfgZDS": {
+          "id": "H1hHfgZDS",
+          "output": {
+            "nodeId": "rJi3-gWPB",
+            "pinKey": "H12bIR_SPyZ"
+          },
+          "input": {
+            "nodeId": "BJBtWx-wB",
+            "pinKey": "B1mSq3gwS"
+          }
+        },
+        "SkKvGeWvr": {
+          "id": "SkKvGeWvr",
+          "output": {
+            "nodeId": "HyzR-ebPS",
+            "pinKey": "H12bIR_SPyZ"
+          },
+          "input": {
+            "nodeId": "BJBtWx-wB",
+            "pinKey": "BkwrcnlDH"
+          }
+        },
+        "ry3vfebwB": {
+          "id": "ry3vfebwB",
+          "output": {
+            "nodeId": "B17CZeZvH",
+            "pinKey": "H12bIR_SPyZ"
+          },
+          "input": {
+            "nodeId": "BJBtWx-wB",
+            "pinKey": "r18S5hgwB"
+          }
+        }
+      },
+      "path": "@/feels-like-temp-lcd-rgb-dht11"
+    }
+  },
+  "name": "feels-like-temp-lcd-rgb"
+}

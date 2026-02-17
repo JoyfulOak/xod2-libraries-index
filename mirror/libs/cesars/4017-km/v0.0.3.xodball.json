@@ -1,0 +1,261 @@
+{
+  "description": "Key Matrix Library ...of Marco Colli  MD_4017_KM",
+  "name": "4017-km",
+  "patches": {
+    "@/0-example-readme": {
+      "comments": {
+        "B10pAgOoV": {
+          "content": "Using a 4017 IC, this library implements a method for reading many open/closed switches using only three digital I/O pins (Clock, Reset and DataIn}).",
+          "id": "B10pAgOoV",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 10,
+            "units": "slots"
+          }
+        },
+        "BJP1JgOo4": {
+          "content": "*Marco Colli* \n[Arduino library](https://github.com/MajicDesigns/MD_4017_KM) * [PCB](https://github.com/MajicDesigns/MD_4017_KM/blob/master/media/photo/3x3%20Matrix%20PCB.JPG) * [Matrix-Key](https://github.com/MajicDesigns/MD_4017_KM/blob/master/media/photo/3x3%20Matrix%20Finished%20Product.jpg) * [INFO-PDF](https://m.eet.com/media/1179070/2.13%20design%20ideas.pdf)\n\n![Schematic!](https://github.com/MajicDesigns/MD_4017_KM/blob/master/media/photo/3x3%20Matrix%20Schematic.JPG?raw=true) \n",
+          "id": "BJP1JgOo4",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 6,
+            "width": 21,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "ByOIuAviN": {
+          "id": "ByOIuAviN",
+          "input": {
+            "nodeId": "SkU8dCviE",
+            "pinKey": "S1LGI0wiN"
+          },
+          "output": {
+            "nodeId": "HkpkE0DsV",
+            "pinKey": "Syzpb0DoV"
+          }
+        },
+        "SJpwQN9sN": {
+          "id": "SJpwQN9sN",
+          "output": {
+            "nodeId": "SkU8dCviE",
+            "pinKey": "SkXVOAPsN"
+          },
+          "input": {
+            "nodeId": "BJqDQ4cjE",
+            "pinKey": "HJdO9HwJ-"
+          }
+        },
+        "rJ0_7VcoV": {
+          "id": "rJ0_7VcoV",
+          "output": {
+            "nodeId": "rkh_7Nqo4",
+            "pinKey": "ByAIWR_UZ"
+          },
+          "input": {
+            "nodeId": "BJqDQ4cjE",
+            "pinKey": "S1n95SDJb"
+          }
+        },
+        "BJlFQE9j4": {
+          "id": "BJlFQE9j4",
+          "output": {
+            "nodeId": "SkU8dCviE",
+            "pinKey": "SkXVOAPsN"
+          },
+          "input": {
+            "nodeId": "rkh_7Nqo4",
+            "pinKey": "BkjI-COLb"
+          }
+        }
+      },
+      "nodes": {
+        "HkpkE0DsV": {
+          "id": "HkpkE0DsV",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/4017-km-dev"
+        },
+        "SkU8dCviE": {
+          "boundLiterals": {
+            "BywHOCPs4": "Continuously"
+          },
+          "id": "SkU8dCviE",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/read-4017-km"
+        },
+        "BJqDQ4cjE": {
+          "id": "BJqDQ4cjE",
+          "type": "xod/debug/console-log",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "rkh_7Nqo4": {
+          "id": "rkh_7Nqo4",
+          "type": "xod/core/pulse-on-change",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/0-example-readme"
+    },
+    "@/4017-km-dev": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/MajicDesigns/MD_4017_KM\"\n//#pragma XOD require \"https://github.com/Cesar-S/MD_4017_KM\"\n\n{{#global}}\n#include <MD_4017_KM.h>\n{{/global}}\n\nstruct State {\n    uint8_t mem[sizeof(MD_4017_KM)];\n};\n\nusing Type = MD_4017_KM*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n\n    if (!isSettingUp())\n        return;\n\n    auto state = getState(ctx);\n\n    Type KM = new (state->mem) MD_4017_KM((uint8_t)getValue<input_numKeys>(ctx), (uint8_t)getValue<input_pinClk>(ctx),\n                                          (uint8_t)getValue<input_pinKeys>(ctx), (uint8_t)getValue<input_pinRst>(ctx));\n\n    KM->begin();\n    emitValue<output_DEV>(ctx, KM);\n}\n"
+        }
+      ],
+      "nodes": {
+        "BkxIsQRwiN": {
+          "boundLiterals": {
+            "__out__": "D6"
+          },
+          "id": "BkxIsQRwiN",
+          "label": "pinRst",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HJWimADoV": {
+          "boundLiterals": {
+            "__out__": "D5"
+          },
+          "id": "HJWimADoV",
+          "label": "pinClk",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HkpTbCvs4": {
+          "id": "HkpTbCvs4",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S18j7RPjN": {
+          "boundLiterals": {
+            "__out__": "D7"
+          },
+          "id": "S18j7RPjN",
+          "label": "pinKeys",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Syzpb0DoV": {
+          "id": "Syzpb0DoV",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "rJetQ0PjV": {
+          "boundLiterals": {
+            "__out__": "9"
+          },
+          "id": "rJetQ0PjV",
+          "label": "numKeys",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/4017-km-dev"
+    },
+    "@/read-4017-km": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n\n    if(!isInputDirty<input_Get>(ctx))\n        return;\n\n    auto KM = getValue<input_KM>(ctx);\n\n    int16_t k = KEY_NONE;\n    bool  bFirst = true;\n\n    emitValue<output_Key>(ctx, KEY_NONE);\n\n    do {\n        k = KM->read(k+1);\n        if (k != KEY_NONE) {\n            if (bFirst) {\n                bFirst = false;\n            }\n            emitValue<output_Key>(ctx, k);\n        }\n    } while (k != KEY_NONE);\n}\n"
+        }
+      ],
+      "nodes": {
+        "BywHOCPs4": {
+          "id": "BywHOCPs4",
+          "label": "Get",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HJemU0DsE": {
+          "id": "HJemU0DsE",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1LGI0wiN": {
+          "id": "S1LGI0wiN",
+          "label": "KM",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-4017-km-dev"
+        },
+        "SkXVOAPsN": {
+          "id": "SkXVOAPsN",
+          "label": "Key",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/read-4017-km"
+    }
+  },
+  "version": "0.0.3"
+}

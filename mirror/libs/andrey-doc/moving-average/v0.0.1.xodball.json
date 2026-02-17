@@ -1,0 +1,253 @@
+{
+  "apiKey": "ce64d9fc-7392-4fcd-8a76-6486eee52006",
+  "description": "Calculates moving averages. Operates in the integer domain. Based on Arduino library code.",
+  "name": "moving-average",
+  "patches": {
+    "@/moving-average": {
+      "nodes": {
+        "SJnggGa3w": {
+          "id": "SJnggGa3w",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Bkl3xxGp3D": {
+          "description": "Specifies the interval (number of data points) for the moving average.",
+          "id": "Bkl3xxGp3D",
+          "label": "NUM",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rk-neeza2P": {
+          "description": "Adds new data point to the moving average.",
+          "id": "rk-neeza2P",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJfhgezp2w": {
+          "description": "Returns the new moving average value.",
+          "id": "HJfhgezp2w",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BkQ3xefp2v": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Restarts the moving average. Zeros the interval array and associated data.",
+          "id": "BkQ3xefp2v",
+          "label": "RST",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/moving-average",
+      "description": "Calculates moving averages. Operates in the integer domain.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "// Based on the Arduino Moving Average Library\n// https://github.com/JChristensen/movingAvg\n\n\nnode {\n    // Internal state variables defined at this level persists across evaluations\n\n    int m_interval;     // number of data points for the moving average\n    int m_nbrReadings;  // number of readings\n    long m_sum;         // sum of the m_readings array\n    int m_next;         // index to the next reading\n    int *m_readings;    // pointer to the dynamically allocated interval array\n\n    // initialize - allocate the interval array\n    void init()\n    {\n        m_readings = new int[m_interval];\n    }\n\n    // add a new reading and return the new moving average\n    int reading(int newReading)\n    {\n        // add each new data point to the sum until the m_readings array is filled\n        if (m_nbrReadings < m_interval)\n        {\n            ++m_nbrReadings;\n            m_sum = m_sum + newReading;\n        }\n        // once the array is filled, subtract the oldest data point and add the new one\n        else\n        {\n            m_sum = m_sum - m_readings[m_next] + newReading;\n        }\n\n        m_readings[m_next] = newReading;\n        if (++m_next >= m_interval) m_next = 0;\n        return (m_sum + m_nbrReadings / 2) / m_nbrReadings;\n    }\n\n    // just return the current moving average\n    int getAvg()\n    {\n        return (m_sum + m_nbrReadings / 2) / m_nbrReadings;\n    }\n\n    // start the moving average over again\n    void reset()\n    {\n        m_nbrReadings = 0;\n        m_sum = 0;\n        m_next = 0;\n    }\n\n\n    void evaluate(Context ctx) {\n\n        if (isSettingUp()) {\n            // This run once\n            m_interval = getValue<input_NUM>(ctx);\n            init();\n        }\n\n        if (isInputDirty<input_RST>(ctx))\n            reset();\n\n        emitValue<output_OUT>(ctx, reading(getValue<input_IN>(ctx)));\n    }\n}"
+        }
+      ]
+    },
+    "@/example": {
+      "comments": {
+        "rJnIZGThv": {
+          "id": "rJnIZGThv",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "width": 6,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "Example uses modified library https://xod.io/libs/nkrkv/random/\nfor testing"
+        },
+        "HyTn-zT3w": {
+          "id": "HyTn-zT3w",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "width": 6,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "Specifies the interval (number of data points) for the moving average."
+        },
+        "BJbBGzanP": {
+          "id": "BJbBGzanP",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "width": 6,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "Restarts the moving average. Zeros the interval array and associated data."
+        },
+        "HynPMzpnD": {
+          "id": "HynPMzpnD",
+          "position": {
+            "x": 8,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "width": 6,
+            "height": 1,
+            "units": "slots"
+          },
+          "content": "Returns the new moving average value."
+        }
+      },
+      "links": {
+        "S1vmmeGa3D": {
+          "id": "S1vmmeGa3D",
+          "input": {
+            "nodeId": "BJQX7xzp3P",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H1MXQgz6nv",
+            "pinKey": "rkJ7YItPM"
+          }
+        },
+        "SkfIgMphP": {
+          "id": "SkfIgMphP",
+          "output": {
+            "nodeId": "BJWQQxzThD",
+            "pinKey": "HJfhgezp2w"
+          },
+          "input": {
+            "nodeId": "BJlX7gfT2v",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "ByNLgMT3D": {
+          "id": "ByNLgMT3D",
+          "output": {
+            "nodeId": "Sy7QxM6nP",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "BJWQQxzThD",
+            "pinKey": "Bkl3xxGp3D"
+          }
+        },
+        "HydIlzpnv": {
+          "id": "HydIlzpnv",
+          "output": {
+            "nodeId": "SkEXXlManP",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "BJWQQxzThD",
+            "pinKey": "BkQ3xefp2v"
+          }
+        },
+        "SkpIxGp3v": {
+          "id": "SkpIxGp3v",
+          "output": {
+            "nodeId": "H1MXQgz6nv",
+            "pinKey": "rkJ7YItPM"
+          },
+          "input": {
+            "nodeId": "BJWQQxzThD",
+            "pinKey": "rk-neeza2P"
+          }
+        }
+      },
+      "nodes": {
+        "Sy7QxM6nP": {
+          "boundLiterals": {
+            "ByfGSDjQE": "20"
+          },
+          "id": "Sy7QxM6nP",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-number"
+        },
+        "BJlX7gfT2v": {
+          "id": "BJlX7gfT2v",
+          "position": {
+            "x": 3,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "BJWQQxzThD": {
+          "id": "BJWQQxzThD",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/moving-average"
+        },
+        "H1MXQgz6nv": {
+          "id": "H1MXQgz6nv",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "nkrkv/random/random"
+        },
+        "BJQX7xzp3P": {
+          "id": "BJQX7xzp3P",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "SkEXXlManP": {
+          "id": "SkEXXlManP",
+          "label": "RESET",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        }
+      },
+      "path": "@/example"
+    }
+  },
+  "version": "0.0.1"
+}

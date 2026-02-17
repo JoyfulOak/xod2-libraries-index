@@ -1,0 +1,1987 @@
+{
+  "patches": {
+    "@/get-precision": {
+      "nodes": {
+        "rJ15yZrEp": {
+          "id": "rJ15yZrEp",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BJxJ9J-S4a": {
+          "description": "An sht4x-device.",
+          "label": "DEV",
+          "id": "BJxJ9J-S4a",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sht4x-device"
+        },
+        "rJfJqJWBEa": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Update.",
+          "label": "UPD",
+          "id": "rJfJqJWBEa",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1mk51-rEp": {
+          "description": "Pulse when precision read.",
+          "label": "Done",
+          "id": "H1mk51-rEp",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BJBhkZBEp": {
+          "id": "BJBhkZBEp",
+          "type": "xod/patch-nodes/output-byte",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "Prec",
+          "description": "Precision. Output: high = 00h, medium = 01h, low = 02h. "
+        }
+      },
+      "path": "@/get-precision",
+      "description": "Get current precision.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\n#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sensor = getValue<input_DEV>(ctx);\n        \n        emitValue<output_Prec>(ctx, sensor->getPrecision());\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/set-precision": {
+      "nodes": {
+        "SkYfQTLAi": {
+          "description": "SHT4X_HIGH_PRECISION,\n  SHT4X_MED_PRECISION,\n  SHT4X_LOW_PRECISION",
+          "id": "SkYfQTLAi",
+          "position": {
+            "x": 0,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJfXX6I0j": {
+          "description": "An sht4x-device.",
+          "label": "DEV",
+          "id": "SJfXX6I0j",
+          "position": {
+            "x": 0,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "@/input-sht4x-device"
+        },
+        "HyvE7680o": {
+          "description": "Precision. Options: high = 00h, medium = 01h, low = 02h. ",
+          "label": "Prec",
+          "id": "HyvE7680o",
+          "position": {
+            "x": 1,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "rJdXRxB46": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Update.",
+          "label": "UPD",
+          "id": "rJdXRxB46",
+          "position": {
+            "x": 2,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkbVCgSET": {
+          "description": "Pulse when precision set.",
+          "label": "Done",
+          "id": "HkbVCgSET",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/set-precision",
+      "description": "Set precision. ",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\n#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sensor = getValue<input_DEV>(ctx);\n        auto prec = getValue<input_Prec>(ctx);\n\n        if (prec < 3) {\n            sensor->setPrecision(prec);\n            emitValue<output_Done>(ctx, 1);\n        }\n\n    }\n}\n"
+        }
+      ]
+    },
+    "@/02-example-configuration-test": {
+      "nodes": {
+        "H1cZJAICs": {
+          "id": "H1cZJAICs",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/sht4x-device"
+        },
+        "ryzfkA8As": {
+          "id": "ryzfkA8As",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/init"
+        },
+        "BJ6ngWrE6": {
+          "id": "BJ6ngWrE6",
+          "type": "@/set-heater",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "BJmpeWBVp": {
+          "id": "BJmpeWBVp",
+          "type": "@/set-precision",
+          "position": {
+            "x": 11,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "BJR6l-BNa": {
+          "id": "BJR6l-BNa",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "HJEk-WBV6": {
+          "id": "HJEk-WBV6",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "H1tlWZSET": {
+          "id": "H1tlWZSET",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "BJrWZbHE6": {
+          "id": "BJrWZbHE6",
+          "type": "xod/debug/tweak-byte",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "SykJ8wjXN": "00h"
+          }
+        },
+        "HJiWWZSVT": {
+          "id": "HJiWWZSVT",
+          "type": "xod/debug/tweak-byte",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "SykJ8wjXN": "04h"
+          }
+        },
+        "rkfXb-H4a": {
+          "id": "rkfXb-H4a",
+          "type": "@/get-heater",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SyKib-rVT": {
+          "id": "SyKib-rVT",
+          "type": "@/get-precision",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "HJH3Z-SN6": {
+          "id": "HJH3Z-SN6",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 6,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "SJk6--SVT": {
+          "id": "SJk6--SVT",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 10,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "HJiz6WWH4a": {
+          "id": "HJiz6WWH4a",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 7,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "r1upbbrN6": {
+          "id": "r1upbbrN6",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 11,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "HyApbbSET": {
+          "id": "HyApbbSET",
+          "type": "xod/core/count",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "HkB0Z-SET": {
+          "id": "HkB0Z-SET",
+          "type": "xod/core/count",
+          "position": {
+            "x": 11,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "BJPbzWHEa": {
+          "id": "BJPbzWHEa",
+          "type": "xod/core/pulse-on-change",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rJTbfbSE6": {
+          "id": "rJTbfbSE6",
+          "type": "xod/core/pulse-on-change",
+          "position": {
+            "x": 13,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "ByrMJRLRj": {
+          "id": "ByrMJRLRj",
+          "input": {
+            "nodeId": "ryzfkA8As",
+            "pinKey": "ry09epI0j"
+          },
+          "output": {
+            "nodeId": "H1cZJAICs",
+            "pinKey": "rysbe6UCs"
+          }
+        },
+        "HJ2RlbSNT": {
+          "id": "HJ2RlbSNT",
+          "output": {
+            "nodeId": "H1cZJAICs",
+            "pinKey": "rysbe6UCs"
+          },
+          "input": {
+            "nodeId": "BJR6l-BNa",
+            "pinKey": "__in__"
+          }
+        },
+        "Byve-bSEa": {
+          "id": "Byve-bSEa",
+          "output": {
+            "nodeId": "HJEk-WBV6",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BJ6ngWrE6",
+            "pinKey": "HJlVdzR80i"
+          }
+        },
+        "r1ybb-SVT": {
+          "id": "r1ybb-SVT",
+          "output": {
+            "nodeId": "H1tlWZSET",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BJmpeWBVp",
+            "pinKey": "SJfXX6I0j"
+          }
+        },
+        "SJt-bZH46": {
+          "id": "SJt-bZH46",
+          "output": {
+            "nodeId": "BJrWZbHE6",
+            "pinKey": "SykJ8wjXN"
+          },
+          "input": {
+            "nodeId": "BJ6ngWrE6",
+            "pinKey": "ryIKz08Ro"
+          }
+        },
+        "r11MZbBNa": {
+          "id": "r11MZbBNa",
+          "output": {
+            "nodeId": "HJiWWZSVT",
+            "pinKey": "SykJ8wjXN"
+          },
+          "input": {
+            "nodeId": "BJmpeWBVp",
+            "pinKey": "HyvE7680o"
+          }
+        },
+        "S1dQWWrNp": {
+          "id": "S1dQWWrNp",
+          "output": {
+            "nodeId": "BJ6ngWrE6",
+            "pinKey": "rJPqf0LRj"
+          },
+          "input": {
+            "nodeId": "rkfXb-H4a",
+            "pinKey": "HJ-wMebrNp"
+          }
+        },
+        "By3QbbBEp": {
+          "id": "By3QbbBEp",
+          "output": {
+            "nodeId": "HJEk-WBV6",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rkfXb-H4a",
+            "pinKey": "S1lwMlZH4T"
+          }
+        },
+        "SkjiWZr4a": {
+          "id": "SkjiWZr4a",
+          "output": {
+            "nodeId": "BJmpeWBVp",
+            "pinKey": "HkbVCgSET"
+          },
+          "input": {
+            "nodeId": "SyKib-rVT",
+            "pinKey": "rJfJqJWBEa"
+          }
+        },
+        "H1Cob-rN6": {
+          "id": "H1Cob-rN6",
+          "output": {
+            "nodeId": "H1tlWZSET",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "SyKib-rVT",
+            "pinKey": "BJxJ9J-S4a"
+          }
+        },
+        "SyOnbZrE6": {
+          "id": "SyOnbZrE6",
+          "output": {
+            "nodeId": "rkfXb-H4a",
+            "pinKey": "H1Xwzg-B46"
+          },
+          "input": {
+            "nodeId": "HJH3Z-SN6",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "rJD0bWrNT": {
+          "id": "rJD0bWrNT",
+          "output": {
+            "nodeId": "SyKib-rVT",
+            "pinKey": "H1mk51-rEp"
+          },
+          "input": {
+            "nodeId": "HkB0Z-SET",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "BJjRbbrVp": {
+          "id": "BJjRbbrVp",
+          "output": {
+            "nodeId": "rkfXb-H4a",
+            "pinKey": "B1zDMlWBN6"
+          },
+          "input": {
+            "nodeId": "HyApbbSET",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "Sy6RZbS46": {
+          "id": "Sy6RZbS46",
+          "output": {
+            "nodeId": "HkB0Z-SET",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "r1upbbrN6",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "ryyJMZSEa": {
+          "id": "ryyJMZSEa",
+          "output": {
+            "nodeId": "SyKib-rVT",
+            "pinKey": "BJBhkZBEp"
+          },
+          "input": {
+            "nodeId": "SJk6--SVT",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "rkxJGbrNp": {
+          "id": "rkxJGbrNp",
+          "output": {
+            "nodeId": "HyApbbSET",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "HJiz6WWH4a",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "BJFMGbHEp": {
+          "id": "BJFMGbHEp",
+          "output": {
+            "nodeId": "BJrWZbHE6",
+            "pinKey": "SykJ8wjXN"
+          },
+          "input": {
+            "nodeId": "BJPbzWHEa",
+            "pinKey": "BkjI-COLb"
+          }
+        },
+        "H15GMZHE6": {
+          "id": "H15GMZHE6",
+          "output": {
+            "nodeId": "BJPbzWHEa",
+            "pinKey": "ByAIWR_UZ"
+          },
+          "input": {
+            "nodeId": "BJ6ngWrE6",
+            "pinKey": "Sy-NOz0IAs"
+          }
+        },
+        "Sy3GzZHNp": {
+          "id": "Sy3GzZHNp",
+          "output": {
+            "nodeId": "HJiWWZSVT",
+            "pinKey": "SykJ8wjXN"
+          },
+          "input": {
+            "nodeId": "rJTbfbSE6",
+            "pinKey": "BkjI-COLb"
+          }
+        },
+        "Skafz-BVa": {
+          "id": "Skafz-BVa",
+          "output": {
+            "nodeId": "rJTbfbSE6",
+            "pinKey": "ByAIWR_UZ"
+          },
+          "input": {
+            "nodeId": "BJmpeWBVp",
+            "pinKey": "rJdXRxB46"
+          }
+        }
+      },
+      "path": "@/02-example-configuration-test",
+      "description": "Patch to test configuration of sensor. Run in debugger."
+    },
+    "@/sht4x-device": {
+      "nodes": {
+        "BypxeTIRi": {
+          "id": "BypxeTIRi",
+          "position": {
+            "x": -10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rysbe6UCs": {
+          "description": "An sht4x-device.",
+          "label": "DEV",
+          "id": "rysbe6UCs",
+          "position": {
+            "x": -10,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/sht4x-device",
+      "description": "Create an sht4x-device.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "// Tell XOD where it can download the libraries:\n#pragma XOD require \"https://github.com/adafruit/Adafruit_BusIO\"\n#pragma XOD require \"https://github.com/adafruit/Adafruit_Sensor\"\n#pragma XOD require \"https://github.com/adafruit/Adafruit_SHT4X\"\n\n//Include C++ libraries\n#include <Adafruit_SHT4x.h>\n\nnode {\n    meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = Adafruit_SHT4x*;\n    }\n    // Keep Adafruit_SHT4x object in state\n    Adafruit_SHT4x sensor = Adafruit_SHT4x();\n\n    void evaluate(Context ctx) {\n        // It should be evaluated only once on the first (setup) transaction\n        if (!isSettingUp())\n            return;\n        emitValue<output_DEV>(ctx, &sensor);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/init": {
+      "nodes": {
+        "S1D8e6ICo": {
+          "id": "S1D8e6ICo",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1B5l6ICo": {
+          "description": "I²C bus",
+          "label": "I2C",
+          "id": "H1B5l6ICo",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/i2c/input-i2c"
+        },
+        "ry09epI0j": {
+          "description": "An sht4x-device.",
+          "label": "DEV",
+          "id": "ry09epI0j",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sht4x-device"
+        },
+        "Syrhe6LCj": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Initialize",
+          "label": "INIT",
+          "id": "Syrhe6LCj",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Bk56gpLAj": {
+          "description": "Pulse on initialization.",
+          "label": "OK",
+          "id": "Bk56gpLAj",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/init",
+      "description": "Initialize sht4x-device.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_INIT\n\nnode {\n\n    void evaluate(Context ctx) {\n\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_INIT>(ctx))\n            return;\n        \n        auto sensor = getValue<input_DEV>(ctx);\n        auto wire = getValue<input_I2C>(ctx);\n\n        // Attempt to initialize sht4x module; if attempt fails emit error\n        if (!sensor->begin(wire)) {\n            raiseError(ctx);\n            return;\n        }\n        \n        emitValue<output_OK>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/read": {
+      "nodes": {
+        "SkHW-68Ci": {
+          "id": "SkHW-68Ci",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Hyj--TI0j": {
+          "description": "An sht4x-device.",
+          "label": "DEV",
+          "id": "Hyj--TI0j",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sht4x-device"
+        },
+        "SJaMZ6IRi": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Update. Pulse triggers read.",
+          "label": "UPD",
+          "id": "SJaMZ6IRi",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJDrbTIRo": {
+          "description": "Relative humidity (%).",
+          "label": "RH",
+          "id": "SJDrbTIRo",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BJgvS-aLRo": {
+          "description": "Temperature (°C).",
+          "label": "Temp",
+          "id": "BJgvS-aLRo",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BkZPHWT8Rj": {
+          "description": "Pulse on read.",
+          "label": "Done",
+          "id": "BkZPHWT8Rj",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/read",
+      "description": "Read relative humidity and temperature.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        sensors_event_t humidity, temp;\n\n        auto sensor = getValue<input_DEV>(ctx);\n        sensor->getEvent(&humidity, &temp);\n        \n        emitValue<output_RH>(ctx, humidity.relative_humidity);\n        emitValue<output_Temp>(ctx, temp.temperature);\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/set-heater": {
+      "nodes": {
+        "H1NOfRLAi": {
+          "id": "H1NOfRLAi",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJlVdzR80i": {
+          "description": "An sht4x-device.",
+          "label": "DEV",
+          "id": "HJlVdzR80i",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sht4x-device"
+        },
+        "Sy-NOz0IAs": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Update.",
+          "label": "UPD",
+          "id": "Sy-NOz0IAs",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryIKz08Ro": {
+          "description": "Heater setting. Options: no heater = 00h, high heat 1s = 01h, high heat 100ms = 02h, medium heat 1s = 03h, medium heat 100ms = 04h, low heat 1s = 05h, low heat 100ms = 06h.",
+          "label": "Heat",
+          "id": "ryIKz08Ro",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "rJPqf0LRj": {
+          "description": "Pulse when heater set.",
+          "label": "Done",
+          "id": "rJPqf0LRj",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/set-heater",
+      "description": "Configure heater.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sensor = getValue<input_DEV>(ctx);\n        auto heater = getValue<input_Heat>(ctx);\n\n        if (heater < 7) {\n            sensor->setHeater(heater);\n            emitValue<output_Done>(ctx, 1);\n        }\n        \n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/get-heater": {
+      "nodes": {
+        "HkwflbSE6": {
+          "id": "HkwflbSE6",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1lwMlZH4T": {
+          "description": "An sht4x-device.",
+          "label": "DEV",
+          "id": "S1lwMlZH4T",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sht4x-device"
+        },
+        "HJ-wMebrNp": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Update.",
+          "label": "UPD",
+          "id": "HJ-wMebrNp",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "B1zDMlWBN6": {
+          "description": "Pulse when heater configuration read.",
+          "label": "Done",
+          "id": "B1zDMlWBN6",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "H1Xwzg-B46": {
+          "id": "H1Xwzg-B46",
+          "type": "xod/patch-nodes/output-byte",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "Heat",
+          "description": "Heater configuration. Output: no heater = 00h, high heat 1s = 01h, high heat 100ms = 02h, medium heat 1s = 03h, medium heat 100ms = 04h, low heat 1s = 05h, low heat 100ms = 06h."
+        }
+      },
+      "path": "@/get-heater",
+      "description": "Get heater configuration. ",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\n#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sensor = getValue<input_DEV>(ctx);\n        \n        emitValue<output_Heat>(ctx, sensor->getHeater());\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/01-example-hygrometer-thermometer": {
+      "nodes": {
+        "rkljH7S46": {
+          "id": "rkljH7S46",
+          "type": "@/hygrometer-thermometer",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "HkfOoZrEp": "On Boot"
+          }
+        },
+        "B1XhSQHVT": {
+          "id": "B1XhSQHVT",
+          "type": "xod/debug/tweak-byte",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "SykJ8wjXN": "01h"
+          }
+        },
+        "r1dhHXB4p": {
+          "id": "r1dhHXB4p",
+          "type": "xod/debug/tweak-byte",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "SykJ8wjXN": "00h"
+          }
+        },
+        "HkYaSQSVa": {
+          "id": "HkYaSQSVa",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "rkqRBmrEa": {
+          "id": "rkqRBmrEa",
+          "type": "xod/core/clock",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B13SCNhl-": "5"
+          }
+        },
+        "r1ye8mBNp": {
+          "id": "r1ye8mBNp",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SyBg8mSNa": {
+          "id": "SyBg8mSNa",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "B18gIXBNT": {
+          "id": "B18gIXBNT",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SkZWIQHNp": {
+          "id": "SkZWIQHNp",
+          "type": "xod/core/count",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "Hkq2Hmr4a": {
+          "id": "Hkq2Hmr4a",
+          "output": {
+            "nodeId": "B1XhSQHVT",
+            "pinKey": "SykJ8wjXN"
+          },
+          "input": {
+            "nodeId": "rkljH7S46",
+            "pinKey": "BkAzhbSN6"
+          }
+        },
+        "SkshBQB4T": {
+          "id": "SkshBQB4T",
+          "output": {
+            "nodeId": "r1dhHXB4p",
+            "pinKey": "SykJ8wjXN"
+          },
+          "input": {
+            "nodeId": "rkljH7S46",
+            "pinKey": "H1XQ3-S4T"
+          }
+        },
+        "ByPJLmHEp": {
+          "id": "ByPJLmHEp",
+          "output": {
+            "nodeId": "rkqRBmrEa",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "rkljH7S46",
+            "pinKey": "SyhgR-B46"
+          }
+        },
+        "SJqyUmSET": {
+          "id": "SJqyUmSET",
+          "output": {
+            "nodeId": "HkYaSQSVa",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "rkljH7S46",
+            "pinKey": "Hy1y0bBVp"
+          }
+        },
+        "By7eLQHVp": {
+          "id": "By7eLQHVp",
+          "output": {
+            "nodeId": "rkljH7S46",
+            "pinKey": "SJkxd91fB46"
+          },
+          "input": {
+            "nodeId": "r1ye8mBNp",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "H1pxUXSN6": {
+          "id": "H1pxUXSN6",
+          "output": {
+            "nodeId": "rkljH7S46",
+            "pinKey": "B1xeuq1GHNp"
+          },
+          "input": {
+            "nodeId": "SyBg8mSNa",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "H16WU7r46": {
+          "id": "H16WU7r46",
+          "output": {
+            "nodeId": "rkljH7S46",
+            "pinKey": "BkbguckzSNT"
+          },
+          "input": {
+            "nodeId": "SkZWIQHNp",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "rJCb8XHEa": {
+          "id": "rJCb8XHEa",
+          "output": {
+            "nodeId": "SkZWIQHNp",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "B18gIXBNT",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/01-example-hygrometer-thermometer",
+      "description": "Patch to test the hygrometer-thermometer node. Run in debugger."
+    },
+    "@/hygrometer-thermometer": {
+      "nodes": {
+        "B1RZjZr4a": {
+          "id": "B1RZjZr4a",
+          "type": "@/read",
+          "position": {
+            "x": 19,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "H1Bms-B46": {
+          "id": "H1Bms-B46",
+          "type": "@/sht4x-device",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "S1cXs-rEp": {
+          "id": "S1cXs-rEp",
+          "type": "@/init",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "ByNNo-SVp": {
+          "id": "ByNNo-SVp",
+          "type": "xod/i2c/input-i2c",
+          "position": {
+            "x": 8,
+            "y": -1,
+            "units": "slots"
+          },
+          "label": "I2C",
+          "description": "I²C bus."
+        },
+        "r1QHjWH4p": {
+          "id": "r1QHjWH4p",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "HkfOoZrEp": {
+          "id": "HkfOoZrEp",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 17,
+            "y": -1,
+            "units": "slots"
+          },
+          "label": "INIT",
+          "description": "Initialize sensor."
+        },
+        "ry8Rjbr46": {
+          "id": "ry8Rjbr46",
+          "type": "@/set-heater",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "r1LJh-BVT": {
+          "id": "r1LJh-BVT",
+          "type": "@/set-precision",
+          "position": {
+            "x": 14,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "H1Be2bB4p": {
+          "id": "H1Be2bB4p",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "H1IW2-S4a": {
+          "id": "H1IW2-S4a",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 14,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "BkAzhbSN6": {
+          "id": "BkAzhbSN6",
+          "type": "xod/patch-nodes/input-byte",
+          "position": {
+            "x": 12,
+            "y": -1,
+            "units": "slots"
+          },
+          "label": "Heat",
+          "description": "Heater setting. Options: no heater = 00h, high heat 1s = 01h, high heat 100ms = 02h, medium heat 1s = 03h, medium heat 100ms = 04h, low heat 1s = 05h, low heat 100ms = 06h."
+        },
+        "H1XQ3-S4T": {
+          "id": "H1XQ3-S4T",
+          "type": "xod/patch-nodes/input-byte",
+          "position": {
+            "x": 15,
+            "y": -1,
+            "units": "slots"
+          },
+          "label": "Prec",
+          "description": "Precision. Options: high = 00h, medium = 01h, low = 02h. "
+        },
+        "S1yHnWSE6": {
+          "id": "S1yHnWSE6",
+          "type": "xod/core/pulse-on-change",
+          "position": {
+            "x": 13,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "r1wrn-BV6": {
+          "id": "r1wrn-BV6",
+          "type": "xod/core/pulse-on-change",
+          "position": {
+            "x": 16,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "rJMapWS4a": {
+          "id": "rJMapWS4a",
+          "type": "@/reset",
+          "position": {
+            "x": 17,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "Hkpaa-SEa": {
+          "id": "Hkpaa-SEa",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 17,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "BkU0T-rN6": {
+          "id": "BkU0T-rN6",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 19,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "Hy1y0bBVp": {
+          "id": "Hy1y0bBVp",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 18,
+            "y": -1,
+            "units": "slots"
+          },
+          "label": "Reset",
+          "description": "Performs a soft reset of the sensor to put it into a known state."
+        },
+        "SyhgR-B46": {
+          "id": "SyhgR-B46",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 20,
+            "y": -1,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update."
+        },
+        "SJkxd91fB46": {
+          "description": "Relative humidity (%).",
+          "label": "RH",
+          "id": "SJkxd91fB46",
+          "position": {
+            "x": 19,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "B1xeuq1GHNp": {
+          "description": "Temperature (°C).",
+          "label": "Temp",
+          "id": "B1xeuq1GHNp",
+          "position": {
+            "x": 20,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BkbguckzSNT": {
+          "description": "Pulse on read.",
+          "label": "Done",
+          "id": "BkbguckzSNT",
+          "position": {
+            "x": 21,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "B1jxgMSV6": {
+          "id": "B1jxgMSV6",
+          "type": "xod/core/gate",
+          "position": {
+            "x": 20,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SJEEeGSN6": {
+          "id": "SJEEeGSN6",
+          "type": "xod/core/flip-flop",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "HkMBlGrNa": {
+          "id": "HkMBlGrNa",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "init"
+        },
+        "S1VUxGSNT": {
+          "id": "S1VUxGSNT",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 21,
+            "y": -1,
+            "units": "slots"
+          },
+          "label": "init"
+        }
+      },
+      "links": {
+        "S1KEs-SNa": {
+          "id": "S1KEs-SNa",
+          "output": {
+            "nodeId": "ByNNo-SVp",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "S1cXs-rEp",
+            "pinKey": "H1B5l6ICo"
+          }
+        },
+        "SJiEibBVa": {
+          "id": "SJiEibBVa",
+          "output": {
+            "nodeId": "H1Bms-B46",
+            "pinKey": "rysbe6UCs"
+          },
+          "input": {
+            "nodeId": "S1cXs-rEp",
+            "pinKey": "ry09epI0j"
+          }
+        },
+        "BJhBjbrVT": {
+          "id": "BJhBjbrVT",
+          "output": {
+            "nodeId": "H1Bms-B46",
+            "pinKey": "rysbe6UCs"
+          },
+          "input": {
+            "nodeId": "r1QHjWH4p",
+            "pinKey": "__in__"
+          }
+        },
+        "HkmhibHN6": {
+          "id": "HkmhibHN6",
+          "output": {
+            "nodeId": "HkfOoZrEp",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "S1cXs-rEp",
+            "pinKey": "Syrhe6LCj"
+          }
+        },
+        "BkCl2-rV6": {
+          "id": "BkCl2-rV6",
+          "output": {
+            "nodeId": "H1Be2bB4p",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ry8Rjbr46",
+            "pinKey": "HJlVdzR80i"
+          }
+        },
+        "Byq-n-BE6": {
+          "id": "Byq-n-BE6",
+          "output": {
+            "nodeId": "H1IW2-S4a",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "r1LJh-BVT",
+            "pinKey": "SJfXX6I0j"
+          }
+        },
+        "rJ3XnWHN6": {
+          "id": "rJ3XnWHN6",
+          "output": {
+            "nodeId": "BkAzhbSN6",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ry8Rjbr46",
+            "pinKey": "ryIKz08Ro"
+          }
+        },
+        "SkrN3-r4p": {
+          "id": "SkrN3-r4p",
+          "output": {
+            "nodeId": "H1XQ3-S4T",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "r1LJh-BVT",
+            "pinKey": "HyvE7680o"
+          }
+        },
+        "Hy4r2-BN6": {
+          "id": "Hy4r2-BN6",
+          "output": {
+            "nodeId": "BkAzhbSN6",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "S1yHnWSE6",
+            "pinKey": "BkjI-COLb"
+          }
+        },
+        "S1SBhZrN6": {
+          "id": "S1SBhZrN6",
+          "output": {
+            "nodeId": "S1yHnWSE6",
+            "pinKey": "ByAIWR_UZ"
+          },
+          "input": {
+            "nodeId": "ry8Rjbr46",
+            "pinKey": "Sy-NOz0IAs"
+          }
+        },
+        "BysB2WSEa": {
+          "id": "BysB2WSEa",
+          "output": {
+            "nodeId": "H1XQ3-S4T",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "r1wrn-BV6",
+            "pinKey": "BkjI-COLb"
+          }
+        },
+        "HyTrh-H46": {
+          "id": "HyTrh-H46",
+          "output": {
+            "nodeId": "r1wrn-BV6",
+            "pinKey": "ByAIWR_UZ"
+          },
+          "input": {
+            "nodeId": "r1LJh-BVT",
+            "pinKey": "rJdXRxB46"
+          }
+        },
+        "By7ApZHVp": {
+          "id": "By7ApZHVp",
+          "output": {
+            "nodeId": "Hkpaa-SEa",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJMapWS4a",
+            "pinKey": "H1efd2bHEa"
+          }
+        },
+        "Byt0abHNa": {
+          "id": "Byt0abHNa",
+          "output": {
+            "nodeId": "BkU0T-rN6",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "B1RZjZr4a",
+            "pinKey": "Hyj--TI0j"
+          }
+        },
+        "Hy-gR-SVp": {
+          "id": "Hy-gR-SVp",
+          "output": {
+            "nodeId": "Hy1y0bBVp",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJMapWS4a",
+            "pinKey": "Bybz_hWBVa"
+          }
+        },
+        "r1NiyGBNa": {
+          "id": "r1NiyGBNa",
+          "output": {
+            "nodeId": "B1RZjZr4a",
+            "pinKey": "SJDrbTIRo"
+          },
+          "input": {
+            "nodeId": "SJkxd91fB46",
+            "pinKey": "__in__"
+          }
+        },
+        "S1IjyMr4p": {
+          "id": "S1IjyMr4p",
+          "output": {
+            "nodeId": "B1RZjZr4a",
+            "pinKey": "BJgvS-aLRo"
+          },
+          "input": {
+            "nodeId": "B1xeuq1GHNp",
+            "pinKey": "__in__"
+          }
+        },
+        "ByvoyfHE6": {
+          "id": "ByvoyfHE6",
+          "output": {
+            "nodeId": "B1RZjZr4a",
+            "pinKey": "BkZPHWT8Rj"
+          },
+          "input": {
+            "nodeId": "BkbguckzSNT",
+            "pinKey": "__in__"
+          }
+        },
+        "B1t4gGB46": {
+          "id": "B1t4gGB46",
+          "output": {
+            "nodeId": "S1cXs-rEp",
+            "pinKey": "Bk56gpLAj"
+          },
+          "input": {
+            "nodeId": "SJEEeGSN6",
+            "pinKey": "Bkh8A_Sv1-"
+          }
+        },
+        "H19rxfSET": {
+          "id": "H19rxfSET",
+          "output": {
+            "nodeId": "SJEEeGSN6",
+            "pinKey": "HkyxURuSPyW"
+          },
+          "input": {
+            "nodeId": "HkMBlGrNa",
+            "pinKey": "__in__"
+          }
+        },
+        "SJuUlfrNa": {
+          "id": "SJuUlfrNa",
+          "output": {
+            "nodeId": "S1VUxGSNT",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "B1jxgMSV6",
+            "pinKey": "B1P1nFwaM"
+          }
+        },
+        "SkSPeMrNa": {
+          "id": "SkSPeMrNa",
+          "output": {
+            "nodeId": "SyhgR-B46",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "B1jxgMSV6",
+            "pinKey": "SJ-1mZPTz"
+          }
+        },
+        "By8DxGS4T": {
+          "id": "By8DxGS4T",
+          "output": {
+            "nodeId": "B1jxgMSV6",
+            "pinKey": "OkPg7GDaW"
+          },
+          "input": {
+            "nodeId": "B1RZjZr4a",
+            "pinKey": "SJaMZ6IRi"
+          }
+        }
+      },
+      "path": "@/hygrometer-thermometer",
+      "description": "Combines low level nodes to create a simple to use hygrometer and thermometer."
+    },
+    "@/reset": {
+      "nodes": {
+        "HkMu3brVa": {
+          "id": "HkMu3brVa",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1efd2bHEa": {
+          "description": "An sht4x-device.",
+          "label": "DEV",
+          "id": "H1efd2bHEa",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-sht4x-device"
+        },
+        "Bybz_hWBVa": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Update.",
+          "label": "UPD",
+          "id": "Bybz_hWBVa",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkQMd3bH4a": {
+          "description": "Pulse on successful soft reset.",
+          "label": "OK",
+          "id": "HkQMd3bH4a",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/reset",
+      "description": "Performs a soft reset of the sensor to put it into a known state.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sensor = getValue<input_DEV>(ctx);\n        if(!sensor->reset()) {\n            raiseError(ctx);\n            return;\n        }\n        emitValue<output_OK>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/03-example-measure-read-time": {
+      "nodes": {
+        "Sk0CyfS4T": {
+          "id": "Sk0CyfS4T",
+          "type": "@/hygrometer-thermometer",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "HkfOoZrEp": "On Boot"
+          }
+        },
+        "ByfYlMBEp": {
+          "id": "ByfYlMBEp",
+          "type": "xod/core/system-time",
+          "position": {
+            "x": 11,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "HyJ5lMSVp": {
+          "id": "HyJ5lMSVp",
+          "type": "xod/core/system-time",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "H1ynxMSNa": {
+          "id": "H1ynxMSNa",
+          "type": "xod/core/subtract",
+          "position": {
+            "x": 10,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "BJrTgMr4p": {
+          "id": "BJrTgMr4p",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 10,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        },
+        "HkH1ZMSV6": {
+          "id": "HkH1ZMSV6",
+          "type": "xod/debug/tweak-byte",
+          "position": {
+            "x": 6,
+            "y": -1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "SykJ8wjXN": "01h"
+          }
+        },
+        "Byty-fB4p": {
+          "id": "Byty-fB4p",
+          "type": "xod/debug/tweak-byte",
+          "position": {
+            "x": 7,
+            "y": -1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "SykJ8wjXN": "04h"
+          }
+        },
+        "SkxeWzH4a": {
+          "id": "SkxeWzH4a",
+          "type": "xod/core/pulse-on-change",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "HyLGZGSVT": {
+          "id": "HyLGZGSVT",
+          "type": "xod/core/pulse-on-change",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SkTEWGr4p": {
+          "id": "SkTEWGr4p",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "ryZSWzrN6": {
+          "id": "ryZSWzrN6",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "ryZtZGrVT": {
+          "id": "ryZtZGrVT",
+          "type": "xod/core/any",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "arityLevel": 2
+        },
+        "ryoRbMSEa": {
+          "id": "ryoRbMSEa",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 13,
+            "y": -1,
+            "units": "slots"
+          }
+        },
+        "B1ImnzB4T": {
+          "id": "B1ImnzB4T",
+          "type": "xod/core/count",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "B1g4hGSN6": {
+          "id": "B1g4hGSN6",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 6,
+            "y": 5,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "rym5eGB4T": {
+          "id": "rym5eGB4T",
+          "output": {
+            "nodeId": "Sk0CyfS4T",
+            "pinKey": "BkbguckzSNT"
+          },
+          "input": {
+            "nodeId": "HyJ5lMSVp",
+            "pinKey": "Bk74I0_SPyb"
+          }
+        },
+        "S1eTlMBV6": {
+          "id": "S1eTlMBV6",
+          "output": {
+            "nodeId": "HyJ5lMSVp",
+            "pinKey": "BkEVI0uHwJb"
+          },
+          "input": {
+            "nodeId": "H1ynxMSNa",
+            "pinKey": "BypX80uSD1Z"
+          }
+        },
+        "HJZaeGBN6": {
+          "id": "HJZaeGBN6",
+          "output": {
+            "nodeId": "ByfYlMBEp",
+            "pinKey": "BkEVI0uHwJb"
+          },
+          "input": {
+            "nodeId": "H1ynxMSNa",
+            "pinKey": "rkJ4URuHDJ-"
+          }
+        },
+        "rkYplzHEp": {
+          "id": "rkYplzHEp",
+          "output": {
+            "nodeId": "H1ynxMSNa",
+            "pinKey": "HyRmUCdBDkZ"
+          },
+          "input": {
+            "nodeId": "BJrTgMr4p",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "HJufWzrVT": {
+          "id": "HJufWzrVT",
+          "output": {
+            "nodeId": "HkH1ZMSV6",
+            "pinKey": "SykJ8wjXN"
+          },
+          "input": {
+            "nodeId": "SkxeWzH4a",
+            "pinKey": "BkjI-COLb"
+          }
+        },
+        "rJFfWzBNa": {
+          "id": "rJFfWzBNa",
+          "output": {
+            "nodeId": "Byty-fB4p",
+            "pinKey": "SykJ8wjXN"
+          },
+          "input": {
+            "nodeId": "HyLGZGSVT",
+            "pinKey": "BkjI-COLb"
+          }
+        },
+        "ByGrWMrE6": {
+          "id": "ByGrWMrE6",
+          "output": {
+            "nodeId": "Sk0CyfS4T",
+            "pinKey": "B1xeuq1GHNp"
+          },
+          "input": {
+            "nodeId": "ryZSWzrN6",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "B1XHZMB4a": {
+          "id": "B1XHZMB4a",
+          "output": {
+            "nodeId": "Sk0CyfS4T",
+            "pinKey": "SJkxd91fB46"
+          },
+          "input": {
+            "nodeId": "SkTEWGr4p",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "Hysu-zBNa": {
+          "id": "Hysu-zBNa",
+          "output": {
+            "nodeId": "HkH1ZMSV6",
+            "pinKey": "SykJ8wjXN"
+          },
+          "input": {
+            "nodeId": "Sk0CyfS4T",
+            "pinKey": "BkAzhbSN6"
+          }
+        },
+        "HyaubGrNT": {
+          "id": "HyaubGrNT",
+          "output": {
+            "nodeId": "Byty-fB4p",
+            "pinKey": "SykJ8wjXN"
+          },
+          "input": {
+            "nodeId": "Sk0CyfS4T",
+            "pinKey": "H1XQ3-S4T"
+          }
+        },
+        "SyHFWGBNp": {
+          "id": "SyHFWGBNp",
+          "output": {
+            "nodeId": "SkxeWzH4a",
+            "pinKey": "ByAIWR_UZ"
+          },
+          "input": {
+            "nodeId": "ryZtZGrVT",
+            "pinKey": "ryv7IRdSP1b"
+          }
+        },
+        "BJUt-GHEa": {
+          "id": "BJUt-GHEa",
+          "output": {
+            "nodeId": "HyLGZGSVT",
+            "pinKey": "ByAIWR_UZ"
+          },
+          "input": {
+            "nodeId": "ryZtZGrVT",
+            "pinKey": "ByU7LRuSPkW"
+          }
+        },
+        "HydFWzB4T": {
+          "id": "HydFWzB4T",
+          "output": {
+            "nodeId": "ryZtZGrVT",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "input": {
+            "nodeId": "Sk0CyfS4T",
+            "pinKey": "SyhgR-B46"
+          }
+        },
+        "SJnY-zBE6": {
+          "id": "SJnY-zBE6",
+          "output": {
+            "nodeId": "ryZtZGrVT",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "input": {
+            "nodeId": "ByfYlMBEp",
+            "pinKey": "Bk74I0_SPyb"
+          }
+        },
+        "Bk1kfMrV6": {
+          "id": "Bk1kfMrV6",
+          "output": {
+            "nodeId": "ryoRbMSEa",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "ryZtZGrVT",
+            "pinKey": "ByU7LRuSPkW-$1"
+          }
+        },
+        "BJs7nMHET": {
+          "id": "BJs7nMHET",
+          "output": {
+            "nodeId": "Sk0CyfS4T",
+            "pinKey": "BkbguckzSNT"
+          },
+          "input": {
+            "nodeId": "B1ImnzB4T",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "ryEEhMB4T": {
+          "id": "ryEEhMB4T",
+          "output": {
+            "nodeId": "B1ImnzB4T",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "B1g4hGSN6",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/03-example-measure-read-time",
+      "description": "Patch to demonstrate how heater and precision settings affect time required to read temperature and relative humidity. Run in debugger."
+    }
+  },
+  "license": "BSD",
+  "version": "0.0.1",
+  "description": "SHT4x relative humidity and temperature sensor. Tested using an SHT40 device. Wraps https://github.com/adafruit/Adafruit_SHT4X",
+  "name": "sht4x"
+}

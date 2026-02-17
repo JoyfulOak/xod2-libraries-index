@@ -1,0 +1,617 @@
+{
+  "description": "Library for the Adafruit RGB Color Sensor tcs34725",
+  "name": "tcs34725",
+  "patches": {
+    "@/tcs34725-device": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/adafruit/Adafruit_TCS34725\"\n#include <Wire.h>\n#include \"Adafruit_TCS34725.h\"\n\nnode {\n\n        meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = Adafruit_TCS34725*;\n    }\n\n    Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X);\n    \n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n\ntcs.begin();\nemitValue<output_OUT>(ctx, &tcs);\n        \n\n        \n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Device node connected to the tcs34725-raw-data",
+      "nodes": {
+        "Byq3aVkbu": {
+          "id": "Byq3aVkbu",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r10OdBlZu": {
+          "description": "To link with tcs34725",
+          "id": "r10OdBlZu",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/tcs34725-device"
+    },
+    "@/tcs34725-raw-data": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#include <Wire.h>\n#include \"Adafruit_TCS34725.h\"\n\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n\nauto tcs = getValue<input_IN>(ctx);\n  uint16_t r, g, b, c, colorTemp, lux;\n\n  tcs->getRawData(&r, &g, &b, &c);\n  colorTemp = tcs->calculateColorTemperature_dn40(r, g, b, c);\n  lux = tcs->calculateLux(r, g, b);\n\n  emitValue<output_colorTemp>(ctx, colorTemp);\n  emitValue<output_lux>(ctx, lux);\n  emitValue<output_R>(ctx, r);\n  emitValue<output_G>(ctx, g);\n  emitValue<output_B>(ctx, b);\n  emitValue<output_C>(ctx, c);\n        \n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "HJ1tcrg-_": {
+          "id": "HJ1tcrg-_",
+          "label": "DONE",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HkjZuSgbO": {
+          "id": "HkjZuSgbO",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HyU95Hxbd": {
+          "description": "Displays the value of illuminance (in lx units)",
+          "id": "HyU95Hxbd",
+          "label": "lux",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "Hym59SeWd": {
+          "description": "Displays the value of Color temperature (in K)",
+          "id": "Hym59SeWd",
+          "label": "colorTemp",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "S1Na5rgZu": {
+          "description": "Displays the intensity value of clear light",
+          "id": "S1Na5rgZu",
+          "label": "C",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SJnPq9BlZ_": {
+          "description": "Displays the intensity of light in the green spectrum (525 nm)",
+          "id": "SJnPq9BlZ_",
+          "label": "G",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "Sklv5rgWd": {
+          "description": "To link with tcs34725-device",
+          "id": "Sklv5rgWd",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-tcs34725-device"
+        },
+        "SyO9cHgbu": {
+          "description": "Displays the intensity of light in the blue spectrum (465 nm)",
+          "id": "SyO9cHgbu",
+          "label": "B",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SyqwcHgZu": {
+          "description": "Updates,. Triggers new sensor reading",
+          "id": "SyqwcHgZu",
+          "label": "UPD",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1D95SgbO": {
+          "description": "Displays the intensity of light in the red spectrum (615 nm)",
+          "id": "r1D95SgbO",
+          "label": "R",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/tcs34725-raw-data"
+    },
+    "@/tcs34725": {
+      "description": "Node to get the data from tcs3475, but the LED is continuously on",
+      "links": {
+        "rypaSsVZu": {
+          "id": "rypaSsVZu",
+          "output": {
+            "nodeId": "r1FTHs4bu",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJNoSoE-O",
+            "pinKey": "HyYh1a3LZ"
+          }
+        },
+        "SJyASi4WO": {
+          "id": "SJyASi4WO",
+          "output": {
+            "nodeId": "HylY6rjNWu",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJNoSoE-O",
+            "pinKey": "rJIdYs1LB"
+          }
+        },
+        "HJWABiVW_": {
+          "id": "HJWABiVW_",
+          "output": {
+            "nodeId": "SJ-tprjNWu",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJNoSoE-O",
+            "pinKey": "B1oqkTnIb"
+          }
+        },
+        "Hk5D_s4Zd": {
+          "id": "Hk5D_s4Zd",
+          "output": {
+            "nodeId": "HJuwOi4W_",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BkS0qrl-d",
+            "pinKey": "Sklv5rgWd"
+          }
+        },
+        "BynYdjN-d": {
+          "id": "BynYdjN-d",
+          "output": {
+            "nodeId": "BkS0qrl-d",
+            "pinKey": "Hym59SeWd"
+          },
+          "input": {
+            "nodeId": "rJ-vYdiVbO",
+            "pinKey": "__in__"
+          }
+        },
+        "ByCFOi4-_": {
+          "id": "ByCFOi4-_",
+          "output": {
+            "nodeId": "BkS0qrl-d",
+            "pinKey": "HyU95Hxbd"
+          },
+          "input": {
+            "nodeId": "HkePt_jE-u",
+            "pinKey": "__in__"
+          }
+        },
+        "Bkx5OjNb_": {
+          "id": "Bkx5OjNb_",
+          "output": {
+            "nodeId": "BkS0qrl-d",
+            "pinKey": "r1D95SgbO"
+          },
+          "input": {
+            "nodeId": "r1HwY_j4Z_",
+            "pinKey": "__in__"
+          }
+        },
+        "SJNc_jEZ_": {
+          "id": "SJNc_jEZ_",
+          "output": {
+            "nodeId": "BkS0qrl-d",
+            "pinKey": "SJnPq9BlZ_"
+          },
+          "input": {
+            "nodeId": "rJQPYOjE-u",
+            "pinKey": "__in__"
+          }
+        },
+        "BkKcuiVWu": {
+          "id": "BkKcuiVWu",
+          "output": {
+            "nodeId": "BkS0qrl-d",
+            "pinKey": "SyO9cHgbu"
+          },
+          "input": {
+            "nodeId": "rkNwKds4Wd",
+            "pinKey": "__in__"
+          }
+        },
+        "S1bs_i4W_": {
+          "id": "S1bs_i4W_",
+          "output": {
+            "nodeId": "BkS0qrl-d",
+            "pinKey": "S1Na5rgZu"
+          },
+          "input": {
+            "nodeId": "HkfwY_o4Z_",
+            "pinKey": "__in__"
+          }
+        },
+        "rkisdjNbd": {
+          "id": "rkisdjNbd",
+          "output": {
+            "nodeId": "BkS0qrl-d",
+            "pinKey": "HJ1tcrg-_"
+          },
+          "input": {
+            "nodeId": "rJPKds4Zd",
+            "pinKey": "__in__"
+          }
+        },
+        "B1nRqs4-_": {
+          "id": "B1nRqs4-_",
+          "output": {
+            "nodeId": "BkHAcjN-_",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BkS0qrl-d",
+            "pinKey": "SyqwcHgZu"
+          }
+        }
+      },
+      "nodes": {
+        "BkS0qrl-d": {
+          "boundLiterals": {
+            "SyqwcHgZu": "Continuously",
+            "rk-CYzoVbu": "D6",
+            "HJ0Kfs4WO": "0"
+          },
+          "id": "BkS0qrl-d",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/tcs34725-raw-data"
+        },
+        "rJNoSoE-O": {
+          "id": "rJNoSoE-O",
+          "type": "xod/common-hardware/led",
+          "position": {
+            "x": -3,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "r1FTHs4bu": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Luminance (brightness) value in relative units [0.0, 1.0]",
+          "id": "r1FTHs4bu",
+          "label": "LUM",
+          "position": {
+            "x": -2,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HylY6rjNWu": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Updates the luminocity of the board  LED on incoming value change while `ACT` is true.",
+          "id": "HylY6rjNWu",
+          "label": "ACT",
+          "position": {
+            "x": -1,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "SJ-tprjNWu": {
+          "description": "Board port number for the color-sensor breakout board LED",
+          "id": "SJ-tprjNWu",
+          "label": "LED",
+          "position": {
+            "x": -3,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HJuwOi4W_": {
+          "id": "HJuwOi4W_",
+          "type": "@/input-tcs34725-device",
+          "position": {
+            "x": 3,
+            "y": -1,
+            "units": "slots"
+          },
+          "description": "Input node for the tcs34725-evice"
+        },
+        "rJPKds4Zd": {
+          "id": "rJPKds4Zd",
+          "label": "DONE",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HkePt_jE-u": {
+          "description": "Displays the value of illuminance (in lx units)",
+          "id": "HkePt_jE-u",
+          "label": "lux",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rJ-vYdiVbO": {
+          "description": "Displays the value of Color temperature (in K)",
+          "id": "rJ-vYdiVbO",
+          "label": "colorTemp",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HkfwY_o4Z_": {
+          "description": "Displays the intensity value of clear light",
+          "id": "HkfwY_o4Z_",
+          "label": "C",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rJQPYOjE-u": {
+          "description": "Displays the intensity of light in the green spectrum (525 nm)",
+          "id": "rJQPYOjE-u",
+          "label": "G",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rkNwKds4Wd": {
+          "description": "Displays the intensity of light in the blue spectrum (465 nm)",
+          "id": "rkNwKds4Wd",
+          "label": "B",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "r1HwY_j4Z_": {
+          "description": "Displays the intensity of light in the red spectrum (615 nm)",
+          "id": "r1HwY_j4Z_",
+          "label": "R",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BkHAcjN-_": {
+          "description": "Updates,. Triggers new sensor reading",
+          "id": "BkHAcjN-_",
+          "label": "UPD",
+          "position": {
+            "x": 4,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/tcs34725"
+    },
+    "@/example-tcs3475": {
+      "nodes": {
+        "Hk-O_iE-_": {
+          "id": "Hk-O_iE-_",
+          "type": "@/tcs34725",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "SJ-tprjNWu": "D6",
+            "H1x6uoE-O": "Continuously",
+            "r1FTHs4bu": "0"
+          }
+        },
+        "Hysl0uiN-u": {
+          "id": "Hysl0uiN-u",
+          "type": "@/tcs34725-device",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SJJLKo4W_": {
+          "id": "SJJLKo4W_",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rJfIKsV-_": {
+          "id": "rJfIKsV-_",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rkhGLKjNWO": {
+          "id": "rkhGLKjNWO",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "r1mIFoVbd": {
+          "id": "r1mIFoVbd",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 11,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "ByhXUKjNWu": {
+          "id": "ByhXUKjNWu",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 12,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rktgmIFjE-_": {
+          "id": "rktgmIFjE-_",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 13,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "S1fCdj4-d": {
+          "id": "S1fCdj4-d",
+          "output": {
+            "nodeId": "Hysl0uiN-u",
+            "pinKey": "r10OdBlZu"
+          },
+          "input": {
+            "nodeId": "Hk-O_iE-_",
+            "pinKey": "HJuwOi4W_"
+          }
+        },
+        "S1PUFsVbd": {
+          "id": "S1PUFsVbd",
+          "output": {
+            "nodeId": "Hk-O_iE-_",
+            "pinKey": "rJ-vYdiVbO"
+          },
+          "input": {
+            "nodeId": "SJJLKo4W_",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "SytUFiEW_": {
+          "id": "SytUFiEW_",
+          "output": {
+            "nodeId": "Hk-O_iE-_",
+            "pinKey": "HkePt_jE-u"
+          },
+          "input": {
+            "nodeId": "rJfIKsV-_",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "r1hLFsEbu": {
+          "id": "r1hLFsEbu",
+          "output": {
+            "nodeId": "Hk-O_iE-_",
+            "pinKey": "r1HwY_j4Z_"
+          },
+          "input": {
+            "nodeId": "rkhGLKjNWO",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "SyvwFoNWO": {
+          "id": "SyvwFoNWO",
+          "output": {
+            "nodeId": "Hk-O_iE-_",
+            "pinKey": "rJQPYOjE-u"
+          },
+          "input": {
+            "nodeId": "r1mIFoVbd",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "rkKvtiE-_": {
+          "id": "rkKvtiE-_",
+          "output": {
+            "nodeId": "Hk-O_iE-_",
+            "pinKey": "rkNwKds4Wd"
+          },
+          "input": {
+            "nodeId": "ByhXUKjNWu",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "SyoPYjVZ_": {
+          "id": "SyoPYjVZ_",
+          "output": {
+            "nodeId": "Hk-O_iE-_",
+            "pinKey": "HkfwY_o4Z_"
+          },
+          "input": {
+            "nodeId": "rktgmIFjE-_",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/example-tcs3475"
+    }
+  },
+  "version": "0.0.3"
+}

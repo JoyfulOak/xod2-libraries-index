@@ -1,0 +1,1003 @@
+{
+  "description": "Text manipulation",
+  "license": "AGPL-3.0",
+  "name": "text",
+  "patches": {
+    "@/div-mod": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto numer = getValue<input_IN1>(ctx);\n    auto denom = getValue<input_IN2>(ctx);\n\n    emitValue<output_DIV>(ctx, (Number)(int)(numer / denom));\n    emitValue<output_MOD>(ctx, fmod(numer, denom));\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "comments": {
+        "H1ADMDF67": {
+          "content": "This patch should be in `xod/math` or `xod/core` IMO",
+          "id": "H1ADMDF67",
+          "position": {
+            "x": 272,
+            "y": 204
+          },
+          "size": {
+            "height": 51,
+            "width": 170
+          }
+        }
+      },
+      "nodes": {
+        "BkFDMwK6m": {
+          "id": "BkFDMwK6m",
+          "position": {
+            "x": 238,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/utility"
+        },
+        "HJ8N0LYaX": {
+          "id": "HJ8N0LYaX",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HyzLALYam": {
+          "id": "HyzLALYam",
+          "label": "DIV",
+          "position": {
+            "x": 136,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "S1T80Ut67": {
+          "id": "S1T80Ut67",
+          "label": "MOD",
+          "position": {
+            "x": 204,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SyV5A8YaQ": {
+          "id": "SyV5A8YaQ",
+          "position": {
+            "x": 136,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rytr0LF67": {
+          "id": "rytr0LF67",
+          "position": {
+            "x": 204,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/div-mod"
+    },
+    "@/marquee": {
+      "comments": {
+        "BkUjdPKTm": {
+          "content": "**General idea**\n\nGiven a string “Hello” and W=3, we extend the content to be scrolled to:\n\n```\n___Hello___\n```\n\nWhere `_` is a space character. Then we get a substring from the extended content with the `X` offset:\n\n```\n___Hello___\n^\n-^\n--^\n...\n-------^\n```\n\nThe X value is wrapped so that overflown values start around. That is, the trailing spaces become the leading spaces on advance.",
+          "id": "BkUjdPKTm",
+          "position": {
+            "x": -374,
+            "y": 102
+          },
+          "size": {
+            "height": 459,
+            "width": 272
+          }
+        },
+        "H1YUp8FaQ": {
+          "content": "Wrap around the string + space head",
+          "id": "H1YUp8FaQ",
+          "position": {
+            "x": 340,
+            "y": 408
+          },
+          "size": {
+            "height": 51,
+            "width": 136
+          }
+        },
+        "Hy66sIY6m": {
+          "content": "Add `W` spaces to the head and tail",
+          "id": "Hy66sIY6m",
+          "position": {
+            "x": -68,
+            "y": 510
+          },
+          "size": {
+            "height": 51,
+            "width": 136
+          }
+        }
+      },
+      "description": "Returns a part of the input string with the given room width and offset to achieve a marquee (crawler line) effect.",
+      "links": {
+        "BkFHaIYTX": {
+          "id": "BkFHaIYTX",
+          "input": {
+            "nodeId": "S1rG6UFam",
+            "pinKey": "HkqmLAOrD1W"
+          },
+          "output": {
+            "nodeId": "HJX8NTUFTm",
+            "pinKey": "__out__"
+          }
+        },
+        "BkSsRLY6Q": {
+          "id": "BkSsRLY6Q",
+          "input": {
+            "nodeId": "BJZoCIY6X",
+            "pinKey": "rytr0LF67"
+          },
+          "output": {
+            "nodeId": "S1rG6UFam",
+            "pinKey": "SyomIRurDJ-"
+          }
+        },
+        "ByUTs8FaQ": {
+          "id": "ByUTs8FaQ",
+          "input": {
+            "nodeId": "Hy2ssIFTQ",
+            "pinKey": "Hkqu9oaWb"
+          },
+          "output": {
+            "nodeId": "H1Bno8F67",
+            "pinKey": "BJ4ciIFTQ"
+          }
+        },
+        "H1Y3oIK6X": {
+          "id": "H1Y3oIK6X",
+          "input": {
+            "nodeId": "H1Bno8F67",
+            "pinKey": "ry1_sLt6m"
+          },
+          "output": {
+            "nodeId": "Bk_p9IYT7",
+            "pinKey": "__out__"
+          }
+        },
+        "HkOaoUt6m": {
+          "id": "HkOaoUt6m",
+          "input": {
+            "nodeId": "Hy2ssIFTQ",
+            "pinKey": "BkeKcj6ZZ-$1"
+          },
+          "output": {
+            "nodeId": "H1Bno8F67",
+            "pinKey": "BJ4ciIFTQ"
+          }
+        },
+        "Hkx60Ut6X": {
+          "id": "Hkx60Ut6X",
+          "input": {
+            "nodeId": "rk4liUYpQ",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJZoCIY6X",
+            "pinKey": "HyzLALYam"
+          }
+        },
+        "S1PJTLtpX": {
+          "id": "S1PJTLtpX",
+          "input": {
+            "nodeId": "rkEyoIF6m",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rk_R2UKTQ",
+            "pinKey": "SyGoc2LtTm"
+          }
+        },
+        "S1xL4a8taX": {
+          "id": "S1xL4a8taX",
+          "input": {
+            "nodeId": "r1INTIF6Q",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Bk_p9IYT7",
+            "pinKey": "__out__"
+          }
+        },
+        "rJJ3CLF6X": {
+          "id": "rJJ3CLF6X",
+          "input": {
+            "nodeId": "rk_R2UKTQ",
+            "pinKey": "Ski9hIt6Q"
+          },
+          "output": {
+            "nodeId": "BJZoCIY6X",
+            "pinKey": "S1T80Ut67"
+          }
+        },
+        "rkyJp8YaQ": {
+          "id": "rkyJp8YaQ",
+          "input": {
+            "nodeId": "rk_R2UKTQ",
+            "pinKey": "Sklscn8FT7"
+          },
+          "output": {
+            "nodeId": "Hy2ssIFTQ",
+            "pinKey": "rksccsp-W"
+          }
+        },
+        "ry-3oLK6Q": {
+          "id": "ry-3oLK6Q",
+          "input": {
+            "nodeId": "Hy2ssIFTQ",
+            "pinKey": "BkeKcj6ZZ"
+          },
+          "output": {
+            "nodeId": "SJn3qUYpm",
+            "pinKey": "__out__"
+          }
+        },
+        "ry2oR8KTm": {
+          "id": "ry2oR8KTm",
+          "input": {
+            "nodeId": "BJZoCIY6X",
+            "pinKey": "HJ8N0LYaX"
+          },
+          "output": {
+            "nodeId": "rk-05IFpQ",
+            "pinKey": "__out__"
+          }
+        },
+        "ryfLV68KTX": {
+          "id": "ryfLV68KTX",
+          "input": {
+            "nodeId": "rk_R2UKTQ",
+            "pinKey": "Bybo9h8t6X"
+          },
+          "output": {
+            "nodeId": "HJbU4p8KT7",
+            "pinKey": "__out__"
+          }
+        },
+        "rydR0L00m": {
+          "id": "rydR0L00m",
+          "output": {
+            "nodeId": "SJn3qUYpm",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "SyVCRICAX",
+            "pinKey": "rkKfJ7Y-7"
+          }
+        },
+        "HJ5R0UAAQ": {
+          "id": "HJ5R0UAAQ",
+          "output": {
+            "nodeId": "SyVCRICAX",
+            "pinKey": "H1kQ1XtbQ"
+          },
+          "input": {
+            "nodeId": "S1rG6UFam",
+            "pinKey": "BJnQUR_BwyZ"
+          }
+        }
+      },
+      "nodes": {
+        "BJZoCIY6X": {
+          "id": "BJZoCIY6X",
+          "position": {
+            "x": 238,
+            "y": 408
+          },
+          "type": "@/div-mod"
+        },
+        "Bk_p9IYT7": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Room width. Usually equal to the number of characters on a display line.",
+          "id": "Bk_p9IYT7",
+          "label": "W",
+          "position": {
+            "x": 170,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H1Bno8F67": {
+          "boundLiterals": {
+            "rk9wjUY6X": "\" \""
+          },
+          "id": "H1Bno8F67",
+          "position": {
+            "x": 136,
+            "y": 408
+          },
+          "type": "@/repeat"
+        },
+        "HJX8NTUFTm": {
+          "id": "HJX8NTUFTm",
+          "label": "W",
+          "position": {
+            "x": 306,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJbU4p8KT7": {
+          "id": "HJbU4p8KT7",
+          "label": "W",
+          "position": {
+            "x": 306,
+            "y": 510
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "Hy2ssIFTQ": {
+          "arityLevel": 2,
+          "id": "Hy2ssIFTQ",
+          "position": {
+            "x": 68,
+            "y": 510
+          },
+          "type": "xod/core/concat"
+        },
+        "S1rG6UFam": {
+          "id": "S1rG6UFam",
+          "position": {
+            "x": 272,
+            "y": 306
+          },
+          "type": "xod/core/add"
+        },
+        "SJn3qUYpm": {
+          "description": "The input string. May be very long. Leading and trailing spaces are not required.",
+          "id": "SJn3qUYpm",
+          "label": "IN",
+          "position": {
+            "x": 102,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "r1INTIF6Q": {
+          "id": "r1INTIF6Q",
+          "label": "W",
+          "position": {
+            "x": 204,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "rk-05IFpQ": {
+          "description": "Animation phase expressed as number of characters shifted. Fractions are truncated. Overflows and underflows are wrapped around.",
+          "id": "rk-05IFpQ",
+          "label": "X",
+          "position": {
+            "x": 238,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rk4liUYpQ": {
+          "description": "Outputs `true` when `X` is larger than the value required to perform a single full run. Use as a condition to stop the animation if you want to display a message just once.",
+          "id": "rk4liUYpQ",
+          "label": "OVF",
+          "position": {
+            "x": 238,
+            "y": 510
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "rkEyoIF6m": {
+          "description": "A part of the string to be shown. Has exactly `W` characters in width. If the original content is too short, extra spaces are inserted.",
+          "id": "rkEyoIF6m",
+          "label": "OUT",
+          "position": {
+            "x": 136,
+            "y": 714
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "rk_R2UKTQ": {
+          "id": "rk_R2UKTQ",
+          "position": {
+            "x": 238,
+            "y": 612
+          },
+          "type": "@/substring-n"
+        },
+        "SyVCRICAX": {
+          "id": "SyVCRICAX",
+          "type": "xod/core/length(string)",
+          "position": {
+            "x": 136,
+            "y": 204
+          }
+        }
+      },
+      "path": "@/marquee"
+    },
+    "@/repeat": {
+      "attachments": [
+        {
+          "content": "\ntemplate<typename T> class RepeatView : public ListView<T> {\n  public:\n    class Cursor : public xod::detail::Cursor<T> {\n      public:\n        Cursor(const RepeatView* owner)\n            : _iter(owner->_list.iterate())\n            , _idx(0)\n            , _owner(owner)\n        {\n        }\n\n        bool isValid() const override {\n            return _iter && isInRange();\n        }\n\n        bool value(T* out) const override {\n            if (!isInRange())\n                return false;\n            return _iter.value(out);\n        }\n\n        void next() override {\n            ++_iter;\n            if (!_iter) {\n                // one pass complete\n                ++_idx;\n                _iter = _owner->_list.iterate();\n            }\n        }\n\n      private:\n        bool isInRange() const {\n            return _idx < _owner->_n;\n        }\n\n      private:\n        const RepeatView* _owner;\n        Iterator<T> _iter;\n        size_t _idx;\n    };\n\n  public:\n    RepeatView(List<T> list, int n)\n        : _list(list)\n        , _n(n)\n    { }\n\n    virtual Iterator<T> iterate() const override {\n        return Iterator<T>(new Cursor(this));\n    }\n\n  private:\n    friend class Cursor;\n    List<T> _list;\n    int _n;\n};\n\nstruct State {\n    uint8_t mem[sizeof(RepeatView<char>)];\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto state = getState(ctx);\n    auto view = new (state->mem) RepeatView<char>(\n        getValue<input_IN>(ctx),\n        getValue<input_N>(ctx)\n    );\n\n    emitValue<output_OUT>(ctx, XString(view));\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Returns `N` copies of `IN` joined together.",
+      "nodes": {
+        "BJ4ciIFTQ": {
+          "id": "BJ4ciIFTQ",
+          "position": {
+            "x": 102,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "rJY5s8Kp7": {
+          "id": "rJY5s8Kp7",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rk9wjUY6X": {
+          "id": "rk9wjUY6X",
+          "label": "IN",
+          "position": {
+            "x": 102,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "ry1_sLt6m": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "The number of copies. Fractions are truncated. Negative values are interpreted as zero.",
+          "id": "ry1_sLt6m",
+          "label": "N",
+          "position": {
+            "x": 170,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/repeat"
+    },
+    "@/substring": {
+      "attachments": [
+        {
+          "content": "\ntemplate<typename T> class SliceView : public ListView<T> {\n  public:\n    class Cursor : public xod::detail::Cursor<T> {\n      public:\n        Cursor(const SliceView* owner)\n            : _iter(owner->_list.iterate())\n            , _owner(owner)\n        {\n            // Fast-forward to the start position\n            _idx = _owner->_start;\n            for (size_t i = 0; i < _idx; ++i)\n                ++_iter;\n        }\n\n        bool isValid() const override {\n            return _iter && isInRange();\n        }\n\n        bool value(T* out) const override {\n            if (!isInRange())\n                return false;\n            return _iter.value(out);\n        }\n\n        void next() override {\n            ++_idx;\n            ++_iter;\n        }\n\n      private:\n        bool isInRange() const {\n            return _idx < _owner->_end;\n        }\n\n      private:\n        const SliceView* _owner;\n        Iterator<T> _iter;\n        size_t _idx;\n    };\n\n  public:\n    SliceView(List<T> list, size_t start, size_t end)\n        : _list(list)\n        , _start(start)\n        , _end(end)\n    { }\n\n    virtual Iterator<T> iterate() const override {\n        return Iterator<T>(new Cursor(this));\n    }\n\n  private:\n    friend class Cursor;\n    List<T> _list;\n    size_t _start;\n    size_t _end;\n};\n\nstruct State {\n    uint8_t mem[sizeof(SliceView<char>)];\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto state = getState(ctx);\n    auto view = new (state->mem) SliceView<char>(\n        getValue<input_IN>(ctx),\n        getValue<input_STRT>(ctx),\n        getValue<input_END>(ctx)\n    );\n\n    emitValue<output_OUT>(ctx, XString(view));\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Extracts an inner part of a string.",
+      "nodes": {
+        "B1e8kpzam": {
+          "description": "Start character index. Zero-based. Fractional indexes are truncated to integers, negative values are interpreted as zero. Indexes past the string length lead to an empty result.",
+          "id": "B1e8kpzam",
+          "label": "STRT",
+          "position": {
+            "x": -238,
+            "y": -408
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJlB1azTX": {
+          "description": "Input string",
+          "id": "HJlB1azTX",
+          "label": "IN",
+          "position": {
+            "x": -306,
+            "y": -408
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Hk3q1azTX": {
+          "boundLiterals": {
+            "__out__": "0"
+          },
+          "description": "End character index. Not inclusive, that is, the value of string length will return the string’s tail. If `STRT` is `0` it is equivalent to number of characters in the slice. Fractional indexes are truncated to integers, negative values are interpreted as zero which, in turn, lead to an always empty result.",
+          "id": "Hk3q1azTX",
+          "label": "END",
+          "position": {
+            "x": -170,
+            "y": -408
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HyD1b6Gp7": {
+          "id": "HyD1b6Gp7",
+          "position": {
+            "x": -306,
+            "y": -306
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SyqMgTz6X": {
+          "description": "Resulting substring (aka part, slice). Will be empty if `END` ≤ `STRT` or `STRT` is past the input length.",
+          "id": "SyqMgTz6X",
+          "position": {
+            "x": -306,
+            "y": -204
+          },
+          "type": "xod/patch-nodes/output-string"
+        }
+      },
+      "path": "@/substring"
+    },
+    "@/substring-n": {
+      "description": "Extracts an inner part of a string from `STRT` char, up to `N` chars in length",
+      "links": {
+        "BJQj3IKaQ": {
+          "id": "BJQj3IKaQ",
+          "input": {
+            "nodeId": "SyGoc2LtTm",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Bygs3LKa7",
+            "pinKey": "SyqMgTz6X"
+          }
+        },
+        "H1bahUFpX": {
+          "id": "H1bahUFpX",
+          "input": {
+            "nodeId": "Bygs3LKa7",
+            "pinKey": "B1e8kpzam"
+          },
+          "output": {
+            "nodeId": "Ski9hIt6Q",
+            "pinKey": "__out__"
+          }
+        },
+        "HkahnUFa7": {
+          "id": "HkahnUFa7",
+          "input": {
+            "nodeId": "Bygs3LKa7",
+            "pinKey": "Hk3q1azTX"
+          },
+          "output": {
+            "nodeId": "BkS2n8tam",
+            "pinKey": "SyomIRurDJ-"
+          }
+        },
+        "Hku238Y67": {
+          "id": "Hku238Y67",
+          "input": {
+            "nodeId": "BkS2n8tam",
+            "pinKey": "HkqmLAOrD1W"
+          },
+          "output": {
+            "nodeId": "Bybo9h8t6X",
+            "pinKey": "__out__"
+          }
+        },
+        "SJv22Utam": {
+          "id": "SJv22Utam",
+          "input": {
+            "nodeId": "BkS2n8tam",
+            "pinKey": "BJnQUR_BwyZ"
+          },
+          "output": {
+            "nodeId": "Ski9hIt6Q",
+            "pinKey": "__out__"
+          }
+        },
+        "Sk-on8KT7": {
+          "id": "Sk-on8KT7",
+          "input": {
+            "nodeId": "Bygs3LKa7",
+            "pinKey": "HJlB1azTX"
+          },
+          "output": {
+            "nodeId": "Sklscn8FT7",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "BkS2n8tam": {
+          "id": "BkS2n8tam",
+          "position": {
+            "x": 68,
+            "y": 102
+          },
+          "type": "xod/core/add"
+        },
+        "Bybo9h8t6X": {
+          "boundLiterals": {
+            "__out__": "+Inf"
+          },
+          "description": "Number of characters to extract. Fractions are truncated. Negative values are interpreted as zero. If `N` is too large for the given input, `OUT` will have a length less than `N`.",
+          "id": "Bybo9h8t6X",
+          "label": "N",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Bygs3LKa7": {
+          "id": "Bygs3LKa7",
+          "position": {
+            "x": 0,
+            "y": 204
+          },
+          "type": "@/substring"
+        },
+        "Ski9hIt6Q": {
+          "description": "Start character index. Zero-based. Fractional indexes are truncated to integers, negative values are interpreted as zero. Indexes past the string length lead to an empty result.",
+          "id": "Ski9hIt6Q",
+          "label": "STRT",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Sklscn8FT7": {
+          "description": "Input string",
+          "id": "Sklscn8FT7",
+          "label": "IN",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SyGoc2LtTm": {
+          "description": "Resulting substring (aka part, slice). Will be empty if `N` ≤ `0` or `STRT` is past the input length.",
+          "id": "SyGoc2LtTm",
+          "position": {
+            "x": 0,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/output-string"
+        }
+      },
+      "path": "@/substring-n"
+    },
+    "@/test-marquee": {
+      "links": {
+        "H1R7QvFaX": {
+          "id": "H1R7QvFaX",
+          "input": {
+            "nodeId": "B1S0zwFpX",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "HJXG7wYpm",
+            "pinKey": "rkEyoIF6m"
+          }
+        },
+        "HJjxqDtpQ": {
+          "id": "HJjxqDtpQ",
+          "input": {
+            "nodeId": "B1qyqPta7",
+            "pinKey": "B1TSE9tZ-"
+          },
+          "output": {
+            "nodeId": "HJXG7wYpm",
+            "pinKey": "rkEyoIF6m"
+          }
+        },
+        "S1rEmDFa7": {
+          "id": "S1rEmDFa7",
+          "input": {
+            "nodeId": "BJfEmPFpX",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "HJXG7wYpm",
+            "pinKey": "rk4liUYpQ"
+          }
+        },
+        "SkOIQPKp7": {
+          "id": "SkOIQPKp7",
+          "input": {
+            "nodeId": "HJXG7wYpm",
+            "pinKey": "rk-05IFpQ"
+          },
+          "output": {
+            "nodeId": "H1B8QvF6m",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "SksXmvtaX": {
+          "id": "SksXmvtaX",
+          "input": {
+            "nodeId": "HJXG7wYpm",
+            "pinKey": "SJn3qUYpm"
+          },
+          "output": {
+            "nodeId": "H1u2zPKaX",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "ryxDXvKpm": {
+          "id": "ryxDXvKpm",
+          "input": {
+            "nodeId": "H1B8QvF6m",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "HJpUQDYa7",
+            "pinKey": "HJU8CE2lW"
+          }
+        }
+      },
+      "nodes": {
+        "B1S0zwFpX": {
+          "id": "B1S0zwFpX",
+          "position": {
+            "x": 136,
+            "y": 408
+          },
+          "size": {
+            "height": 51,
+            "width": 136
+          },
+          "type": "xod/core/watch"
+        },
+        "B1qyqPta7": {
+          "boundLiterals": {
+            "rJlYT7EfW": "38h"
+          },
+          "id": "B1qyqPta7",
+          "position": {
+            "x": -68,
+            "y": 408
+          },
+          "type": "xod/common-hardware/text-lcd-16x2-i2c"
+        },
+        "BJfEmPFpX": {
+          "id": "BJfEmPFpX",
+          "position": {
+            "x": 170,
+            "y": 306
+          },
+          "size": {
+            "height": 51,
+            "width": 68
+          },
+          "type": "xod/core/watch"
+        },
+        "H1B8QvF6m": {
+          "id": "H1B8QvF6m",
+          "position": {
+            "x": 204,
+            "y": 102
+          },
+          "type": "xod/core/count"
+        },
+        "H1u2zPKaX": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "\"Hello!\""
+          },
+          "id": "H1u2zPKaX",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "size": {
+            "height": 51,
+            "width": 68
+          },
+          "type": "xod/core/constant-string"
+        },
+        "HJXG7wYpm": {
+          "boundLiterals": {
+            "Bk_p9IYT7": "16"
+          },
+          "id": "HJXG7wYpm",
+          "position": {
+            "x": 136,
+            "y": 204
+          },
+          "type": "@/marquee"
+        },
+        "HJpUQDYa7": {
+          "boundLiterals": {
+            "B13SCNhl-": "0.33"
+          },
+          "id": "HJpUQDYa7",
+          "position": {
+            "x": 238,
+            "y": 0
+          },
+          "type": "xod/core/clock"
+        },
+        "SJXgQPFam": {
+          "id": "SJXgQPFam",
+          "position": {
+            "x": 374,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/utility"
+        }
+      },
+      "path": "@/test-marquee"
+    },
+    "@/test-substring": {
+      "links": {
+        "H1Ck6aM67": {
+          "id": "H1Ck6aM67",
+          "input": {
+            "nodeId": "SkXRh6faQ",
+            "pinKey": "BJnQUR_BwyZ"
+          },
+          "output": {
+            "nodeId": "HJdyTaGa7",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "H1sR2azTm": {
+          "id": "H1sR2azTm",
+          "input": {
+            "nodeId": "SkXRh6faQ",
+            "pinKey": "HkqmLAOrD1W"
+          },
+          "output": {
+            "nodeId": "ByDjn6z6Q",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "SJJj10MTm": {
+          "id": "SJJj10MTm",
+          "input": {
+            "nodeId": "Sy6qkCzT7",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "Hkny5Tfam",
+            "pinKey": "SyqMgTz6X"
+          }
+        },
+        "SJqo3pGam": {
+          "id": "SJqo3pGam",
+          "input": {
+            "nodeId": "ByDjn6z6Q",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "Byks3TG6m",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "Sk203aMpX": {
+          "id": "Sk203aMpX",
+          "input": {
+            "nodeId": "Hkny5Tfam",
+            "pinKey": "Hk3q1azTX"
+          },
+          "output": {
+            "nodeId": "SkXRh6faQ",
+            "pinKey": "SyomIRurDJ-"
+          }
+        },
+        "r1TJppzTX": {
+          "id": "r1TJppzTX",
+          "input": {
+            "nodeId": "Hkny5Tfam",
+            "pinKey": "B1e8kpzam"
+          },
+          "output": {
+            "nodeId": "HJdyTaGa7",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "r1gFhpG67": {
+          "id": "r1gFhpG67",
+          "input": {
+            "nodeId": "Hkny5Tfam",
+            "pinKey": "HJlB1azTX"
+          },
+          "output": {
+            "nodeId": "BkGZupzTm",
+            "pinKey": "B1x2RV3eZ"
+          }
+        }
+      },
+      "nodes": {
+        "BJPpk0f6X": {
+          "id": "BJPpk0f6X",
+          "position": {
+            "x": 476,
+            "y": 408
+          },
+          "type": "xod/patch-nodes/utility"
+        },
+        "BkGZupzTm": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "\"Hello wonderful world\""
+          },
+          "id": "BkGZupzTm",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "size": {
+            "height": 51,
+            "width": 272
+          },
+          "type": "xod/core/constant-string"
+        },
+        "ByDjn6z6Q": {
+          "id": "ByDjn6z6Q",
+          "position": {
+            "x": 204,
+            "y": 306
+          },
+          "type": "xod/core/count"
+        },
+        "Byks3TG6m": {
+          "id": "Byks3TG6m",
+          "position": {
+            "x": 238,
+            "y": 204
+          },
+          "type": "xod/core/clock"
+        },
+        "HJdyTaGa7": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "6"
+          },
+          "id": "HJdyTaGa7",
+          "position": {
+            "x": 170,
+            "y": 306
+          },
+          "type": "xod/core/constant-number"
+        },
+        "Hkny5Tfam": {
+          "boundLiterals": {
+            "B1e8kpzam": "6",
+            "Hk3q1azTX": "5"
+          },
+          "id": "Hkny5Tfam",
+          "position": {
+            "x": 136,
+            "y": 510
+          },
+          "type": "@/substring"
+        },
+        "SkXRh6faQ": {
+          "boundLiterals": {
+            "HkqmLAOrD1W": "6"
+          },
+          "id": "SkXRh6faQ",
+          "position": {
+            "x": 238,
+            "y": 408
+          },
+          "type": "xod/core/add"
+        },
+        "Sy6qkCzT7": {
+          "id": "Sy6qkCzT7",
+          "position": {
+            "x": 136,
+            "y": 612
+          },
+          "size": {
+            "height": 51,
+            "width": 170
+          },
+          "type": "xod/core/watch"
+        }
+      },
+      "path": "@/test-substring"
+    }
+  },
+  "version": "1.1.0"
+}

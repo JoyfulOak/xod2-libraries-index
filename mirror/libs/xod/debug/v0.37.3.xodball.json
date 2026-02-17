@@ -1,0 +1,2928 @@
+{
+  "patches": {
+    "@/close": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1eXvb_0BL": {
+          "boundLiterals": {},
+          "description": "Pulses when the connection is closed",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1eXvb_0BL",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "By-QPWu0SU": {
+          "boundLiterals": {
+            "__out__": "Never"
+          },
+          "description": "Close the connection",
+          "label": "CLS",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "By-QPWu0SU",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Hk7P-_0SU": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hk7P-_0SU",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "SJNmmuCSL": {
+          "boundLiterals": {},
+          "description": "A socket",
+          "label": "SOCK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJNmmuCSL",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/net/input-socket",
+          "@@type": "xod-project/Node"
+        },
+        "SkTjFL5CU": {
+          "boundLiterals": {},
+          "description": "An internet connection",
+          "label": "INET'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkTjFL5CU",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/output-tethering-inet",
+          "@@type": "xod-project/Node"
+        },
+        "SyGQPWOAB8": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyGQPWOAB8",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "rkX7PWORrU": {
+          "boundLiterals": {},
+          "description": "An internet connection",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkX7PWORrU",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-tethering-inet",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/close",
+      "description": "Closes connection",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_CLS\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_CLS>(ctx))\n            return;\n\n        auto inet = getValue<input_INET>(ctx);\n        auto sockId = getValue<input_SOCK>(ctx);\n        if (inet->close(sockId)) {\n            emitValue<output_DONE>(ctx, 1);\n        } else {\n            raiseError(ctx);\n        }\n\n        emitValue<output_INETU0027>(ctx, inet);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/console-log": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "HJdO9HwJ-": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "LINE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJdO9HwJ-",
+          "position": {
+            "x": 0.25,
+            "y": 0.15
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "S1n95SDJb": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "DUMP",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1n95SDJb",
+          "position": {
+            "x": 4.05,
+            "y": 0.15
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "noNativeImpl": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "noNativeImpl",
+          "position": {
+            "x": 3,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/console-log",
+      "description": "Outputs a line of text to the board standard debug interface",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_DUMP\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_DUMP>(ctx))\n            return;\n\n        auto line = getValue<input_LINE>(ctx);\n\n        for (auto it = line->iterate(); it; ++it)\n            XOD_DEBUG_SERIAL.write((char)*it);\n\n        XOD_DEBUG_SERIAL.write('\\r');\n        XOD_DEBUG_SERIAL.write('\\n');\n\n        XOD_DEBUG_SERIAL.flush();\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example-tethering-internet": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJZUal0kII": {
+          "boundLiterals": {
+            "rkZ8oIj0-m": "\"{\"iso\":\"\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJZUal0kII",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/stream/pass-from-sequence",
+          "@@type": "xod-project/Node"
+        },
+        "Bkm7hhRK8": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bkm7hhRK8",
+          "position": {
+            "x": 7,
+            "y": 0
+          },
+          "type": "@/tweak-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "S1g8ae0y8I": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "height": 1,
+            "width": 4
+          },
+          "id": "S1g8ae0y8I",
+          "position": {
+            "x": -1,
+            "y": 4
+          },
+          "type": "@/watch",
+          "@@type": "xod-project/Node"
+        },
+        "rJ62xR1I8": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJ62xR1I8",
+          "position": {
+            "x": 0,
+            "y": -0.25
+          },
+          "type": "@/tethering-inet",
+          "@@type": "xod-project/Node"
+        },
+        "rJ8TlRyU8": {
+          "boundLiterals": {
+            "HkAv2Av-X": "24"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJ8TlRyU8",
+          "position": {
+            "x": -1,
+            "y": 3
+          },
+          "type": "xod/stream/accumulate-string",
+          "@@type": "xod-project/Node"
+        },
+        "rJtneCyIU": {
+          "boundLiterals": {
+            "H1e9S9e-mQ": "On Boot",
+            "HJzqrceZQm": "\"/httpbin/now\"",
+            "S1geqrqgWmX": "\"api.xod.io\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJtneCyIU",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/net/http-request",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "BJ9plCkUL": {
+          "id": "BJ9plCkUL",
+          "input": {
+            "nodeId": "BJZUal0kII",
+            "pinKey": "rklUo8jA-Q"
+          },
+          "output": {
+            "nodeId": "rJtneCyIU",
+            "pinKey": "S1sqHqebm7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJM8alAy8U": {
+          "id": "BJM8alAy8U",
+          "input": {
+            "nodeId": "rJ8TlRyU8",
+            "pinKey": "HJi_30PZX"
+          },
+          "output": {
+            "nodeId": "BJZUal0kII",
+            "pinKey": "SkSGwoAZQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "By78TeRy8L": {
+          "id": "By78TeRy8L",
+          "input": {
+            "nodeId": "rJ8TlRyU8",
+            "pinKey": "r1NYhRDZ7"
+          },
+          "output": {
+            "nodeId": "BJZUal0kII",
+            "pinKey": "SkYZwiRbm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJVITx0kL8": {
+          "id": "HJVITx0kL8",
+          "input": {
+            "nodeId": "S1g8ae0y8I",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rJ8TlRyU8",
+            "pinKey": "S1s7pCDbQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJLSnnRYU": {
+          "id": "SJLSnnRYU",
+          "input": {
+            "nodeId": "rJ8TlRyU8",
+            "pinKey": "HyvKhAv-7"
+          },
+          "output": {
+            "nodeId": "Bkm7hhRK8",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJkpgCyI8": {
+          "id": "SJkpgCyI8",
+          "input": {
+            "nodeId": "rJtneCyIU",
+            "pinKey": "S1SP9lW7X"
+          },
+          "output": {
+            "nodeId": "rJ62xR1I8",
+            "pinKey": "SyveJHHBL"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkEmhn0YI": {
+          "id": "SkEmhn0YI",
+          "input": {
+            "nodeId": "rJtneCyIU",
+            "pinKey": "H1e9S9e-mQ"
+          },
+          "output": {
+            "nodeId": "Bkm7hhRK8",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkFalRk8L": {
+          "id": "SkFalRk8L",
+          "input": {
+            "nodeId": "BJZUal0kII",
+            "pinKey": "B18iIoA-m"
+          },
+          "output": {
+            "nodeId": "rJtneCyIU",
+            "pinKey": "H15S9xWQX"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJsalR1UU": {
+          "id": "rJsalR1UU",
+          "input": {
+            "nodeId": "BJZUal0kII",
+            "pinKey": "BJhHwoRb7"
+          },
+          "output": {
+            "nodeId": "rJtneCyIU",
+            "pinKey": "SJGl9r9l-m7"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/example-tethering-internet",
+      "description": "",
+      "attachments": []
+    },
+    "@/get-local-ip": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1ZYjLdCrU": {
+          "boundLiterals": {
+            "__out__": "Never"
+          },
+          "description": "Send request for local IP address",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1ZYjLdCrU",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "BJzYoL_ArL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJzYoL_ArL",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "ByFsId0HL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByFsId0HL",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "HkXZvORHU": {
+          "boundLiterals": {},
+          "description": "A local IP address",
+          "label": "IP",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkXZvORHU",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/net/output-ip-address",
+          "@@type": "xod-project/Node"
+        },
+        "S1xFi8u0BU": {
+          "boundLiterals": {},
+          "description": "Pulses when IP address received",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1xFi8u0BU",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rJQYj8dRrU": {
+          "boundLiterals": {},
+          "description": "A tethering internet",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJQYj8dRrU",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-tethering-inet",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/get-local-ip",
+      "description": "Requests local IP from Tethering Internet, that connected to some network.\n\nPossible errors:\n— Can't get local IP address",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto inet = getValue<input_INET>(ctx);\n        typeof_IP ip = inet->getIP();\n        if (ip == 0) {\n            raiseError(ctx);\n            return;\n        }\n        emitValue<output_IP>(ctx, ip);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/http-request(tethering-inet)": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1KLWgCyL8": {
+          "boundLiterals": {
+            "__out__": "\"GET\""
+          },
+          "description": "An HTTP method (e.g., GET, POST, PUT, or DELETE)",
+          "label": "METH",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1KLWgCyL8",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "B1WIZe0J8I": {
+          "boundLiterals": {
+            "HJTIija-W": "0"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1WIZe0J8I",
+          "position": {
+            "x": 9,
+            "y": 1
+          },
+          "type": "xod/core/format-number",
+          "@@type": "xod-project/Node"
+        },
+        "BJALbe0yLU": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "description": "A domain name of the server",
+          "label": "HOST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJALbe0yLU",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "Hyyg8WeRyUU": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "description": "Additional headers",
+          "label": "HDRS",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hyyg8WeRyUU",
+          "position": {
+            "x": 10,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "S16beAy8L": {
+          "boundLiterals": {},
+          "description": "A tethering internet",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S16beAy8L",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-tethering-inet",
+          "@@type": "xod-project/Node"
+        },
+        "S1l7lR1IL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1l7lR1IL",
+          "position": {
+            "x": 0,
+            "y": 4
+          },
+          "type": "@/open-tcp",
+          "@@type": "xod-project/Node"
+        },
+        "S1pUZl01IL": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "description": "The request body (optional)",
+          "label": "BODY",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1pUZl01IL",
+          "position": {
+            "x": 12,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "SJQHgAJUI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJQHgAJUI",
+          "position": {
+            "x": 8,
+            "y": 4
+          },
+          "type": "@/receive",
+          "@@type": "xod-project/Node"
+        },
+        "SJzLWe0JLL": {
+          "boundLiterals": {
+            "__out__": "\"/\""
+          },
+          "description": "A path to the requested resource",
+          "label": "PATH",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJzLWe0JLL",
+          "position": {
+            "x": 8,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "SkUbg0yI8": {
+          "boundLiterals": {},
+          "description": "The last received character from the response",
+          "label": "CHAR",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkUbg0yI8",
+          "position": {
+            "x": 0,
+            "y": 6
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "SyMElAyU8": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyMElAyU8",
+          "position": {
+            "x": 4,
+            "y": 4
+          },
+          "type": "@/send",
+          "@@type": "xod-project/Node"
+        },
+        "SylIZl0yUL": {
+          "boundLiterals": {},
+          "description": "Begin the request",
+          "label": "INIT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SylIZl0yUL",
+          "position": {
+            "x": 14,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "r15IWxA18U": {
+          "boundLiterals": {},
+          "description": "Pulses when a new response character is received",
+          "label": "RCV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r15IWxA18U",
+          "position": {
+            "x": 2,
+            "y": 6
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "r1VLWeR1II": {
+          "boundLiterals": {
+            "__out__": "80"
+          },
+          "description": "A port number on which the server is listening. In most configurations, HTTP web servers listen at port 80",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1VLWeR1II",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "rk_LbgRJI8": {
+          "boundLiterals": {
+            "BkeKcj6ZZ": "\":\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 2,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rk_LbgRJI8",
+          "position": {
+            "x": 7,
+            "y": 2
+          },
+          "type": "xod/core/concat",
+          "@@type": "xod-project/Node"
+        },
+        "rkeeIZe0yIL": {
+          "boundLiterals": {},
+          "description": "Pulses when all response data is received and the connection is closed",
+          "label": "END",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkeeIZe0yIL",
+          "position": {
+            "x": 4,
+            "y": 6
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "ry38-e0kLL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ry38-e0kLL",
+          "position": {
+            "x": 6,
+            "y": 3
+          },
+          "type": "xod/net/format-http-request",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B1NVe01LI": {
+          "id": "B1NVe01LI",
+          "input": {
+            "nodeId": "SyMElAyU8",
+            "pinKey": "Sy7vWxtr8"
+          },
+          "output": {
+            "nodeId": "S1l7lR1IL",
+            "pinKey": "SJ7VWxYSI"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJ5eU-gRkII": {
+          "id": "BJ5eU-gRkII",
+          "input": {
+            "nodeId": "ry38-e0kLL",
+            "pinKey": "HkcCKGYZ7"
+          },
+          "output": {
+            "nodeId": "SJzLWe0JLL",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJOgLWeRyLI": {
+          "id": "BJOgLWeRyLI",
+          "input": {
+            "nodeId": "rk_LbgRJI8",
+            "pinKey": "BkeKcj6ZZ-$1"
+          },
+          "output": {
+            "nodeId": "B1WIZe0J8I",
+            "pinKey": "r1H_oipZb"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJw4l01UL": {
+          "id": "BJw4l01UL",
+          "input": {
+            "nodeId": "SyMElAyU8",
+            "pinKey": "ByW4A1xFBU"
+          },
+          "output": {
+            "nodeId": "S1l7lR1IL",
+            "pinKey": "SJttyrSBU"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkW7lAJII": {
+          "id": "BkW7lAJII",
+          "input": {
+            "nodeId": "S1l7lR1IL",
+            "pinKey": "Sy6DyHSS8"
+          },
+          "output": {
+            "nodeId": "S16beAy8L",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Bkrmg0yLL": {
+          "id": "Bkrmg0yLL",
+          "input": {
+            "nodeId": "S1l7lR1IL",
+            "pinKey": "HyetYJSrHU"
+          },
+          "output": {
+            "nodeId": "r1VLWeR1II",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Bypg8-xR1UU": {
+          "id": "Bypg8-xR1UU",
+          "input": {
+            "nodeId": "ry38-e0kLL",
+            "pinKey": "Hyd95MK-m"
+          },
+          "output": {
+            "nodeId": "Hyyg8WeRyUU",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1UElAyII": {
+          "id": "H1UElAyII",
+          "input": {
+            "nodeId": "SyMElAyU8",
+            "pinKey": "HJMVCJxtBU"
+          },
+          "output": {
+            "nodeId": "ry38-e0kLL",
+            "pinKey": "H1leYGFbm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJ-bU-eR18I": {
+          "id": "HJ-bU-eR18I",
+          "input": {
+            "nodeId": "ry38-e0kLL",
+            "pinKey": "SkQFtMKZm"
+          },
+          "output": {
+            "nodeId": "B1KLWgCyL8",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkN-8ZxCkIL": {
+          "id": "HkN-8ZxCkIL",
+          "input": {
+            "nodeId": "ry38-e0kLL",
+            "pinKey": "Sy5v9zFZ7"
+          },
+          "output": {
+            "nodeId": "S1pUZl01IL",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkQXeAk8U": {
+          "id": "HkQXeAk8U",
+          "input": {
+            "nodeId": "S1l7lR1IL",
+            "pinKey": "S1GFKJBSBL"
+          },
+          "output": {
+            "nodeId": "BJALbe0yLU",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HyCBe0yUU": {
+          "id": "HyCBe0yUU",
+          "input": {
+            "nodeId": "SkUbg0yI8",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJQHgAJUI",
+            "pinKey": "SJ4S6-VtSI"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HyZxIbxC188": {
+          "id": "HyZxIbxC188",
+          "input": {
+            "nodeId": "B1WIZe0J8I",
+            "pinKey": "BJlHojaWZ"
+          },
+          "output": {
+            "nodeId": "r1VLWeR1II",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HykLeRyIU": {
+          "id": "HykLeRyIU",
+          "input": {
+            "nodeId": "r15IWxA18U",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJQHgAJUI",
+            "pinKey": "Bkj6bEKHI"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJPZLbeCkLU": {
+          "id": "SJPZLbeCkLU",
+          "input": {
+            "nodeId": "rk_LbgRJI8",
+            "pinKey": "Hkqu9oaWb"
+          },
+          "output": {
+            "nodeId": "BJALbe0yLU",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkEre0J8L": {
+          "id": "SkEre0J8L",
+          "input": {
+            "nodeId": "SJQHgAJUI",
+            "pinKey": "HyXBaZ4KBL"
+          },
+          "output": {
+            "nodeId": "SyMElAyU8",
+            "pinKey": "rJvCGxtHL"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Skcmg0yL8": {
+          "id": "Skcmg0yL8",
+          "input": {
+            "nodeId": "S1l7lR1IL",
+            "pinKey": "HyWtFyHBSL"
+          },
+          "output": {
+            "nodeId": "SylIZl0yUL",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Skzl8bxAyIU": {
+          "id": "Skzl8bxAyIU",
+          "input": {
+            "nodeId": "ry38-e0kLL",
+            "pinKey": "BJqntfKbm"
+          },
+          "output": {
+            "nodeId": "rk_LbgRJI8",
+            "pinKey": "rksccsp-W"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyPBeCyIU": {
+          "id": "SyPBeCyIU",
+          "input": {
+            "nodeId": "SJQHgAJUI",
+            "pinKey": "HJMHTZNYB8"
+          },
+          "output": {
+            "nodeId": "SyMElAyU8",
+            "pinKey": "rkVN0keKBL"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkjxsL9AU": {
+          "id": "rkjxsL9AU",
+          "input": {
+            "nodeId": "SyMElAyU8",
+            "pinKey": "HyOYqU5RU"
+          },
+          "output": {
+            "nodeId": "S1l7lR1IL",
+            "pinKey": "H1R1Q_Rr8"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ry2liL9RL": {
+          "id": "ry2liL9RL",
+          "input": {
+            "nodeId": "SJQHgAJUI",
+            "pinKey": "H1n75UqAI"
+          },
+          "output": {
+            "nodeId": "SyMElAyU8",
+            "pinKey": "H1z958cA8"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryL-oI9RU": {
+          "id": "ryL-oI9RU",
+          "input": {
+            "nodeId": "rkeeIZe0yIL",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJQHgAJUI",
+            "pinKey": "BkbBTWVYHI"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/http-request(tethering-inet)",
+      "description": "Performs an HTTP request and returns the response as a stream of characters\n\nPossible errors:\n— Can't open TCP connection\n— Can't send data to the socket",
+      "attachments": []
+    },
+    "@/is-receiving": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1E6kwQ6H8": {
+          "boundLiterals": {},
+          "description": "A tethering internet",
+          "label": "INET'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1E6kwQ6H8",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/output-tethering-inet",
+          "@@type": "xod-project/Node"
+        },
+        "B1x6kPXpBU": {
+          "boundLiterals": {},
+          "description": "Pulses when Socket have available bytes",
+          "label": "Y",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1x6kPXpBU",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "BJQp1DX6B8": {
+          "boundLiterals": {},
+          "description": "Begin waiting of the incoming package data",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJQp1DX6B8",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "H1n-0v0SU": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1n-0v0SU",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "Hkf6JvXaBU": {
+          "boundLiterals": {},
+          "description": "A tethering internet",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hkf6JvXaBU",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-tethering-inet",
+          "@@type": "xod-project/Node"
+        },
+        "HkmKJrprU": {
+          "boundLiterals": {
+            "__out__": "30"
+          },
+          "description": "How long to wait the next data package in seconds.",
+          "label": "T",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkmKJrprU",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "rJ-ayvQ6BI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJ-ayvQ6BI",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "ry6kwX6rL": {
+          "boundLiterals": {},
+          "description": "Pulses when all the data was readen",
+          "label": "END",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ry6kwX6rL",
+          "position": {
+            "x": 4,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/is-receiving",
+      "description": "Waits for the incoming data packages with the defined timeout in seconds.\n\nPossible error:\n- Do not receive any incoming data within the defined timeout",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    bool received = false;\n    TimeMs startTime = 0;\n    bool isWaiting = false;\n\n    void evaluate(Context ctx) {\n        auto inet = getValue<input_INET>(ctx);\n        emitValue<output_INETU0027>(ctx, inet);\n\n        auto t = getValue<input_T>(ctx);\n\n        if (isInputDirty<input_UPD>(ctx)) {\n            startTime = transactionTime();\n            setImmediate();\n            isWaiting = true;\n        }\n\n        if (isWaiting) {\n            bool shouldWait = startTime + (t * 1000) > transactionTime();\n            if (shouldWait && inet->isConnected()) {\n                // No incoming data, but we're still waiting for data\n                if (!inet->isReceiving()) {\n                    setImmediate();\n                    return;\n                }\n                // Receiving data\n                received = true;\n                startTime = transactionTime();\n                setImmediate();\n                emitValue<output_Y>(ctx, 1);\n            } else {\n                isWaiting = false;\n                // No more incoming data\n                if (received && !inet->isReceiving()) {\n                    received = false;\n                    emitValue<output_END>(ctx, 1);\n                    return;\n                }\n                // Timeout error\n                raiseError(ctx);\n            }\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/kick": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1xhXPIHU": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1xhXPIHU",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "H10rNPLH8": {
+          "boundLiterals": {},
+          "description": "Pulses when answer received",
+          "label": "OK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H10rNPLH8",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HyciQvUSU": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Perform the check",
+          "label": "KICK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyciQvUSU",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HylC-CP0SI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HylC-CP0SI",
+          "position": {
+            "x": 3,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "rJac7vUHI": {
+          "boundLiterals": {},
+          "description": "A tethering internet",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJac7vUHI",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "@/input-tethering-inet",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/kick",
+      "description": "Checks that tethering internet initialized and answers for AT commands",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_KICK\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_KICK>(ctx))\n            return;\n\n        auto inet = getValue<input_INET>(ctx);\n        if (inet->kick()) {\n            emitValue<output_OK>(ctx, 1);\n        } else {\n            raiseError(ctx);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/receive-byte": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJ5nbeFSL": {
+          "boundLiterals": {},
+          "description": "A tethering internet",
+          "label": "INET'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJ5nbeFSL",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/output-tethering-inet",
+          "@@type": "xod-project/Node"
+        },
+        "By4TZeKSI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "By4TZeKSI",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "H1gvzRvAB8": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1gvzRvAB8",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "Hyxk3ZgtrL": {
+          "boundLiterals": {},
+          "description": "Pulses when the byte is read",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hyxk3ZgtrL",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SJ-JhZgtr8": {
+          "boundLiterals": {},
+          "description": "Read the byte",
+          "label": "READ",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJ-JhZgtr8",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "r1doblFBI": {
+          "boundLiterals": {},
+          "description": "A tethering internet",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1doblFBI",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-tethering-inet",
+          "@@type": "xod-project/Node"
+        },
+        "ryJ3bgKSL": {
+          "boundLiterals": {},
+          "description": "The last read byte",
+          "label": "CHAR",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryJ3bgKSL",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/receive-byte",
+      "description": "Read a single byte of the response from an opened connection\n\nPossible errors:\n— Can't receive a data from the socket\n— No available bytes to read",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_READ\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_READ>(ctx))\n            return;\n\n        auto inet = getValue<input_INET>(ctx);\n        char r;\n        emitValue<output_INETU0027>(ctx, inet);\n        if (inet->receiveByte(&r)) {\n            emitValue<output_CHAR>(ctx, (uint8_t)r);\n            emitValue<output_DONE>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/stream-string": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "Hye55Bp4B": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hye55Bp4B",
+          "position": {
+            "x": 4,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "HyvQ6ZIMH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyvQ6ZIMH",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Syo3oH64S": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Syo3oH64S",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "ry2m6-Uzr": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ry2m6-Uzr",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "ryT-aWIfS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryT-aWIfS",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/stream-string",
+      "description": "",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    Iterator<char> it = Iterator<char>::nil();\n\n    void evaluate(Context ctx) {\n        if (isInputDirty<input_IN>(ctx)) {\n            auto str = getValue<input_IN>(ctx);\n            it = str.iterate();\n        }\n\n        if (it) {\n            emitValue<output_OUT1>(ctx, *it);\n            emitValue<output_OUT2>(ctx, true);\n            ++it;\n            setImmediate();\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/receive": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1HaWEtH8": {
+          "boundLiterals": {},
+          "description": "A tethering internet",
+          "label": "INET'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1HaWEtH8",
+          "position": {
+            "x": 0,
+            "y": 5
+          },
+          "type": "@/output-tethering-inet",
+          "@@type": "xod-project/Node"
+        },
+        "BkbBTWVYHI": {
+          "boundLiterals": {},
+          "description": "Pulses when connection closed",
+          "label": "CLS",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkbBTWVYHI",
+          "position": {
+            "x": 4,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Bkgm8QTHL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bkgm8QTHL",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/core/defer",
+          "@@type": "xod-project/Node"
+        },
+        "Bkj6bEKHI": {
+          "boundLiterals": {},
+          "description": "Pulses when the new byte is read",
+          "label": "PUSH",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bkj6bEKHI",
+          "position": {
+            "x": 2,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Bkl4M0wRSI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bkl4M0wRSI",
+          "position": {
+            "x": 5,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "H1n75UqAI": {
+          "boundLiterals": {},
+          "description": "A socket",
+          "label": "SOCK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1n75UqAI",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/net/input-socket",
+          "@@type": "xod-project/Node"
+        },
+        "HJMHTZNYB8": {
+          "boundLiterals": {},
+          "description": "Begin reading",
+          "label": "READ",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJMHTZNYB8",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Hk-fXNKSL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hk-fXNKSL",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/core/any",
+          "@@type": "xod-project/Node"
+        },
+        "HyXBaZ4KBL": {
+          "boundLiterals": {},
+          "description": "A tethering internet",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyXBaZ4KBL",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-tethering-inet",
+          "@@type": "xod-project/Node"
+        },
+        "HyZy9Uq0L": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyZy9Uq0L",
+          "position": {
+            "x": 3,
+            "y": 4
+          },
+          "type": "@/close",
+          "@@type": "xod-project/Node"
+        },
+        "SJ4S6-VtSI": {
+          "boundLiterals": {},
+          "description": "The last read byte",
+          "label": "CHAR",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJ4S6-VtSI",
+          "position": {
+            "x": 1,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "SJixD7arI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJixD7arI",
+          "position": {
+            "x": 0,
+            "y": 3
+          },
+          "type": "@/is-receiving",
+          "@@type": "xod-project/Node"
+        },
+        "r1nRMEFBL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1nRMEFBL",
+          "position": {
+            "x": 0,
+            "y": 4
+          },
+          "type": "@/receive-byte",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B1hM58cRI": {
+          "id": "B1hM58cRI",
+          "input": {
+            "nodeId": "Hk-fXNKSL",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "r1nRMEFBL",
+            "pinKey": "Hyxk3ZgtrL"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJEfDQprU": {
+          "id": "BJEfDQprU",
+          "input": {
+            "nodeId": "SJixD7arI",
+            "pinKey": "BJQp1DX6B8"
+          },
+          "output": {
+            "nodeId": "Bkgm8QTHL",
+            "pinKey": "HJhXDIY9-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJuyc850I": {
+          "id": "BJuyc850I",
+          "input": {
+            "nodeId": "HyZy9Uq0L",
+            "pinKey": "By-QPWu0SU"
+          },
+          "output": {
+            "nodeId": "SJixD7arI",
+            "pinKey": "ry6kwX6rL"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ByfQUQ6S8": {
+          "id": "ByfQUQ6S8",
+          "input": {
+            "nodeId": "Bkgm8QTHL",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "Hk-fXNKSL",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJAxwQpr8": {
+          "id": "HJAxwQpr8",
+          "input": {
+            "nodeId": "r1nRMEFBL",
+            "pinKey": "r1doblFBI"
+          },
+          "output": {
+            "nodeId": "SJixD7arI",
+            "pinKey": "B1E6kwQ6H8"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJ_7Q4FHU": {
+          "id": "HJ_7Q4FHU",
+          "input": {
+            "nodeId": "B1HaWEtH8",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1nRMEFBL",
+            "pinKey": "BJ5nbeFSL"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJqycIqRI": {
+          "id": "SJqycIqRI",
+          "input": {
+            "nodeId": "BkbBTWVYHI",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HyZy9Uq0L",
+            "pinKey": "B1eXvb_0BL"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkMl589CL": {
+          "id": "SkMl589CL",
+          "input": {
+            "nodeId": "HyZy9Uq0L",
+            "pinKey": "rkX7PWORrU"
+          },
+          "output": {
+            "nodeId": "SJixD7arI",
+            "pinKey": "B1E6kwQ6H8"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyaeD76B8": {
+          "id": "SyaeD76B8",
+          "input": {
+            "nodeId": "SJixD7arI",
+            "pinKey": "Hkf6JvXaBU"
+          },
+          "output": {
+            "nodeId": "HyXBaZ4KBL",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Symm7EKSU": {
+          "id": "Symm7EKSU",
+          "input": {
+            "nodeId": "Bkj6bEKHI",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1nRMEFBL",
+            "pinKey": "Hyxk3ZgtrL"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1SV9L5RI": {
+          "id": "r1SV9L5RI",
+          "input": {
+            "nodeId": "HyZy9Uq0L",
+            "pinKey": "SJNmmuCSL"
+          },
+          "output": {
+            "nodeId": "H1n75UqAI",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkUXXVKHL": {
+          "id": "rkUXXVKHL",
+          "input": {
+            "nodeId": "SJ4S6-VtSI",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1nRMEFBL",
+            "pinKey": "ryJ3bgKSL"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ry7fm4tSI": {
+          "id": "ry7fm4tSI",
+          "input": {
+            "nodeId": "Hk-fXNKSL",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "HJMHTZNYB8",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryrzPmaHU": {
+          "id": "ryrzPmaHU",
+          "input": {
+            "nodeId": "r1nRMEFBL",
+            "pinKey": "SJ-JhZgtr8"
+          },
+          "output": {
+            "nodeId": "SJixD7arI",
+            "pinKey": "B1x6kPXpBU"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/receive",
+      "description": "Read a response from an opened connection as a stream of bytes until it closes\n\nPossible errors:\n— Can't receive a data from the socket\n— No available bytes to read",
+      "attachments": []
+    },
+    "@/open-tcp": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "Bkw_kSrSL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bkw_kSrSL",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "H1R1Q_Rr8": {
+          "boundLiterals": {},
+          "description": "The socket connected",
+          "label": "SOCK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1R1Q_Rr8",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/net/output-socket",
+          "@@type": "xod-project/Node"
+        },
+        "HyWtFyHBSL": {
+          "boundLiterals": {},
+          "description": "Open the connection",
+          "label": "CONN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyWtFyHBSL",
+          "position": {
+            "x": 7,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HyetYJSrHU": {
+          "boundLiterals": {
+            "__out__": "80"
+          },
+          "description": "A destination server port number",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyetYJSrHU",
+          "position": {
+            "x": 5,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "S1GFKJBSBL": {
+          "boundLiterals": {},
+          "description": "Server name or IP address",
+          "label": "HOST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1GFKJBSBL",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "SJ7VWxYSI": {
+          "boundLiterals": {},
+          "description": "A tethering internet",
+          "label": "INET'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJ7VWxYSI",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "@/output-tethering-inet",
+          "@@type": "xod-project/Node"
+        },
+        "SJttyrSBU": {
+          "boundLiterals": {},
+          "description": "Pulses when the TCP connection is successfully open",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJttyrSBU",
+          "position": {
+            "x": 5,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Sy6DyHSS8": {
+          "boundLiterals": {},
+          "description": "A tethering internet",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sy6DyHSS8",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "@/input-tethering-inet",
+          "@@type": "xod-project/Node"
+        },
+        "r1-MADRHU": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1-MADRHU",
+          "position": {
+            "x": 3,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/open-tcp",
+      "description": "Open a TCP connection to the specified server.\n\nPossible errors:\n— Can't open TCP connection",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_CONN\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_CONN>(ctx))\n            return;\n\n        auto inet = getValue<input_INET>(ctx);\n\n        // Do nothing if TCP connection is already opened\n        if (inet->isConnected()) return;\n\n        auto host = getValue<input_HOST>(ctx);\n        uint32_t port = (uint32_t)getValue<input_PORT>(ctx);\n\n        emitValue<output_INETU0027>(ctx, inet);\n        if (inet->openTcp(host, port)) {\n            emitValue<output_SOCK>(ctx, 0); // TODO: MUX\n            emitValue<output_DONE>(ctx, 1);\n        } else {\n            raiseError(ctx);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/tethering-inet": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "Hk2l1SSHL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hk2l1SSHL",
+          "position": {
+            "x": -4,
+            "y": -2
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "SyveJHHBL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyveJHHBL",
+          "position": {
+            "x": -4,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/output-self",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/tethering-inet",
+      "description": "",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#ifdef __AVR__\n#include <avr/pgmspace.h>\n#elif defined(ESP8266) || defined(ESP32)\n#include <pgmspace.h>\n#else\n/*\n * Not all non-AVR boards installs define macros\n * for compatibility with existing PROGMEM-reading AVR code.\n */\n#ifndef PROGMEM\n#define PROGMEM\n#endif\n#ifndef PGM_P\n#define PGM_P const char *\n#endif\n#ifndef SIZE_IRRELEVANT\n#define SIZE_IRRELEVANT 0x7fffffff\n#endif\n#ifndef pgm_read_byte\n#define pgm_read_byte(addr) (*(const unsigned char *)(addr))\n#endif\n#ifndef strcpy_P\nchar* strncpy_P(char* dest, PGM_P src, size_t size) {\n    bool size_known = (size != SIZE_IRRELEVANT);\n    const char* read = src;\n    char* write = dest;\n    char ch = '.';\n    while (size > 0 && ch != '\\0')\n    {\n        ch = pgm_read_byte(read++);\n        *write++ = ch;\n        size--;\n    }\n    if (size_known)\n    {\n        while (size > 0)\n        {\n            *write++ = 0;\n            size--;\n        }\n    }\n\n    return dest;\n}\n#define strcpy_P(dest, src) strncpy_P((dest), (src), SIZE_IRRELEVANT)\n#endif\n#endif // PROGMEM\n\n/*\n * TetheringInternet class\n */\nnamespace xod {\nnamespace tethering_inet {\n\nconst char XOD_PREFIX[] PROGMEM = \"+XOD:\";\n\nconst char OK[] PROGMEM = \"OK\";\nconst char FAIL[] PROGMEM = \"FAIL\";\nconst char ERROR[] PROGMEM = \"ERROR\";\nconst char IPD[] PROGMEM = \"IPD,\";\nconst char CLOSED[] PROGMEM = \"CLOSED\";\nconst char CIFSR[] PROGMEM = \"AT+CIFSR\";\nconst char STAIP[] PROGMEM = \"STAIP,\\\"\";\n\nconst char AT[] PROGMEM = \"AT\";\nconst char CIPSEND[] PROGMEM = \"AT+CIPSEND=\";\nconst char CIPSTART[] PROGMEM = \"AT+CIPSTART=\\\"\";\nconst char CIPCLOSE[] PROGMEM = \"AT+CIPCLOSE\";\nconst char TCP[] PROGMEM = \"TCP\";\n\nconst char SEND_OK[] PROGMEM = \"SEND OK\";\nconst char LINK_IS_NOT[] PROGMEM = \"link is not\";\nconst char PROMPT[] PROGMEM = \">\";\n\nconst char COMMA[] PROGMEM = \",\";\nconst char COMMA_1[] PROGMEM = \"\\\",\";\nconst char COMMA_2[] PROGMEM = \"\\\",\\\"\";\nconst char COLON[] PROGMEM = \":\";\n\nconst char EOL[] PROGMEM = \"\\r\\n\";\n\nclass TetheringInternet {\n    private:\n    #ifdef XOD_WASM_SERIAL_H\n        WasmSerial_* _serial = &XOD_DEBUG_SERIAL;\n    #else\n        Stream* _serial = &XOD_DEBUG_SERIAL;\n    #endif\n        uint16_t _nodeId;\n        bool _connected = false;\n        static volatile uint16_t _pkgSize;\n        void printPrefix() {\n            writeCmd(XOD_PREFIX);\n            _serial->print(transactionTime());\n            writeCmd(COLON);\n            _serial->print(_nodeId);\n            writeCmd(COLON);\n        }\n        uint8_t readCmd(const char* text1, const char* text2 = nullptr, uint32_t timeout = 5000) {\n            // setup buffers on stack & copy data from PROGMEM pointers\n            char buf1[16] = { '\\0' };\n            char buf2[16] = { '\\0' };\n            if (text1 != nullptr)\n                strcpy_P(buf1, text1);\n            if (text2 != nullptr)\n                strcpy_P(buf2, text2);\n            uint8_t len1 = strlen(buf1);\n            uint8_t len2 = strlen(buf2);\n            uint8_t pos1 = 0;\n            uint8_t pos2 = 0;\n            // read chars until first match or timeout\n            uint32_t stop = millis() + timeout;\n            do {\n                while (_serial->available()) {\n                    char c = _serial->read();\n                    pos1 = (c == buf1[pos1]) ? pos1 + 1 : 0;\n                    pos2 = (c == buf2[pos2]) ? pos2 + 1 : 0;\n                    if (len1 > 0 && pos1 == len1) {\n                        return 1;\n                    }\n                    if (len2 > 0 && pos2 == len2) {\n                        return 2;\n                    }\n                }\n            } while (millis() < stop);\n            return 0;\n        }\n        bool cmdOK(const char* okResponse, const char* failResponse = nullptr, uint32_t timeout = 1000) {\n            uint8_t res = readCmd(okResponse, failResponse, timeout);\n            return res == 1;\n        }\n        void writeCmd(const char* text1 = nullptr, const char* text2 = nullptr) {\n            char buf[16] = { '\\0' };\n            strcpy_P(buf, text1);\n            _serial->print(buf);\n            if (text2 == EOL) {\n                _serial->println();\n            } else if (text2 != nullptr) {\n                strcpy_P(buf, text2);\n                _serial->print(buf);\n            }\n        }\n    public:\n        TetheringInternet(uint16_t nodeId) {\n            _nodeId = nodeId;\n        }\n\n        static bool isReceiving() {\n            return _pkgSize > 0;\n        }\n        static void beginReceiving(uint16_t pkgSize) {\n            _pkgSize = pkgSize;\n        }\n\n        bool kick() {\n            printPrefix();\n            writeCmd(AT, EOL);\n            _serial->flush();\n            uint8_t res = readCmd(OK, ERROR);\n            return res == 1;\n        }\n        bool openTcp(XString host, uint32_t port, uint16_t keepAlive = 0) {\n            printPrefix();\n            // Command + connection type\n            writeCmd(CIPSTART);\n            writeCmd(TCP);\n            writeCmd(COMMA_2);\n            // Host\n            for (auto it = host.iterate(); it; ++it)\n                _serial->print((char)*it);\n            // Port\n            writeCmd(COMMA_1);\n            char _port[32];\n            xod::formatNumber(port, 0, _port);\n            _serial->print(port);\n            // Delimiter\n            writeCmd(COMMA);\n            // Keep alive\n            char _keepAlive[1];\n            xod::formatNumber(keepAlive, 0, _keepAlive);\n            _serial->println(keepAlive);\n            _serial->flush();\n\n            _connected = readCmd(OK, ERROR) == 1;\n            return _connected;\n        }\n        bool send(XString req) {\n            printPrefix();\n\n            size_t len = length(req);\n            char reqLen[len];\n            xod::formatNumber(len, 0, reqLen);\n\n            writeCmd(CIPSEND);\n            _serial->println(reqLen);\n            _serial->flush();\n\n            bool prompt = cmdOK(PROMPT, LINK_IS_NOT);\n            if (!prompt)\n                return false;\n\n            // Send message in a special way to wrap each line with a XOD prefix\n            bool nextLine = true;\n            bool cr = false;\n            for (auto it = req.iterate(); it; ++it) {\n                if (nextLine) {\n                    printPrefix();\n                    nextLine = false;\n                }\n                if (*it == '\\r') {\n                  cr = true;\n                  _serial->print(\"\\\\r\");\n                } else if (*it == '\\n') {\n                    nextLine = true;\n                    _serial->print(\"\\\\n\");\n                    if (cr) _serial->print('\\r');\n                    _serial->print('\\n');\n                } else {\n                    _serial->print((char)*it);\n                }\n            }\n            // Ensure the latest line of request sent\n            if (!nextLine) {\n                _serial->println();\n            }\n\n            _serial->flush();\n\n            return cmdOK(SEND_OK, nullptr, 5000);\n        }\n        bool isConnected() {\n          return _connected;\n        }\n        bool isAvailable() {\n            return _serial->available();\n        }\n        bool receiveByte(char* outBuff, uint32_t timeout = 5000) {\n            uint32_t stop = millis() + timeout;\n            uint32_t a = 0;\n            do {\n                if (isAvailable() && isReceiving()) {\n                    *outBuff = _serial->read();\n                    _pkgSize--;\n                    // Response with ACK character to request next chunks\n                    if (_pkgSize == 0) {\n                      printPrefix();\n                      _serial->println('\\6');\n                    }\n                    if (*outBuff == '\\4') {\n                      // end of transmittion symbol == connection closed\n                      _connected = false;\n                      _pkgSize = 0;\n                    }\n                    return true;\n                }\n            } while (a < stop);\n            return false;\n        }\n        uint32_t getIP() {\n            printPrefix();\n            writeCmd(CIFSR, EOL);\n            uint8_t code = readCmd(STAIP, ERROR);\n            if (code == 1) {\n                // found ip\n                uint32_t ip[4];\n                ip[0] = _serial->parseInt();\n                _serial->read(); // .\n                ip[1] = _serial->parseInt();\n                _serial->read(); // .\n                ip[2] = _serial->parseInt();\n                _serial->read(); // .\n                ip[3] = _serial->parseInt();\n\n                if ((ip[0] | ip[1] | ip[2] | ip[3]) >= 0x100)\n                    return 0;\n\n                return ip[0] + ip[1] * 0x100 + ip[2] * 0x10000ul + ip[3] * 0x1000000ul;\n            }\n            return 0;\n        }\n        bool close(uint8_t linkId) {\n            // TODO: MUX\n            printPrefix();\n            writeCmd(CIPCLOSE, EOL);\n            _connected = false;\n            _pkgSize = 0;\n            return readCmd(OK, ERROR) == 1;\n        }\n};\n\nvolatile uint16_t TetheringInternet::_pkgSize = 0;\n\n} // namespace tethering_inet\n} // namespace xod\n\nnode {\n    meta {\n        // Alias to make accessible static class methods from `handleDebugProtocolMessages` function\n        // Can be deleted after fixing mentioned function in the XOD runtime\n        using TetheringInternet = tethering_inet::TetheringInternet;\n        using Type = TetheringInternet*;\n    }\n\n    uint8_t mem[sizeof(TetheringInternet)];\n    TetheringInternet* inet;\n\n    void evaluate(Context ctx) {\n        inet = new (mem) TetheringInternet(getNodeId(ctx));\n        emitValue<output_INET>(ctx, inet);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/send": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "ByW4A1xFBU": {
+          "boundLiterals": {},
+          "description": "Send the message",
+          "label": "SEND",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByW4A1xFBU",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "H1z958cA8": {
+          "boundLiterals": {},
+          "description": "A socket",
+          "label": "SOCK'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1z958cA8",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/net/output-socket",
+          "@@type": "xod-project/Node"
+        },
+        "HJMVCJxtBU": {
+          "boundLiterals": {},
+          "description": "The message to send",
+          "label": "MSG",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJMVCJxtBU",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "HyOYqU5RU": {
+          "boundLiterals": {},
+          "description": "A socket",
+          "label": "SOCK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyOYqU5RU",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/net/input-socket",
+          "@@type": "xod-project/Node"
+        },
+        "SJ5GRPArL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJ5GRPArL",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "Sy7vWxtr8": {
+          "boundLiterals": {},
+          "description": "A tethering internet",
+          "label": "INET",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sy7vWxtr8",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-tethering-inet",
+          "@@type": "xod-project/Node"
+        },
+        "SyeNRkeKrI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyeNRkeKrI",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "rJvCGxtHL": {
+          "boundLiterals": {},
+          "description": "A tethering internet",
+          "label": "INET'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJvCGxtHL",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/output-tethering-inet",
+          "@@type": "xod-project/Node"
+        },
+        "rkVN0keKBL": {
+          "boundLiterals": {},
+          "description": "Pulses when the message is successfully sent",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkVN0keKBL",
+          "position": {
+            "x": 4,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/send",
+      "description": "Sends a message through an opened TCP/UDP connection\n\nPossible errors:\n— Can't send data to the socket",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_SEND\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_SEND>(ctx))\n            return;\n\n        auto socket = getValue<input_SOCK>(ctx);\n        auto req = getValue<input_MSG>(ctx);\n        auto inet = getValue<input_INET>(ctx);\n\n        emitValue<output_INETU0027>(ctx, inet);\n        emitValue<output_SOCKU0027>(ctx, socket);\n        if (inet->send(req)) {\n            emitValue<output_DONE>(ctx, 1);\n        } else {\n            raiseError(ctx);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/tweak-byte": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "SykJ8wjXN": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SykJ8wjXN",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "rkF0HwimE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkF0HwimE",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/tweak-byte",
+      "description": "Outputs a fixed byte value which you may change in real-time during a debug or simulation session",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The actual code that makes tweak-nodes work\n    // is injected in detail::handleTweaks\n}\n"
+        }
+      ]
+    },
+    "@/tweak-boolean": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1eYyON8EE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1eYyON8EE",
+          "position": {
+            "x": -0.05,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "Sk1e_NIVE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk1e_NIVE",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/output-boolean",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/tweak-boolean",
+      "description": "Outputs a fixed boolean value which you may change in real-time during a debug or simulation session",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The actual code that makes tweak-nodes work\n    // is injected in detail::handleTweaks\n}\n"
+        }
+      ]
+    },
+    "@/tweak-color": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "SykJ8wjXN": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SykJ8wjXN",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/color/output-color",
+          "@@type": "xod-project/Node"
+        },
+        "rkF0HwimE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkF0HwimE",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/tweak-color",
+      "description": "Outputs a color value which you may change in real-time during a debug or simulation session",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The actual code that makes tweak-nodes work\n    // is injected in detail::handleTweaks\n}\n"
+        }
+      ]
+    },
+    "@/tweak-number": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "ByfGSDjQE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByfGSDjQE",
+          "position": {
+            "x": -8,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "ByvGHviQ4": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByvGHviQ4",
+          "position": {
+            "x": -8,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/tweak-number",
+      "description": "Outputs a fixed numerical value which you may change in real-time during a debug or simulation session",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The actual code that makes tweak-nodes work\n    // is injected in detail::handleTweaks\n}\n"
+        }
+      ]
+    },
+    "@/tweak-string-128": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "H157HwsX7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H157HwsX7",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "H1wh06BEY": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1wh06BEY",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-string",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/tweak-string-128",
+      "description": "Outputs a 128-character string which you may change in real-time during a debug or simulation session",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nstruct State {\n    char buff[129]; // one extra for the '\\0'\n    CStringView view;\n\n    State() : view(buff) {}\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto state = getState(ctx);\n\n    // Additional code that sets value of `buff`\n    // is injected in detail::handleTweaks\n\n    emitValue<output_OUT>(ctx, XString(&state->view));\n}\n"
+        }
+      ]
+    },
+    "@/tweak-string-16": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "H157HwsX4": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H157HwsX4",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "H1wh06BEV": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1wh06BEV",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-string",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/tweak-string-16",
+      "description": "Outputs a 16-character string which you may change in real-time during a debug or simulation session",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nstruct State {\n    char buff[17]; // one extra for the '\\0'\n    CStringView view;\n\n    State() : view(buff) {}\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto state = getState(ctx);\n\n    // Additional code that sets value of `buff`\n    // is injected in detail::handleTweaks\n\n    emitValue<output_OUT>(ctx, XString(&state->view));\n}\n"
+        }
+      ]
+    },
+    "@/tweak-pulse": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "Bkf4BDsmV": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bkf4BDsmV",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "H157HwsX4": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H157HwsX4",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/tweak-pulse",
+      "description": "Outputs a pulse whenever you trigger it manually in real-time during a debug or simulation session",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The actual code that makes tweak-nodes work\n    // is injected in detail::handleTweaks\n}\n"
+        }
+      ]
+    },
+    "@/tweak-string-32": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "H157HwsX5": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H157HwsX5",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "H1wh06BEW": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1wh06BEW",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-string",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/tweak-string-32",
+      "description": "Outputs a 32-character string which you may change in real-time during a debug or simulation session",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nstruct State {\n    char buff[33]; // one extra for the '\\0'\n    CStringView view;\n\n    State() : view(buff) {}\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto state = getState(ctx);\n\n    // Additional code that sets value of `buff`\n    // is injected in detail::handleTweaks\n\n    emitValue<output_OUT>(ctx, XString(&state->view));\n}\n"
+        }
+      ]
+    },
+    "@/tweak-string-64": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "H157HwsX6": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H157HwsX6",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "H1wh06BEX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1wh06BEX",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-string",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/tweak-string-64",
+      "description": "Outputs a 64-character string which you may change in real-time during a debug or simulation session",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nstruct State {\n    char buff[65]; // one extra for the '\\0'\n    CStringView view;\n\n    State() : view(buff) {}\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto state = getState(ctx);\n\n    // Additional code that sets value of `buff`\n    // is injected in detail::handleTweaks\n\n    emitValue<output_OUT>(ctx, XString(&state->view));\n}\n"
+        }
+      ]
+    },
+    "@/watch": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1iYZOzoZ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1iYZOzoZ",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "HkXK-dGob": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkXK-dGob",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/watch",
+      "description": "Shows incoming values in the realtime, when a debug session is active",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_IN\n#pragma XOD error_catch enable\n\nnode {\n    void evaluate(Context ctx) {\n      if (!isInputDirty<input_IN>(ctx))\n          return;\n\n      auto err = getError<input_IN>(ctx);\n      auto line = getValue<input_IN>(ctx);\n\n      TimeMs tNow = transactionTime();\n      XOD_DEBUG_SERIAL.print(F(\"+XOD:\"));\n      XOD_DEBUG_SERIAL.print(tNow);\n      XOD_DEBUG_SERIAL.print(':');\n      XOD_DEBUG_SERIAL.print(getNodeId(ctx));\n      XOD_DEBUG_SERIAL.print(':');\n      if (err) {\n        XOD_DEBUG_SERIAL.print(F(\"ERR\"));\n      } else {\n        for (auto it = line.iterate(); it; ++it)\n          XOD_DEBUG_SERIAL.print((char)*it);\n      }\n\n      XOD_DEBUG_SERIAL.print('\\r');\n      XOD_DEBUG_SERIAL.print('\\n');\n      XOD_DEBUG_SERIAL.flush();\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "authors": [
+    "XOD"
+  ],
+  "license": "AGPL-3.0",
+  "version": "0.37.3",
+  "description": "Debug nodes for XOD",
+  "apiKey": "",
+  "name": "debug"
+}

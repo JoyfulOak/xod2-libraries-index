@@ -1,0 +1,1742 @@
+{
+  "patches": {
+    "@/accumulate-string": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "HJi_30PZX": {
+          "boundLiterals": {},
+          "description": "A new character to be pushed to the end of the string",
+          "label": "CHAR",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJi_30PZX",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "HkAv2Av-X": {
+          "boundLiterals": {
+            "__out__": "16"
+          },
+          "description": "The capacity of the string buffer. Defines the maximum length. Must be a constant value. Any changes during program execution will be ignored.",
+          "label": "CAP",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkAv2Av-X",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "HyLm6CwbX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyLm6CwbX",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "HyvKhAv-7": {
+          "boundLiterals": {},
+          "description": "Empty the accumulated string and start over",
+          "label": "RST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyvKhAv-7",
+          "position": {
+            "x": 9,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "S1K4pADWX": {
+          "boundLiterals": {},
+          "description": "Pulses when resulting string is updated",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1K4pADWX",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "S1s7pCDbQ": {
+          "boundLiterals": {},
+          "description": "String that is accumulated so far",
+          "label": "STR",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1s7pCDbQ",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-string",
+          "@@type": "xod-project/Node"
+        },
+        "SkwBVl_bX": {
+          "boundLiterals": {},
+          "description": "Pulses when string reached maximum length and pushed character was ignored",
+          "label": "FULL",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkwBVl_bX",
+          "position": {
+            "x": 6,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "r1NYhRDZ7": {
+          "boundLiterals": {},
+          "description": "Push new character",
+          "label": "PUSH",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1NYhRDZ7",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/accumulate-string",
+      "description": "Creates a string from a stream of characters by appending each new character to the end of the string until the maximum capacity is reached.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    char* buff;\n    char* cursor;\n    size_t cap;\n    CStringView view;\n\n    void evaluate(Context ctx) {\n        if (isSettingUp()) {\n            // save initial cap to ignore possiple input changes during program execution\n            cap = getValue<input_CAP>(ctx);\n            buff = new char[cap + 1]; // +1 to make room for terminal '\\0'\n            view = CStringView(buff);\n        }\n\n        if (isSettingUp() || isInputDirty<input_RST>(ctx)) {\n            memset(buff, '\\0', cap + 1);\n            cursor = buff;\n        }\n\n        if (isInputDirty<input_PUSH>(ctx)) {\n            if (cursor >= &buff[cap]) {\n                emitValue<output_FULL>(ctx, 1);\n                return;\n            }\n\n            *cursor = getValue<input_CHAR>(ctx);\n            cursor++;\n            emitValue<output_STR>(ctx, XString(&view));\n            emitValue<output_UPD>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/parse-integer": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BksptX0b7": {
+          "boundLiterals": {},
+          "description": "Pulses when the non-numerical character was encountered",
+          "label": "END",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BksptX0b7",
+          "position": {
+            "x": 4,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HyNy970bX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyNy970bX",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "Sk6oKXA-Q": {
+          "boundLiterals": {},
+          "description": "The resulting integer",
+          "label": "NUM",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk6oKXA-Q",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "Sy1it7R-m": {
+          "boundLiterals": {},
+          "description": "Push a new character to process",
+          "label": "PUSH",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sy1it7R-m",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "r1JWmAxzQ": {
+          "boundLiterals": {},
+          "description": "Reset the parsed number to 0 and start over",
+          "label": "RST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1JWmAxzQ",
+          "position": {
+            "x": 7,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rJ55KmC-X": {
+          "boundLiterals": {},
+          "description": "The next character to be processed",
+          "label": "CHAR",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJ55KmC-X",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/parse-integer",
+      "description": "Read an integer number from a stream of characters. Stop when a non-numeric character was encountered",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    Number n = 0;\n    bool isDone = false;\n\n    void evaluate(Context ctx) {\n        if (isInputDirty<input_RST>(ctx)) {\n            isDone = false;\n            n = 0;\n        }\n\n        if (!isInputDirty<input_PUSH>(ctx) || isDone)\n            return;\n\n        auto c = getValue<input_CHAR>(ctx);\n        if (c >= '0' && c <= '9') {\n            n *= 10;\n            n += c - '0';\n        } else {\n            isDone = true;\n            emitValue<output_END>(ctx, 1);\n        }\n\n        emitValue<output_NUM>(ctx, n);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/parse-number": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "ByEaDQKC3I": {
+          "boundLiterals": {},
+          "description": "The next character to be processed",
+          "label": "CHAR",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByEaDQKC3I",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "Byfpw7FCnU": {
+          "boundLiterals": {},
+          "description": "Push a new character to process",
+          "label": "PUSH",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Byfpw7FCnU",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Bymaw7FAhL": {
+          "boundLiterals": {},
+          "description": "Reset the parsed number to 0 and start over",
+          "label": "RST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bymaw7FAhL",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "H1xTwXF0nU": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1xTwXF0nU",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "Sk-6vQKRnL": {
+          "boundLiterals": {},
+          "description": "The resulting integer",
+          "label": "NUM",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk-6vQKRnL",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "rkawmFR3I": {
+          "boundLiterals": {},
+          "description": "Pulses when the non-numerical character was encountered",
+          "label": "END",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkawmFR3I",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/parse-number",
+      "description": "Read a number with floating point from a stream of characters. Stop when a non-numeric character was encountered",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    Number n = 0;\n    Number fraction = 1.0;\n    bool isNegative = false;\n    bool isFraction = false;\n\n    bool isDone = false;\n\n    void evaluate(Context ctx) {\n        if (isInputDirty<input_RST>(ctx)) {\n            isDone = false;\n            n = 0;\n        }\n\n        if (!isInputDirty<input_PUSH>(ctx) || isDone)\n            return;\n\n        auto c = getValue<input_CHAR>(ctx);\n\n        if (c == '-' && n == 0) {\n            isNegative = true;\n        } else if (c == '.' && !isFraction) {\n            isFraction = true;\n        } else if (c >= '0' && c <= '9') {\n            n *= 10;\n            n += c - '0';\n            if (isFraction) {\n                fraction *= 0.1;\n            }\n        } else {\n            isDone = true;\n            emitValue<output_END>(ctx, 1);\n        }\n\n        Number sign = isNegative ? -1 : 1;\n        emitValue<output_NUM>(ctx, sign * n * fraction);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/parse-u32": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1GszSOU38": {
+          "boundLiterals": {},
+          "description": "Least significant byte",
+          "label": "B0",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1GszSOU38",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "BJTWS_Lh8": {
+          "boundLiterals": {},
+          "description": "Pulses when the non-numerical character was encountered",
+          "label": "END",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJTWS_Lh8",
+          "position": {
+            "x": 6,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "ByeifH_82L": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "B1",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByeifH_82L",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "H1faWHuInL": {
+          "boundLiterals": {},
+          "description": "Push a new character to process",
+          "label": "PUSH",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1faWHuInL",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HJWjGBdIhL": {
+          "boundLiterals": {},
+          "description": "Most significant byte",
+          "label": "B3",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJWjGBdIhL",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "HympbBOLh8": {
+          "boundLiterals": {},
+          "description": "Reset the parsed unsigned integer to 0 and start over",
+          "label": "RST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HympbBOLh8",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SkofSOLh8": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "B2",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkofSOLh8",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "rkxa-SOUh8": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkxa-SOUh8",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "ryNpbr_L3U": {
+          "boundLiterals": {},
+          "description": "The next character to be processed",
+          "label": "CHAR",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryNpbr_L3U",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/parse-u32",
+      "description": "Read an unsigned integer number from a stream of characters and returns it as 4 bytes. Stop when a non-numeric character was encountered",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    uint32_t n = 0;\n    bool isDone = false;\n\n    void evaluate(Context ctx) {\n        if (isInputDirty<input_RST>(ctx)) {\n            isDone = false;\n            n = 0;\n        }\n\n        if (!isInputDirty<input_PUSH>(ctx) || isDone)\n            return;\n\n        auto c = getValue<input_CHAR>(ctx);\n        if (c >= '0' && c <= '9') {\n            n *= 10;\n            n += c - '0';\n        } else {\n            isDone = true;\n            emitValue<output_END>(ctx, 1);\n        }\n\n        uint8_t b3 = (n >> 24);\n        uint8_t b2 = (n >> 16);\n        uint8_t b1 = (n >> 8);\n        uint8_t b0 = n;\n        emitValue<output_B0>(ctx, b0);\n        emitValue<output_B1>(ctx, b1);\n        emitValue<output_B2>(ctx, b2);\n        emitValue<output_B3>(ctx, b3);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/pass-from-sequence": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B18iIoA-m": {
+          "boundLiterals": {},
+          "description": "A character to be pushed through",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B18iIoA-m",
+          "position": {
+            "x": -0.05,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "BJhHwoRb7": {
+          "boundLiterals": {},
+          "description": "Stop passing characters through until next SEQ",
+          "label": "RST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJhHwoRb7",
+          "position": {
+            "x": 9,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "BJzFp8sCW7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJzFp8sCW7",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/core/defer",
+          "@@type": "xod-project/Node"
+        },
+        "HkFTIiCWQ": {
+          "boundLiterals": {
+            "Hy9qN5AZm": "\"\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkFTIiCWQ",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "@/pulse-on-sequence",
+          "@@type": "xod-project/Node"
+        },
+        "S1lK6UiCWQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1lK6UiCWQ",
+          "position": {
+            "x": 2,
+            "y": 3
+          },
+          "type": "xod/core/flip-flop",
+          "@@type": "xod-project/Node"
+        },
+        "SkSGwoAZQ": {
+          "boundLiterals": {},
+          "description": "A character that passed through",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkSGwoAZQ",
+          "position": {
+            "x": 0,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "SkYZwiRbm": {
+          "boundLiterals": {},
+          "description": "Pulses when a character passes through",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkYZwiRbm",
+          "position": {
+            "x": 1,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "r1-t68jC-Q": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1-t68jC-Q",
+          "position": {
+            "x": 0,
+            "y": 4
+          },
+          "type": "@/pass-if",
+          "@@type": "xod-project/Node"
+        },
+        "rkZ8oIj0-m": {
+          "boundLiterals": {},
+          "description": "The searched sequence",
+          "label": "SEQ",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkZ8oIj0-m",
+          "position": {
+            "x": 6,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "rklUo8jA-Q": {
+          "boundLiterals": {},
+          "description": "Try to push a new character through",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rklUo8jA-Q",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "BJ6bvoR-7": {
+          "id": "BJ6bvoR-7",
+          "input": {
+            "nodeId": "SkYZwiRbm",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1-t68jC-Q",
+            "pinKey": "SkgG870bX"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HklIviCWQ": {
+          "id": "HklIviCWQ",
+          "input": {
+            "nodeId": "S1lK6UiCWQ",
+            "pinKey": "B1RU0OrDkb"
+          },
+          "output": {
+            "nodeId": "BJhHwoRb7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkEtaLjR-X": {
+          "id": "SkEtaLjR-X",
+          "input": {
+            "nodeId": "BJzFp8sCW7",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "HkFTIiCWQ",
+            "pinKey": "BJmjV9A-m"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Skp0IiAbQ": {
+          "id": "Skp0IiAbQ",
+          "input": {
+            "nodeId": "HkFTIiCWQ",
+            "pinKey": "Hy9qN5AZm"
+          },
+          "output": {
+            "nodeId": "rkZ8oIj0-m",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Sy1ALs0ZQ": {
+          "id": "Sy1ALs0ZQ",
+          "input": {
+            "nodeId": "HkFTIiCWQ",
+            "pinKey": "HkAtN5CbX"
+          },
+          "output": {
+            "nodeId": "B18iIoA-m",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1U1wjR-X": {
+          "id": "r1U1wjR-X",
+          "input": {
+            "nodeId": "r1-t68jC-Q",
+            "pinKey": "rJ5aSXCWm"
+          },
+          "output": {
+            "nodeId": "rklUo8jA-Q",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1XkvsRZQ": {
+          "id": "r1XkvsRZQ",
+          "input": {
+            "nodeId": "r1-t68jC-Q",
+            "pinKey": "S1618X0bX"
+          },
+          "output": {
+            "nodeId": "B18iIoA-m",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rk7Kp8iRb7": {
+          "id": "rk7Kp8iRb7",
+          "input": {
+            "nodeId": "r1-t68jC-Q",
+            "pinKey": "SyN0S7RZ7"
+          },
+          "output": {
+            "nodeId": "S1lK6UiCWQ",
+            "pinKey": "HkyxURuSPyW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkykDiRWm": {
+          "id": "rkykDiRWm",
+          "input": {
+            "nodeId": "HkFTIiCWQ",
+            "pinKey": "B14qE5RZ7"
+          },
+          "output": {
+            "nodeId": "rklUo8jA-Q",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryHFaUoAWQ": {
+          "id": "ryHFaUoAWQ",
+          "input": {
+            "nodeId": "S1lK6UiCWQ",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "BJzFp8sCW7",
+            "pinKey": "HJhXDIY9-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rywzvj0-7": {
+          "id": "rywzvj0-7",
+          "input": {
+            "nodeId": "SkSGwoAZQ",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1-t68jC-Q",
+            "pinKey": "HyqbI70-7"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/pass-from-sequence",
+      "description": "Lets characters pass through only after a specified sequence is encountered",
+      "attachments": []
+    },
+    "@/pass-if": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1dMI7RWX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1dMI7RWX",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "HyqbI70-7": {
+          "boundLiterals": {},
+          "description": "A value that passed through",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyqbI70-7",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-t1",
+          "@@type": "xod-project/Node"
+        },
+        "S1618X0bX": {
+          "boundLiterals": {},
+          "description": "A value to be pushed through",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1618X0bX",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-t1",
+          "@@type": "xod-project/Node"
+        },
+        "SkgG870bX": {
+          "boundLiterals": {},
+          "description": "Pulses when a value passes through",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkgG870bX",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SyN0S7RZ7": {
+          "boundLiterals": {},
+          "description": "Decides whether values should be let through",
+          "label": "COND",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyN0S7RZ7",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "rJ5aSXCWm": {
+          "boundLiterals": {},
+          "description": "Try to push a new value through",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJ5aSXCWm",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/pass-if",
+      "description": "Lets values pass through only if COND is true",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_IN2\n\nnode {\n    void evaluate(Context ctx) {\n        if (!getValue<input_COND>(ctx))\n            return;\n\n        if (!isInputDirty<input_IN2>(ctx))\n            return;\n\n        emitValue<output_OUT1>(ctx, getValue<input_IN1>(ctx));\n        emitValue<output_OUT2>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/pass-until": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJYbP7CZm": {
+          "boundLiterals": {},
+          "description": "A value to be pushed through",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJYbP7CZm",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-t1",
+          "@@type": "xod-project/Node"
+        },
+        "BJ_Hwm0WX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJ_Hwm0WX",
+          "position": {
+            "x": 1,
+            "y": 4
+          },
+          "type": "@/pass-if",
+          "@@type": "xod-project/Node"
+        },
+        "BJjdD70W7": {
+          "boundLiterals": {
+            "HkyxURuSPyW": "True"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJjdD70W7",
+          "position": {
+            "x": 5,
+            "y": 3
+          },
+          "type": "xod/core/flip-flop",
+          "@@type": "xod-project/Node"
+        },
+        "By5Vv7C-7": {
+          "boundLiterals": {},
+          "description": "A value that passed through",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "By5Vv7C-7",
+          "position": {
+            "x": 1,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/output-t1",
+          "@@type": "xod-project/Node"
+        },
+        "HJzoP70-X": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJzoP70-X",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/core/equal",
+          "@@type": "xod-project/Node"
+        },
+        "S1a8PX0Wm": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Lets values through until another S.",
+          "label": "RST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1a8PX0Wm",
+          "position": {
+            "x": 11,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "S1bGvmAWQ": {
+          "boundLiterals": {},
+          "description": "This and any values after it are ignored",
+          "label": "S",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1bGvmAWQ",
+          "position": {
+            "x": 9,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-t1",
+          "@@type": "xod-project/Node"
+        },
+        "SkCsDX0-m": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkCsDX0-m",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/core/pulse-on-true",
+          "@@type": "xod-project/Node"
+        },
+        "r1CWwm0b7": {
+          "boundLiterals": {},
+          "description": "Try to push a new value through",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1CWwm0b7",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "r1XBwQCWQ": {
+          "boundLiterals": {},
+          "description": "Pulses when a value passes through",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1XBwQCWQ",
+          "position": {
+            "x": 3,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B1b8djCWm": {
+          "id": "B1b8djCWm",
+          "input": {
+            "nodeId": "HJzoP70-X",
+            "pinKey": "rJXICuSwyW"
+          },
+          "output": {
+            "nodeId": "BJYbP7CZm",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJRgTY0bX": {
+          "id": "HJRgTY0bX",
+          "input": {
+            "nodeId": "BJjdD70W7",
+            "pinKey": "B1RU0OrDkb"
+          },
+          "output": {
+            "nodeId": "SkCsDX0-m",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkSdDX0bm": {
+          "id": "HkSdDX0bm",
+          "input": {
+            "nodeId": "BJ_Hwm0WX",
+            "pinKey": "S1618X0bX"
+          },
+          "output": {
+            "nodeId": "BJYbP7CZm",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HybuPQCbX": {
+          "id": "HybuPQCbX",
+          "input": {
+            "nodeId": "r1XBwQCWQ",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJ_Hwm0WX",
+            "pinKey": "SkgG870bX"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJZYPX0bm": {
+          "id": "SJZYPX0bm",
+          "input": {
+            "nodeId": "BJ_Hwm0WX",
+            "pinKey": "SyN0S7RZ7"
+          },
+          "output": {
+            "nodeId": "BJjdD70W7",
+            "pinKey": "HkyxURuSPyW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJeqPmC-Q": {
+          "id": "SJeqPmC-Q",
+          "input": {
+            "nodeId": "BJjdD70W7",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "S1a8PX0Wm",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJP_Pm0bX": {
+          "id": "rJP_Pm0bX",
+          "input": {
+            "nodeId": "BJ_Hwm0WX",
+            "pinKey": "rJ5aSXCWm"
+          },
+          "output": {
+            "nodeId": "r1CWwm0b7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJyU_iAb7": {
+          "id": "rJyU_iAb7",
+          "input": {
+            "nodeId": "HJzoP70-X",
+            "pinKey": "HJG8C_SPkb"
+          },
+          "output": {
+            "nodeId": "S1bGvmAWQ",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJyuDX0-X": {
+          "id": "rJyuDX0-X",
+          "input": {
+            "nodeId": "By5Vv7C-7",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJ_Hwm0WX",
+            "pinKey": "HyqbI70-7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryb2Dm0WQ": {
+          "id": "ryb2Dm0WQ",
+          "input": {
+            "nodeId": "SkCsDX0-m",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HJzoP70-X",
+            "pinKey": "H1E8AuSPkZ"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/pass-until",
+      "description": "Lets values pass through until the value specified in S is encountered",
+      "attachments": []
+    },
+    "@/pulse-on-sequence": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B14qE5RZ7": {
+          "boundLiterals": {},
+          "description": "Push the next character",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B14qE5RZ7",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "BJmjV9A-m": {
+          "boundLiterals": {},
+          "description": "Pulses each time when sequence is encountered",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJmjV9A-m",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HkAtN5CbX": {
+          "boundLiterals": {},
+          "description": "The next character in the stream",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkAtN5CbX",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "Hy9qN5AZm": {
+          "boundLiterals": {},
+          "description": "The searched sequence",
+          "label": "SEQ",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hy9qN5AZm",
+          "position": {
+            "x": 7,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        },
+        "SJYoE5Ab7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJYoE5Ab7",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/pulse-on-sequence",
+      "description": "Pulses each time when a specified sequence of characters is encountered",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    int pos = 0;\n    int _length;\n\n    char charAt(XString str, int pos) {\n        auto it = str.iterate();\n        for (int i = 0; i < pos; i++) {\n            ++it;\n        }\n\n        return *it;\n    }\n\n    void evaluate(Context ctx) {\n        auto str = getValue<input_SEQ>(ctx);\n\n        if (isInputDirty<input_SEQ>(ctx)) {\n            _length = length(str);\n            pos = 0;\n        }\n\n        if (!isInputDirty<input_IN2>(ctx))\n            return;\n\n        auto c = getValue<input_IN1>(ctx);\n        if (c == charAt(str, pos)) {\n            pos++;\n\n            // it was the last char in a string\n            if (pos == _length) {\n                emitValue<output_OUT>(ctx, 1);\n                // we will start over on next pulse\n                pos = 0;\n            }\n        } else {\n            // we will start over on next pulse\n            pos = 0;\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/skip-until": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1L-OKCZ7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1L-OKCZ7",
+          "position": {
+            "x": 0,
+            "y": 3
+          },
+          "type": "xod/core/defer",
+          "@@type": "xod-project/Node"
+        },
+        "B1S9JuXRbX": {
+          "boundLiterals": {},
+          "description": "Do not let values through until another S",
+          "label": "RST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1S9JuXRbX",
+          "position": {
+            "x": 11,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "BJ-qyu70ZX": {
+          "boundLiterals": {},
+          "description": "All values after this one will be passed through",
+          "label": "S",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJ-qyu70ZX",
+          "position": {
+            "x": 8,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-t1",
+          "@@type": "xod-project/Node"
+        },
+        "BJmqJ_XRb7": {
+          "boundLiterals": {},
+          "description": "Pulses when a value passes through",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJmqJ_XRb7",
+          "position": {
+            "x": 3,
+            "y": 6
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "H1VqydXA-X": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1VqydXA-X",
+          "position": {
+            "x": 0,
+            "y": 5
+          },
+          "type": "@/pass-if",
+          "@@type": "xod-project/Node"
+        },
+        "HJec1dQCZ7": {
+          "boundLiterals": {},
+          "description": "Try to push a new value through",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJec1dQCZ7",
+          "position": {
+            "x": 5,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HkDc1OQCWX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkDc1OQCWX",
+          "position": {
+            "x": -0.05,
+            "y": 1
+          },
+          "type": "xod/core/equal",
+          "@@type": "xod-project/Node"
+        },
+        "SJLcyuXRWm": {
+          "boundLiterals": {
+            "HkyxURuSPyW": "False"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJLcyuXRWm",
+          "position": {
+            "x": 3,
+            "y": 4
+          },
+          "type": "xod/core/flip-flop",
+          "@@type": "xod-project/Node"
+        },
+        "Skc1_Q0-X": {
+          "boundLiterals": {},
+          "description": "A value to be pushed through",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Skc1_Q0-X",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-t1",
+          "@@type": "xod-project/Node"
+        },
+        "r1M51O7Rbm": {
+          "boundLiterals": {},
+          "description": "The last value passed through",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1M51O7Rbm",
+          "position": {
+            "x": 0,
+            "y": 6
+          },
+          "type": "xod/patch-nodes/output-t1",
+          "@@type": "xod-project/Node"
+        },
+        "r1dcyumC-m": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1dcyumC-m",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/core/pulse-on-true",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "ByFqJd70b7": {
+          "id": "ByFqJd70b7",
+          "input": {
+            "nodeId": "r1M51O7Rbm",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "H1VqydXA-X",
+            "pinKey": "HyqbI70-7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJ5qydQCbX": {
+          "id": "HJ5qydQCbX",
+          "input": {
+            "nodeId": "BJmqJ_XRb7",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "H1VqydXA-X",
+            "pinKey": "SkgG870bX"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJh5kd7R-X": {
+          "id": "HJh5kd7R-X",
+          "input": {
+            "nodeId": "H1VqydXA-X",
+            "pinKey": "rJ5aSXCWm"
+          },
+          "output": {
+            "nodeId": "HJec1dQCZ7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hy0vOo0bm": {
+          "id": "Hy0vOo0bm",
+          "input": {
+            "nodeId": "HkDc1OQCWX",
+            "pinKey": "rJXICuSwyW"
+          },
+          "output": {
+            "nodeId": "Skc1_Q0-X",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hyj9kOQAZm": {
+          "id": "Hyj9kOQAZm",
+          "input": {
+            "nodeId": "H1VqydXA-X",
+            "pinKey": "S1618X0bX"
+          },
+          "output": {
+            "nodeId": "Skc1_Q0-X",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1lguX0b7": {
+          "id": "S1lguX0b7",
+          "input": {
+            "nodeId": "SJLcyuXRWm",
+            "pinKey": "B1RU0OrDkb"
+          },
+          "output": {
+            "nodeId": "B1S9JuXRbX",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkT-uYRWX": {
+          "id": "SkT-uYRWX",
+          "input": {
+            "nodeId": "SJLcyuXRWm",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "B1L-OKCZ7",
+            "pinKey": "HJhXDIY9-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJFWuFR-Q": {
+          "id": "rJFWuFR-Q",
+          "input": {
+            "nodeId": "B1L-OKCZ7",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "r1dcyumC-m",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJldusC-m": {
+          "id": "rJldusC-m",
+          "input": {
+            "nodeId": "HkDc1OQCWX",
+            "pinKey": "HJG8C_SPkb"
+          },
+          "output": {
+            "nodeId": "BJ-qyu70ZX",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkJec1OXR-m": {
+          "id": "rkJec1OXR-m",
+          "input": {
+            "nodeId": "r1dcyumC-m",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HkDc1OQCWX",
+            "pinKey": "H1E8AuSPkZ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryT5kdmCZm": {
+          "id": "ryT5kdmCZm",
+          "input": {
+            "nodeId": "H1VqydXA-X",
+            "pinKey": "SyN0S7RZ7"
+          },
+          "output": {
+            "nodeId": "SJLcyuXRWm",
+            "pinKey": "HkyxURuSPyW"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/skip-until",
+      "description": "Lets values pass through only after the value specified in S is encountered",
+      "attachments": []
+    }
+  },
+  "authors": [
+    "XOD"
+  ],
+  "license": "AGPL-3.0",
+  "version": "0.37.3",
+  "description": "Nodes to process sequences of bytes one by one",
+  "apiKey": "",
+  "name": "stream"
+}

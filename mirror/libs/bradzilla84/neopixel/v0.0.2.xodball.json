@@ -1,0 +1,555 @@
+{
+  "description": "Basic Functionality for NeoPixel Strip (See Examples)",
+  "license": "GPL",
+  "name": "neopixel",
+  "patches": {
+    "@/neopixel-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/adafruit/Adafruit_NeoPixel\"\n\n// Include C++ library:\n{{#global}}\n#include <Adafruit_NeoPixel.h>\n#ifdef __AVR__\n  #include <avr/power.h>\n#endif\n{{/global}}\n\n\nstruct State {\n    uint8_t mem[sizeof(Adafruit_NeoPixel)];\n};\n\n// Define our custom type as a pointer on the class instance.\nusing Type = Adafruit_NeoPixel*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // It should be evaluated only once on the first (setup) transaction\n    if (!isSettingUp())\n        return;\n\n    auto state = getState(ctx);\n\n    // Create a new object in the memory area reserved previously.\n    Type strip = new (state->mem) Adafruit_NeoPixel(getValue<input_NUM_LEDS>(ctx), getValue<input_DataPin>(ctx), NEO_GRB + NEO_KHZ800);\n    strip->setBrightness(getValue<input_BRIGHTNESS>(ctx));\n    strip->begin();\n    strip->show(); // Initialize all pixels to 'off'\n    emitValue<output_DEV>(ctx, strip);\n}"
+        }
+      ],
+      "description": "Main setup for NeoPixel",
+      "nodes": {
+        "SJRtNlPTX": {
+          "boundLiterals": {
+            "__out__": "D6"
+          },
+          "description": "Data Pin for Strip",
+          "id": "SJRtNlPTX",
+          "label": "DataPin",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SJynGgvT7": {
+          "boundLiterals": {
+            "__out__": "8"
+          },
+          "description": "Number of LED's",
+          "id": "SJynGgvT7",
+          "label": "NUM_LEDS",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJ-hGlv6Q": {
+          "boundLiterals": {
+            "__out__": "50"
+          },
+          "description": "Brightness 0-100",
+          "id": "rJ-hGlv6Q",
+          "label": "BRIGHTNESS",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJbz51vpm": {
+          "id": "rJbz51vpm",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rkEf9yw6m": {
+          "id": "rkEf9yw6m",
+          "label": "DEV",
+          "position": {
+            "x": 136,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/neopixel-device"
+    },
+    "@/setpixelcolor-neopixel": {
+      "nodes": {
+        "Syv36gPaX": {
+          "id": "Syv36gPaX",
+          "type": "@/input-neopixel-device",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "label": "DEV"
+        },
+        "ryzapxP6X": {
+          "id": "ryzapxP6X",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 102,
+            "y": 102
+          }
+        },
+        "H1KaaePam": {
+          "id": "H1KaaePam",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "label": "PixelNumber",
+          "description": "Pixel Number to Set. (Starting at 0)"
+        },
+        "rJg0agw6m": {
+          "id": "rJg0agw6m",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 238,
+            "y": 0
+          },
+          "label": "RED",
+          "description": "Red Color 0-255"
+        },
+        "HyG06xD6Q": {
+          "id": "HyG06xD6Q",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 306,
+            "y": 0
+          },
+          "label": "GREEN",
+          "description": "Green Color 0-255"
+        },
+        "ByEApxwaQ": {
+          "id": "ByEApxwaQ",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 374,
+            "y": 0
+          },
+          "label": "BLUE",
+          "description": "Blue Color 0-255"
+        },
+        "H1FSRxvaX": {
+          "id": "H1FSRxvaX",
+          "label": "OK",
+          "position": {
+            "x": 170,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SJgtrAgDa7": {
+          "description": "Pulse to Set",
+          "id": "SJgtrAgDa7",
+          "label": "INIT",
+          "position": {
+            "x": 476,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ry4IRxPaQ": {
+          "id": "ry4IRxPaQ",
+          "type": "@/output-neopixel-device",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "label": "OUT"
+        }
+      },
+      "path": "@/setpixelcolor-neopixel",
+      "description": "Set a Pixel to Col",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the `OLED` class instance\n    auto pixels = getValue<input_DEV>(ctx);\n\n    pixels->setPixelColor(getValue<input_PixelNumber>(ctx), pixels->Color(getValue<input_RED>(ctx),getValue<input_GREEN>(ctx),getValue<input_BLUE>(ctx))); // Moderately bright color.\n    pixels->show(); // This sends the updated pixel color to the hardware.\n    // Pulse that module initialized successfully\n    emitValue<output_OUT>(ctx, pixels);\n    emitValue<output_OK>(ctx, 1);\n}"
+        }
+      ]
+    },
+    "@/set-all-to-off-neopixel": {
+      "nodes": {
+        "Bkpl_-P67": {
+          "id": "Bkpl_-P67",
+          "type": "@/input-neopixel-device",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "label": "DEV"
+        },
+        "rygaldWDpX": {
+          "id": "rygaldWDpX",
+          "type": "@/output-neopixel-device",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "label": "OUT"
+        },
+        "H1Z6xdbDaX": {
+          "id": "H1Z6xdbDaX",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": -1,
+            "y": 101
+          }
+        },
+        "H1G6xd-vT7": {
+          "id": "H1G6xd-vT7",
+          "label": "OK",
+          "position": {
+            "x": 67,
+            "y": 203
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SkXpgdWwT7": {
+          "description": "Pulse to Set",
+          "id": "SkXpgdWwT7",
+          "label": "INIT",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/set-all-to-off-neopixel",
+      "description": "Sel ALL Pixel's to OFF",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx)){\n    emitValue<output_OUT>(ctx, getValue<input_DEV>(ctx));\n        return;}\n\n    // Get a pointer to the `OLED` class instance\n    auto pixels = getValue<input_DEV>(ctx);\n\n    for(uint16_t i=0; i<pixels->numPixels(); i++) {\n    pixels->setPixelColor(i, 0,0,0);\n    }\n    pixels->show();\n\n    emitValue<output_OUT>(ctx, pixels);\n    emitValue<output_OK>(ctx, 1);\n}"
+        }
+      ]
+    },
+    "@/example1-neopixel": {
+      "nodes": {
+        "rywBNSd67": {
+          "boundLiterals": {
+            "rJ-hGlv6Q": "20"
+          },
+          "id": "rywBNSd67",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "@/neopixel-device"
+        },
+        "rkePH4H_TQ": {
+          "id": "rkePH4H_TQ",
+          "type": "@/setpixelcolor-neopixel",
+          "position": {
+            "x": -1,
+            "y": 203
+          },
+          "boundLiterals": {
+            "rJg0agw6m": "255",
+            "SJgtrAgDa7": "Never",
+            "H1KaaePam": "2"
+          }
+        },
+        "S1WPH4r_a7": {
+          "id": "S1WPH4r_a7",
+          "type": "@/set-all-to-off-neopixel",
+          "position": {
+            "x": -1,
+            "y": 101
+          }
+        },
+        "ByfPr4HdpX": {
+          "id": "ByfPr4HdpX",
+          "type": "xod/core/sine-wave",
+          "position": {
+            "x": 203,
+            "y": -1
+          }
+        },
+        "SJXwB4BOaX": {
+          "id": "SJXwB4BOaX",
+          "type": "xod/math/map",
+          "position": {
+            "x": 203,
+            "y": 101
+          },
+          "boundLiterals": {
+            "HJCWLAdSwyW": "1",
+            "rkpbU0OrwyZ": "7.5"
+          }
+        },
+        "By4PSVB_p7": {
+          "id": "By4PSVB_p7",
+          "type": "xod/core/pulse-on-change",
+          "position": {
+            "x": 135,
+            "y": -1
+          }
+        },
+        "BJSwrVrOp7": {
+          "id": "BJSwrVrOp7",
+          "type": "xod/core/defer",
+          "position": {
+            "x": 305,
+            "y": 305
+          }
+        }
+      },
+      "links": {
+        "ByLvrVrd67": {
+          "id": "ByLvrVrd67",
+          "output": {
+            "nodeId": "ByfPr4HdpX",
+            "pinKey": "BJB_WYnYyM"
+          },
+          "input": {
+            "nodeId": "SJXwB4BOaX",
+            "pinKey": "BJlzICOSv1-"
+          }
+        },
+        "B1wwBESd6m": {
+          "id": "B1wwBESd6m",
+          "output": {
+            "nodeId": "SJXwB4BOaX",
+            "pinKey": "H12bIR_SPyZ"
+          },
+          "input": {
+            "nodeId": "rkePH4H_TQ",
+            "pinKey": "H1KaaePam"
+          }
+        },
+        "Skdvr4Huam": {
+          "id": "Skdvr4Huam",
+          "output": {
+            "nodeId": "S1WPH4r_a7",
+            "pinKey": "H1G6xd-vT7"
+          },
+          "input": {
+            "nodeId": "rkePH4H_TQ",
+            "pinKey": "SJgtrAgDa7"
+          }
+        },
+        "HytDrVBdTX": {
+          "id": "HytDrVBdTX",
+          "output": {
+            "nodeId": "rywBNSd67",
+            "pinKey": "rkEf9yw6m"
+          },
+          "input": {
+            "nodeId": "S1WPH4r_a7",
+            "pinKey": "Bkpl_-P67"
+          }
+        },
+        "HycvBEHdT7": {
+          "id": "HycvBEHdT7",
+          "output": {
+            "nodeId": "S1WPH4r_a7",
+            "pinKey": "rygaldWDpX"
+          },
+          "input": {
+            "nodeId": "rkePH4H_TQ",
+            "pinKey": "Syv36gPaX"
+          }
+        },
+        "HkjwHVrOaQ": {
+          "id": "HkjwHVrOaQ",
+          "output": {
+            "nodeId": "SJXwB4BOaX",
+            "pinKey": "H12bIR_SPyZ"
+          },
+          "input": {
+            "nodeId": "By4PSVB_p7",
+            "pinKey": "BkjI-COLb"
+          }
+        },
+        "Hk2DBEHdp7": {
+          "id": "Hk2DBEHdp7",
+          "output": {
+            "nodeId": "By4PSVB_p7",
+            "pinKey": "ByAIWR_UZ"
+          },
+          "input": {
+            "nodeId": "S1WPH4r_a7",
+            "pinKey": "SkXpgdWwT7"
+          }
+        },
+        "r1pwS4SdaX": {
+          "id": "r1pwS4SdaX",
+          "output": {
+            "nodeId": "rkePH4H_TQ",
+            "pinKey": "H1FSRxvaX"
+          },
+          "input": {
+            "nodeId": "BJSwrVrOp7",
+            "pinKey": "BJI7P8t9Z"
+          }
+        },
+        "ryCPHErdTX": {
+          "id": "ryCPHErdTX",
+          "output": {
+            "nodeId": "BJSwrVrOp7",
+            "pinKey": "HJhXDIY9-"
+          },
+          "input": {
+            "nodeId": "ByfPr4HdpX",
+            "pinKey": "Sy_ZYhFkM"
+          }
+        }
+      },
+      "path": "@/example1-neopixel",
+      "description": "Basic Animation (First 8 Pixel's)"
+    },
+    "@/example2-neopixel": {
+      "nodes": {
+        "Skw0NruaQ": {
+          "boundLiterals": {
+            "rJ-hGlv6Q": "20"
+          },
+          "id": "Skw0NruaQ",
+          "position": {
+            "x": 0,
+            "y": 102
+          },
+          "type": "@/neopixel-device"
+        },
+        "r1gv0NSdpX": {
+          "id": "r1gv0NSdpX",
+          "type": "@/setpixelcolor-neopixel",
+          "position": {
+            "x": 0,
+            "y": 204
+          },
+          "boundLiterals": {
+            "rJg0agw6m": "255",
+            "SJgtrAgDa7": "Never",
+            "H1KaaePam": "0"
+          }
+        },
+        "Bk-D0EHdTQ": {
+          "id": "Bk-D0EHdTQ",
+          "type": "xod/core/flip-flop",
+          "position": {
+            "x": 238,
+            "y": 102
+          }
+        },
+        "rJMDCEHOpm": {
+          "id": "rJMDCEHOpm",
+          "type": "xod/core/branch",
+          "position": {
+            "x": 238,
+            "y": 204
+          }
+        },
+        "HJ7vAEB_pX": {
+          "id": "HJ7vAEB_pX",
+          "type": "xod/core/clock",
+          "position": {
+            "x": 272,
+            "y": 0
+          }
+        },
+        "S1NwR4Sda7": {
+          "id": "S1NwR4Sda7",
+          "type": "@/setpixelcolor-neopixel",
+          "position": {
+            "x": 0,
+            "y": 306
+          },
+          "boundLiterals": {
+            "rJg0agw6m": "0",
+            "SJgtrAgDa7": "Never",
+            "H1KaaePam": "0",
+            "HyG06xD6Q": "255"
+          }
+        }
+      },
+      "links": {
+        "SkHDA4r_6m": {
+          "id": "SkHDA4r_6m",
+          "output": {
+            "nodeId": "Bk-D0EHdTQ",
+            "pinKey": "HkyxURuSPyW"
+          },
+          "input": {
+            "nodeId": "rJMDCEHOpm",
+            "pinKey": "S1OlUAuBD1-"
+          }
+        },
+        "H1Uv0NrOpX": {
+          "id": "H1Uv0NrOpX",
+          "output": {
+            "nodeId": "HJ7vAEB_pX",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "Bk-D0EHdTQ",
+            "pinKey": "ryTIROHwkW"
+          }
+        },
+        "S1wPRNS_pm": {
+          "id": "S1wPRNS_pm",
+          "output": {
+            "nodeId": "HJ7vAEB_pX",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "rJMDCEHOpm",
+            "pinKey": "HkDgIRdrv1W"
+          }
+        },
+        "S1dDANHO6m": {
+          "id": "S1dDANHO6m",
+          "output": {
+            "nodeId": "r1gv0NSdpX",
+            "pinKey": "ry4IRxPaQ"
+          },
+          "input": {
+            "nodeId": "S1NwR4Sda7",
+            "pinKey": "Syv36gPaX"
+          }
+        },
+        "ryFPAEBu6m": {
+          "id": "ryFPAEBu6m",
+          "output": {
+            "nodeId": "rJMDCEHOpm",
+            "pinKey": "SJUl8Aurv1W"
+          },
+          "input": {
+            "nodeId": "r1gv0NSdpX",
+            "pinKey": "SJgtrAgDa7"
+          }
+        },
+        "ry5D0NBd6X": {
+          "id": "ry5D0NBd6X",
+          "output": {
+            "nodeId": "rJMDCEHOpm",
+            "pinKey": "SyM2ATB-b"
+          },
+          "input": {
+            "nodeId": "S1NwR4Sda7",
+            "pinKey": "SJgtrAgDa7"
+          }
+        },
+        "HksPA4Hd6X": {
+          "id": "HksPA4Hd6X",
+          "output": {
+            "nodeId": "Skw0NruaQ",
+            "pinKey": "rkEf9yw6m"
+          },
+          "input": {
+            "nodeId": "r1gv0NSdpX",
+            "pinKey": "Syv36gPaX"
+          }
+        }
+      },
+      "path": "@/example2-neopixel",
+      "description": "Basic Bilnk Example"
+    }
+  },
+  "version": "0.0.2"
+}

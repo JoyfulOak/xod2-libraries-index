@@ -1,0 +1,174 @@
+{
+  "description": "Measure pH or ORP, and temperature with the uFire ISE device. ",
+  "name": "ufire-ise",
+  "patches": {
+    "@/ufire-ise-device": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/u-fire/Isolated_ISE\"\n\n{{#global}}\n#include <ISE_pH.h>\n{{/global}}\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_START>(ctx))\n        return;\n\n    ISE_pH pH;\n    float temp = pH.measureTemp();\n    emitValue<output_PH>(ctx, pH.measurepH(temp));\n    emitValue<output_TEMP>(ctx, temp);\n    emitValue<output_MV>(ctx, pH.mV);\n\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Measure pH or ORP, and temperature with the uFire ISE device. ",
+      "nodes": {
+        "BJya-xnA4": {
+          "description": "Temperature in Celsius",
+          "id": "BJya-xnA4",
+          "label": "TEMP",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "Byg9rbiCE": {
+          "description": "Measured pH",
+          "id": "Byg9rbiCE",
+          "label": "PH",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HyGtzbj04": {
+          "id": "HyGtzbj04",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1D0Tk204": {
+          "id": "S1D0Tk204",
+          "label": "START",
+          "position": {
+            "x": 2,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Sk9Q7e3C4": {
+          "description": "Measured mV from probe. ",
+          "id": "Sk9Q7e3C4",
+          "label": "MV",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/ufire-ise-device"
+    },
+    "@/ufire-ise-example": {
+      "comments": {
+        "H1L2PenCV": {
+          "content": "This will take a temperature compensated pH measurement every second. \n\nThis node assumes the device has already been calibrated through some other method. \n\nSee ufire.co for more details. ",
+          "id": "H1L2PenCV",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 2,
+            "width": 5,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "B152BxnC4": {
+          "id": "B152BxnC4",
+          "input": {
+            "nodeId": "rk82Bl2CN",
+            "pinKey": "S1D0Tk204"
+          },
+          "output": {
+            "nodeId": "HJFgVlhC4",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "H1A2Sl3R4": {
+          "id": "H1A2Sl3R4",
+          "input": {
+            "nodeId": "HJ1EzxnCN",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rk82Bl2CN",
+            "pinKey": "BJya-xnA4"
+          }
+        },
+        "HJhhSe20V": {
+          "id": "HJhhSe20V",
+          "input": {
+            "nodeId": "HJWjR1nCV",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rk82Bl2CN",
+            "pinKey": "Byg9rbiCE"
+          }
+        }
+      },
+      "nodes": {
+        "HJ1EzxnCN": {
+          "id": "HJ1EzxnCN",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "HJFgVlhC4": {
+          "id": "HJFgVlhC4",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "HJWjR1nCV": {
+          "id": "HJWjR1nCV",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "rk82Bl2CN": {
+          "id": "rk82Bl2CN",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/ufire-ise-device"
+        }
+      },
+      "path": "@/ufire-ise-example"
+    }
+  },
+  "version": "0.9.0"
+}

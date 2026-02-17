@@ -1,0 +1,1764 @@
+{
+  "patches": {
+    "@/esp32-inet": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/espressif/arduino-esp32\"\n#include <WiFi.h>\n#include <WiFiClient.h>\n\nnode {\n    WiFiClient wifiClient;\n    uint8_t mem[sizeof(WiFiClass)];\n    WiFiClass* wifi;\n\n   meta {\n        using Type = WiFiClient*;\n    }\n\n    void evaluate(Context ctx) {\n        // Debugging print\n        Serial.begin(115200);\n        Serial.println(\"Initializing WiFiClient\");\n\n        emitValue<output_INET>(ctx, &wifiClient);\n\n        // Debugging print\n        Serial.println(\"WiFiClient initialized and emitted\");\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "H1sgSdqRD": {
+          "id": "H1sgSdqRD",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HkQilruq0v": {
+          "id": "HkQilruq0v",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/utility"
+        },
+        "HyfolHdcAv": {
+          "description": "An internet connection",
+          "label": "INET",
+          "id": "HyfolHdcAv",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/esp32-inet"
+    },
+    "@/esp32-request": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/espressif/arduino-esp32\"\n\n#include <HTTPClient.h>\n\nnode {\n    uint8_t mem[sizeof(HTTPClient)];\n    HTTPClient* http;\n\n    meta {\n      struct Type {\n          HTTPClient* http;\n      };\n    }\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_INIT>(ctx))\n            return;\n\n        auto url = getValue<input_URL>(ctx);\n        char _url[length(url) + 1] = { 0 };\n        dump(url, _url);\n\n        http = new (mem) HTTPClient();\n        Type obj = { http };\n        http->begin(_url);\n\n        emitValue<output_REQ>(ctx, obj);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "BJJR-a3CP": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "label": "URL",
+          "id": "BJJR-a3CP",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "HJMt8inRD": {
+          "id": "HJMt8inRD",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJtUYChAw": {
+          "id": "HJtUYChAw",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/utility"
+        },
+        "Hkp_Io3Aw": {
+          "label": "REQ",
+          "id": "Hkp_Io3Aw",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "Hkqg5ihRP": {
+          "label": "DONE",
+          "id": "Hkqg5ihRP",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SJKtUihCv": {
+          "label": "INIT",
+          "id": "SJKtUihCv",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkRYwveo_": {
+          "label": "INET",
+          "id": "SkRYwveo_",
+          "type": "@/input-esp32-inet",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/esp32-request"
+    },
+    "@/http-request(esp32-inet)": {
+      "description": "Performs an HTTP request and returns the response as a stream of characters.",
+      "links": {
+        "HJxNzp3RP": {
+          "id": "HJxNzp3RP",
+          "input": {
+            "nodeId": "r1X7fa2AD",
+            "pinKey": "BkeKcj6ZZ-$2"
+          },
+          "output": {
+            "nodeId": "rkMJpL_9RP",
+            "pinKey": "__out__"
+          }
+        },
+        "S1ggyp8O90D": {
+          "id": "S1ggyp8O90D",
+          "input": {
+            "nodeId": "Hybkp8u90w",
+            "pinKey": "BJlHojaWZ"
+          },
+          "output": {
+            "nodeId": "SJ4JTU_qCD",
+            "pinKey": "__out__"
+          }
+        },
+        "SkOmM620w": {
+          "id": "SkOmM620w",
+          "input": {
+            "nodeId": "r1X7fa2AD",
+            "pinKey": "Hkqu9oaWb"
+          },
+          "output": {
+            "nodeId": "S1aJaLdq0w",
+            "pinKey": "__out__"
+          }
+        },
+        "SyB1tAhCv": {
+          "id": "SyB1tAhCv",
+          "input": {
+            "nodeId": "r1X7fa2AD",
+            "pinKey": "BkeKcj6ZZ-$1"
+          },
+          "output": {
+            "nodeId": "Hybkp8u90w",
+            "pinKey": "r1H_oipZb"
+          }
+        },
+        "SJ6PNpLoO": {
+          "id": "SJ6PNpLoO",
+          "output": {
+            "nodeId": "r1z0Jwlod",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJIvVa8s_",
+            "pinKey": "SkRYwveo_"
+          }
+        },
+        "rk-O4aUod": {
+          "id": "rk-O4aUod",
+          "output": {
+            "nodeId": "r1X7fa2AD",
+            "pinKey": "rksccsp-W"
+          },
+          "input": {
+            "nodeId": "rJIvVa8s_",
+            "pinKey": "BJJR-a3CP"
+          }
+        },
+        "BJddV6Uo_": {
+          "id": "BJddV6Uo_",
+          "output": {
+            "nodeId": "Byg16LOcRv",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJIvVa8s_",
+            "pinKey": "SJKtUihCv"
+          }
+        },
+        "Hy7lyCLod": {
+          "id": "Hy7lyCLod",
+          "output": {
+            "nodeId": "rJIvVa8s_",
+            "pinKey": "Hkp_Io3Aw"
+          },
+          "input": {
+            "nodeId": "ByleJRUju",
+            "pinKey": "r1rEH6Iju"
+          }
+        },
+        "ByVxyRIod": {
+          "id": "ByVxyRIod",
+          "output": {
+            "nodeId": "ByleJRUju",
+            "pinKey": "Sy55T6Lj_"
+          },
+          "input": {
+            "nodeId": "H1s1ZCnCv",
+            "pinKey": "ByO8uThAv"
+          }
+        },
+        "ByPl108jO": {
+          "id": "ByPl108jO",
+          "output": {
+            "nodeId": "rJIvVa8s_",
+            "pinKey": "Hkqg5ihRP"
+          },
+          "input": {
+            "nodeId": "ByleJRUju",
+            "pinKey": "S1BKr6LjO"
+          }
+        },
+        "HyKxJR8sd": {
+          "id": "HyKxJR8sd",
+          "output": {
+            "nodeId": "ByleJRUju",
+            "pinKey": "ry_rr6Uiu"
+          },
+          "input": {
+            "nodeId": "H1s1ZCnCv",
+            "pinKey": "rk4DuT3RD"
+          }
+        },
+        "rkilJC8o_": {
+          "id": "rkilJC8o_",
+          "output": {
+            "nodeId": "Bk0kTUu5CD",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ByleJRUju",
+            "pinKey": "SyaESTIsu"
+          }
+        },
+        "SJfZb0Ij_": {
+          "id": "SJfZb0Ij_",
+          "output": {
+            "nodeId": "S1plWCUid",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "H1s1ZCnCv",
+            "pinKey": "rk-_1tSj_"
+          }
+        },
+        "H17bZ08jd": {
+          "id": "H17bZ08jd",
+          "output": {
+            "nodeId": "rkW17uxsu",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "S1plWCUid",
+            "pinKey": "__in__"
+          }
+        },
+        "HJpbZA8iu": {
+          "id": "HJpbZA8iu",
+          "output": {
+            "nodeId": "HksWbC8jd",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "H1s1ZCnCv",
+            "pinKey": "H1tzYa20w"
+          }
+        },
+        "SJJfbALod": {
+          "id": "SJJfbALod",
+          "output": {
+            "nodeId": "B1_1pLucCw",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HksWbC8jd",
+            "pinKey": "__in__"
+          }
+        },
+        "SJzyBR8ou": {
+          "id": "SJzyBR8ou",
+          "output": {
+            "nodeId": "H1s1ZCnCv",
+            "pinKey": "S1f9mAIs_"
+          },
+          "input": {
+            "nodeId": "Syx8X0Ls_",
+            "pinKey": "BJF8QCIsd"
+          }
+        },
+        "rJiArCLo_": {
+          "id": "rJiArCLo_",
+          "output": {
+            "nodeId": "H1s1ZCnCv",
+            "pinKey": "rJxLYuBaAv"
+          },
+          "input": {
+            "nodeId": "Syx8X0Ls_",
+            "pinKey": "B1qlSRUsO"
+          }
+        },
+        "Bk0RrCUiu": {
+          "id": "Bk0RrCUiu",
+          "output": {
+            "nodeId": "Syx8X0Ls_",
+            "pinKey": "BJ1GB0Lj_"
+          },
+          "input": {
+            "nodeId": "Hkkek68dcCD",
+            "pinKey": "__in__"
+          }
+        },
+        "S1s58wA8sO": {
+          "id": "S1s58wA8sO",
+          "output": {
+            "nodeId": "Syx8X0Ls_",
+            "pinKey": "rJ4d8RIou"
+          },
+          "input": {
+            "nodeId": "r1ypI_q0P",
+            "pinKey": "__in__"
+          }
+        },
+        "Sy53d0Iou": {
+          "id": "Sy53d0Iou",
+          "output": {
+            "nodeId": "Syx8X0Ls_",
+            "pinKey": "ByHFdCUju"
+          },
+          "input": {
+            "nodeId": "SJlzuALju",
+            "pinKey": "__in__"
+          }
+        }
+      },
+      "nodes": {
+        "B1_1pLucCw": {
+          "boundLiterals": {
+            "__out__": "\"GET\""
+          },
+          "description": "An HTTP method (e.g., GET, POST, PUT, or DELETE)",
+          "label": "METH",
+          "id": "B1_1pLucCw",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Bk0kTUu5CD": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "description": "Additional headers",
+          "label": "HDRS",
+          "id": "Bk0kTUu5CD",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Byg16LOcRv": {
+          "description": "Begin the request",
+          "label": "INIT",
+          "id": "Byg16LOcRv",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1s1ZCnCv": {
+          "id": "H1s1ZCnCv",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/request-send"
+        },
+        "Hkkek68dcCD": {
+          "description": "Pulses when all response data is received and the connection is closed",
+          "label": "END",
+          "id": "Hkkek68dcCD",
+          "position": {
+            "x": 13,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hybkp8u90w": {
+          "boundLiterals": {
+            "HJTIija-W": "0"
+          },
+          "id": "Hybkp8u90w",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/format-number"
+        },
+        "S1aJaLdq0w": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "description": "A domain name of the server",
+          "label": "HOST",
+          "id": "S1aJaLdq0w",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SJ4JTU_qCD": {
+          "boundLiterals": {
+            "__out__": "80"
+          },
+          "description": "A port number on which the server is listening. In most configurations, HTTP web servers listen at port 80",
+          "label": "PORT",
+          "id": "SJ4JTU_qCD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1X7fa2AD": {
+          "boundLiterals": {
+            "BkeKcj6ZZ": "\":\""
+          },
+          "arityLevel": 3,
+          "id": "r1X7fa2AD",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/concat"
+        },
+        "r1ypI_q0P": {
+          "description": "The last received character from the response",
+          "label": "CHAR",
+          "id": "r1ypI_q0P",
+          "position": {
+            "x": 11,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-byte"
+        },
+        "rkMJpL_9RP": {
+          "boundLiterals": {
+            "__out__": "\"/\""
+          },
+          "description": "A path to the requested resource",
+          "label": "PATH",
+          "id": "rkMJpL_9RP",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "r1z0Jwlod": {
+          "label": "INET",
+          "id": "r1z0Jwlod",
+          "type": "@/input-esp32-inet",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "rkW17uxsu": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "description": "Additional headers",
+          "label": "BODY",
+          "id": "rkW17uxsu",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "rJIvVa8s_": {
+          "id": "rJIvVa8s_",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/esp32-request"
+        },
+        "ByleJRUju": {
+          "id": "ByleJRUju",
+          "type": "@/add-headers",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "S1plWCUid": {
+          "id": "S1plWCUid",
+          "type": "xod/patch-nodes/jumper",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HksWbC8jd": {
+          "id": "HksWbC8jd",
+          "type": "xod/patch-nodes/jumper",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "Syx8X0Ls_": {
+          "id": "Syx8X0Ls_",
+          "type": "@/receive",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SJlzuALju": {
+          "label": "RCV",
+          "id": "SJlzuALju",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 12,
+            "y": 4,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/http-request(esp32-inet)"
+    },
+    "@/receive-one-byte": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/espressif/arduino-esp32\"\n\n#include <WiFiClient.h>\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_READ>(ctx))\n            return;\n\n        auto req = getValue<input_REQ>(ctx);\n\n        WiFiClient* client = req.http->getStreamPtr();\n        int r = client->read();\n        emitValue<output_CHAR>(ctx, (uint8_t)r);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "rytOY08id": {
+          "label": "REQ",
+          "id": "rytOY08id",
+          "type": "@/input-esp32-request",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SkQ6KAUju": {
+          "label": "READ",
+          "id": "SkQ6KAUju",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "ByApKAUou": {
+          "label": "CHAR",
+          "id": "ByApKAUou",
+          "type": "xod/patch-nodes/output-byte",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "H1oRt0Lo_": {
+          "label": "DONE",
+          "id": "H1oRt0Lo_",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 11,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "Sy0ycCLjd": {
+          "id": "Sy0ycCLjd",
+          "type": "xod/patch-nodes/utility",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "r1UmcR8id": {
+          "id": "r1UmcR8id",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/receive-one-byte"
+    },
+    "@/close": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_INIT>(ctx))\n            return;\n\n        auto req = getValue<input_REQ>(ctx);\n        req.http->getStreamPtr()->stop();\n\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "r1vB90LsO": {
+          "label": "REQ",
+          "id": "r1vB90LsO",
+          "type": "@/input-esp32-request",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SJXt9AIsu": {
+          "id": "SJXt9AIsu",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "HJ05c08iO": {
+          "label": "DONE",
+          "id": "HJ05c08iO",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "H1LicCUou": {
+          "label": "INIT",
+          "id": "H1LicCUou",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rJ385gPjO": {
+          "id": "rJ385gPjO",
+          "type": "xod/patch-nodes/utility",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/close"
+    },
+    "@/available": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_INIT>(ctx))\n            return;\n\n        auto req = getValue<input_REQ>(ctx);\n\n        if (req.http->getStreamPtr()->available()) {\n            emitValue<output_Y>(ctx, 1);\n        } else {\n            emitValue<output_N>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "SkpnsC8iu": {
+          "id": "SkpnsC8iu",
+          "type": "xod/patch-nodes/utility",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "HJbasC8ou": {
+          "id": "HJbasC8ou",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rk_TiCIiu": {
+          "label": "REQ",
+          "id": "rk_TiCIiu",
+          "type": "@/input-esp32-request",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rJ8T2AIj_": {
+          "label": "INIT",
+          "id": "rJ8T2AIj_",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SyDyT0LsO": {
+          "label": "N",
+          "id": "SyDyT0LsO",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SJaJaCLiu": {
+          "label": "Y",
+          "id": "SJaJaCLiu",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/available"
+    },
+    "@/lan-ip": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/espressif/arduino-esp32\"\n\n#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n#pragma XOD error_raise enable\n\n#include <WiFi.h>\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        if (WiFi.status() != WL_CONNECTED) {\n            raiseError(ctx);\n            return;\n        }\n\n        IPAddress ip = WiFi.localIP();\n        emitValue<output_IP>(ctx, ip);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "description": "Gets the local IP address",
+      "nodes": {
+        "B1Wy7Pv5Av": {
+          "description": "Send request for local IP address",
+          "label": "UPD",
+          "id": "B1Wy7Pv5Av",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H17yQvvqCv": {
+          "id": "H17yQvvqCv",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HykQvv5CP": {
+          "description": "Pulses when IP address received",
+          "label": "DONE",
+          "id": "HykQvv5CP",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r1oJ6w90D": {
+          "label": "IP",
+          "id": "r1oJ6w90D",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/net/output-ip-address"
+        }
+      },
+      "path": "@/lan-ip"
+    },
+    "@/add-headers": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_INIT>(ctx))\n            return;\n\n        auto req = getValue<input_REQ>(ctx);\n\n        // Add headers\n        XString __hdrs = getValue<input_HDRS>(ctx);\n        char _hdrs[length(__hdrs) + 1] = { 0 };\n        dump(__hdrs, _hdrs);\n        String hdrs = String(_hdrs);\n\n        size_t pos_from = 0;\n        while (true) {\n            size_t pos_to = hdrs.indexOf(\",\", pos_from);\n            size_t pos_delim = hdrs.indexOf(\":\", pos_from);\n\n            if (pos_to == -1) pos_to = hdrs.length();\n\n            String key = hdrs.substring(pos_from, pos_delim);\n            String val = hdrs.substring(pos_delim + 1, pos_to);\n\n            if (key.length() > 0 && val.length() > 0) {\n                req.http->addHeader(key, val);\n            }\n\n            if (pos_to == hdrs.length()) break;\n            pos_from = pos_to + 1;\n        }\n\n        emitValue<output_DONE>(ctx, 1);\n        emitValue<output_REQU0027>(ctx, req);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "r1rEH6Iju": {
+          "label": "REQ",
+          "id": "r1rEH6Iju",
+          "type": "@/input-esp32-request",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SyaESTIsu": {
+          "label": "HDRS",
+          "id": "SyaESTIsu",
+          "type": "xod/patch-nodes/input-string",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "ry_rr6Uiu": {
+          "label": "DONE",
+          "id": "ry_rr6Uiu",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "Bkn8HTLiO": {
+          "id": "Bkn8HTLiO",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "S1BKr6LjO": {
+          "label": "INIT",
+          "id": "S1BKr6LjO",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "Sy55T6Lj_": {
+          "label": "REQ'",
+          "id": "Sy55T6Lj_",
+          "type": "@/output-esp32-request",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "SJGQWWvsO": {
+          "id": "SJGQWWvsO",
+          "type": "xod/patch-nodes/utility",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/add-headers"
+    },
+    "@/request-send": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/espressif/arduino-esp32\"\n#include <WiFi.h>\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_INIT>(ctx))\n            return;\n\n        XString _method = getValue<input_METH>(ctx);\n        char method[length(_method) + 1] = { 0 };\n        dump(_method, method);\n\n        auto req = getValue<input_REQ>(ctx);\n\n        XString _body = getValue<input_BODY>(ctx);\n        char body[length(_body) + 1] = { 0 };\n        dump(_body, body);\n\n        int httpResponseCode = 0;\n        if (length(_body) > 0) {\n            httpResponseCode = req.http->sendRequest(method, body);\n        } else {\n            httpResponseCode = req.http->sendRequest(method);\n        }\n\n        emitValue<output_STATUS>(ctx, httpResponseCode);\n        emitValue<output_REQU0027>(ctx, req);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "BJnSup2Aw": {
+          "id": "BJnSup2Aw",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "ByO8uThAv": {
+          "label": "REQ",
+          "id": "ByO8uThAv",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-esp32-request"
+        },
+        "H1tzYa20w": {
+          "description": "An HTTP method (e.g., GET, POST, PUT, or DELETE)",
+          "label": "METH",
+          "id": "H1tzYa20w",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "rJxLYuBaAv": {
+          "description": "Pulses when all response data is received and the connection is closed",
+          "label": "DONE",
+          "id": "rJxLYuBaAv",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rk4DuT3RD": {
+          "label": "INIT",
+          "id": "rk4DuT3RD",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rk-_1tSj_": {
+          "boundLiterals": {
+            "__out__": "\"\""
+          },
+          "label": "BODY",
+          "id": "rk-_1tSj_",
+          "type": "xod/patch-nodes/input-string",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "S1f9mAIs_": {
+          "label": "REQ'",
+          "id": "S1f9mAIs_",
+          "type": "@/output-esp32-request",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "H1ODHA8id": {
+          "label": "STATUS",
+          "id": "H1ODHA8id",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "BkGSZZPo_": {
+          "id": "BkGSZZPo_",
+          "type": "xod/patch-nodes/utility",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/request-send"
+    },
+    "@/receive": {
+      "links": {
+        "SJFEtCIju": {
+          "id": "SJFEtCIju",
+          "output": {
+            "nodeId": "B1qlSRUsO",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ByB4tRIjO",
+            "pinKey": "ryv7IRdSP1b"
+          }
+        },
+        "SJ_SYAIsO": {
+          "id": "SJ_SYAIsO",
+          "output": {
+            "nodeId": "SJVrKCLj_",
+            "pinKey": "HJhXDIY9-"
+          },
+          "input": {
+            "nodeId": "ByB4tRIjO",
+            "pinKey": "ByU7LRuSPkW"
+          }
+        },
+        "ryjlcCIjd": {
+          "id": "ryjlcCIjd",
+          "output": {
+            "nodeId": "BJF8QCIsd",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "B1ewF0UiO",
+            "pinKey": "rytOY08id"
+          }
+        },
+        "r1ZEoCLod": {
+          "id": "r1ZEoCLod",
+          "output": {
+            "nodeId": "BJF8QCIsd",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rkcmsCUsu",
+            "pinKey": "r1vB90LsO"
+          }
+        },
+        "SkM46AUsO": {
+          "id": "SkM46AUsO",
+          "output": {
+            "nodeId": "BJF8QCIsd",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ry50iAIjO",
+            "pinKey": "rk_TiCIiu"
+          }
+        },
+        "ryEVaC8oO": {
+          "id": "ryEVaC8oO",
+          "output": {
+            "nodeId": "ByB4tRIjO",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "input": {
+            "nodeId": "ry50iAIjO",
+            "pinKey": "rJ8T2AIj_"
+          }
+        },
+        "HkyHTAIid": {
+          "id": "HkyHTAIid",
+          "output": {
+            "nodeId": "ry50iAIjO",
+            "pinKey": "SJaJaCLiu"
+          },
+          "input": {
+            "nodeId": "B1ewF0UiO",
+            "pinKey": "SkQ6KAUju"
+          }
+        },
+        "Hk7rTRIi_": {
+          "id": "Hk7rTRIi_",
+          "output": {
+            "nodeId": "ry50iAIjO",
+            "pinKey": "SyDyT0LsO"
+          },
+          "input": {
+            "nodeId": "rkcmsCUsu",
+            "pinKey": "H1LicCUou"
+          }
+        },
+        "rJM8TAIid": {
+          "id": "rJM8TAIid",
+          "output": {
+            "nodeId": "rkcmsCUsu",
+            "pinKey": "HJ05c08iO"
+          },
+          "input": {
+            "nodeId": "BJ1GB0Lj_",
+            "pinKey": "__in__"
+          }
+        },
+        "HkPD60IoO": {
+          "id": "HkPD60IoO",
+          "output": {
+            "nodeId": "B1ewF0UiO",
+            "pinKey": "ByApKAUou"
+          },
+          "input": {
+            "nodeId": "rJ4d8RIou",
+            "pinKey": "__in__"
+          }
+        },
+        "SJhd6RLsd": {
+          "id": "SJhd6RLsd",
+          "output": {
+            "nodeId": "BJF8QCIsd",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BkbOXAUo_",
+            "pinKey": "__in__"
+          }
+        },
+        "BkBtpAIsO": {
+          "id": "BkBtpAIsO",
+          "output": {
+            "nodeId": "B1ewF0UiO",
+            "pinKey": "H1oRt0Lo_"
+          },
+          "input": {
+            "nodeId": "SJVrKCLj_",
+            "pinKey": "BJI7P8t9Z"
+          }
+        },
+        "Bkdqa0Ui_": {
+          "id": "Bkdqa0Ui_",
+          "output": {
+            "nodeId": "B1ewF0UiO",
+            "pinKey": "H1oRt0Lo_"
+          },
+          "input": {
+            "nodeId": "ByHFdCUju",
+            "pinKey": "__in__"
+          }
+        }
+      },
+      "nodes": {
+        "BJF8QCIsd": {
+          "label": "REQ",
+          "id": "BJF8QCIsd",
+          "type": "@/input-esp32-request",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BkbOXAUo_": {
+          "label": "REQ'",
+          "id": "BkbOXAUo_",
+          "type": "@/output-esp32-request",
+          "position": {
+            "x": 5,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "B1qlSRUsO": {
+          "label": "INIT",
+          "id": "B1qlSRUsO",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BJ1GB0Lj_": {
+          "label": "DONE",
+          "id": "BJ1GB0Lj_",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 11,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "rJ4d8RIou": {
+          "label": "CHAR",
+          "id": "rJ4d8RIou",
+          "type": "xod/patch-nodes/output-byte",
+          "position": {
+            "x": 8,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "ByHFdCUju": {
+          "label": "RCV",
+          "id": "ByHFdCUju",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 9,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "ByB4tRIjO": {
+          "id": "ByB4tRIjO",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "SJVrKCLj_": {
+          "id": "SJVrKCLj_",
+          "position": {
+            "x": 11,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "B1ewF0UiO": {
+          "id": "B1ewF0UiO",
+          "type": "@/receive-one-byte",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "rkcmsCUsu": {
+          "id": "rkcmsCUsu",
+          "type": "@/close",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "ry50iAIjO": {
+          "id": "ry50iAIjO",
+          "type": "@/available",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "S1DEW-wod": {
+          "id": "S1DEW-wod",
+          "type": "xod/patch-nodes/utility",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/receive"
+    },
+    "@/example-get-ip": {
+      "description": "Connects to a WiFi network, makes a request and shows a response.",
+      "links": {
+        "BybW6vqAv": {
+          "id": "BybW6vqAv",
+          "input": {
+            "nodeId": "SkRxaD9Av",
+            "pinKey": "H17mp7ZZX"
+          },
+          "output": {
+            "nodeId": "HkZD5v9Rw",
+            "pinKey": "r1oJ6w90D"
+          }
+        },
+        "r10cEFgoO": {
+          "id": "r10cEFgoO",
+          "output": {
+            "nodeId": "HkX54tlou",
+            "pinKey": "rksccsp-W"
+          },
+          "input": {
+            "nodeId": "SJq_Eteod",
+            "pinKey": "HJdO9HwJ-"
+          }
+        },
+        "BksBfFrsu": {
+          "id": "BksBfFrsu",
+          "output": {
+            "nodeId": "SJ_HztriO",
+            "pinKey": "H1wh06BEY"
+          },
+          "input": {
+            "nodeId": "BJNuxdlou",
+            "pinKey": "rkW17uxsu"
+          }
+        },
+        "ryohrFBo_": {
+          "id": "ryohrFBo_",
+          "output": {
+            "nodeId": "BytnHYrsu",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BJNuxdlou",
+            "pinKey": "r1z0Jwlod"
+          }
+        },
+        "HkLaRgwj_": {
+          "id": "HkLaRgwj_",
+          "output": {
+            "nodeId": "HkQvCePsO",
+            "pinKey": "S1s7pCDbQ"
+          },
+          "input": {
+            "nodeId": "HkX54tlou",
+            "pinKey": "BkeKcj6ZZ"
+          }
+        },
+        "rJDACevjd": {
+          "id": "rJDACevjd",
+          "output": {
+            "nodeId": "BJNuxdlou",
+            "pinKey": "Hkkek68dcCD"
+          },
+          "input": {
+            "nodeId": "SJq_Eteod",
+            "pinKey": "S1n95SDJb"
+          }
+        },
+        "H1Pb1-Piu": {
+          "id": "H1Pb1-Piu",
+          "output": {
+            "nodeId": "r1M-k-Dsu",
+            "pinKey": "rksccsp-W"
+          },
+          "input": {
+            "nodeId": "r1Np1w9RP",
+            "pinKey": "HJdO9HwJ-"
+          }
+        },
+        "rJYZ1ZDjO": {
+          "id": "rJYZ1ZDjO",
+          "output": {
+            "nodeId": "HkZD5v9Rw",
+            "pinKey": "HykQvv5CP"
+          },
+          "input": {
+            "nodeId": "r1Np1w9RP",
+            "pinKey": "S1n95SDJb"
+          }
+        },
+        "HkjZy-wju": {
+          "id": "HkjZy-wju",
+          "output": {
+            "nodeId": "SkRxaD9Av",
+            "pinKey": "By1xaQb-m"
+          },
+          "input": {
+            "nodeId": "r1M-k-Dsu",
+            "pinKey": "BkeKcj6ZZ"
+          }
+        },
+        "SkJtx-DsO": {
+          "id": "SkJtx-DsO",
+          "output": {
+            "nodeId": "By1m9v9Rw",
+            "pinKey": "BySbdxbws_"
+          },
+          "input": {
+            "nodeId": "rkajHtrsu",
+            "pinKey": "__in__"
+          }
+        },
+        "BkeYlWvj_": {
+          "id": "BkeYlWvj_",
+          "output": {
+            "nodeId": "By1m9v9Rw",
+            "pinKey": "ryxbOxbwsu"
+          },
+          "input": {
+            "nodeId": "HkZD5v9Rw",
+            "pinKey": "B1Wy7Pv5Av"
+          }
+        },
+        "Bkc7MZvi_": {
+          "id": "Bkc7MZvi_",
+          "output": {
+            "nodeId": "SJQmzZDj_",
+            "pinKey": "H1wh06BEY"
+          },
+          "input": {
+            "nodeId": "BJNuxdlou",
+            "pinKey": "Bk0kTUu5CD"
+          }
+        },
+        "Sy2KmWDju": {
+          "id": "Sy2KmWDju",
+          "output": {
+            "nodeId": "HkZD5v9Rw",
+            "pinKey": "HykQvv5CP"
+          },
+          "input": {
+            "nodeId": "BJNuxdlou",
+            "pinKey": "Byg16LOcRv"
+          }
+        },
+        "HJpu4WvsO": {
+          "id": "HJpu4WvsO",
+          "output": {
+            "nodeId": "BJNuxdlou",
+            "pinKey": "r1ypI_q0P"
+          },
+          "input": {
+            "nodeId": "Hy__EZwou",
+            "pinKey": "B18iIoA-m"
+          }
+        },
+        "SkAu4-Po_": {
+          "id": "SkAu4-Po_",
+          "output": {
+            "nodeId": "BJNuxdlou",
+            "pinKey": "SJlzuALju"
+          },
+          "input": {
+            "nodeId": "Hy__EZwou",
+            "pinKey": "rklUo8jA-Q"
+          }
+        },
+        "Hk99VWwoO": {
+          "id": "Hk99VWwoO",
+          "output": {
+            "nodeId": "Hy__EZwou",
+            "pinKey": "SkSGwoAZQ"
+          },
+          "input": {
+            "nodeId": "rJv54bvod",
+            "pinKey": "BJYbP7CZm"
+          }
+        },
+        "BkscVbvid": {
+          "id": "BkscVbvid",
+          "output": {
+            "nodeId": "Hy__EZwou",
+            "pinKey": "SkYZwiRbm"
+          },
+          "input": {
+            "nodeId": "rJv54bvod",
+            "pinKey": "r1CWwm0b7"
+          }
+        },
+        "SyAcE-Po_": {
+          "id": "SyAcE-Po_",
+          "output": {
+            "nodeId": "rJv54bvod",
+            "pinKey": "By5Vv7C-7"
+          },
+          "input": {
+            "nodeId": "HkQvCePsO",
+            "pinKey": "HJi_30PZX"
+          }
+        },
+        "HyxjEbvs_": {
+          "id": "HyxjEbvs_",
+          "output": {
+            "nodeId": "rJv54bvod",
+            "pinKey": "r1XBwQCWQ"
+          },
+          "input": {
+            "nodeId": "HkQvCePsO",
+            "pinKey": "r1NYhRDZ7"
+          }
+        }
+      },
+      "nodes": {
+        "By1m9v9Rw": {
+          "boundLiterals": {
+            "B1ZRRUPq0D": "\"P$tata1234\"",
+            "BJGRA8w5RD": "\"4wordsalllowercase\"",
+            "S1xCRIP50D": "On Boot",
+            "rkWugbwoO": "\"my-ssid\"",
+            "Hk--deWwsu": "\"my-pass\"",
+            "S1zZdeWDjO": "On Boot"
+          },
+          "id": "By1m9v9Rw",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/esp32-connect"
+        },
+        "HkZD5v9Rw": {
+          "id": "HkZD5v9Rw",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/lan-ip"
+        },
+        "SkRxaD9Av": {
+          "id": "SkRxaD9Av",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/net/format-ip"
+        },
+        "r1Np1w9RP": {
+          "id": "r1Np1w9RP",
+          "position": {
+            "x": 3,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/debug/console-log"
+        },
+        "BJNuxdlou": {
+          "boundLiterals": {
+            "rkMJpL_9RP": "\"/httpbin/ip\"",
+            "S1aJaLdq0w": "\"https://api.xod.io\"",
+            "SJ4JTU_qCD": "443",
+            "Bk0kTUu5CD": "\"\""
+          },
+          "id": "BJNuxdlou",
+          "type": "@/http-request(esp32-inet)",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "SJq_Eteod": {
+          "id": "SJq_Eteod",
+          "position": {
+            "x": 21,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/debug/console-log"
+        },
+        "HkX54tlou": {
+          "boundLiterals": {
+            "Hkqu9oaWb": "\"Public IP: \""
+          },
+          "id": "HkX54tlou",
+          "type": "xod/core/concat",
+          "position": {
+            "x": 19,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "SJ_HztriO": {
+          "boundLiterals": {
+            "H1wh06BEY": "\"{\"foo\":\"bar\"}\""
+          },
+          "size": {
+            "width": 8,
+            "height": 1,
+            "units": "slots"
+          },
+          "id": "SJ_HztriO",
+          "type": "xod/debug/tweak-string-128",
+          "position": {
+            "x": 13,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "rkajHtrsu": {
+          "label": "INET",
+          "id": "rkajHtrsu",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "BytnHYrsu": {
+          "label": "INET",
+          "id": "BytnHYrsu",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "HkQvCePsO": {
+          "boundLiterals": {
+            "HkAv2Av-X": "16"
+          },
+          "id": "HkQvCePsO",
+          "type": "xod/stream/accumulate-string",
+          "position": {
+            "x": 15,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "r1M-k-Dsu": {
+          "boundLiterals": {
+            "Hkqu9oaWb": "\"LAN IP: \""
+          },
+          "id": "r1M-k-Dsu",
+          "type": "xod/core/concat",
+          "position": {
+            "x": 3,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "SJQmzZDj_": {
+          "boundLiterals": {
+            "H1wh06BEY": "\"Authorization:Bearer a1b2c3,Accept:application/json\""
+          },
+          "size": {
+            "width": 9,
+            "height": 1,
+            "units": "slots"
+          },
+          "id": "SJQmzZDj_",
+          "type": "xod/debug/tweak-string-128",
+          "position": {
+            "x": 12,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "Hy__EZwou": {
+          "boundLiterals": {
+            "rkZ8oIj0-m": "\"{\"origin\":\"\""
+          },
+          "id": "Hy__EZwou",
+          "type": "xod/stream/pass-from-sequence",
+          "position": {
+            "x": 7,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "rJv54bvod": {
+          "boundLiterals": {
+            "S1bGvmAWQ": "34d"
+          },
+          "id": "rJv54bvod",
+          "type": "xod/stream/pass-until",
+          "position": {
+            "x": 11,
+            "y": 5,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example-get-ip"
+    },
+    "@/esp32-connect": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/espressif/arduino-esp32\"\n\n#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_CONN\n#pragma XOD error_raise enable\n\n#include <WiFi.h>\n#include <WiFiClient.h>\n\nnode {\n    #define WIFI_TIMEOUT_MS 20000\n\n    WiFiClient wifiClient;\n\n    meta {\n        using Type = WiFiClient*;\n    }\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_CONN>(ctx))\n            return;\n\n        auto ssid = getValue<input_SSID>(ctx);\n        char _ssid[length(ssid) + 1] = { 0 };\n        dump(ssid, _ssid);\n\n        auto password = getValue<input_PWD>(ctx);\n        char _password[length(password) + 1] = { 0 };\n        dump(password, _password);\n\n        WiFi.mode(WIFI_STA);\n        WiFi.begin(_ssid, _password);\n\n        unsigned long startAttemptTime = millis();\n\n        while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < WIFI_TIMEOUT_MS) {\n            delay(100);\n        }\n\n        if (WiFi.status() != WL_CONNECTED) {\n            raiseError(ctx); // Connection failed\n        } else {\n            emitValue<output_DONE>(ctx, 1);\n            emitValue<output_INET>(ctx, &wifiClient); // Emit the WiFiClient object\n        }\n    }\n}\n"
+        }
+      ],
+      "description": "Establish an internet connection via Wi-Fi using ESP32.",
+      "nodes": {
+        "rkWugbwoO": {
+          "description": "Name of the Wi-Fi network",
+          "label": "SSID",
+          "id": "rkWugbwoO",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "ryxbOxbwsu": {
+          "description": "Pulses on a successful connection",
+          "label": "DONE",
+          "id": "ryxbOxbwsu",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hk--deWwsu": {
+          "description": "Wi-Fi network password",
+          "label": "PWD",
+          "id": "Hk--deWwsu",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "S1zZdeWDjO": {
+          "description": "Establish the connection",
+          "label": "CONN",
+          "id": "S1zZdeWDjO",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ryVWde-woO": {
+          "id": "ryVWde-woO",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BySbdxbws_": {
+          "label": "INET",
+          "id": "BySbdxbws_",
+          "type": "@/output-esp32-inet",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/esp32-connect"
+    }
+  },
+  "version": "0.1.3",
+  "description": "Helper nodes to connect to a WiFi network and make requests using an ESP32 directly.",
+  "name": "esp32-wifi"
+}

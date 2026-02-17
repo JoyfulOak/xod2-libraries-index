@@ -1,0 +1,1494 @@
+{
+  "description": "Pulse-oximeter. Arduino library for the MAX30102 (https://datasheets.maximintegrated.com/en/ds/MAX30102.pdf). Wraps the SparkFun MAX3010x sensor library (https://github.com/sparkfun/SparkFun_MAX3010x_Sensor_Library)  written by Nathan Seidle and Peter Jansen. This XOD library is a work in progress - a node for measuring oxygen saturation will be added soon.",
+  "license": "MIT",
+  "name": "max30102-pulse-oximeter",
+  "patches": {
+    "@/calculate-heart-rate": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n    static const uint8_t RATE_SIZE =4; //Increase this for more averaging. 4 is good.\n    uint8_t rates[RATE_SIZE]; //Array of heart rates\n    uint8_t rateSpot=0;\n    long lastBeat=0; //Time at which the last beat occurred\n    float beatsPerMinute;\n    int beatAvg;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // get state\n    State* state = getState(ctx);\n\n    long irValue = getValue<input_IR>(ctx);\n    \n    if (checkForBeat(irValue) == true)\n    {\n        //We sensed a beat!\n        emitValue<output_BEAT>(ctx,1);\n        long delta = millis() - state->lastBeat;\n        state->lastBeat = millis();\n        state->beatsPerMinute = 60 / (delta / 1000.0);\n        if (state->beatsPerMinute < 255 && state->beatsPerMinute > 20)\n        {\n            state->rates[state->rateSpot++] = (uint8_t)state->beatsPerMinute; //Store this reading in the array\n            state->rateSpot %= state->RATE_SIZE; //Wrap variable\n            //Take average of readings\n            state->beatAvg = 0;\n            for (uint8_t x = 0 ; x < state->RATE_SIZE ; x++)\n                state->beatAvg += state->rates[x];\n            state->beatAvg /= state->RATE_SIZE;\n            emitValue<output_BPM>(ctx,state->beatsPerMinute);\n            emitValue<output_AvgBPM>(ctx,state->beatAvg);\n        }\n    }\n    emitValue<output_DONE>(ctx,1);\n}\n"
+        }
+      ],
+      "description": "Calculate heart rate from IR signal.",
+      "nodes": {
+        "BJrXSyg-H": {
+          "description": "Infrared signal.",
+          "id": "BJrXSyg-H",
+          "label": "IR",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "By8OSgebS": {
+          "id": "By8OSgebS",
+          "label": "AvgBPM",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ByziVyx-r": {
+          "description": "Update. Triggers calculation.",
+          "id": "ByziVyx-r",
+          "label": "UPD",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Hy5h8xebr": {
+          "description": "Pulse on completion.",
+          "id": "Hy5h8xebr",
+          "label": "DONE",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SyMqV1lZS": {
+          "id": "SyMqV1lZS",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r146NJx-S": {
+          "description": "Heart rate in beats per minute.",
+          "id": "r146NJx-S",
+          "label": "BPM",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ryYjHegZS": {
+          "description": "Pulse on heartbeat.",
+          "id": "ryYjHegZS",
+          "label": "BEAT",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/calculate-heart-rate"
+    },
+    "@/example-basic-readings": {
+      "description": "Example: reading red and infrared values.",
+      "links": {
+        "B18S98kWB": {
+          "id": "B18S98kWB",
+          "input": {
+            "nodeId": "BJSM58kbr",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "r1hltU1-H",
+            "pinKey": "rJY_HUJ-H"
+          }
+        },
+        "B1SZtUJWH": {
+          "id": "B1SZtUJWH",
+          "input": {
+            "nodeId": "r1hltU1-H",
+            "pinKey": "SkBXHLybr"
+          },
+          "output": {
+            "nodeId": "Hyy9NLyWB",
+            "pinKey": "rkaoV4y-r"
+          }
+        },
+        "BkB5F8JbB": {
+          "id": "BkB5F8JbB",
+          "input": {
+            "nodeId": "ryPtYUkZB",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "BJlC4Ly-r",
+            "pinKey": "rk5sREJZB"
+          }
+        },
+        "HJ6Sq8Jbr": {
+          "id": "HJ6Sq8Jbr",
+          "input": {
+            "nodeId": "Hkiz5U1br",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "S1AXcLk-H",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "S1YScLkbH": {
+          "id": "S1YScLkbH",
+          "input": {
+            "nodeId": "Bkqfq8ybB",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "r1hltU1-H",
+            "pinKey": "rJ5aBUy-S"
+          }
+        },
+        "S1_pELJ-B": {
+          "id": "S1_pELJ-B",
+          "input": {
+            "nodeId": "HJDT48kbr",
+            "pinKey": "By6iV81-B"
+          },
+          "output": {
+            "nodeId": "Hyy9NLyWB",
+            "pinKey": "rkaoV4y-r"
+          }
+        },
+        "SJ03F8y-S": {
+          "id": "SJ03F8y-S",
+          "input": {
+            "nodeId": "rJF3YI1-S",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ryPtYUkZB",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "SJ8CN81br": {
+          "id": "SJ8CN81br",
+          "input": {
+            "nodeId": "BJlC4Ly-r",
+            "pinKey": "Hy-lBr1ZS"
+          },
+          "output": {
+            "nodeId": "HJDT48kbr",
+            "pinKey": "Hkmjk341WB"
+          }
+        },
+        "SJERNIkZH": {
+          "id": "SJERNIkZH",
+          "input": {
+            "nodeId": "BJlC4Ly-r",
+            "pinKey": "H1OXpN1Wr"
+          },
+          "output": {
+            "nodeId": "Hyy9NLyWB",
+            "pinKey": "rkaoV4y-r"
+          }
+        },
+        "Skf-c8JbS": {
+          "id": "Skf-c8JbS",
+          "input": {
+            "nodeId": "r1hltU1-H",
+            "pinKey": "HJuVSUybr"
+          },
+          "output": {
+            "nodeId": "SJhtKUkZr",
+            "pinKey": "OkPg7GDaW"
+          }
+        },
+        "r1jr58JbS": {
+          "id": "r1jr58JbS",
+          "input": {
+            "nodeId": "S1AXcLk-H",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "r1hltU1-H",
+            "pinKey": "Hk5LSLkbS"
+          }
+        },
+        "rJ2RFLybr": {
+          "id": "rJ2RFLybr",
+          "input": {
+            "nodeId": "SJhtKUkZr",
+            "pinKey": "B1P1nFwaM"
+          },
+          "output": {
+            "nodeId": "H1sTKUJZS",
+            "pinKey": "__out__"
+          }
+        },
+        "rJDe9UkZS": {
+          "id": "rJDe9UkZS",
+          "input": {
+            "nodeId": "SJhtKUkZr",
+            "pinKey": "SJ-1mZPTz"
+          },
+          "output": {
+            "nodeId": "HygmtLJ-r",
+            "pinKey": "HJU8CE2lW"
+          }
+        }
+      },
+      "nodes": {
+        "BJSM58kbr": {
+          "id": "BJSM58kbr",
+          "position": {
+            "x": 7,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "BJlC4Ly-r": {
+          "id": "BJlC4Ly-r",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/setup"
+        },
+        "Bkqfq8ybB": {
+          "id": "Bkqfq8ybB",
+          "position": {
+            "x": 9,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "H1sTKUJZS": {
+          "id": "H1sTKUJZS",
+          "label": "INTD",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJDT48kbr": {
+          "id": "HJDT48kbr",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/init"
+        },
+        "Hkiz5U1br": {
+          "id": "Hkiz5U1br",
+          "position": {
+            "x": 11,
+            "y": 5,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "HygmtLJ-r": {
+          "boundLiterals": {
+            "B13SCNhl-": "0.5"
+          },
+          "id": "HygmtLJ-r",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "Hyy9NLyWB": {
+          "id": "Hyy9NLyWB",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/max30102-device"
+        },
+        "S1AXcLk-H": {
+          "id": "S1AXcLk-H",
+          "position": {
+            "x": 11,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "SJhtKUkZr": {
+          "id": "SJhtKUkZr",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/gate"
+        },
+        "r1hltU1-H": {
+          "id": "r1hltU1-H",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/read-raw"
+        },
+        "rJF3YI1-S": {
+          "id": "rJF3YI1-S",
+          "label": "INTD",
+          "position": {
+            "x": 0,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "ryPtYUkZB": {
+          "id": "ryPtYUkZB",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        }
+      },
+      "path": "@/example-basic-readings"
+    },
+    "@/heart-rate-monitor": {
+      "description": "Detects pulse and reports heart rate.",
+      "links": {
+        "BJDS5le-S": {
+          "id": "BJDS5le-S",
+          "input": {
+            "nodeId": "r1NE9xgbH",
+            "pinKey": "BJrXSyg-H"
+          },
+          "output": {
+            "nodeId": "S18tJqxeWr",
+            "pinKey": "rJ5aBUy-S"
+          }
+        },
+        "Hks5Kex-S": {
+          "id": "Hks5Kex-S",
+          "input": {
+            "nodeId": "ByYuFgxZr",
+            "pinKey": "By6iV81-B"
+          },
+          "output": {
+            "nodeId": "B1rOYxe-H",
+            "pinKey": "rkaoV4y-r"
+          }
+        },
+        "HyXaYggbS": {
+          "id": "HyXaYggbS",
+          "input": {
+            "nodeId": "H1MKYexbr",
+            "pinKey": "Hy-lBr1ZS"
+          },
+          "output": {
+            "nodeId": "ByYuFgxZr",
+            "pinKey": "Hkmjk341WB"
+          }
+        },
+        "SJ4XBjxbH": {
+          "id": "SJ4XBjxbH",
+          "input": {
+            "nodeId": "S18tJqxeWr",
+            "pinKey": "SkBXHLybr"
+          },
+          "output": {
+            "nodeId": "SJr2FllZB",
+            "pinKey": "__out__"
+          }
+        },
+        "SyEvIjeZH": {
+          "id": "SyEvIjeZH",
+          "input": {
+            "nodeId": "BJRL8jx-S",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "B1X8Isg-S",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "SyhjFlxbr": {
+          "id": "SyhjFlxbr",
+          "input": {
+            "nodeId": "H1MKYexbr",
+            "pinKey": "H1OXpN1Wr"
+          },
+          "output": {
+            "nodeId": "SyyiKxxZB",
+            "pinKey": "__out__"
+          }
+        },
+        "r1kB65l-S": {
+          "id": "r1kB65l-S",
+          "input": {
+            "nodeId": "HJtEa5eWB",
+            "pinKey": "ry5sz01bH"
+          },
+          "output": {
+            "nodeId": "H1MKYexbr",
+            "pinKey": "rk5sREJZB"
+          }
+        },
+        "rJuUUsgbB": {
+          "id": "rJuUUsgbB",
+          "input": {
+            "nodeId": "B1X8Isg-S",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "HJtEa5eWB",
+            "pinKey": "ry-dTakZr"
+          }
+        },
+        "rkFSqegbr": {
+          "id": "rkFSqegbr",
+          "input": {
+            "nodeId": "r1NE9xgbH",
+            "pinKey": "ByziVyx-r"
+          },
+          "output": {
+            "nodeId": "S18tJqxeWr",
+            "pinKey": "Hk5LSLkbS"
+          }
+        },
+        "ryKqtxxWr": {
+          "id": "ryKqtxxWr",
+          "input": {
+            "nodeId": "Hy5FKgx-H",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "B1rOYxe-H",
+            "pinKey": "rkaoV4y-r"
+          }
+        },
+        "rya4acgbr": {
+          "id": "rya4acgbr",
+          "input": {
+            "nodeId": "HJtEa5eWB",
+            "pinKey": "rk3inaJZB"
+          },
+          "output": {
+            "nodeId": "H1lhFexbB",
+            "pinKey": "__out__"
+          }
+        },
+        "SJwo0ol-r": {
+          "id": "SJwo0ol-r",
+          "output": {
+            "nodeId": "SkdvUol-S",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "B1pq0jxZH",
+            "pinKey": "__in__"
+          }
+        },
+        "rkJWyngZr": {
+          "id": "rkJWyngZr",
+          "output": {
+            "nodeId": "B1pq0jxZH",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rk4eyhlbr",
+            "pinKey": "ryv7IRdSP1b"
+          }
+        },
+        "Bk--y2gWB": {
+          "id": "Bk--y2gWB",
+          "output": {
+            "nodeId": "rk4eyhlbr",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "input": {
+            "nodeId": "S18tJqxeWr",
+            "pinKey": "HJuVSUybr"
+          }
+        },
+        "Byxzy2lWB": {
+          "id": "Byxzy2lWB",
+          "output": {
+            "nodeId": "r1NE9xgbH",
+            "pinKey": "Hy5h8xebr"
+          },
+          "input": {
+            "nodeId": "SyIb13e-r",
+            "pinKey": "BJI7P8t9Z"
+          }
+        },
+        "HyXzy3lbS": {
+          "id": "HyXzy3lbS",
+          "output": {
+            "nodeId": "SyIb13e-r",
+            "pinKey": "HJhXDIY9-"
+          },
+          "input": {
+            "nodeId": "rk4eyhlbr",
+            "pinKey": "ByU7LRuSPkW"
+          }
+        },
+        "HkdLm3gZS": {
+          "id": "HkdLm3gZS",
+          "output": {
+            "nodeId": "r1NE9xgbH",
+            "pinKey": "Hy5h8xebr"
+          },
+          "input": {
+            "nodeId": "Skb8m2eZS",
+            "pinKey": "__in__"
+          }
+        },
+        "ryiUXhxWB": {
+          "id": "ryiUXhxWB",
+          "output": {
+            "nodeId": "r1NE9xgbH",
+            "pinKey": "ryYjHegZS"
+          },
+          "input": {
+            "nodeId": "rJFl72e-r",
+            "pinKey": "__in__"
+          }
+        },
+        "Hy3IX2l-H": {
+          "id": "Hy3IX2l-H",
+          "output": {
+            "nodeId": "r1NE9xgbH",
+            "pinKey": "By8OSgebS"
+          },
+          "input": {
+            "nodeId": "HkqRG2ebH",
+            "pinKey": "__in__"
+          }
+        },
+        "BJRU7nxZH": {
+          "id": "BJRU7nxZH",
+          "output": {
+            "nodeId": "r1NE9xgbH",
+            "pinKey": "r146NJx-S"
+          },
+          "input": {
+            "nodeId": "HJzTG2ebS",
+            "pinKey": "__in__"
+          }
+        },
+        "ryx2m2l-r": {
+          "id": "ryx2m2l-r",
+          "output": {
+            "nodeId": "S18tJqxeWr",
+            "pinKey": "rJ5aBUy-S"
+          },
+          "input": {
+            "nodeId": "rki9m3xZS",
+            "pinKey": "__in__"
+          }
+        },
+        "S156Q3xbr": {
+          "id": "S156Q3xbr",
+          "output": {
+            "nodeId": "r1ZpX3xZH",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ByYuFgxZr",
+            "pinKey": "Hybs1nE1br"
+          }
+        }
+      },
+      "nodes": {
+        "B1X8Isg-S": {
+          "id": "B1X8Isg-S",
+          "position": {
+            "x": 0,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "B1rOYxe-H": {
+          "id": "B1rOYxe-H",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/max30102-device"
+        },
+        "BJRL8jx-S": {
+          "id": "BJRL8jx-S",
+          "label": "INTD",
+          "position": {
+            "x": 0,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "ByYuFgxZr": {
+          "id": "ByYuFgxZr",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/init"
+        },
+        "H1MKYexbr": {
+          "id": "H1MKYexbr",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/setup"
+        },
+        "H1lhFexbB": {
+          "id": "H1lhFexbB",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJtEa5eWB": {
+          "boundLiterals": {
+            "SkG2ApJbH": "0Ah"
+          },
+          "id": "HJtEa5eWB",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/set-pulse-amplitude-red"
+        },
+        "Hy5FKgx-H": {
+          "id": "Hy5FKgx-H",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "S18tJqxeWr": {
+          "boundLiterals": {
+            "HJuVSUybr": "Continuously"
+          },
+          "id": "S18tJqxeWr",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/read-raw"
+        },
+        "SJr2FllZB": {
+          "id": "SJr2FllZB",
+          "label": "DEV",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SkdvUol-S": {
+          "id": "SkdvUol-S",
+          "label": "INTD",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SyyiKxxZB": {
+          "id": "SyyiKxxZB",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "r1NE9xgbH": {
+          "id": "r1NE9xgbH",
+          "position": {
+            "x": 10,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/calculate-heart-rate"
+        },
+        "B1pq0jxZH": {
+          "id": "B1pq0jxZH",
+          "type": "xod/core/pulse-on-true",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rk4eyhlbr": {
+          "id": "rk4eyhlbr",
+          "type": "xod/core/any",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "SyIb13e-r": {
+          "id": "SyIb13e-r",
+          "type": "xod/core/defer",
+          "position": {
+            "x": 16,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "HJzTG2ebS": {
+          "id": "HJzTG2ebS",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 10,
+            "y": 5,
+            "units": "slots"
+          },
+          "label": "BPM",
+          "description": "Heart rate (beats per minute)."
+        },
+        "HkqRG2ebH": {
+          "id": "HkqRG2ebH",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 11,
+            "y": 5,
+            "units": "slots"
+          },
+          "label": "AvgBPM",
+          "description": "Average heart rate (beats per minute)."
+        },
+        "rJFl72e-r": {
+          "id": "rJFl72e-r",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 12,
+            "y": 5,
+            "units": "slots"
+          },
+          "label": "BEAT",
+          "description": "Pulse on heartbeat."
+        },
+        "Skb8m2eZS": {
+          "id": "Skb8m2eZS",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 13,
+            "y": 5,
+            "units": "slots"
+          },
+          "label": "READ",
+          "description": "Pulse on each read of IR signal.\n"
+        },
+        "rki9m3xZS": {
+          "id": "rki9m3xZS",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 9,
+            "y": 5,
+            "units": "slots"
+          },
+          "label": "IR",
+          "description": "Infrared value."
+        },
+        "r1ZpX3xZH": {
+          "id": "r1ZpX3xZH",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "INIT",
+          "description": "Initialize heart rate monitor.",
+          "boundLiterals": {
+            "__out__": "On Boot"
+          }
+        }
+      },
+      "path": "@/heart-rate-monitor"
+    },
+    "@/init": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx))\n        return;\n\n    // Get a pointer to the `MAX30105` class instance\n    auto sensor = getValue<input_DEV>(ctx);\n\n    // Attempt to initialize MAX30102 module; if attempt fails emit pulse from error port\n    if (!sensor->begin(Wire, I2C_SPEED_FAST)) {\n        emitValue<output_ERR>(ctx, 1);\n        return;\n    }\n\n    // Pulse that module initialized successfully\n    emitValue<output_OK>(ctx, 1);\n\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Initializes MAX30102 device.",
+      "nodes": {
+        "By6iV81-B": {
+          "description": "A MAX30102 device.",
+          "id": "By6iV81-B",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-max30102-device"
+        },
+        "Hkmjk341WB": {
+          "description": "Pulse if initialization successful.",
+          "id": "Hkmjk341WB",
+          "label": "OK",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hybs1nE1br": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Trigger for initialization. Default is to initialize on boot.",
+          "id": "Hybs1nE1br",
+          "label": "INIT",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HylsJ2NkWS": {
+          "description": "Pulse if initialization failed.",
+          "id": "HylsJ2NkWS",
+          "label": "ERR",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SkoyhNJ-r": {
+          "id": "SkoyhNJ-r",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/init"
+    },
+    "@/max30102-device": {
+      "attachments": [
+        {
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/sparkfun/SparkFun_MAX3010x_Sensor_Library\"\n\n//Include C++ libraries\n{{#global}}\n#include <Wire.h>\n#include <MAX30105.h>\n#include <spo2_algorithm.h>\n#include <heartRate.h>\n{{/global}}\n\n// Reserve memory to store an instance of the class,\n// and create the instance later:\nstruct State {\n    uint8_t mem[sizeof(MAX30105)];\n};\n\n// Define our custom type as a pointer on the class instance.\nusing Type = MAX30105*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // It should be evaluated only once on the first (setup) transaction\n    if (!isSettingUp())\n        return;\n\n    auto state = getState(ctx);\n\n    // Create a new object in the memory area reserved previously.\n    Type sensor = new (state->mem) MAX30105();\n\n    emitValue<output_DEV>(ctx, sensor);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "rkaoV4y-r": {
+          "id": "rkaoV4y-r",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "rktUWNJWH": {
+          "id": "rktUWNJWH",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/max30102-device"
+    },
+    "@/read-raw": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `MAX30102` class instance\n    auto sensor = getValue<input_DEV>(ctx);\n\n    emitValue<output_RED>(ctx,sensor->getRed());\n    emitValue<output_IR>(ctx,sensor->getIR());\n    emitValue<output_DONE>(ctx,1);\n\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Read red and infrared values.",
+      "nodes": {
+        "BJpfHLkbB": {
+          "id": "BJpfHLkbB",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJuVSUybr": {
+          "description": "Update. Trigger new reading.",
+          "id": "HJuVSUybr",
+          "label": "UPD",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Hk5LSLkbS": {
+          "description": "Pulse on completion of read.",
+          "id": "Hk5LSLkbS",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SkBXHLybr": {
+          "description": "A MAX30102 device.",
+          "id": "SkBXHLybr",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-max30102-device"
+        },
+        "rJ5aBUy-S": {
+          "description": "Infrared value.",
+          "id": "rJ5aBUy-S",
+          "label": "IR",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rJY_HUJ-H": {
+          "description": "Red value.",
+          "id": "rJY_HUJ-H",
+          "label": "RED",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/read-raw"
+    },
+    "@/set-pulse-amplitude-ir": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `MAX30105` class instance\n    auto sensor = getValue<input_DEV>(ctx);\n\n    sensor->setPulseAmplitudeIR(getValue<input_AMP>(ctx));\n    emitValue<output_DONE>(ctx,1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Set pulse amplitude of IR LED. ",
+      "nodes": {
+        "B1Xyg1eWB": {
+          "id": "B1Xyg1eWB",
+          "position": {
+            "x": -16,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "B1emyeJlbB": {
+          "description": "A MAX30102 device.",
+          "id": "B1emyeJlbB",
+          "label": "DEV",
+          "position": {
+            "x": -16,
+            "y": -4,
+            "units": "slots"
+          },
+          "type": "@/input-max30102-device"
+        },
+        "S1mQkx1lbr": {
+          "description": "Update. Trigger for setting pulse amplitude of IR LED.",
+          "id": "S1mQkx1lbr",
+          "label": "UPD",
+          "position": {
+            "x": -14,
+            "y": -4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJZQ1l1lbS": {
+          "description": "Pulse on completion.",
+          "id": "rJZQ1l1lbS",
+          "label": "DONE",
+          "position": {
+            "x": -16,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ryGQklJlZB": {
+          "boundLiterals": {
+            "__out__": "1Fh"
+          },
+          "description": "Amplitude. Values: 0x00 = 0mA, 0x7F = 25.4mA, 0xFF = 50mA (typical).",
+          "id": "ryGQklJlZB",
+          "label": "AMP",
+          "position": {
+            "x": -15,
+            "y": -4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/set-pulse-amplitude-ir"
+    },
+    "@/set-pulse-amplitude-red": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `MAX30105` class instance\n    auto sensor = getValue<input_DEV>(ctx);\n\n    sensor->setPulseAmplitudeRed(getValue<input_AMP>(ctx));\n    emitValue<output_DONE>(ctx,1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Set pulse amplitude of red LED. ",
+      "nodes": {
+        "Hy5W361br": {
+          "id": "Hy5W361br",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SkG2ApJbH": {
+          "boundLiterals": {
+            "__out__": "1Fh"
+          },
+          "description": "Amplitude. Values: 0x00 = 0mA, 0x7F = 25.4mA, 0xFF = 50mA (typical).",
+          "id": "SkG2ApJbH",
+          "label": "AMP",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "rk3inaJZB": {
+          "description": "A MAX30102 device.",
+          "id": "rk3inaJZB",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-max30102-device"
+        },
+        "ry-dTakZr": {
+          "description": "Pulse on completion.",
+          "id": "ry-dTakZr",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ry5sz01bH": {
+          "description": "Update. Trigger for setting pulse amplitude of red LED.",
+          "id": "ry5sz01bH",
+          "label": "UPD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/set-pulse-amplitude-red"
+    },
+    "@/setup": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `MAX30105` class instance\n    auto sensor = getValue<input_DEV>(ctx);\n\n    sensor->setup(getValue<input_PWR>(ctx),\n                  getValue<input_SA>(ctx),\n                  getValue<input_LED>(ctx),\n                  getValue<input_SR>(ctx),\n                  getValue<input_PW>(ctx),\n                  getValue<input_ADC>(ctx));\n    emitValue<output_DONE>(ctx,1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Configure MAX30102 sensor.",
+      "nodes": {
+        "B1FzT4J-H": {
+          "id": "B1FzT4J-H",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1OXpN1Wr": {
+          "description": "A MAX30102 device.\n",
+          "id": "H1OXpN1Wr",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-max30102-device"
+        },
+        "Hy-lBr1ZS": {
+          "description": "Update. Triggers setup.",
+          "id": "Hy-lBr1ZS",
+          "label": "UPD",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HySDp4yWS": {
+          "boundLiterals": {
+            "__out__": "1Fh"
+          },
+          "description": "Power level (LED brightness). Options: 0=Off to 255=50mA.",
+          "id": "HySDp4yWS",
+          "label": "PWR",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HyYB0NkbB": {
+          "boundLiterals": {
+            "__out__": "4096"
+          },
+          "description": "ADC range. Options: 2048, 4096, 8192, 16384.",
+          "id": "HyYB0NkbB",
+          "label": "ADC",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJUcT4J-S": {
+          "boundLiterals": {
+            "__out__": "4d"
+          },
+          "description": "Sample Average. Options: 1, 2, 4, 8, 16, 32.",
+          "id": "SJUcT4J-S",
+          "label": "SA",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "Skf3aEJ-r": {
+          "boundLiterals": {
+            "__out__": "3d"
+          },
+          "description": "LED mode. Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green.",
+          "id": "Skf3aEJ-r",
+          "label": "LED",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SkizREkWr": {
+          "boundLiterals": {
+            "__out__": "400"
+          },
+          "description": "Sample Rate. Options: 50, 100, 200, 400, 800, 1000, 1600, 3200.",
+          "id": "SkizREkWr",
+          "label": "SR",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rk5sREJZB": {
+          "description": "Pulse on completion of setup.",
+          "id": "rk5sREJZB",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ryzNRN1ZB": {
+          "boundLiterals": {
+            "__out__": "411"
+          },
+          "description": "Pulse Width. Options: 69, 118, 215, 411.",
+          "id": "ryzNRN1ZB",
+          "label": "PW",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/setup"
+    },
+    "@/example-test-heart-rate-monitor": {
+      "nodes": {
+        "Hkd5S2eWS": {
+          "id": "Hkd5S2eWS",
+          "type": "@/heart-rate-monitor",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SyHp8nlbS": {
+          "id": "SyHp8nlbS",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        },
+        "HkTaLnebr": {
+          "id": "HkTaLnebr",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        },
+        "rJHR8nx-S": {
+          "id": "rJHR8nx-S",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        },
+        "HyYCUnebB": {
+          "id": "HyYCUnebB",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        },
+        "BJiCUheZH": {
+          "id": "BJiCUheZH",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        },
+        "Hk3JDhebH": {
+          "id": "Hk3JDhebH",
+          "type": "xod/core/count",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "S11bDheWS": {
+          "id": "S11bDheWS",
+          "type": "xod/core/count",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "rJGZvhg-S": {
+          "id": "rJGZvhg-S",
+          "output": {
+            "nodeId": "Hkd5S2eWS",
+            "pinKey": "rJFl72e-r"
+          },
+          "input": {
+            "nodeId": "Hk3JDhebH",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "rkEbv3xZr": {
+          "id": "rkEbv3xZr",
+          "output": {
+            "nodeId": "Hkd5S2eWS",
+            "pinKey": "Skb8m2eZS"
+          },
+          "input": {
+            "nodeId": "S11bDheWS",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "B1wWv3ebr": {
+          "id": "B1wWv3ebr",
+          "output": {
+            "nodeId": "Hk3JDhebH",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "HyYCUnebB",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "B1YZP3gZS": {
+          "id": "B1YZP3gZS",
+          "output": {
+            "nodeId": "S11bDheWS",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "BJiCUheZH",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "ByhWD3xZS": {
+          "id": "ByhWD3xZS",
+          "output": {
+            "nodeId": "Hkd5S2eWS",
+            "pinKey": "rki9m3xZS"
+          },
+          "input": {
+            "nodeId": "SyHp8nlbS",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "HkRWw2eZS": {
+          "id": "HkRWw2eZS",
+          "output": {
+            "nodeId": "Hkd5S2eWS",
+            "pinKey": "HJzTG2ebS"
+          },
+          "input": {
+            "nodeId": "HkTaLnebr",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "SkgGD2lbr": {
+          "id": "SkgGD2lbr",
+          "output": {
+            "nodeId": "Hkd5S2eWS",
+            "pinKey": "HkqRG2ebH"
+          },
+          "input": {
+            "nodeId": "rJHR8nx-S",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/example-test-heart-rate-monitor",
+      "description": "Using debug mode to test operation of heart rate monitor."
+    }
+  },
+  "version": "0.0.1"
+}

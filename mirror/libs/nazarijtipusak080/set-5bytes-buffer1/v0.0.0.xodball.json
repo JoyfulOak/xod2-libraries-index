@@ -1,0 +1,326 @@
+{
+  "description": "Node for sequentially writing five bytes to buffer1.",
+  "patches": {
+    "@/set-5bytes-buffer1": {
+      "nodes": {
+        "BJduxgzWee": {
+          "id": "BJduxgzWee",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJgOuglMWxx": {
+          "label": "val1",
+          "id": "HJgOuglMWxx",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "BkWdOleGZxe": {
+          "label": "begin",
+          "id": "BkWdOleGZxe",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BkfOdeeGblx": {
+          "label": "trigger",
+          "id": "BkfOdeeGblx",
+          "position": {
+            "x": 13,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H1QO_lxzWxl": {
+          "label": "done",
+          "id": "H1QO_lxzWxl",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "H1VOOeezWgl": {
+          "label": "ERR",
+          "id": "H1VOOeezWgl",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ryBu_glfZex": {
+          "label": "buffer1",
+          "id": "ryBu_glfZex",
+          "type": "nazarijtipusak080/buffer1/input-buffer1",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "r1I_dxgz-gl": {
+          "label": "buffer",
+          "id": "r1I_dxgz-gl",
+          "type": "nazarijtipusak080/buffer1/output-buffer1",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "HJNeZgGZgg": {
+          "label": "val2",
+          "id": "HJNeZgGZgg",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SkUlWlGZee": {
+          "label": "val3",
+          "id": "SkUlWlGZee",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "S1xUeZxz-lg": {
+          "label": "val4",
+          "id": "S1xUeZxz-lg",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SkDlWlMbxl": {
+          "label": "val5",
+          "id": "SkDlWlMbxl",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/set-5bytes-buffer1",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "//-- void buffer1::set_byte(value, i)\n// Our constructor namespace should be: buffer1_ll__buffer1\nstruct State {\n  // not used\n  };\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n\n  // only act on trigger, inputs not relevant for this\n  if ( !isInputDirty<input_trigger>(ctx) ) return;\n\n  char value1 = getValue<input_val1>(ctx); // char\n    char value2 = getValue<input_val2>(ctx);\n    char value3 = getValue<input_val3>(ctx);\n    char value4 = getValue<input_val4>(ctx);\n    char value5 = getValue<input_val5>(ctx);\n  uint16_t i = static_cast<uint16_t> (getValue<input_begin>(ctx));\n  auto _object = getValue<input_buffer1>(ctx); // buffer1\n\n  //DEBUG_SERIAL.print(F(\"set @\")); DEBUG_SERIAL.print((long) _object->buffer);DEBUG_SERIAL.print(F(\"/\"));DEBUG_SERIAL.print(_object->len);\n  //DEBUG_SERIAL.print(F(\"[\"));DEBUG_SERIAL.print((int)i);DEBUG_SERIAL.print(F(\"]=\"));DEBUG_SERIAL.print((int)value,HEX);\n  //DEBUG_SERIAL.print(F(\"\\n\"));\n  if ( ! _object->buffer ) {\n    //DEBUG_SERIAL.print(F(\"buffer1/\"));DEBUG_SERIAL.print(F(\"set-byte\")); DEBUG_SERIAL.print(F(\" saw unallocated buffer1\\n\")); // exception\n  }\n  else if ( i < 0 || (i+4) >= _object->len ) {\n    emitValue<output_ERR>(ctx, 1); // pulse\n  }\n  else {\n    _object->buffer[i] = value1;\n       _object->buffer[i+1] = value2;\n       _object->buffer[i+2] = value3;\n       _object->buffer[i+3] = value4;\n       _object->buffer[i+4] = value5;\n    emitValue<output_done>(ctx, 1); // pulse\n  }\n  emitValue<output_buffer>(ctx, _object); // convenience\n}\n"
+        }
+      ]
+    },
+    "@/example": {
+      "nodes": {
+        "SJkI7gMbxl": {
+          "id": "SJkI7gMbxl",
+          "type": "nazarijtipusak080/get-5bytes-from-buffer1/get-5bytes-buffer1",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "H1P8XeGZee": {
+          "id": "H1P8XeGZee",
+          "type": "@/set-5bytes-buffer1",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "HJgOuglMWxx": "02h",
+            "HJNeZgGZgg": "03h",
+            "SkUlWlGZee": "04h",
+            "S1xUeZxz-lg": "05h",
+            "SkDlWlMbxl": "06h"
+          }
+        },
+        "B1ZvQxMZex": {
+          "id": "B1ZvQxMZex",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "ByHwXlGZex": {
+          "id": "ByHwXlGZex",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SJLP7lfWxe": {
+          "id": "SJLP7lfWxe",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SJl8w7xfWgl": {
+          "id": "SJl8w7xfWgl",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SkPvQlz-ex": {
+          "id": "SkPvQlz-ex",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "BylcXxMbxg": {
+          "id": "BylcXxMbxg",
+          "type": "nazarijtipusak080/buffer1/buffer1",
+          "position": {
+            "x": 6,
+            "y": -2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "Sy-S_uF26C": "5"
+          }
+        }
+      },
+      "links": {
+        "Sy_vQxzbxl": {
+          "id": "Sy_vQxzbxl",
+          "output": {
+            "nodeId": "SJkI7gMbxl",
+            "pinKey": "BybFhAFg-ex"
+          },
+          "input": {
+            "nodeId": "B1ZvQxMZex",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "Hyqv7eM-xe": {
+          "id": "Hyqv7eM-xe",
+          "output": {
+            "nodeId": "SJkI7gMbxl",
+            "pinKey": "SJl8J9e-xl"
+          },
+          "input": {
+            "nodeId": "ByHwXlGZex",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "H1jD7lMWlx": {
+          "id": "H1jD7lMWlx",
+          "output": {
+            "nodeId": "SJkI7gMbxl",
+            "pinKey": "BJZLJ5xZlx"
+          },
+          "input": {
+            "nodeId": "SJLP7lfWxe",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "r1hvXxfbxe": {
+          "id": "r1hvXxfbxe",
+          "output": {
+            "nodeId": "SJkI7gMbxl",
+            "pinKey": "SkzIycxbex"
+          },
+          "input": {
+            "nodeId": "SJl8w7xfWgl",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "S1TPXxfbgg": {
+          "id": "S1TPXxfbgg",
+          "output": {
+            "nodeId": "SJkI7gMbxl",
+            "pinKey": "B1Q8kclWlx"
+          },
+          "input": {
+            "nodeId": "SkPvQlz-ex",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "rJqKQgMWll": {
+          "id": "rJqKQgMWll",
+          "output": {
+            "nodeId": "H1P8XeGZee",
+            "pinKey": "H1QO_lxzWxl"
+          },
+          "input": {
+            "nodeId": "SJkI7gMbxl",
+            "pinKey": "SJxthRKlZee"
+          }
+        },
+        "By-97gfWlx": {
+          "id": "By-97gfWlx",
+          "output": {
+            "nodeId": "BylcXxMbxg",
+            "pinKey": "rymHO_t3pC"
+          },
+          "input": {
+            "nodeId": "H1P8XeGZee",
+            "pinKey": "ryBu_glfZex"
+          }
+        },
+        "Bklh7gM-xl": {
+          "id": "Bklh7gM-xl",
+          "output": {
+            "nodeId": "BylcXxMbxg",
+            "pinKey": "rJGB__F3pC"
+          },
+          "input": {
+            "nodeId": "H1P8XeGZee",
+            "pinKey": "BkfOdeeGblx"
+          }
+        },
+        "H1MZVeGZll": {
+          "id": "H1MZVeGZll",
+          "output": {
+            "nodeId": "H1P8XeGZee",
+            "pinKey": "r1I_dxgz-gl"
+          },
+          "input": {
+            "nodeId": "SJkI7gMbxl",
+            "pinKey": "ry4thAFgWxg"
+          }
+        }
+      },
+      "path": "@/example"
+    }
+  },
+  "name": "set-5bytes-buffer1",
+  "apiKey": "18c5cb87-1652-435f-a6de-7a7175739b18"
+}

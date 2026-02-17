@@ -1,0 +1,1706 @@
+{
+  "description": "MPU-6050 is a Six-Axis Gyro + Accelerometer with the Digital Motion Processor.",
+  "name": "mpu6050",
+  "patches": {
+    "@/calibrate": {
+      "attachments": [
+        {
+          "content": "\nnode {\n\n    int buffersize = 500; //Amount of readings used to average, make it higher to get more precision but sketch will be slower  (default:1000)\n    int acel_deadzone = 8; //Acelerometer error allowed, make it lower to get more precision, but sketch may not converge  (default:8)\n    int giro_deadzone = 1; //Giro error allowed, make it lower to get more precision, but sketch may not converge  (default:1)\n\n    int16_t ax, ay, az, gx, gy, gz;\n\n    int cal_state = 0;\n    int mean_ax, mean_ay, mean_az, mean_gx, mean_gy, mean_gz;\n    int ax_offset, ay_offset, az_offset, gx_offset, gy_offset, gz_offset;\n\n    MPU6050* mpu; // local copy\n\n    void meansensors() {\n        Number buff_ax = 0, buff_ay = 0, buff_az = 0, buff_gx = 0, buff_gy = 0, buff_gz = 0;\n        Number i = 0;\n\n        while (i < (buffersize + 101)) {\n            mpu->getMotion6(&ax, &ay, &az, &gx, &gy, &gz);\n            if (i > 100 && i <= (buffersize + 100)) { //First 100 measures are discarded\n                buff_ax = buff_ax + ax;\n                buff_ay = buff_ay + ay;\n                buff_az = buff_az + az;\n                buff_gx = buff_gx + gx;\n                buff_gy = buff_gy + gy;\n                buff_gz = buff_gz + gz;\n            }\n            if (i == (buffersize + 100)) {\n                mean_ax = buff_ax / buffersize;\n                mean_ay = buff_ay / buffersize;\n                mean_az = buff_az / buffersize;\n                mean_gx = buff_gx / buffersize;\n                mean_gy = buff_gy / buffersize;\n                mean_gz = buff_gz / buffersize;\n            }\n            i++;\n            delay(2); //Needed so we don't get repeated measures\n        }\n    }\n\n    void calibration() {\n        ax_offset = -mean_ax / 8;\n        ay_offset = -mean_ay / 8;\n        az_offset = (16384.0 - mean_az) / 8;\n\n        gx_offset = -mean_gx / 4;\n        gy_offset = -mean_gy / 4;\n        gz_offset = -mean_gz / 4;\n\n        while (1) {\n            int ready = 0;\n            mpu->setXAccelOffset(ax_offset);\n            mpu->setYAccelOffset(ay_offset);\n            mpu->setZAccelOffset(az_offset);\n\n            mpu->setXGyroOffset(gx_offset);\n            mpu->setYGyroOffset(gy_offset);\n            mpu->setZGyroOffset(gz_offset);\n\n            meansensors();\n\n            if (abs(mean_ax) <= acel_deadzone)\n                ready++;\n            else\n                ax_offset = ax_offset - mean_ax / acel_deadzone;\n            if (abs(mean_ay) <= acel_deadzone)\n                ready++;\n            else\n                ay_offset = ay_offset - mean_ay / acel_deadzone;\n            if (abs(16384.0 - mean_az) <= acel_deadzone)\n                ready++;\n            else\n                az_offset = az_offset + (16384.0 - mean_az) / acel_deadzone;\n            if (abs(mean_gx) <= giro_deadzone)\n                ready++;\n            else\n                gx_offset = gx_offset - mean_gx / (giro_deadzone + 1);\n            if (abs(mean_gy) <= giro_deadzone)\n                ready++;\n            else\n                gy_offset = gy_offset - mean_gy / (giro_deadzone + 1);\n            if (abs(mean_gz) <= giro_deadzone)\n                ready++;\n            else\n                gz_offset = gz_offset - mean_gz / (giro_deadzone + 1);\n\n            XOD_DEBUG_SERIAL.print(\"Calibrated: \");\n            XOD_DEBUG_SERIAL.print(ready);\n            XOD_DEBUG_SERIAL.println(\"/6\");\n\n            if (ready == 6)\n                break;\n        }\n    }\n\n    void evaluate(Context ctx) {\n\n        mpu = getValue<input_DEV>(ctx);\n        bool error = mpu->testConnection();\n        if (error) {\n            XOD_DEBUG_SERIAL.println(\"MPU6050 connection successful\");\n        } else {\n            XOD_DEBUG_SERIAL.println(\"MPU6050 connection failed\");\n        }\n\n        if (isInputDirty<input_DO>(ctx)) {\n            if (cal_state == 0) {\n                XOD_DEBUG_SERIAL.println(\"Reading sensors for first time\");\n                meansensors();\n                cal_state++;\n                delay(500);\n            }\n            if (cal_state == 1) {\n                XOD_DEBUG_SERIAL.println(\"Calculating offsets\");\n                calibration();\n                cal_state++;\n                delay(500);\n            }\n            if (cal_state == 2) {\n                XOD_DEBUG_SERIAL.println(\"Finished\");\n                meansensors();\n                emitValue<output_GXoff>(ctx, gx_offset);\n                emitValue<output_GYoff>(ctx, gy_offset);\n                emitValue<output_GZoff>(ctx, gz_offset);\n                emitValue<output_AXoff>(ctx, ax_offset);\n                emitValue<output_AYoff>(ctx, ay_offset);\n                emitValue<output_AZoff>(ctx, az_offset);\n                emitValue<output_DONE>(ctx, 1);\n            }\n        }\n    }\n\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1m4IEp2Nv": {
+          "description": "Accelerometer offset on Y-axis.",
+          "id": "B1m4IEp2Nv",
+          "label": "AYoff",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "B1x4LNTnND": {
+          "description": "Gyroscope offset on Y-axis.",
+          "id": "B1x4LNTnND",
+          "label": "GYoff",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BkUELVpn4D": {
+          "description": "Fires when the calibration is done.",
+          "id": "BkUELVpn4D",
+          "label": "DONE",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BkrVLEan4v": {
+          "description": "Accelerometer offset on X-axis.",
+          "id": "BkrVLEan4v",
+          "label": "AXoff",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HJGVUEa3Vv": {
+          "description": "Accelerometer offset on Z-axis.",
+          "id": "HJGVUEa3Vv",
+          "label": "AZoff",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HJP8EahED": {
+          "id": "HJP8EahED",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-mpu6050-device"
+        },
+        "HJwE8EpnVv": {
+          "boundLiterals": {
+            "__out__": "Never"
+          },
+          "description": "Triggers new calibration.",
+          "id": "HJwE8EpnVv",
+          "label": "DO",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Sk-VU4p3NP": {
+          "description": "Gyroscope offset on X-axis.",
+          "id": "Sk-VU4p3NP",
+          "label": "GXoff",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "Sy4NLNp3Nw": {
+          "description": "Gyroscope offset on Z-axis.",
+          "id": "Sy4NLNp3Nw",
+          "label": "GZoff",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "r1NI4T34v": {
+          "id": "r1NI4T34v",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/calibrate"
+    },
+    "@/dmp-initialize-arduino": {
+      "attachments": [
+        {
+          "content": "#pragma XOD error_raise enable\n\nvolatile bool mpuInterrupt = false;\n\nvoid dmpDataReady() {\n    mpuInterrupt = true;\n}\n\nnode {\n\n    int8_t devStatus; // return status after each device operation (0 = success, !0 = error)\n\n    void evaluate(Context ctx) {\n        auto mpu = getValue<input_DEV>(ctx);\n\n        if (isSettingUp())\n            emitValue<output_DEVU0027>(ctx, mpu);\n\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        const uint8_t INTERRUPT_PIN = getValue<input_INT>(ctx);\n        pinMode(INTERRUPT_PIN, INPUT);\n\n        devStatus = mpu->dmpInitialize();\n\n        if (devStatus == 0) {\n            mpu->setDMPEnabled(true);\n\n            attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmpDataReady, RISING);\n\n            mpuIntStatus = mpu->getIntStatus();\n            dmpReady = true;\n            packetSize = mpu->dmpGetFIFOPacketSize();\n        } else {\n            raiseError(ctx);\n            return;\n        }\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n\n\n\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "Bk7DdrypNP": {
+          "id": "Bk7DdrypNP",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BkxPOrJTNP": {
+          "id": "BkxPOrJTNP",
+          "label": "DEV'",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-mpu6050-device"
+        },
+        "H1Ev_S1a4D": {
+          "id": "H1Ev_S1a4D",
+          "label": "INT",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HyDOrJTVP": {
+          "id": "HyDOrJTVP",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-mpu6050-device"
+        },
+        "SJMD_BJpND": {
+          "id": "SJMD_BJpND",
+          "label": "DO",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkWDdrJpED": {
+          "id": "SkWDdrJpED",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/dmp-initialize-arduino"
+    },
+    "@/dmp-initialize-mbot": {
+      "attachments": [
+        {
+          "content": "#pragma XOD error_raise enable\n#pragma XOD require \"https://github.com/GreyGnome/PinChangeInt\"\n\n#include <PinChangeInt.h>\n\nvolatile bool mpuInterrupt = false;\n\nvoid dmpDataReady() {\n    mpuInterrupt = true;\n}\n\nnode {\n\n    int8_t devStatus; // return status after each device operation (0 = success, !0 = error)\n\n    void evaluate(Context ctx) {\n        auto mpu = getValue<input_DEV>(ctx);\n\n        if (isSettingUp())\n            emitValue<output_DEVU0027>(ctx, mpu);\n\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        const uint8_t INTERRUPT_PIN = getValue<input_INT>(ctx);\n        devStatus = mpu->dmpInitialize();\n\n        if (devStatus == 0) {\n           mpu->setDMPEnabled(true);\n\n           PCintPort::attachInterrupt(INTERRUPT_PIN, dmpDataReady, RISING);\n\n            mpuIntStatus = mpu->getIntStatus();\n            dmpReady = true;\n            packetSize = mpu->dmpGetFIFOPacketSize();\n        } else {\n            raiseError(ctx);\n            return;\n        }\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n\n\n\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Initialize for Mbot only!",
+      "nodes": {
+        "BkX3wOThEw": {
+          "id": "BkX3wOThEw",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "H1MnDup3VP": {
+          "id": "H1MnDup3VP",
+          "label": "DO",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJWhvuT34w": {
+          "id": "rJWhvuT34w",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJlhw_p24D": {
+          "id": "rJlhw_p24D",
+          "label": "DEV'",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-mpu6050-device"
+        },
+        "rk3PO634P": {
+          "id": "rk3PO634P",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-mpu6050-device"
+        },
+        "rk5utah4w": {
+          "id": "rk5utah4w",
+          "label": "INT",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        }
+      },
+      "path": "@/dmp-initialize-mbot"
+    },
+    "@/example-arduino": {
+      "comments": {
+        "B1QlkAtyaVD": {
+          "content": "Example for Arduino.\nSet INT pin.",
+          "id": "B1QlkAtyaVD",
+          "position": {
+            "x": 14,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "B1hyRKJa4P": {
+          "id": "B1hyRKJa4P",
+          "input": {
+            "nodeId": "H14yCt1TVv",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "r1f1CKk64P",
+            "pinKey": "B1ZjyK0h4w"
+          }
+        },
+        "B1kGikTND": {
+          "id": "B1kGikTND",
+          "input": {
+            "nodeId": "B1hWjJ6ED",
+            "pinKey": "BJ5bc164D"
+          },
+          "output": {
+            "nodeId": "r1f1CKk64P",
+            "pinKey": "rkgLauA2VP"
+          }
+        },
+        "BJQn-jJTVP": {
+          "id": "BJQn-jJTVP",
+          "input": {
+            "nodeId": "SygnbokpNv",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "B1hWjJ6ED",
+            "pinKey": "S1eKG5kpNv"
+          }
+        },
+        "H10yCKyTVw": {
+          "id": "H10yCKyTVw",
+          "input": {
+            "nodeId": "B1LyCK1pEP",
+            "pinKey": "ryXpET3Nw"
+          },
+          "output": {
+            "nodeId": "BJk0Kk64D",
+            "pinKey": "rkb3fCoTH"
+          }
+        },
+        "HJp10KkTVv": {
+          "id": "HJp10KkTVv",
+          "input": {
+            "nodeId": "rySk0FJaEv",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "r1f1CKk64P",
+            "pinKey": "BJoyFA2ED"
+          }
+        },
+        "Hk5k0t1TED": {
+          "id": "Hk5k0t1TED",
+          "input": {
+            "nodeId": "r1f1CKk64P",
+            "pinKey": "ryfI6OA2VP"
+          },
+          "output": {
+            "nodeId": "By-yAtypNP",
+            "pinKey": "Sk90YA2ND"
+          }
+        },
+        "HyE2biJTNw": {
+          "id": "HyE2biJTNw",
+          "input": {
+            "nodeId": "Bk-h-ikpVD",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "B1hWjJ6ED",
+            "pinKey": "SkKfqJa4P"
+          }
+        },
+        "Hyqy5ypED": {
+          "id": "Hyqy5ypED",
+          "input": {
+            "nodeId": "By-yAtypNP",
+            "pinKey": "S1yb0ahED"
+          },
+          "output": {
+            "nodeId": "r1_15y6ED",
+            "pinKey": "BkxPOrJTNP"
+          }
+        },
+        "S1gMs1pNv": {
+          "id": "S1gMs1pNv",
+          "input": {
+            "nodeId": "B1hWjJ6ED",
+            "pinKey": "HJz9W5kaEP"
+          },
+          "output": {
+            "nodeId": "r1f1CKk64P",
+            "pinKey": "rkm86u0nVw"
+          }
+        },
+        "SJFkRtkp4P": {
+          "id": "SJFkRtkp4P",
+          "input": {
+            "nodeId": "r1f1CKk64P",
+            "pinKey": "ryIad0nVP"
+          },
+          "output": {
+            "nodeId": "By-yAtypNP",
+            "pinKey": "HklJ-RTn4v"
+          }
+        },
+        "SkFy5kpEv": {
+          "id": "SkFy5kpEv",
+          "input": {
+            "nodeId": "r1_15y6ED",
+            "pinKey": "HyDOrJTVP"
+          },
+          "output": {
+            "nodeId": "rkwy0F1p4w",
+            "pinKey": "rkeHRra3Vw"
+          }
+        },
+        "SkGthka4P": {
+          "id": "SkGthka4P",
+          "input": {
+            "nodeId": "r1_15y6ED",
+            "pinKey": "SJMD_BJpND"
+          },
+          "output": {
+            "nodeId": "rkwy0F1p4w",
+            "pinKey": "HkQr0HT24D"
+          }
+        },
+        "SkblJRKkp4v": {
+          "id": "SkblJRKkp4v",
+          "input": {
+            "nodeId": "rkwy0F1p4w",
+            "pinKey": "HyGSCr6hEP"
+          },
+          "output": {
+            "nodeId": "B1LyCK1pEP",
+            "pinKey": "H17mpNTnVP"
+          }
+        },
+        "rJklkRYya4D": {
+          "id": "rJklkRYya4D",
+          "input": {
+            "nodeId": "rkwy0F1p4w",
+            "pinKey": "H1B0rp24D"
+          },
+          "output": {
+            "nodeId": "B1LyCK1pEP",
+            "pinKey": "r1eQT4p3EP"
+          }
+        },
+        "rJrhbikaNv": {
+          "id": "rJrhbikaNv",
+          "input": {
+            "nodeId": "BkG3bjJ6ND",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "B1hWjJ6ED",
+            "pinKey": "HyWFMq16ND"
+          }
+        },
+        "rysk0t1TEw": {
+          "id": "rysk0t1TEw",
+          "input": {
+            "nodeId": "ByQk0YJTND",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "r1f1CKk64P",
+            "pinKey": "HJxo1KC2ED"
+          }
+        }
+      },
+      "nodes": {
+        "B1LyCK1pEP": {
+          "boundLiterals": {
+            "SkVNRNa2Nw": "1471",
+            "Syz4R46hVD": "-2112",
+            "rJeNANT2VD": "1714",
+            "ryzmTVp2ND": "On Boot"
+          },
+          "id": "B1LyCK1pEP",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/set-accel-offsets"
+        },
+        "B1hWjJ6ED": {
+          "id": "B1hWjJ6ED",
+          "position": {
+            "x": 19,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/get-linear-accel"
+        },
+        "BJk0Kk64D": {
+          "id": "BJk0Kk64D",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/mpu6050-device"
+        },
+        "Bk-h-ikpVD": {
+          "id": "Bk-h-ikpVD",
+          "position": {
+            "x": 21,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "BkG3bjJ6ND": {
+          "id": "BkG3bjJ6ND",
+          "position": {
+            "x": 22,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "By-yAtypNP": {
+          "boundLiterals": {
+            "ry3jFC24v": "Continuously"
+          },
+          "id": "By-yAtypNP",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/update-buffer"
+        },
+        "ByQk0YJTND": {
+          "id": "ByQk0YJTND",
+          "position": {
+            "x": 14,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "H14yCt1TVv": {
+          "id": "H14yCt1TVv",
+          "position": {
+            "x": 15,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "SygnbokpNv": {
+          "id": "SygnbokpNv",
+          "position": {
+            "x": 20,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "r1_15y6ED": {
+          "boundLiterals": {
+            "H1Ev_S1a4D": "D2"
+          },
+          "id": "r1_15y6ED",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/dmp-initialize-arduino"
+        },
+        "r1f1CKk64P": {
+          "id": "r1f1CKk64P",
+          "position": {
+            "x": 13,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/get-roll-pitch-yaw"
+        },
+        "rkwy0F1p4w": {
+          "boundLiterals": {
+            "BkbQ1Lp3ND": "24",
+            "HJ71La3Nv": "-7",
+            "ryx7yIThEw": "1130"
+          },
+          "id": "rkwy0F1p4w",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/set-gyro-offsets"
+        },
+        "rySk0FJaEv": {
+          "id": "rySk0FJaEv",
+          "position": {
+            "x": 16,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        }
+      },
+      "path": "@/example-arduino"
+    },
+    "@/example-calibrate": {
+      "comments": {
+        "ByWeDTnNP": {
+          "content": "Push to start calibration. Watch the console log.",
+          "id": "ByWeDTnNP",
+          "position": {
+            "x": 13,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "BJUevCUTn4v": {
+          "id": "BJUevCUTn4v",
+          "input": {
+            "nodeId": "ByYv08T3ND",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H1Xw08p3Ew",
+            "pinKey": "HJGVUEa3Vv"
+          }
+        },
+        "Bk3PAUp2Vv": {
+          "id": "Bk3PAUp2Vv",
+          "input": {
+            "nodeId": "Syfw0Ia3VP",
+            "pinKey": "H1B0rp24D"
+          },
+          "output": {
+            "nodeId": "S1WwRLpnVv",
+            "pinKey": "r1eQT4p3EP"
+          }
+        },
+        "ByBgDA86hED": {
+          "id": "ByBgDA86hED",
+          "input": {
+            "nodeId": "Sy_w0UahND",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H1Xw08p3Ew",
+            "pinKey": "B1m4IEp2Nv"
+          }
+        },
+        "H1FkPpnNP": {
+          "id": "H1FkPpnNP",
+          "input": {
+            "nodeId": "H1Xw08p3Ew",
+            "pinKey": "HJwE8EpnVv"
+          },
+          "output": {
+            "nodeId": "HyUJvpnVw",
+            "pinKey": "Bkf4BDsmV"
+          }
+        },
+        "HyNxvC8Th4v": {
+          "id": "HyNxvC8Th4v",
+          "input": {
+            "nodeId": "BJDD0I63Ew",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H1Xw08p3Ew",
+            "pinKey": "BkrVLEan4v"
+          }
+        },
+        "HyklDCUp3VP": {
+          "id": "HyklDCUp3VP",
+          "input": {
+            "nodeId": "H1Xw08p3Ew",
+            "pinKey": "HJP8EahED"
+          },
+          "output": {
+            "nodeId": "Syfw0Ia3VP",
+            "pinKey": "rkeHRra3Vw"
+          }
+        },
+        "SkWxDAUpn4w": {
+          "id": "SkWxDAUpn4w",
+          "input": {
+            "nodeId": "HJEw0LahEw",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H1Xw08p3Ew",
+            "pinKey": "Sk-VU4p3NP"
+          }
+        },
+        "SyGgwRITnEP": {
+          "id": "SyGgwRITnEP",
+          "input": {
+            "nodeId": "BkrwRLpnNw",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H1Xw08p3Ew",
+            "pinKey": "B1x4LNTnND"
+          }
+        },
+        "r1RPRUT3Nv": {
+          "id": "r1RPRUT3Nv",
+          "input": {
+            "nodeId": "Syfw0Ia3VP",
+            "pinKey": "HyGSCr6hEP"
+          },
+          "output": {
+            "nodeId": "S1WwRLpnVv",
+            "pinKey": "H17mpNTnVP"
+          }
+        },
+        "rJ7gvCUpnNP": {
+          "id": "rJ7gvCUpnNP",
+          "input": {
+            "nodeId": "S1UPALp3Vv",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H1Xw08p3Ew",
+            "pinKey": "Sy4NLNp3Nw"
+          }
+        },
+        "rkT5_An4w": {
+          "id": "rkT5_An4w",
+          "input": {
+            "nodeId": "S1WwRLpnVv",
+            "pinKey": "ryXpET3Nw"
+          },
+          "output": {
+            "nodeId": "Hkv08anND",
+            "pinKey": "rkb3fCoTH"
+          }
+        }
+      },
+      "nodes": {
+        "BJDD0I63Ew": {
+          "id": "BJDD0I63Ew",
+          "position": {
+            "x": 15,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "BkrwRLpnNw": {
+          "id": "BkrwRLpnNw",
+          "position": {
+            "x": 11,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "ByYv08T3ND": {
+          "id": "ByYv08T3ND",
+          "position": {
+            "x": 19,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "H1Xw08p3Ew": {
+          "id": "H1Xw08p3Ew",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/calibrate"
+        },
+        "HJEw0LahEw": {
+          "id": "HJEw0LahEw",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "Hkv08anND": {
+          "id": "Hkv08anND",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/mpu6050-device"
+        },
+        "HyUJvpnVw": {
+          "id": "HyUJvpnVw",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        },
+        "S1UPALp3Vv": {
+          "id": "S1UPALp3Vv",
+          "position": {
+            "x": 13,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "S1WwRLpnVv": {
+          "boundLiterals": {
+            "ryzmTVp2ND": "On Boot"
+          },
+          "id": "S1WwRLpnVv",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/set-accel-offsets"
+        },
+        "Sy_w0UahND": {
+          "id": "Sy_w0UahND",
+          "position": {
+            "x": 17,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "Syfw0Ia3VP": {
+          "id": "Syfw0Ia3VP",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/set-gyro-offsets"
+        }
+      },
+      "path": "@/example-calibrate"
+    },
+    "@/example-mbot": {
+      "comments": {
+        "HyRjK1a4w": {
+          "content": "Example for MBOT only D12 is the first MBOT PORT.",
+          "id": "HyRjK1a4w",
+          "position": {
+            "x": 16,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "B1Px5IdkTND": {
+          "id": "B1Px5IdkTND",
+          "input": {
+            "nodeId": "BywcI_1pVP",
+            "pinKey": "S1yb0ahED"
+          },
+          "output": {
+            "nodeId": "HJxqLuypNP",
+            "pinKey": "rJlhw_p24D"
+          }
+        },
+        "B1_n9kpVP": {
+          "id": "B1_n9kpVP",
+          "input": {
+            "nodeId": "BkDh9ypVD",
+            "pinKey": "BJ5bc164D"
+          },
+          "output": {
+            "nodeId": "Skc9U_1TED",
+            "pinKey": "rkgLauA2VP"
+          }
+        },
+        "B1g3391a4v": {
+          "id": "B1g3391a4v",
+          "input": {
+            "nodeId": "r1e5nqJ6VP",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BkDh9ypVD",
+            "pinKey": "SkKfqJa4P"
+          }
+        },
+        "B1nnq16EP": {
+          "id": "B1nnq16EP",
+          "input": {
+            "nodeId": "Hyq35kaEP",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BkDh9ypVD",
+            "pinKey": "S1eKG5kpNv"
+          }
+        },
+        "BJJb9IOka4v": {
+          "id": "BJJb9IOka4v",
+          "input": {
+            "nodeId": "ryC9I_J6NP",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "Skc9U_1TED",
+            "pinKey": "B1ZjyK0h4w"
+          }
+        },
+        "Bksx5IOkpND": {
+          "id": "Bksx5IOkpND",
+          "input": {
+            "nodeId": "Skc9U_1TED",
+            "pinKey": "ryfI6OA2VP"
+          },
+          "output": {
+            "nodeId": "BywcI_1pVP",
+            "pinKey": "Sk90YA2ND"
+          }
+        },
+        "HkSSKJTVw": {
+          "id": "HkSSKJTVw",
+          "input": {
+            "nodeId": "Hyq4YyTNP",
+            "pinKey": "HyGSCr6hEP"
+          },
+          "output": {
+            "nodeId": "Sk_Ntk64D",
+            "pinKey": "H17mpNTnVP"
+          }
+        },
+        "Hyqe9LOypEv": {
+          "id": "Hyqe9LOypEv",
+          "input": {
+            "nodeId": "Skc9U_1TED",
+            "pinKey": "ryIad0nVP"
+          },
+          "output": {
+            "nodeId": "BywcI_1pVP",
+            "pinKey": "HklJ-RTn4v"
+          }
+        },
+        "S10xcI_16Nw": {
+          "id": "S10xcI_16Nw",
+          "input": {
+            "nodeId": "S1acLOya4v",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "Skc9U_1TED",
+            "pinKey": "HJxo1KC2ED"
+          }
+        },
+        "S1e-c8O1pNw": {
+          "id": "S1e-c8O1pNw",
+          "input": {
+            "nodeId": "HkJxq8dkT4P",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "Skc9U_1TED",
+            "pinKey": "BJoyFA2ED"
+          }
+        },
+        "SJTh9ya4w": {
+          "id": "SJTh9ya4w",
+          "input": {
+            "nodeId": "SJbc25kp4w",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BkDh9ypVD",
+            "pinKey": "HyWFMq16ND"
+          }
+        },
+        "SydHY1aVP": {
+          "id": "SydHY1aVP",
+          "input": {
+            "nodeId": "HJxqLuypNP",
+            "pinKey": "H1MnDup3VP"
+          },
+          "output": {
+            "nodeId": "Hyq4YyTNP",
+            "pinKey": "HkQr0HT24D"
+          }
+        },
+        "r1hEtk6EP": {
+          "id": "r1hEtk6EP",
+          "input": {
+            "nodeId": "Hyq4YyTNP",
+            "pinKey": "H1B0rp24D"
+          },
+          "output": {
+            "nodeId": "Sk_Ntk64D",
+            "pinKey": "r1eQT4p3EP"
+          }
+        },
+        "r1iEFJTND": {
+          "id": "r1iEFJTND",
+          "input": {
+            "nodeId": "Sk_Ntk64D",
+            "pinKey": "ryXpET3Nw"
+          },
+          "output": {
+            "nodeId": "Hk5I_JTEv",
+            "pinKey": "rkb3fCoTH"
+          }
+        },
+        "rkyaqJpNw": {
+          "id": "rkyaqJpNw",
+          "input": {
+            "nodeId": "BkDh9ypVD",
+            "pinKey": "HJz9W5kaEP"
+          },
+          "output": {
+            "nodeId": "Skc9U_1TED",
+            "pinKey": "rkm86u0nVw"
+          }
+        },
+        "rygHYk6EP": {
+          "id": "rygHYk6EP",
+          "input": {
+            "nodeId": "HJxqLuypNP",
+            "pinKey": "rk3PO634P"
+          },
+          "output": {
+            "nodeId": "Hyq4YyTNP",
+            "pinKey": "rkeHRra3Vw"
+          }
+        }
+      },
+      "nodes": {
+        "BkDh9ypVD": {
+          "id": "BkDh9ypVD",
+          "position": {
+            "x": 21,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/get-linear-accel"
+        },
+        "BywcI_1pVP": {
+          "boundLiterals": {
+            "ry3jFC24v": "Continuously"
+          },
+          "id": "BywcI_1pVP",
+          "position": {
+            "x": 12,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/update-buffer"
+        },
+        "HJxqLuypNP": {
+          "boundLiterals": {
+            "H1MnDup3VP": "On Boot",
+            "rk5utah4w": "D12"
+          },
+          "id": "HJxqLuypNP",
+          "position": {
+            "x": 12,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/dmp-initialize-mbot"
+        },
+        "Hk5I_JTEv": {
+          "id": "Hk5I_JTEv",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/mpu6050-device"
+        },
+        "HkJxq8dkT4P": {
+          "id": "HkJxq8dkT4P",
+          "position": {
+            "x": 18,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "Hyq35kaEP": {
+          "id": "Hyq35kaEP",
+          "position": {
+            "x": 22,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "Hyq4YyTNP": {
+          "boundLiterals": {
+            "BkbQ1Lp3ND": "24",
+            "HJ71La3Nv": "-7",
+            "ryx7yIThEw": "1130"
+          },
+          "id": "Hyq4YyTNP",
+          "position": {
+            "x": 12,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/set-gyro-offsets"
+        },
+        "S1acLOya4v": {
+          "id": "S1acLOya4v",
+          "position": {
+            "x": 16,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "SJbc25kp4w": {
+          "id": "SJbc25kp4w",
+          "position": {
+            "x": 24,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "Sk_Ntk64D": {
+          "boundLiterals": {
+            "SkVNRNa2Nw": "1471",
+            "Syz4R46hVD": "-2112",
+            "rJeNANT2VD": "1714",
+            "ryzmTVp2ND": "On Boot"
+          },
+          "id": "Sk_Ntk64D",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/set-accel-offsets"
+        },
+        "Skc9U_1TED": {
+          "id": "Skc9U_1TED",
+          "position": {
+            "x": 15,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/get-roll-pitch-yaw"
+        },
+        "r1e5nqJ6VP": {
+          "id": "r1e5nqJ6VP",
+          "position": {
+            "x": 23,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "ryC9I_J6NP": {
+          "id": "ryC9I_J6NP",
+          "position": {
+            "x": 17,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        }
+      },
+      "path": "@/example-mbot"
+    },
+    "@/get-linear-accel": {
+      "attachments": [
+        {
+          "content": "node {\n    void evaluate(Context ctx) {\n        auto mpu = getValue<input_DEV>(ctx);\n\n        if (isSettingUp())\n            emitValue<output_DEVU0027>(ctx, mpu);\n\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        mpu->dmpGetQuaternion(&q, fifoBuffer);\n        mpu->dmpGetAccel(&aa, fifoBuffer);\n        mpu->dmpGetGravity(&gravity, &q);\n        mpu->dmpGetLinearAccel(&aaReal, &aa, &gravity);\n\n        emitValue<output_laX>(ctx, aaReal.x);\n        emitValue<output_laY>(ctx, aaReal.y);\n        emitValue<output_laZ>(ctx, aaReal.z);\n\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJ5bc164D": {
+          "id": "BJ5bc164D",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-mpu6050-device"
+        },
+        "H17cW5JaVw": {
+          "id": "H17cW5JaVw",
+          "label": "DONE",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HJz9W5kaEP": {
+          "id": "HJz9W5kaEP",
+          "label": "UPD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkZqWc16Ev": {
+          "id": "HkZqWc16Ev",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Hkg9-qJTEw": {
+          "id": "Hkg9-qJTEw",
+          "label": "DEV'",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-mpu6050-device"
+        },
+        "HyWFMq16ND": {
+          "description": " Linear acceleration along Z-axis.",
+          "id": "HyWFMq16ND",
+          "label": "laZ",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "S1eKG5kpNv": {
+          "description": " Linear acceleration along X-axis.",
+          "id": "S1eKG5kpNv",
+          "label": "laX",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SkKfqJa4P": {
+          "description": " Linear acceleration along Y-axis.",
+          "id": "SkKfqJa4P",
+          "label": "laY",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/get-linear-accel"
+    },
+    "@/get-roll-pitch-yaw": {
+      "attachments": [
+        {
+          "content": "node {\n    void evaluate(Context ctx) {\n        auto mpu = getValue<input_DEV>(ctx);\n\n        if (isSettingUp())\n            emitValue<output_DEVU0027>(ctx, mpu);\n\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        mpu->dmpGetQuaternion(&q, fifoBuffer);\n        mpu->dmpGetGravity(&gravity, &q);\n        mpu->dmpGetYawPitchRoll(ypr, &q, &gravity);\n\n        emitValue<output_YAW>(ctx, ypr[0] * 180 / PI);\n        emitValue<output_PITCH>(ctx, ypr[1] * 180 / PI);\n        emitValue<output_ROLL>(ctx, ypr[2] * 180 / PI);\n\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1ZjyK0h4w": {
+          "description": "The rotation angle around Y-axis.",
+          "id": "B1ZjyK0h4w",
+          "label": "PITCH",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BJoyFA2ED": {
+          "description": "The rotation angle around X-axis.",
+          "id": "BJoyFA2ED",
+          "label": "ROLL",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ByZI6u0hEv": {
+          "id": "ByZI6u0hEv",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJxo1KC2ED": {
+          "description": "The rotation angle around Z-axis.",
+          "id": "HJxo1KC2ED",
+          "label": "YAW",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rkgLauA2VP": {
+          "id": "rkgLauA2VP",
+          "label": "DEV'",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-mpu6050-device"
+        },
+        "rkm86u0nVw": {
+          "id": "rkm86u0nVw",
+          "label": "DONE",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ryIad0nVP": {
+          "id": "ryIad0nVP",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-mpu6050-device"
+        },
+        "ryfI6OA2VP": {
+          "id": "ryfI6OA2VP",
+          "label": "UPD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/get-roll-pitch-yaw"
+    },
+    "@/mpu6050-device": {
+      "attachments": [
+        {
+          "content": "#pragma XOD error_raise enable\n\n#include <I2Cdev.h>\n#include <MPU6050_6Axis_MotionApps20.h>\n#include <Wire.h>\n\nuint8_t mpuIntStatus; // holds actual interrupt status byte from MPU\nbool dmpReady = false; // set true if DMP init was successful\nuint16_t packetSize; // expected DMP packet size (default is 42 bytes)\nuint16_t fifoCount; // count of all bytes currently in FIFO\nuint8_t fifoBuffer[64]; // FIFO storage buffer\n\nQuaternion q; // [w, x, y, z] quaternion container\nVectorFloat gravity; // [x, y, z] gravity vector\nfloat ypr[3]; // [yaw, pitch, roll] yaw/pitch/roll container and gravity vector\nVectorInt16 aa; // [x, y, z] accel sensor measurements\nVectorInt16 aaReal; // [x, y, z] gravity-free accel sensor measurements\n\nnode {\n    meta {\n        using Type = MPU6050*;\n    }\n\n    uint8_t mem[sizeof(MPU6050)];\n\n    void evaluate(Context ctx) {\n        if (!isSettingUp())\n            return;\n\n        uint8_t addr = getValue<input_ADDR>(ctx);\n\n        if (addr > 127) {\n            raiseError(ctx);\n            return;\n        }\n\n        Type mpu = new (mem) MPU6050(addr);\n        mpu->initialize();\n        emitValue<output_DEV>(ctx, mpu);\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "H1YwXy26S": {
+          "id": "H1YwXy26S",
+          "label": "I2C",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/i2c/input-i2c"
+        },
+        "HyCuG0sTB": {
+          "id": "HyCuG0sTB",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HymoMCsaS": {
+          "boundLiterals": {
+            "__out__": "68h"
+          },
+          "id": "HymoMCsaS",
+          "label": "ADDR",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "rkb3fCoTH": {
+          "id": "rkb3fCoTH",
+          "label": "DEV",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/mpu6050-device"
+    },
+    "@/set-accel-offsets": {
+      "attachments": [
+        {
+          "content": "node {\n    void evaluate(Context ctx) {\n        auto mpu = getValue<input_DEV>(ctx);\n\n        if (isSettingUp())\n            emitValue<output_DEVU0027>(ctx, mpu);\n\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        mpu->setXAccelOffset(getValue<input_AXoff>(ctx));\n        mpu->setYAccelOffset(getValue<input_AYoff>(ctx));\n        mpu->setZAccelOffset(getValue<input_AZoff>(ctx));\n\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "H17mpNTnVP": {
+          "id": "H17mpNTnVP",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SkVNRNa2Nw": {
+          "description": "Accelerometer offset on Z-axis.",
+          "id": "SkVNRNa2Nw",
+          "label": "AZoff",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SybQpVT2ND": {
+          "id": "SybQpVT2ND",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Syz4R46hVD": {
+          "description": "Accelerometer offset on Y-axis.",
+          "id": "Syz4R46hVD",
+          "label": "AYoff",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1eQT4p3EP": {
+          "id": "r1eQT4p3EP",
+          "label": "DEV'",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-mpu6050-device"
+        },
+        "rJeNANT2VD": {
+          "description": "Accelerometer offset on X-axis.",
+          "id": "rJeNANT2VD",
+          "label": "AXoff",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ryXpET3Nw": {
+          "id": "ryXpET3Nw",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-mpu6050-device"
+        },
+        "ryzmTVp2ND": {
+          "id": "ryzmTVp2ND",
+          "label": "DO",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/set-accel-offsets"
+    },
+    "@/set-gyro-offsets": {
+      "attachments": [
+        {
+          "content": "node {\n    void evaluate(Context ctx) {\n        auto mpu = getValue<input_DEV>(ctx);\n\n        if (isSettingUp())\n            emitValue<output_DEVU0027>(ctx, mpu);\n\n        if (!isInputDirty<input_DO>(ctx))\n            return;\n\n        mpu->setXGyroOffset(getValue<input_GXoff>(ctx));\n        mpu->setYGyroOffset(getValue<input_GYoff>(ctx));\n        mpu->setZGyroOffset(getValue<input_GZoff>(ctx));\n\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BkbBAHTnEP": {
+          "id": "BkbBAHTnEP",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BkbQ1Lp3ND": {
+          "description": "Gyroscope offset on Y-axis.",
+          "id": "BkbQ1Lp3ND",
+          "label": "GYoff",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H1B0rp24D": {
+          "id": "H1B0rp24D",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-mpu6050-device"
+        },
+        "HJ71La3Nv": {
+          "description": "Gyroscope offset on Z-axis.",
+          "id": "HJ71La3Nv",
+          "label": "GZoff",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HkQr0HT24D": {
+          "id": "HkQr0HT24D",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HyGSCr6hEP": {
+          "id": "HyGSCr6hEP",
+          "label": "DO",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkeHRra3Vw": {
+          "id": "rkeHRra3Vw",
+          "label": "DEV'",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-mpu6050-device"
+        },
+        "ryx7yIThEw": {
+          "description": "Gyroscope offset on X-axis.",
+          "id": "ryx7yIThEw",
+          "label": "GXoff",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/set-gyro-offsets"
+    },
+    "@/update-buffer": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "node {\n\n    void evaluate(Context ctx) {\n        auto mpu = getValue<input_DEV>(ctx);\n\n        if (isSettingUp())\n            emitValue<output_DEVU0027>(ctx, mpu);\n\n        if (isInputDirty<input_UPD>(ctx)) {\n            if (!dmpReady) {\n                return;\n            }\n\n\n            while (!mpuInterrupt && fifoCount < packetSize) {}\n\n            mpuInterrupt = false;\n\n            mpuIntStatus = mpu->getIntStatus();\n            fifoCount = mpu->getFIFOCount();\n\n            if ((mpuIntStatus & 0x10) || fifoCount == 1024) {\n\n                mpu->resetFIFO();\n\n            } else if (mpuIntStatus & 0x02) {\n \n                while (fifoCount < packetSize)\n                    fifoCount = mpu->getFIFOCount();\n\n                mpu->getFIFOBytes(fifoBuffer, packetSize);\n                fifoCount -= packetSize;\n            }\n\n        }\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "HklJ-RTn4v": {
+          "id": "HklJ-RTn4v",
+          "label": "DEV'",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/output-mpu6050-device"
+        },
+        "HybyWR63Vw": {
+          "id": "HybyWR63Vw",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1yb0ahED": {
+          "id": "S1yb0ahED",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-mpu6050-device"
+        },
+        "Sk90YA2ND": {
+          "id": "Sk90YA2ND",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ry3jFC24v": {
+          "id": "ry3jFC24v",
+          "label": "UPD",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/update-buffer"
+    }
+  },
+  "version": "0.0.4"
+}

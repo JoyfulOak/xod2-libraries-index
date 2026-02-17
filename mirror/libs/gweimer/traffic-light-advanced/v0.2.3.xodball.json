@@ -1,0 +1,5255 @@
+{
+  "description": "The next step in your learning once you understand the simple traffic light example provided in the XOD documentation. Updated for XOD 0.32.1; added mutex, bus, and jumper examples.",
+  "name": "traffic-light-advanced",
+  "patches": {
+    "@/0-traffic-simple": {
+      "comments": {
+        "HkXh1aAVf": {
+          "content": "Introduction:\n* A simple state machine that cycles through 3 lights, turning on only one at a time and loop back to repeat.\n* Note that a defer node should usually follow the boot node so system stabalizes before starting any code. Here we reuse the same defer node for boot and to allow the program to loop.\n\n* see one-light to see how we control the lights.",
+          "id": "HkXh1aAVf",
+          "position": {
+            "x": 11,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 3,
+            "width": 9,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "Review of simple traffic light for only one direction.",
+      "links": {
+        "B1724v5kI": {
+          "id": "B1724v5kI",
+          "input": {
+            "nodeId": "rkrcVPq1L",
+            "pinKey": "HJ-QJvc1I"
+          },
+          "output": {
+            "nodeId": "BkTVJv5k8",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "BJFhEv5J8": {
+          "id": "BJFhEv5J8",
+          "input": {
+            "nodeId": "rJNj4wcJ8",
+            "pinKey": "HJ-QJvc1I"
+          },
+          "output": {
+            "nodeId": "r1i41Pc1L",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "HJip1QK0z": {
+          "id": "HJip1QK0z",
+          "input": {
+            "nodeId": "S18pk7tRM",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "SJ8qZT0Nf",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "Hk2iEwcJU": {
+          "id": "Hk2iEwcJU",
+          "input": {
+            "nodeId": "HyXo4P9yU",
+            "pinKey": "HJZIe6RVM"
+          },
+          "output": {
+            "nodeId": "rkrcVPq1L",
+            "pinKey": "SkFsepCNz"
+          }
+        },
+        "HkShVPqkI": {
+          "id": "HkShVPqkI",
+          "input": {
+            "nodeId": "HyXo4P9yU",
+            "pinKey": "HJ-QJvc1I"
+          },
+          "output": {
+            "nodeId": "SyhEyvq1L",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "S19oEPqkL": {
+          "id": "S19oEPqkL",
+          "input": {
+            "nodeId": "rJNj4wcJ8",
+            "pinKey": "HJZIe6RVM"
+          },
+          "output": {
+            "nodeId": "HyXo4P9yU",
+            "pinKey": "SkFsepCNz"
+          }
+        },
+        "SJwAWT0Ez": {
+          "id": "SJwAWT0Ez",
+          "input": {
+            "nodeId": "SJ8qZT0Nf",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "SJBeepCVf",
+            "pinKey": "ryVmUAOrvkb"
+          }
+        },
+        "SkCi4vq18": {
+          "id": "SkCi4vq18",
+          "input": {
+            "nodeId": "rkrcVPq1L",
+            "pinKey": "HJZIe6RVM"
+          },
+          "output": {
+            "nodeId": "S18pk7tRM",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "rylnVP9kU": {
+          "id": "rylnVP9kU",
+          "input": {
+            "nodeId": "SJ8qZT0Nf",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "rJNj4wcJ8",
+            "pinKey": "SkFsepCNz"
+          }
+        }
+      },
+      "nodes": {
+        "BkTVJv5k8": {
+          "id": "BkTVJv5k8",
+          "label": "RPort",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-port"
+        },
+        "HyXo4P9yU": {
+          "id": "HyXo4P9yU",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "gweimer/traffic-light-advanced/one-light"
+        },
+        "S18pk7tRM": {
+          "id": "S18pk7tRM",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "SJ8qZT0Nf": {
+          "id": "SJ8qZT0Nf",
+          "position": {
+            "x": 11,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "SJBeepCVf": {
+          "id": "SJBeepCVf",
+          "position": {
+            "x": 14,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/boot"
+        },
+        "SyhEyvq1L": {
+          "id": "SyhEyvq1L",
+          "label": "GPort",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-port"
+        },
+        "r1i41Pc1L": {
+          "id": "r1i41Pc1L",
+          "label": "YPort",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-port"
+        },
+        "rJNj4wcJ8": {
+          "id": "rJNj4wcJ8",
+          "position": {
+            "x": 7,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "gweimer/traffic-light-advanced/one-light"
+        },
+        "rkrcVPq1L": {
+          "id": "rkrcVPq1L",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "gweimer/traffic-light-advanced/one-light"
+        }
+      },
+      "path": "@/0-traffic-simple"
+    },
+    "@/1-traffic-delay-bad": {
+      "comments": {
+        "S1I7XMW2AVM": {
+          "content": "Control for North/South lights",
+          "id": "S1I7XMW2AVM",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 5,
+            "units": "slots"
+          }
+        },
+        "SJrQQGbhANf": {
+          "content": "Control for East/West lights",
+          "id": "SJrQQGbhANf",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 5,
+            "units": "slots"
+          }
+        },
+        "r1Kdu3R4z": {
+          "content": "Attempt #1:\n* Realize that we don't need to directly control Red lights, we just need red light on if any green or yellow lights are on for other directions.\n* Turn  on green light for NS, then turn off green & turn on yellow, then turn off yellow and move to EW green light.\n\n* With this structure, we cannot encapsulate lights for each direction because we need communication between lights in each direction (cross-connection of OR nodes)\n* Let's try again using select statements. Open 2-traffic-select-flat",
+          "id": "r1Kdu3R4z",
+          "position": {
+            "x": 21,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 4,
+            "width": 8,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "Traffic light example in one node using delay timers and \"or\" nodes.",
+      "links": {
+        "B1Zb7fW30Ez": {
+          "id": "B1Zb7fW30Ez",
+          "input": {
+            "nodeId": "rydXGZ2RNG",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "SkoXMZnA4z",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "BJ3BWhAVz": {
+          "id": "BJ3BWhAVz",
+          "input": {
+            "nodeId": "rJKSZ3CEz",
+            "pinKey": "BJaG80urD1-"
+          },
+          "output": {
+            "nodeId": "rydXGZ2RNG",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "BJ5Zev5yL": {
+          "id": "BJ5Zev5yL",
+          "input": {
+            "nodeId": "rkbglw5JU",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "HyfQMZ3CEf",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "Bk5nkv5k8": {
+          "id": "Bk5nkv5k8",
+          "input": {
+            "nodeId": "HkX3yD9k8",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "rydXGZ2RNG",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "By0bQzW3RNz": {
+          "id": "By0bQzW3RNz",
+          "input": {
+            "nodeId": "HJ9mzZhR4z",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "B16mfZn0Ez",
+            "pinKey": "ryVmUAOrvkb"
+          }
+        },
+        "ByvZew5kL": {
+          "id": "ByvZew5kL",
+          "input": {
+            "nodeId": "B1xWlxDqy8",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "rJVxmfWn0Nz",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "HJc-QMWh0EG": {
+          "id": "HJc-QMWh0EG",
+          "input": {
+            "nodeId": "HyfQMZ3CEf",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "rydXGZ2RNG",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "HyX_-hA4f": {
+          "id": "HyX_-hA4f",
+          "input": {
+            "nodeId": "rJeP-30Vz",
+            "pinKey": "BJaG80urD1-"
+          },
+          "output": {
+            "nodeId": "rJVxmfWn0Nz",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "S1Anyv91L": {
+          "id": "S1Anyv91L",
+          "input": {
+            "nodeId": "rylXhkDqyL",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "HJ8LZ2CVG",
+            "pinKey": "SJyXI0OrD1-"
+          }
+        },
+        "SJUO-204M": {
+          "id": "SJUO-204M",
+          "input": {
+            "nodeId": "rJeP-30Vz",
+            "pinKey": "HJCfI0dBDkb"
+          },
+          "output": {
+            "nodeId": "HyfQMZ3CEf",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "SJdYbhC4f": {
+          "id": "SJdYbhC4f",
+          "input": {
+            "nodeId": "HJ8LZ2CVG",
+            "pinKey": "BJaG80urD1-"
+          },
+          "output": {
+            "nodeId": "rJeP-30Vz",
+            "pinKey": "SJyXI0OrD1-"
+          }
+        },
+        "SJjFZ20VM": {
+          "id": "SJjFZ20VM",
+          "input": {
+            "nodeId": "rJNP-2AEM",
+            "pinKey": "BJaG80urD1-"
+          },
+          "output": {
+            "nodeId": "rJKSZ3CEz",
+            "pinKey": "SJyXI0OrD1-"
+          }
+        },
+        "SJtWXG-hC4f": {
+          "id": "SJtWXG-hC4f",
+          "input": {
+            "nodeId": "rJVxmfWn0Nz",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "HyfQMZ3CEf",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "SyS-lv9kL": {
+          "id": "SyS-lv9kL",
+          "input": {
+            "nodeId": "BkW-xlDcy8",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "rJNP-2AEM",
+            "pinKey": "SJyXI0OrD1-"
+          }
+        },
+        "SynoJP9JI": {
+          "id": "SynoJP9JI",
+          "input": {
+            "nodeId": "By35ywckL",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "SkoXMZnA4z",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "rJfQhrlBG": {
+          "id": "rJfQhrlBG",
+          "input": {
+            "nodeId": "HJ9mzZhR4z",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "rJVxmfWn0Nz",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "rJpsJmtAG": {
+          "id": "rJpsJmtAG",
+          "input": {
+            "nodeId": "SkoXMZnA4z",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "SJqj1QFRz",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "ryArbnA4f": {
+          "id": "ryArbnA4f",
+          "input": {
+            "nodeId": "rJKSZ3CEz",
+            "pinKey": "HJCfI0dBDkb"
+          },
+          "output": {
+            "nodeId": "SkoXMZnA4z",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "ryy2yQKRz": {
+          "id": "ryy2yQKRz",
+          "input": {
+            "nodeId": "SJqj1QFRz",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "HJ9mzZhR4z",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        }
+      },
+      "nodes": {
+        "B16mfZn0Ez": {
+          "id": "B16mfZn0Ez",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/boot"
+        },
+        "B1xWlxDqy8": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D6"
+          },
+          "id": "B1xWlxDqy8",
+          "label": "EW Yellow",
+          "position": {
+            "x": 10,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "BkW-xlDcy8": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D7"
+          },
+          "id": "BkW-xlDcy8",
+          "label": "EW Red",
+          "position": {
+            "x": 10,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "By35ywckL": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D2"
+          },
+          "id": "By35ywckL",
+          "label": "NS Green",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "HJ8LZ2CVG": {
+          "id": "HJ8LZ2CVG",
+          "position": {
+            "x": 6,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/or"
+        },
+        "HJ9mzZhR4z": {
+          "id": "HJ9mzZhR4z",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "HkX3yD9k8": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D3"
+          },
+          "id": "HkX3yD9k8",
+          "label": "NS Yellow",
+          "position": {
+            "x": 1,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "HyfQMZ3CEf": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "HyfQMZ3CEf",
+          "position": {
+            "x": 14,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "SJqj1QFRz": {
+          "id": "SJqj1QFRz",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "SkoXMZnA4z": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "SkoXMZnA4z",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "rJKSZ3CEz": {
+          "id": "rJKSZ3CEz",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/or"
+        },
+        "rJNP-2AEM": {
+          "id": "rJNP-2AEM",
+          "position": {
+            "x": 15,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/or"
+        },
+        "rJVxmfWn0Nz": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "rJVxmfWn0Nz",
+          "position": {
+            "x": 14,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "rJeP-30Vz": {
+          "id": "rJeP-30Vz",
+          "position": {
+            "x": 15,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/or"
+        },
+        "rkbglw5JU": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D5"
+          },
+          "id": "rkbglw5JU",
+          "label": "EW Green",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "rydXGZ2RNG": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "rydXGZ2RNG",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "rylXhkDqyL": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D4"
+          },
+          "id": "rylXhkDqyL",
+          "label": "NS Red",
+          "position": {
+            "x": 1,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        }
+      },
+      "path": "@/1-traffic-delay-bad"
+    },
+    "@/2-traffic-select-flat": {
+      "comments": {
+        "B1WgW6GNSf": {
+          "content": "Control for East/West lights",
+          "id": "B1WgW6GNSf",
+          "position": {
+            "x": 12,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 7,
+            "units": "slots"
+          }
+        },
+        "S1d2SjC4G": {
+          "content": "When timer is active, switch lights to non-default; switch back to default when Done. Green->Yellow transition can leave Red off.",
+          "id": "S1d2SjC4G",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 2,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "SklAK2ANM": {
+          "content": "Attempt#2:\n* Select will default to S2 (right-most) value, so we set Red to default on while Yellow & Green default off.\n* Cycle starts with all Red lights, then we select non-default value for NS Red & Green, then switch Green back to default & select non-default value for Yellow (Red does not need to change yet), then switch Yellow & Red back to default & proceed to EW lights.\n\n* It is ugly, but we achieved encapsulation, so we can take delays, selects, and outputs for lights in each direction and make them a new node. The node needs a start pulse and port #s for Red/Yellow/Green LEDs as well as an output pulse. Open 3-traffic-select to see how it works.",
+          "id": "SklAK2ANM",
+          "position": {
+            "x": 21,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 4,
+            "width": 7,
+            "units": "slots"
+          }
+        },
+        "r1elbpGESG": {
+          "content": "Control for North/South lights",
+          "id": "r1elbpGESG",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 7,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "Traffic light example in one node using delay timers and select nodes.",
+      "links": {
+        "B171bPqy8": {
+          "id": "B171bPqy8",
+          "input": {
+            "nodeId": "rkbFCeD5yU",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "BkVeLt0NM",
+            "pinKey": "S1yaHC6UW"
+          }
+        },
+        "B1RAlvcyI": {
+          "id": "B1RAlvcyI",
+          "input": {
+            "nodeId": "rkK0xPckL",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "SJDIBt04f",
+            "pinKey": "S1yaHC6UW"
+          }
+        },
+        "B1pbiKAEM": {
+          "id": "B1pbiKAEM",
+          "input": {
+            "nodeId": "SJZAMUFAEz",
+            "pinKey": "rJUjrCTUb"
+          },
+          "output": {
+            "nodeId": "BkXZDFREG",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "BJ1okXY0G": {
+          "id": "BJ1okXY0G",
+          "input": {
+            "nodeId": "rygyPtANM",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "rJt9kXtCz",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "BJfjxP5yL": {
+          "id": "BJfjxP5yL",
+          "input": {
+            "nodeId": "rk2cgvqJ8",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "SJZAMUFAEz",
+            "pinKey": "S1yaHC6UW"
+          }
+        },
+        "BkmxjFRNz": {
+          "id": "BkmxjFRNz",
+          "input": {
+            "nodeId": "ryo2rY0Ez",
+            "pinKey": "rkmiHCaIZ"
+          },
+          "output": {
+            "nodeId": "HyujLKC4G",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "BkwJiK04M": {
+          "id": "BkwJiK04M",
+          "input": {
+            "nodeId": "BkVeLt0NM",
+            "pinKey": "rkmiHCaIZ"
+          },
+          "output": {
+            "nodeId": "ryQUIFRVM",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "ByiJiFRVG": {
+          "id": "ByiJiFRVG",
+          "input": {
+            "nodeId": "SJDIBt04f",
+            "pinKey": "rkmiHCaIZ"
+          },
+          "output": {
+            "nodeId": "ryQUIFRVM",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "H1NogPcyI": {
+          "id": "H1NogPcyI",
+          "input": {
+            "nodeId": "SJx35lD91L",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "SJmRMLtCEM",
+            "pinKey": "S1yaHC6UW"
+          }
+        },
+        "H1QnLYA4z": {
+          "id": "H1QnLYA4z",
+          "input": {
+            "nodeId": "HyujLKC4G",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "ryQUIFRVM",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "H1xfvF0Ez": {
+          "id": "H1xfvF0Ez",
+          "input": {
+            "nodeId": "BkXZDFREG",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "rygyPtANM",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "HkGO4HtAVM": {
+          "id": "HkGO4HtAVM",
+          "input": {
+            "nodeId": "S1-d4SYRNM",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "Sy_EHFA4f",
+            "pinKey": "ryVmUAOrvkb"
+          }
+        },
+        "HkOlotAVf": {
+          "id": "HkOlotAVf",
+          "input": {
+            "nodeId": "SJDIBt04f",
+            "pinKey": "rJUjrCTUb"
+          },
+          "output": {
+            "nodeId": "HyujLKC4G",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "HkkliY0Vf": {
+          "id": "HkkliY0Vf",
+          "input": {
+            "nodeId": "BkVeLt0NM",
+            "pinKey": "rJUjrCTUb"
+          },
+          "output": {
+            "nodeId": "ryQUIFRVM",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "HypqczNHM": {
+          "id": "HypqczNHM",
+          "input": {
+            "nodeId": "S1-d4SYRNM",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "HyujLKC4G",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "SJ29J7F0z": {
+          "id": "SJ29J7F0z",
+          "input": {
+            "nodeId": "rJt9kXtCz",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "S1-d4SYRNM",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "SJH-sFREG": {
+          "id": "SJH-sFREG",
+          "input": {
+            "nodeId": "SJmRMLtCEM",
+            "pinKey": "rJUjrCTUb"
+          },
+          "output": {
+            "nodeId": "rygyPtANM",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "Sk-1-P5yI": {
+          "id": "Sk-1-P5yI",
+          "input": {
+            "nodeId": "HkxFCxPcJU",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "ryo2rY0Ez",
+            "pinKey": "S1yaHC6UW"
+          }
+        },
+        "Sk6eitCVM": {
+          "id": "Sk6eitCVM",
+          "input": {
+            "nodeId": "SkCMItRNf",
+            "pinKey": "rkmiHCaIZ"
+          },
+          "output": {
+            "nodeId": "rygyPtANM",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "Sy9bjtRNM": {
+          "id": "Sy9bjtRNM",
+          "input": {
+            "nodeId": "SJZAMUFAEz",
+            "pinKey": "rkmiHCaIZ"
+          },
+          "output": {
+            "nodeId": "BkXZDFREG",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "Syu9qMVBz": {
+          "id": "Syu9qMVBz",
+          "input": {
+            "nodeId": "ryQUIFRVM",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "BkXZDFREG",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "SyxYeDqkI": {
+          "id": "SyxYeDqkI",
+          "input": {
+            "nodeId": "BkideD5JU",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "SkCMItRNf",
+            "pinKey": "S1yaHC6UW"
+          }
+        },
+        "rJl-oKA4f": {
+          "id": "rJl-oKA4f",
+          "input": {
+            "nodeId": "SJmRMLtCEM",
+            "pinKey": "rkmiHCaIZ"
+          },
+          "output": {
+            "nodeId": "rygyPtANM",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "ryrejK0EM": {
+          "id": "ryrejK0EM",
+          "input": {
+            "nodeId": "ryo2rY0Ez",
+            "pinKey": "rJUjrCTUb"
+          },
+          "output": {
+            "nodeId": "HyujLKC4G",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "ryyziFA4z": {
+          "id": "ryyziFA4z",
+          "input": {
+            "nodeId": "SkCMItRNf",
+            "pinKey": "rJUjrCTUb"
+          },
+          "output": {
+            "nodeId": "BkXZDFREG",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        }
+      },
+      "nodes": {
+        "BkVeLt0NM": {
+          "boundLiterals": {
+            "S10qrR6UZ": "1",
+            "rygjH06LW": "0"
+          },
+          "id": "BkVeLt0NM",
+          "position": {
+            "x": 18,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/select"
+        },
+        "BkXZDFREG": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "BkXZDFREG",
+          "label": "NS Yellow delay",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "BkideD5JU": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D4"
+          },
+          "id": "BkideD5JU",
+          "label": "NS Red",
+          "position": {
+            "x": -1,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "HkxFCxPcJU": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D6"
+          },
+          "id": "HkxFCxPcJU",
+          "label": "EW Yellow",
+          "position": {
+            "x": 16,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "HyujLKC4G": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "HyujLKC4G",
+          "label": "EW Yellow delay",
+          "position": {
+            "x": 16,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "S1-d4SYRNM": {
+          "id": "S1-d4SYRNM",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "SJDIBt04f": {
+          "boundLiterals": {
+            "S10qrR6UZ": "0",
+            "rygjH06LW": "1"
+          },
+          "id": "SJDIBt04f",
+          "position": {
+            "x": 12,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/select"
+        },
+        "SJZAMUFAEz": {
+          "boundLiterals": {
+            "S10qrR6UZ": "1",
+            "rygjH06LW": "0"
+          },
+          "id": "SJZAMUFAEz",
+          "label": "Yellow; default off",
+          "position": {
+            "x": 2,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/select"
+        },
+        "SJmRMLtCEM": {
+          "boundLiterals": {
+            "S10qrR6UZ": "1",
+            "rygjH06LW": "0"
+          },
+          "id": "SJmRMLtCEM",
+          "label": "Green; default off",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/select"
+        },
+        "SJx35lD91L": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D2"
+          },
+          "id": "SJx35lD91L",
+          "label": "NS Green",
+          "position": {
+            "x": 7,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "SkCMItRNf": {
+          "boundLiterals": {
+            "S10qrR6UZ": "0",
+            "rygjH06LW": "1"
+          },
+          "id": "SkCMItRNf",
+          "label": "Red; default on",
+          "position": {
+            "x": 0,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/select"
+        },
+        "Sy_EHFA4f": {
+          "id": "Sy_EHFA4f",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/boot"
+        },
+        "rJt9kXtCz": {
+          "id": "rJt9kXtCz",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "rk2cgvqJ8": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D3"
+          },
+          "id": "rk2cgvqJ8",
+          "label": "NS Yellow",
+          "position": {
+            "x": 3,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "rkK0xPckL": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D7"
+          },
+          "id": "rkK0xPckL",
+          "label": "EW Red",
+          "position": {
+            "x": 12,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "rkbFCeD5yU": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D5"
+          },
+          "id": "rkbFCeD5yU",
+          "label": "EW Green",
+          "position": {
+            "x": 20,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "ryQUIFRVM": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "ryQUIFRVM",
+          "label": "EW Green delay",
+          "position": {
+            "x": 16,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "rygyPtANM": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "rygyPtANM",
+          "label": "NS Green delay",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "ryo2rY0Ez": {
+          "boundLiterals": {
+            "S10qrR6UZ": "1",
+            "rygjH06LW": "0"
+          },
+          "id": "ryo2rY0Ez",
+          "position": {
+            "x": 14,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/select"
+        }
+      },
+      "path": "@/2-traffic-select-flat"
+    },
+    "@/3-traffic-select": {
+      "comments": {
+        "rJRKihRNz": {
+          "content": "Attempt#3:\n* Nice clean main node\n* signal-select encapsulates R/Y/G lights for each direction. Open signal-select for next step",
+          "id": "rJRKihRNz",
+          "position": {
+            "x": 14,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 3,
+            "width": 11,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "Traffic light main example with signal for each direction encapsulated in its own node using select nodes.",
+      "links": {
+        "B1loBwqyL": {
+          "id": "B1loBwqyL",
+          "input": {
+            "nodeId": "ry6uSv9kI",
+            "pinKey": "HJjz6Y04f"
+          },
+          "output": {
+            "nodeId": "SJXvSw5JU",
+            "pinKey": "rkuKat0NM"
+          }
+        },
+        "HkcFy7tRM": {
+          "id": "HkcFy7tRM",
+          "input": {
+            "nodeId": "B1uF1QFRM",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "ry-PnatCNG",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "S1fjrv918": {
+          "id": "S1fjrv918",
+          "input": {
+            "nodeId": "ry-PnatCNG",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "ry6uSv9kI",
+            "pinKey": "rkuKat0NM"
+          }
+        },
+        "SJ65HPqyI": {
+          "id": "SJ65HPqyI",
+          "input": {
+            "nodeId": "SJXvSw5JU",
+            "pinKey": "HJjz6Y04f"
+          },
+          "output": {
+            "nodeId": "B1uF1QFRM",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "SyNwhTtANG": {
+          "id": "SyNwhTtANG",
+          "input": {
+            "nodeId": "ry-PnatCNG",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "ByP26KRVG",
+            "pinKey": "ryVmUAOrvkb"
+          }
+        }
+      },
+      "nodes": {
+        "B1uF1QFRM": {
+          "id": "B1uF1QFRM",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "ByP26KRVG": {
+          "id": "ByP26KRVG",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/boot"
+        },
+        "SJXvSw5JU": {
+          "boundLiterals": {
+            "B1QPbvc1I": "D4",
+            "By9sZD5kU": "D3",
+            "HyjiWwqkL": "D2"
+          },
+          "id": "SJXvSw5JU",
+          "label": "NS signal-select",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "gweimer/traffic-light-advanced/signal-select"
+        },
+        "ry-PnatCNG": {
+          "id": "ry-PnatCNG",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "ry6uSv9kI": {
+          "boundLiterals": {
+            "B1QPbvc1I": "D7",
+            "By9sZD5kU": "D6",
+            "HyjiWwqkL": "D5"
+          },
+          "id": "ry6uSv9kI",
+          "label": "EW signal-select",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "gweimer/traffic-light-advanced/signal-select"
+        }
+      },
+      "path": "@/3-traffic-select"
+    },
+    "@/4-traffic-delay-flat": {
+      "comments": {
+        "SJyOuj0EM": {
+          "content": "Control for East/West lights",
+          "id": "SJyOuj0EM",
+          "position": {
+            "x": 10,
+            "y": -2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 5,
+            "units": "slots"
+          }
+        },
+        "r1f8a3RVM": {
+          "content": "Attempt#4:\n* Back to delay without Select. Replace cascading ORs with a single NOR.\n* Much cleaner than selects and still provides encapsulation.\n* Open 5-traffic-delay to see the encapsulation.",
+          "id": "r1f8a3RVM",
+          "position": {
+            "x": 17,
+            "y": -2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 2,
+            "width": 8,
+            "units": "slots"
+          }
+        },
+        "rkIq_iCNf": {
+          "content": "Control for North/South lights",
+          "id": "rkIq_iCNf",
+          "position": {
+            "x": 1,
+            "y": -2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 5,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "Traffic light example in one node using delay timers and nor gate for Red",
+      "links": {
+        "BkaPfv5JI": {
+          "id": "BkaPfv5JI",
+          "input": {
+            "nodeId": "r1ei8GvqkL",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "rJMeSURVz",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "BktuNUCEM": {
+          "id": "BktuNUCEM",
+          "input": {
+            "nodeId": "S1UwNLC4G",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "SkKrNLAVM",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "BkulsoR4G": {
+          "id": "BkulsoR4G",
+          "input": {
+            "nodeId": "rymxoiA4f",
+            "pinKey": "S1dG8AOBPJW"
+          },
+          "output": {
+            "nodeId": "BktcEUA4z",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "H1f9zPq1I": {
+          "id": "H1f9zPq1I",
+          "input": {
+            "nodeId": "r1xEYfPcJ8",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "S1UwNLC4G",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "Hki_17FRG": {
+          "id": "Hki_17FRG",
+          "input": {
+            "nodeId": "ryu_1QKAf",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "SJuQH8CVG",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "Hkpd1QK0f": {
+          "id": "Hkpd1QK0f",
+          "input": {
+            "nodeId": "BktcEUA4z",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "ryu_1QKAf",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "HyBxjsC4M": {
+          "id": "HyBxjsC4M",
+          "input": {
+            "nodeId": "rymxoiA4f",
+            "pinKey": "r1tz8CdBDkb"
+          },
+          "output": {
+            "nodeId": "rJMeSURVz",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "S1l5fwq1I": {
+          "id": "S1l5fwq1I",
+          "input": {
+            "nodeId": "SJ4FfPqyI",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "SkKrNLAVM",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "S1uxBIA4G": {
+          "id": "S1uxBIA4G",
+          "input": {
+            "nodeId": "rJMeSURVz",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "BktcEUA4z",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "SJqvfP5JL": {
+          "id": "SJqvfP5JL",
+          "input": {
+            "nodeId": "ByjUzv91L",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "BktcEUA4z",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "Sy5mB8R4z": {
+          "id": "Sy5mB8R4z",
+          "input": {
+            "nodeId": "SJuQH8CVG",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "Skzdz80Vz",
+            "pinKey": "ryVmUAOrvkb"
+          }
+        },
+        "r1X1siCNG": {
+          "id": "r1X1siCNG",
+          "input": {
+            "nodeId": "HyHR9oAEM",
+            "pinKey": "r1tz8CdBDkb"
+          },
+          "output": {
+            "nodeId": "S1UwNLC4G",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "rJDLYzEBG": {
+          "id": "rJDLYzEBG",
+          "input": {
+            "nodeId": "SJuQH8CVG",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "S1UwNLC4G",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "rJJOfPcy8": {
+          "id": "rJJOfPcy8",
+          "input": {
+            "nodeId": "ryWs8MPqJL",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "rymxoiA4f",
+            "pinKey": "rJqfIRdHwkW"
+          }
+        },
+        "rJr5fP9yI": {
+          "id": "rJr5fP9yI",
+          "input": {
+            "nodeId": "HyW4Yfwc18",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "HyHR9oAEM",
+            "pinKey": "rJqfIRdHwkW"
+          }
+        },
+        "rkSkoiCVG": {
+          "id": "rkSkoiCVG",
+          "input": {
+            "nodeId": "HyHR9oAEM",
+            "pinKey": "S1dG8AOBPJW"
+          },
+          "output": {
+            "nodeId": "SkKrNLAVM",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "ryVIKGVSM": {
+          "id": "ryVIKGVSM",
+          "input": {
+            "nodeId": "SkKrNLAVM",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "rJMeSURVz",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        }
+      },
+      "nodes": {
+        "BktcEUA4z": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "BktcEUA4z",
+          "position": {
+            "x": 4,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "ByjUzv91L": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D2"
+          },
+          "id": "ByjUzv91L",
+          "label": "NS Green",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "HyHR9oAEM": {
+          "id": "HyHR9oAEM",
+          "position": {
+            "x": 14,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/nor"
+        },
+        "HyW4Yfwc18": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D7"
+          },
+          "id": "HyW4Yfwc18",
+          "label": "EW Red",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "S1UwNLC4G": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "S1UwNLC4G",
+          "position": {
+            "x": 13,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "SJ4FfPqyI": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D5"
+          },
+          "id": "SJ4FfPqyI",
+          "label": "EW Green",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "SJuQH8CVG": {
+          "id": "SJuQH8CVG",
+          "position": {
+            "x": 8,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "SkKrNLAVM": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "SkKrNLAVM",
+          "position": {
+            "x": 13,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "Skzdz80Vz": {
+          "id": "Skzdz80Vz",
+          "position": {
+            "x": 6,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/core/boot"
+        },
+        "r1ei8GvqkL": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D3"
+          },
+          "id": "r1ei8GvqkL",
+          "label": "NS Yellow",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "r1xEYfPcJ8": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D6"
+          },
+          "id": "r1xEYfPcJ8",
+          "label": "EW Yellow",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "rJMeSURVz": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "rJMeSURVz",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "ryWs8MPqJL": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D4"
+          },
+          "id": "ryWs8MPqJL",
+          "label": "NS Red",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "rymxoiA4f": {
+          "id": "rymxoiA4f",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/nor"
+        },
+        "ryu_1QKAf": {
+          "id": "ryu_1QKAf",
+          "position": {
+            "x": 8,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        }
+      },
+      "path": "@/4-traffic-delay-flat"
+    },
+    "@/5-traffic-delay": {
+      "comments": {
+        "B1Q1C2REG": {
+          "content": "Attempt#5:\n* Same clean main node we had with select statements\n* See signal-delay for encapsulated code",
+          "id": "B1Q1C2REG",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 3,
+            "width": 10,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "Traffic light main example with signal for each direction encapsulated in its own node using delay timers.",
+      "links": {
+        "BJ8E8PqJI": {
+          "id": "BJ8E8PqJI",
+          "input": {
+            "nodeId": "rkBbLvqJL",
+            "pinKey": "SJaMRoCEz"
+          },
+          "output": {
+            "nodeId": "SkSIyQKCz",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "BkvLJ7KRM": {
+          "id": "BkvLJ7KRM",
+          "input": {
+            "nodeId": "SkSIyQKCz",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "SJvRtTsANf",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "S1dEUD5JU": {
+          "id": "S1dEUD5JU",
+          "input": {
+            "nodeId": "HJyXLw5kI",
+            "pinKey": "SJaMRoCEz"
+          },
+          "output": {
+            "nodeId": "rkBbLvqJL",
+            "pinKey": "HkP9Aj04G"
+          }
+        },
+        "Ska0Fai0NG": {
+          "id": "Ska0Fai0NG",
+          "input": {
+            "nodeId": "SJvRtTsANf",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "HJZ0FaiAEG",
+            "pinKey": "ryVmUAOrvkb"
+          }
+        },
+        "rJqE8wqJ8": {
+          "id": "rJqE8wqJ8",
+          "input": {
+            "nodeId": "SJvRtTsANf",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "HJyXLw5kI",
+            "pinKey": "HkP9Aj04G"
+          }
+        }
+      },
+      "nodes": {
+        "HJZ0FaiAEG": {
+          "id": "HJZ0FaiAEG",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/boot"
+        },
+        "HJyXLw5kI": {
+          "boundLiterals": {
+            "B1lJD7D9k8": "D5",
+            "BJkw7DqJI": "D6",
+            "HySIQv5kI": "D7"
+          },
+          "id": "HJyXLw5kI",
+          "label": "EW signal-delay",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "gweimer/traffic-light-advanced/signal-delay"
+        },
+        "SJvRtTsANf": {
+          "id": "SJvRtTsANf",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "SkSIyQKCz": {
+          "id": "SkSIyQKCz",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "rkBbLvqJL": {
+          "boundLiterals": {
+            "B1lJD7D9k8": "D2",
+            "BJkw7DqJI": "D3",
+            "HySIQv5kI": "D4"
+          },
+          "id": "rkBbLvqJL",
+          "label": "NS signal-delay",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "gweimer/traffic-light-advanced/signal-delay"
+        }
+      },
+      "path": "@/5-traffic-delay"
+    },
+    "@/6-traffic-turn": {
+      "comments": {
+        "HJ3zZIlSM": {
+          "content": "Attempt#6:\n* Let's add a turn signl for NS traffic. Assuming we only want to cycle the turn signal while someone is waiting to turn, we need a way to provide an if/then condition for flow-control. With the branch node, when the pulse comes into TRIG, it will exit either the True or False port, depending on whether GATE is True or False.\n* Here we have a button node to represent the car sensor that would be in the road (for us probably just a button). If the sensor is active, we will cycle the left-turn signal.\n* Another \"any\" node will join the two code branches back together and then loop back to restart the full cycle\n\n* Want EW to have a longer green light than NS traffic? Then you will have to add an input pin to signal-delay to specify time to stay green and link that to the timer for green delay.\n\n* What if we want NS to stay green until there is traffic in the EW (or NS turn) lanes? One option would be to replace the delay node for green with a flip-flop and add another pulse-input (perhaps labeled Cont) to indicate when it is time to continue. For NS signal, Cont would be tied to the traffic sensor for EW traffic (probably OR'd with the turn sensor). For EW signal (and NS turn), we would include a delay node in Main to trigger Cont. Note that you will also need to add a timer for the NS signal so it doesn't trigger immediately if there is EW or turn traffic. (Hint: You can feed a boolean value to a pulse input. It will pulse when the boolean turns True. You will want to Cont if timer-ACT is False and traffic sensor is True.) See if you can work out a solution yourself before proceding to 7-traffic-continue..",
+          "id": "HJ3zZIlSM",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 6,
+            "width": 11,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "Adding a turn signal to your 2-way traffic light.",
+      "links": {
+        "B1Sk2gUxBM": {
+          "id": "B1Sk2gUxBM",
+          "input": {
+            "nodeId": "rJfkneIerG",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "B1Wk3eIgrf",
+            "pinKey": "ryVmUAOrvkb"
+          }
+        },
+        "BJo2LwcJI": {
+          "id": "BJo2LwcJI",
+          "input": {
+            "nodeId": "SknO8w5kL",
+            "pinKey": "SJaMRoCEz"
+          },
+          "output": {
+            "nodeId": "rJ_DIPq1I",
+            "pinKey": "HkP9Aj04G"
+          }
+        },
+        "BkCW3GFAz": {
+          "id": "BkCW3GFAz",
+          "input": {
+            "nodeId": "Sy7GbLlrf",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "r1y6sztRG",
+            "pinKey": "SyM2ATB-b"
+          }
+        },
+        "BkSaIvqJ8": {
+          "id": "BkSaIvqJ8",
+          "input": {
+            "nodeId": "S18tIDqkU",
+            "pinKey": "SJaMRoCEz"
+          },
+          "output": {
+            "nodeId": "r1y6sztRG",
+            "pinKey": "SJUl8Aurv1W"
+          }
+        },
+        "BkT3UPcJU": {
+          "id": "BkT3UPcJU",
+          "input": {
+            "nodeId": "r1y6sztRG",
+            "pinKey": "HkDgIRdrv1W"
+          },
+          "output": {
+            "nodeId": "SknO8w5kL",
+            "pinKey": "HkP9Aj04G"
+          }
+        },
+        "BkdpUw5yL": {
+          "id": "BkdpUw5yL",
+          "input": {
+            "nodeId": "Sy7GbLlrf",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "S18tIDqkU",
+            "pinKey": "HkP9Aj04G"
+          }
+        },
+        "By-NJQYRz": {
+          "id": "By-NJQYRz",
+          "input": {
+            "nodeId": "H15mymY0M",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "rJfkneIerG",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "H1FSfUxHG": {
+          "id": "H1FSfUxHG",
+          "input": {
+            "nodeId": "rJfkneIerG",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "Sy7GbLlrf",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "H1y1mD9J8": {
+          "id": "H1y1mD9J8",
+          "input": {
+            "nodeId": "r1y6sztRG",
+            "pinKey": "S1OlUAuBD1-"
+          },
+          "output": {
+            "nodeId": "B1sRfv9J8",
+            "pinKey": "BJ--G1tI-"
+          }
+        },
+        "HJZhIPc18": {
+          "id": "HJZhIPc18",
+          "input": {
+            "nodeId": "rJ_DIPq1I",
+            "pinKey": "SJaMRoCEz"
+          },
+          "output": {
+            "nodeId": "H15mymY0M",
+            "pinKey": "HJhXDIY9-"
+          }
+        }
+      },
+      "nodes": {
+        "B1Wk3eIgrf": {
+          "id": "B1Wk3eIgrf",
+          "position": {
+            "x": -1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/boot"
+        },
+        "B1sRfv9J8": {
+          "boundLiterals": {
+            "ByNiWkt8Z": "D8"
+          },
+          "id": "B1sRfv9J8",
+          "label": "NS Turn button",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/button"
+        },
+        "H15mymY0M": {
+          "id": "H15mymY0M",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "S18tIDqkU": {
+          "boundLiterals": {
+            "B1lJD7D9k8": "D2",
+            "BJkw7DqJI": "D3",
+            "HySIQv5kI": "D4"
+          },
+          "id": "S18tIDqkU",
+          "label": "NS Turn signal-delay",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "gweimer/traffic-light-advanced/signal-delay"
+        },
+        "SknO8w5kL": {
+          "boundLiterals": {
+            "B1lJD7D9k8": "D5",
+            "BJkw7DqJI": "D6",
+            "HySIQv5kI": "D7"
+          },
+          "id": "SknO8w5kL",
+          "label": "EW signal-delay",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "gweimer/traffic-light-advanced/signal-delay"
+        },
+        "Sy7GbLlrf": {
+          "id": "Sy7GbLlrf",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "r1y6sztRG": {
+          "id": "r1y6sztRG",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/branch"
+        },
+        "rJ_DIPq1I": {
+          "boundLiterals": {
+            "B1lJD7D9k8": "D2",
+            "BJkw7DqJI": "D3",
+            "HySIQv5kI": "D4"
+          },
+          "id": "rJ_DIPq1I",
+          "label": "NS signal-delay",
+          "position": {
+            "x": -1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "gweimer/traffic-light-advanced/signal-delay"
+        },
+        "rJfkneIerG": {
+          "id": "rJfkneIerG",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        }
+      },
+      "path": "@/6-traffic-turn"
+    },
+    "@/7-traffic-continue": {
+      "comments": {
+        "rkW_GMNHf": {
+          "content": "Variable Green light:\n* Quite a bit more complicated, but also a lot more powerful.\n* The NS lanes will have a green light for the specified minimum time, and it will stay green after that until EW or NS turn traffic sensors are triggered. Note that we don't use the DONE pin for NS Green delay now; we use the AND node instead.\n* Once NS light is red, we will check EW sensor; if active, we will cycle that light.\n* Once EW is red (or if EW sensor was not active), we will check NS turn sensor & cycle that light if it is active.\n* Once NS turn light is red (or if NS turn sensor was not active), we will cycle back to the beginning.\n* Note that since green delay was pulled out of the signal node, we automatically have the option to specify different green times for each light. We would still need to add a pin for yellow delay if we wanted that different for each direction.\n* Note how EW and NST have the same functionality, so I have arranged the nodes for each in the same way to make this more obvious. One might even note that there is good encasulation for these, so a new node could be created to encapsulate the any, branch, delay, signal, and sensor. Since the NS light needs to know when sensors are active, you will need to include an output pin for it (or optionally leave them out of the new node).\nSee signal-cont for new encapsulation code.",
+          "id": "rkW_GMNHf",
+          "position": {
+            "x": 16,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 6,
+            "width": 11,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "No cheating...try to figure out the challenge in 6-traffic-turn on your own",
+      "links": {
+        "B1l5vD9kI": {
+          "id": "B1l5vD9kI",
+          "input": {
+            "nodeId": "B1oDPPqkL",
+            "pinKey": "B18bnuWHf"
+          },
+          "output": {
+            "nodeId": "S1qX6ObSz",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "BJ2f4D9J8": {
+          "id": "BJ2f4D9J8",
+          "input": {
+            "nodeId": "BkPWTuZrz",
+            "pinKey": "HJCfI0dBDkb"
+          },
+          "output": {
+            "nodeId": "SJfMVv5yI",
+            "pinKey": "BJ--G1tI-"
+          }
+        },
+        "BJxBPDqy8": {
+          "id": "BJxBPDqy8",
+          "input": {
+            "nodeId": "B1yXwwqyI",
+            "pinKey": "rkE_13_WBz"
+          },
+          "output": {
+            "nodeId": "Bk393OZrz",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "BkT6CMF0G": {
+          "id": "BkT6CMF0G",
+          "input": {
+            "nodeId": "Hy120GYAf",
+            "pinKey": "HkDgIRdrv1W"
+          },
+          "output": {
+            "nodeId": "B1I6ndbrM",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "ByFzJmFAz": {
+          "id": "ByFzJmFAz",
+          "input": {
+            "nodeId": "ryHGy7FCf",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "H1vb9sdWBM",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "H1CWT_ZrM": {
+          "id": "H1CWT_ZrM",
+          "input": {
+            "nodeId": "SJRep_WHM",
+            "pinKey": "r1bVLR_BPJW"
+          },
+          "output": {
+            "nodeId": "BkPWTuZrz",
+            "pinKey": "SJyXI0OrD1-"
+          }
+        },
+        "H1hq0GKCG": {
+          "id": "H1hq0GKCG",
+          "input": {
+            "nodeId": "SyfBa_-rf",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "r1VdAGt0f",
+            "pinKey": "SJUl8Aurv1W"
+          }
+        },
+        "HJRfVDcyL": {
+          "id": "HJRfVDcyL",
+          "input": {
+            "nodeId": "Hy120GYAf",
+            "pinKey": "S1OlUAuBD1-"
+          },
+          "output": {
+            "nodeId": "SJfMVv5yI",
+            "pinKey": "BJ--G1tI-"
+          }
+        },
+        "HJmrDD9y8": {
+          "id": "HJmrDD9y8",
+          "input": {
+            "nodeId": "r1VdAGt0f",
+            "pinKey": "HkDgIRdrv1W"
+          },
+          "output": {
+            "nodeId": "B1yXwwqyI",
+            "pinKey": "rkQu12dbrf"
+          }
+        },
+        "Hkkqvw51L": {
+          "id": "Hkkqvw51L",
+          "input": {
+            "nodeId": "B1oDPPqkL",
+            "pinKey": "rkE_13_WBz"
+          },
+          "output": {
+            "nodeId": "S1qX6ObSz",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "Hy0VDwcyU": {
+          "id": "Hy0VDwcyU",
+          "input": {
+            "nodeId": "B1yXwwqyI",
+            "pinKey": "B18bnuWHf"
+          },
+          "output": {
+            "nodeId": "SJRep_WHM",
+            "pinKey": "B1gN80uHvk-"
+          }
+        },
+        "SJefadbSz": {
+          "id": "SJefadbSz",
+          "input": {
+            "nodeId": "SJRep_WHM",
+            "pinKey": "SJMVU0urvkZ"
+          },
+          "output": {
+            "nodeId": "BkPxTu-rM",
+            "pinKey": "r1if8ROSDJ-"
+          }
+        },
+        "SkUDvDqy8": {
+          "id": "SkUDvDqy8",
+          "input": {
+            "nodeId": "ByUHwP5JU",
+            "pinKey": "B18bnuWHf"
+          },
+          "output": {
+            "nodeId": "SyfBa_-rf",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "Skl11mKCf": {
+          "id": "Skl11mKCf",
+          "input": {
+            "nodeId": "S1qX6ObSz",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "Hy120GYAf",
+            "pinKey": "SJUl8Aurv1W"
+          }
+        },
+        "Sku-5idbrf": {
+          "id": "Sku-5idbrf",
+          "input": {
+            "nodeId": "H1vb9sdWBM",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "H1l-qjdWSM",
+            "pinKey": "ryVmUAOrvkb"
+          }
+        },
+        "SyYDDP5kL": {
+          "id": "SyYDDP5kL",
+          "input": {
+            "nodeId": "B1I6ndbrM",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "ByUHwP5JU",
+            "pinKey": "rkQu12dbrf"
+          }
+        },
+        "Sytg6OZBM": {
+          "id": "Sytg6OZBM",
+          "input": {
+            "nodeId": "BkPxTu-rM",
+            "pinKey": "ry3zLA_Bv1Z"
+          },
+          "output": {
+            "nodeId": "Bk393OZrz",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "rJyj0ztRM": {
+          "id": "rJyj0ztRM",
+          "input": {
+            "nodeId": "B1I6ndbrM",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "r1VdAGt0f",
+            "pinKey": "SyM2ATB-b"
+          }
+        },
+        "rkQJkQtRf": {
+          "id": "rkQJkQtRf",
+          "input": {
+            "nodeId": "H1EW9iubHz",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "Hy120GYAf",
+            "pinKey": "SyM2ATB-b"
+          }
+        },
+        "rkQqDD5J8": {
+          "id": "rkQqDD5J8",
+          "input": {
+            "nodeId": "H1EW9iubHz",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "B1oDPPqkL",
+            "pinKey": "rkQu12dbrf"
+          }
+        },
+        "rkR74vqyU": {
+          "id": "rkR74vqyU",
+          "input": {
+            "nodeId": "BkPWTuZrz",
+            "pinKey": "BJaG80urD1-"
+          },
+          "output": {
+            "nodeId": "S1gXNPcyU",
+            "pinKey": "BJ--G1tI-"
+          }
+        },
+        "rkgEEPqJ8": {
+          "id": "rkgEEPqJ8",
+          "input": {
+            "nodeId": "r1VdAGt0f",
+            "pinKey": "S1OlUAuBD1-"
+          },
+          "output": {
+            "nodeId": "S1gXNPcyU",
+            "pinKey": "BJ--G1tI-"
+          }
+        },
+        "ryPPvfEBf": {
+          "id": "ryPPvfEBf",
+          "input": {
+            "nodeId": "H1vb9sdWBM",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "H1EW9iubHz",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "ryQDPvq1U": {
+          "id": "ryQDPvq1U",
+          "input": {
+            "nodeId": "ByUHwP5JU",
+            "pinKey": "rkE_13_WBz"
+          },
+          "output": {
+            "nodeId": "SyfBa_-rf",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "rylQy7FRf": {
+          "id": "rylQy7FRf",
+          "input": {
+            "nodeId": "Bk393OZrz",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "ryHGy7FCf",
+            "pinKey": "HJhXDIY9-"
+          }
+        }
+      },
+      "nodes": {
+        "B1I6ndbrM": {
+          "id": "B1I6ndbrM",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "B1oDPPqkL": {
+          "boundLiterals": {
+            "SJfcUNv9yL": "D11",
+            "SkVcUNvc1L": "D9",
+            "ry758EPckU": "D10"
+          },
+          "id": "B1oDPPqkL",
+          "label": "NS Turn signal-cont",
+          "position": {
+            "x": 10,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "gweimer/traffic-light-advanced/signal-cont"
+        },
+        "B1yXwwqyI": {
+          "boundLiterals": {
+            "SJfcUNv9yL": "D4",
+            "SkVcUNvc1L": "D2",
+            "ry758EPckU": "D3"
+          },
+          "id": "B1yXwwqyI",
+          "label": "NS signal-cont",
+          "position": {
+            "x": -2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "gweimer/traffic-light-advanced/signal-cont"
+        },
+        "Bk393OZrz": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "Bk393OZrz",
+          "label": "NS Green delay",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "BkPWTuZrz": {
+          "id": "BkPWTuZrz",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/or"
+        },
+        "BkPxTu-rM": {
+          "id": "BkPxTu-rM",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/not"
+        },
+        "ByUHwP5JU": {
+          "boundLiterals": {
+            "SJfcUNv9yL": "D7",
+            "SkVcUNvc1L": "D5",
+            "ry758EPckU": "D6"
+          },
+          "id": "ByUHwP5JU",
+          "label": "EW signal-cont",
+          "position": {
+            "x": 4,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "gweimer/traffic-light-advanced/signal-cont"
+        },
+        "H1EW9iubHz": {
+          "id": "H1EW9iubHz",
+          "position": {
+            "x": 11,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "H1l-qjdWSM": {
+          "id": "H1l-qjdWSM",
+          "position": {
+            "x": -1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/boot"
+        },
+        "H1vb9sdWBM": {
+          "id": "H1vb9sdWBM",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "Hy120GYAf": {
+          "id": "Hy120GYAf",
+          "position": {
+            "x": 13,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/branch"
+        },
+        "S1gXNPcyU": {
+          "boundLiterals": {
+            "ByNiWkt8Z": "D12"
+          },
+          "id": "S1gXNPcyU",
+          "label": "EW button",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/button"
+        },
+        "S1qX6ObSz": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "S1qX6ObSz",
+          "label": "NST Green delay",
+          "position": {
+            "x": 12,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "SJRep_WHM": {
+          "id": "SJRep_WHM",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/and"
+        },
+        "SJfMVv5yI": {
+          "boundLiterals": {
+            "ByNiWkt8Z": "D8"
+          },
+          "id": "SJfMVv5yI",
+          "label": "NS Turn button",
+          "position": {
+            "x": 13,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/button"
+        },
+        "SyfBa_-rf": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "SyfBa_-rf",
+          "label": "EW Green delay",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "r1VdAGt0f": {
+          "id": "r1VdAGt0f",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/branch"
+        },
+        "ryHGy7FCf": {
+          "id": "ryHGy7FCf",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        }
+      },
+      "path": "@/7-traffic-continue"
+    },
+    "@/8-traffic-mux": {
+      "comments": {
+        "rkc-Va6_ckU": {
+          "content": "Adding Mutex locking.\n* Our main code doesn't change very much. All we've done is add a MUX pin to the signal patch.\n* We have to pass the same mutex to all the signal patches so they can share the same lock and only allow one to be active at a time.\n\nBus nodes to cleanup messy wiring.\n\n* In order to eliminate some of the wires cutting across or back up the patch, we've replaced some of those wires with to-bus and from-bus nodes. These are the triangle nodes near the bottom and top of the patch.\n* The bus nodes are basically invisible wires and can be used the same as wires.\n* You can quickly replace a wire with a to/from bus pair by clicking the wire and hitting \"b\" to convert it to bus nodes.\n* You can also manually add to-bus or from-bus nodes.\n* Nodes with the same label will be linked together and share the same data. You can only have one to-bus per label because each wire can only have one value. You can have multiple from-bus nodes to create copies of the data for multiple inputs (and/or run multiple wires from a single from-bus node).\n* For the mutex, we create a single MUX, then pass it to each signal node by linking directly, daisy-chaining through another node (which requires the node to pass the MUX to an output pin), and using bus nodes. All are equally valid and it is just a matter of preference and/or whatever is cleaner for a particular patch.\n* Note that it is also possible to over-use bus nodes. Adding more bus pairs makes it harder to find the matching bus for any bus node you are trying to trace.\n\nNote that to the right of each EW & NST Green delay node there is a short wire with pins top & bottom. This is a jumper and can be added to your patch just like any node. All it does is allow you to force a wire to route through a particular spot to clean things up. Without these jumper wires, the wire between any & branch would run through the delay node instead of around it. Unfortunately, it behaves like a node and output pins must link to the top of the jumper and input pins to the bottom, so it is not very useful for routing wires from the bottom back to the top of the patch.\n\nSee signal-cont-mutex for how the MUX is actually used.",
+          "id": "rkc-Va6_ckU",
+          "position": {
+            "x": 18,
+            "y": -1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 8,
+            "width": 12,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "BJypEKqJ8": {
+          "id": "BJypEKqJ8",
+          "input": {
+            "nodeId": "rJjWlt9J8",
+            "pinKey": "SymN4_cy8"
+          },
+          "output": {
+            "nodeId": "rJxORd5JU",
+            "pinKey": "ByjnHd91U"
+          }
+        },
+        "BkCnyF5kU": {
+          "id": "BkCnyF5kU",
+          "input": {
+            "nodeId": "rJxORd5JU",
+            "pinKey": "SymN4_cy8"
+          },
+          "output": {
+            "nodeId": "Sk82yKckI",
+            "pinKey": "HJAPJgcFE"
+          }
+        },
+        "BkHbEppuqJI": {
+          "id": "BkHbEppuqJI",
+          "input": {
+            "nodeId": "H1m46adc1I",
+            "pinKey": "BJaG80urD1-"
+          },
+          "output": {
+            "nodeId": "HkcEppdc1U",
+            "pinKey": "BJ--G1tI-"
+          }
+        },
+        "BksCmt9JI": {
+          "id": "BksCmt9JI",
+          "input": {
+            "nodeId": "B1OCXYq18",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Sk82yKckI",
+            "pinKey": "HJAPJgcFE"
+          }
+        },
+        "ByCl466u5kU": {
+          "id": "ByCl466u5kU",
+          "input": {
+            "nodeId": "B1jNppu9J8",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "rJK46aOcJU",
+            "pinKey": "SJUl8Aurv1W"
+          }
+        },
+        "BybUZtcyI": {
+          "id": "BybUZtcyI",
+          "input": {
+            "nodeId": "H1Ny-t9kU",
+            "pinKey": "SJ_fNu5J8"
+          },
+          "output": {
+            "nodeId": "B1jNppu9J8",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "Byer8tck8": {
+          "id": "Byer8tck8",
+          "input": {
+            "nodeId": "rkETTdqk8",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "BySELt9y8",
+            "pinKey": "__out__"
+          }
+        },
+        "ByrN4YqJ8": {
+          "id": "ByrN4YqJ8",
+          "input": {
+            "nodeId": "rJxORd5JU",
+            "pinKey": "SJ_fNu5J8"
+          },
+          "output": {
+            "nodeId": "S1MVTpOqJL",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "H1g-WMY9yL": {
+          "id": "H1g-WMY9yL",
+          "input": {
+            "nodeId": "Bk--MF5yI",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJxORd5JU",
+            "pinKey": "rkzOGVO9kL"
+          }
+        },
+        "HJPxNT6_c18": {
+          "id": "HJPxNT6_c18",
+          "input": {
+            "nodeId": "HJ0EpadqkL",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "SkygVpad9kU",
+            "pinKey": "SJUl8Aurv1W"
+          }
+        },
+        "HJWb4a6uqkU": {
+          "id": "HJWb4a6uqkU",
+          "input": {
+            "nodeId": "By44Ta_9JL",
+            "pinKey": "ry3zLA_Bv1Z"
+          },
+          "output": {
+            "nodeId": "S1MVTpOqJL",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "HJevcbYcyL": {
+          "id": "HJevcbYcyL",
+          "input": {
+            "nodeId": "HyD9ZK5kU",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkETTdqk8",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "HJhx4a6O9yI": {
+          "id": "HJhx4a6O9yI",
+          "input": {
+            "nodeId": "BkhNTp_qJL",
+            "pinKey": "SJMVU0urvkZ"
+          },
+          "output": {
+            "nodeId": "By44Ta_9JL",
+            "pinKey": "r1if8ROSDJ-"
+          }
+        },
+        "Hk7NlF5yL": {
+          "id": "Hk7NlF5yL",
+          "input": {
+            "nodeId": "rJjWlt9J8",
+            "pinKey": "rJqOzV_51U"
+          },
+          "output": {
+            "nodeId": "HJ0EpadqkL",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "HkNxVYc1U": {
+          "id": "HkNxVYc1U",
+          "input": {
+            "nodeId": "H1Ny-t9kU",
+            "pinKey": "SymN4_cy8"
+          },
+          "output": {
+            "nodeId": "ryllVF91U",
+            "pinKey": "__out__"
+          }
+        },
+        "HkpELY5yU": {
+          "id": "HkpELY5yU",
+          "input": {
+            "nodeId": "BySELt9y8",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SkygVpad9kU",
+            "pinKey": "SyM2ATB-b"
+          }
+        },
+        "Hy-b-t5kL": {
+          "id": "Hy-b-t5kL",
+          "input": {
+            "nodeId": "rkETTdqk8",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "rJjWlt9J8",
+            "pinKey": "rkzOGVO9kL"
+          }
+        },
+        "HyHVlFqyU": {
+          "id": "HyHVlFqyU",
+          "input": {
+            "nodeId": "rJjWlt9J8",
+            "pinKey": "SJ_fNu5J8"
+          },
+          "output": {
+            "nodeId": "HJ0EpadqkL",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "HyIx4TTd9yL": {
+          "id": "HyIx4TTd9yL",
+          "input": {
+            "nodeId": "BkhNTp_qJL",
+            "pinKey": "r1bVLR_BPJW"
+          },
+          "output": {
+            "nodeId": "H1m46adc1I",
+            "pinKey": "SJyXI0OrD1-"
+          }
+        },
+        "HyJZEpTOckL": {
+          "id": "HyJZEpTOckL",
+          "input": {
+            "nodeId": "H1O4pp_cyU",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "SJw4aau5J8",
+            "pinKey": "ryVmUAOrvkb"
+          }
+        },
+        "S13rItc18": {
+          "id": "S13rItc18",
+          "input": {
+            "nodeId": "B1vSUt9JL",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJK46aOcJU",
+            "pinKey": "SyM2ATB-b"
+          }
+        },
+        "S1BlN66dc18": {
+          "id": "S1BlN66dc18",
+          "input": {
+            "nodeId": "rJegV66_ckL",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "H1O4pp_cyU",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "S1Y-E66dcy8": {
+          "id": "S1Y-E66dcy8",
+          "input": {
+            "nodeId": "S1MVTpOqJL",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "rJegV66_ckL",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "Sk5sJY9yI": {
+          "id": "Sk5sJY9yI",
+          "input": {
+            "nodeId": "rJxORd5JU",
+            "pinKey": "rJqOzV_51U"
+          },
+          "output": {
+            "nodeId": "BkhNTp_qJL",
+            "pinKey": "B1gN80uHvk-"
+          }
+        },
+        "SkL-4a6ucJU": {
+          "id": "SkL-4a6ucJU",
+          "input": {
+            "nodeId": "SkygVpad9kU",
+            "pinKey": "S1OlUAuBD1-"
+          },
+          "output": {
+            "nodeId": "HkcEppdc1U",
+            "pinKey": "BJ--G1tI-"
+          }
+        },
+        "SkgUWFq1U": {
+          "id": "SkgUWFq1U",
+          "input": {
+            "nodeId": "H1Ny-t9kU",
+            "pinKey": "rJqOzV_51U"
+          },
+          "output": {
+            "nodeId": "B1jNppu9J8",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "r1fPqWY9yL": {
+          "id": "r1fPqWY9yL",
+          "input": {
+            "nodeId": "rJK46aOcJU",
+            "pinKey": "HkDgIRdrv1W"
+          },
+          "output": {
+            "nodeId": "SkZP9-F9y8",
+            "pinKey": "__out__"
+          }
+        },
+        "rJGZ-MFcJU": {
+          "id": "rJGZ-MFcJU",
+          "input": {
+            "nodeId": "SkygVpad9kU",
+            "pinKey": "HkDgIRdrv1W"
+          },
+          "output": {
+            "nodeId": "r1b-ZzY518",
+            "pinKey": "__out__"
+          }
+        },
+        "rJlohWFqJU": {
+          "id": "rJlohWFqJU",
+          "input": {
+            "nodeId": "rJsh-YcyL",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ryLEaaOc1L",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "rJqHIY5kL": {
+          "id": "rJqHIY5kL",
+          "input": {
+            "nodeId": "ryLEaaOc1L",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "B1vSUt9JL",
+            "pinKey": "__out__"
+          }
+        },
+        "rJsLZK5JI": {
+          "id": "rJsLZK5JI",
+          "input": {
+            "nodeId": "ryLEaaOc1L",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "H1Ny-t9kU",
+            "pinKey": "rkzOGVO9kL"
+          }
+        },
+        "rkfl4TT_qJL": {
+          "id": "rkfl4TT_qJL",
+          "input": {
+            "nodeId": "H1m46adc1I",
+            "pinKey": "HJCfI0dBDkb"
+          },
+          "output": {
+            "nodeId": "Ska4pTd9kI",
+            "pinKey": "BJ--G1tI-"
+          }
+        },
+        "rkzi3ZF5yL": {
+          "id": "rkzi3ZF5yL",
+          "input": {
+            "nodeId": "H1O4pp_cyU",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "rk-onWtqk8",
+            "pinKey": "__out__"
+          }
+        },
+        "ry_eVTTO91L": {
+          "id": "ry_eVTTO91L",
+          "input": {
+            "nodeId": "rJK46aOcJU",
+            "pinKey": "S1OlUAuBD1-"
+          },
+          "output": {
+            "nodeId": "Ska4pTd9kI",
+            "pinKey": "BJ--G1tI-"
+          }
+        }
+      },
+      "nodes": {
+        "B1OCXYq18": {
+          "id": "B1OCXYq18",
+          "label": "MUX",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "B1jNppu9J8": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "B1jNppu9J8",
+          "label": "NST Green delay",
+          "position": {
+            "x": 14,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "B1vSUt9JL": {
+          "id": "B1vSUt9JL",
+          "position": {
+            "x": 17,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/jumper"
+        },
+        "Bk--MF5yI": {
+          "id": "Bk--MF5yI",
+          "label": "NS",
+          "position": {
+            "x": 0,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "BkhNTp_qJL": {
+          "id": "BkhNTp_qJL",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/and"
+        },
+        "By44Ta_9JL": {
+          "id": "By44Ta_9JL",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/not"
+        },
+        "BySELt9y8": {
+          "id": "BySELt9y8",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/jumper"
+        },
+        "H1Ny-t9kU": {
+          "boundLiterals": {
+            "BJhdGNu9J8": "D11",
+            "ByQ_fVucJ8": "D10",
+            "SJSdfVu5JU": "D9"
+          },
+          "id": "H1Ny-t9kU",
+          "label": "NS Turn signal-cont-mutex",
+          "position": {
+            "x": 11,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "gweimer/traffic-light-advanced/signal-cont-mutex"
+        },
+        "H1O4pp_cyU": {
+          "id": "H1O4pp_cyU",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "H1m46adc1I": {
+          "id": "H1m46adc1I",
+          "position": {
+            "x": 12,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/or"
+        },
+        "HJ0EpadqkL": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "HJ0EpadqkL",
+          "label": "EW Green delay",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "HkcEppdc1U": {
+          "boundLiterals": {
+            "ByNiWkt8Z": "D12"
+          },
+          "id": "HkcEppdc1U",
+          "label": "EW button",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/button"
+        },
+        "HyD9ZK5kU": {
+          "id": "HyD9ZK5kU",
+          "label": "EW",
+          "position": {
+            "x": 9,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "S1MVTpOqJL": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "S1MVTpOqJL",
+          "label": "NS Green delay",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "SJw4aau5J8": {
+          "id": "SJw4aau5J8",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/boot"
+        },
+        "Sk82yKckI": {
+          "id": "Sk82yKckI",
+          "position": {
+            "x": -1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/mutex/mutex"
+        },
+        "SkZP9-F9y8": {
+          "id": "SkZP9-F9y8",
+          "label": "EW",
+          "position": {
+            "x": 16,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "Ska4pTd9kI": {
+          "boundLiterals": {
+            "ByNiWkt8Z": "D8"
+          },
+          "id": "Ska4pTd9kI",
+          "label": "NS Turn button",
+          "position": {
+            "x": 15,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/button"
+        },
+        "SkygVpad9kU": {
+          "id": "SkygVpad9kU",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/branch"
+        },
+        "r1b-ZzY518": {
+          "id": "r1b-ZzY518",
+          "label": "NS",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rJK46aOcJU": {
+          "id": "rJK46aOcJU",
+          "position": {
+            "x": 15,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/branch"
+        },
+        "rJegV66_ckL": {
+          "id": "rJegV66_ckL",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "rJjWlt9J8": {
+          "boundLiterals": {
+            "BJhdGNu9J8": "D7",
+            "ByQ_fVucJ8": "D6",
+            "SJSdfVu5JU": "D5"
+          },
+          "id": "rJjWlt9J8",
+          "label": "EW signal-cont-mutex",
+          "position": {
+            "x": 4,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "gweimer/traffic-light-advanced/signal-cont-mutex"
+        },
+        "rJsh-YcyL": {
+          "id": "rJsh-YcyL",
+          "label": "NST",
+          "position": {
+            "x": 16,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "rJxORd5JU": {
+          "boundLiterals": {
+            "BJhdGNu9J8": "D4",
+            "ByQ_fVucJ8": "D3",
+            "SJSdfVu5JU": "D2"
+          },
+          "id": "rJxORd5JU",
+          "label": "NS signal-cont-mutex",
+          "position": {
+            "x": -1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "gweimer/traffic-light-advanced/signal-cont-mutex"
+        },
+        "rk-onWtqk8": {
+          "id": "rk-onWtqk8",
+          "label": "NST",
+          "position": {
+            "x": 4,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rkETTdqk8": {
+          "id": "rkETTdqk8",
+          "position": {
+            "x": 9,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "ryLEaaOc1L": {
+          "id": "ryLEaaOc1L",
+          "position": {
+            "x": 16,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "ryllVF91U": {
+          "id": "ryllVF91U",
+          "label": "MUX",
+          "position": {
+            "x": 11,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        }
+      },
+      "path": "@/8-traffic-mux"
+    },
+    "@/one-light": {
+      "comments": {
+        "SJXSeaR4z": {
+          "content": "Introduction, encapsulation:\n* On entry, we trigger a delay timer. As long as the timer is ACT, we turn on the light tied to this port.\n* Note the defer-pulse node before we exit. This is to make sure the system stabalizes with the light off before we continue. It is not always needed depending on what you are doing, but things sometimes become unstable without it.\n\n* This works if we only need 1 light on at a time\n* It does not work if we need lights for 2 directions of traffic; one must stay Red while the other direction is cycling through Green/Yellow.\n\n* See 1-traffic-delay-bad for a 1st attempt to control a traffic signal for 2 directions.",
+          "id": "SJXSeaR4z",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 4,
+            "width": 8,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "A simle node to turn one light on for a set time",
+      "links": {
+        "BJ3Ck7FAG": {
+          "id": "BJ3Ck7FAG",
+          "input": {
+            "nodeId": "HJFAJ7YCG",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "rkzvgTCEM",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "Bknm1w5kL": {
+          "id": "Bknm1w5kL",
+          "input": {
+            "nodeId": "SywmyD51L",
+            "pinKey": "B1oqkTnIb"
+          },
+          "output": {
+            "nodeId": "HJ-QJvc1I",
+            "pinKey": "__out__"
+          }
+        },
+        "ByRAkXYCz": {
+          "id": "ByRAkXYCz",
+          "input": {
+            "nodeId": "SkFsepCNz",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HJFAJ7YCG",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "SkdPlpRNz": {
+          "id": "SkdPlpRNz",
+          "input": {
+            "nodeId": "rkzvgTCEM",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "HJZIe6RVM",
+            "pinKey": "__out__"
+          }
+        },
+        "rkqQJwqkU": {
+          "id": "rkqQJwqkU",
+          "input": {
+            "nodeId": "SywmyD51L",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "rkzvgTCEM",
+            "pinKey": "HkU3vNoTW"
+          }
+        }
+      },
+      "nodes": {
+        "HJ-QJvc1I": {
+          "id": "HJ-QJvc1I",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HJFAJ7YCG": {
+          "id": "HJFAJ7YCG",
+          "position": {
+            "x": 3,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "HJZIe6RVM": {
+          "id": "HJZIe6RVM",
+          "label": "Start",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkFsepCNz": {
+          "id": "SkFsepCNz",
+          "label": "Done",
+          "position": {
+            "x": 5,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SywmyD51L": {
+          "id": "SywmyD51L",
+          "position": {
+            "x": 5,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "rkzvgTCEM": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "rkzvgTCEM",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        }
+      },
+      "path": "@/one-light"
+    },
+    "@/signal-cont": {
+      "comments": {
+        "S1YtVfESM": {
+          "content": "Variable green light:\n* Here you can see how the green delay timer has been replaced by a flip-flop to remember state. The start pulse no longer travels from green through the rest of the cycle; we just get stuck on green.\n\n* Notice the Cont pulse must reset the flip-flop for green and start the timer for yellow.\n\n* Once the yellow timer expires, we pass the pulse through as before.\n\n*\n* Bonus question. This code has a MAJOR bug. If one of the sensors is triggered when we do not have a green for NS traffic, the NS light still \"continues\" its cycle, giving green lights for more than one direction -- a VERY bad thing for a traffic light. How can we use the 'gate' node to ignore the continue pulse if the light is not green? See signal-cont-gate for one solution.",
+          "id": "S1YtVfESM",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 5,
+            "width": 9,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "Signal lights for one direction with a pin to continue from green instead of a timer.",
+      "links": {
+        "B1HeemFCz": {
+          "id": "B1HeemFCz",
+          "input": {
+            "nodeId": "rkQu12dbrf",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "H11gg7F0M",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "BJLPEw51U": {
+          "id": "BJLPEw51U",
+          "input": {
+            "nodeId": "B1-9UEwqJL",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "SkdJ2_ZHM",
+            "pinKey": "rJqfIRdHwkW"
+          }
+        },
+        "ByVzdsYCM": {
+          "id": "ByVzdsYCM",
+          "input": {
+            "nodeId": "SkdJ2_ZHM",
+            "pinKey": "r1tz8CdBDkb"
+          },
+          "output": {
+            "nodeId": "HJve2OWBM",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "H1-fnO-Hf": {
+          "id": "H1-fnO-Hf",
+          "input": {
+            "nodeId": "HJve2OWBM",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "rkE_13_WBz",
+            "pinKey": "__out__"
+          }
+        },
+        "HJF3aIHZQ": {
+          "id": "HJF3aIHZQ",
+          "input": {
+            "nodeId": "HJve2OWBM",
+            "pinKey": "B1RU0OrDkb"
+          },
+          "output": {
+            "nodeId": "B18bnuWHf",
+            "pinKey": "__out__"
+          }
+        },
+        "HJvqLEDqJU": {
+          "id": "HJvqLEDqJU",
+          "input": {
+            "nodeId": "B1-9UEwqJL",
+            "pinKey": "B1oqkTnIb"
+          },
+          "output": {
+            "nodeId": "SJfcUNv9yL",
+            "pinKey": "__out__"
+          }
+        },
+        "Hy9Mdit0z": {
+          "id": "Hy9Mdit0z",
+          "input": {
+            "nodeId": "SkdJ2_ZHM",
+            "pinKey": "S1dG8AOBPJW"
+          },
+          "output": {
+            "nodeId": "S1cOyhObHz",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "S189I4D9kI": {
+          "id": "S189I4D9kI",
+          "input": {
+            "nodeId": "r1gq8Ev9JU",
+            "pinKey": "B1oqkTnIb"
+          },
+          "output": {
+            "nodeId": "ry758EPckU",
+            "pinKey": "__out__"
+          }
+        },
+        "Sk4vVPqkL": {
+          "id": "Sk4vVPqkL",
+          "input": {
+            "nodeId": "r1gq8Ev9JU",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "S1cOyhObHz",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "Sk7egXFAf": {
+          "id": "Sk7egXFAf",
+          "input": {
+            "nodeId": "H11gg7F0M",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "S1cOyhObHz",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "SkLgkDHbQ": {
+          "id": "SkLgkDHbQ",
+          "input": {
+            "nodeId": "S1cOyhObHz",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "B18bnuWHf",
+            "pinKey": "__out__"
+          }
+        },
+        "Skbw4PqJ8": {
+          "id": "Skbw4PqJ8",
+          "input": {
+            "nodeId": "S15L4v9JL",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "HJve2OWBM",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "ryB58ED5yL": {
+          "id": "ryB58ED5yL",
+          "input": {
+            "nodeId": "S15L4v9JL",
+            "pinKey": "B1oqkTnIb"
+          },
+          "output": {
+            "nodeId": "SkVcUNvc1L",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "B1-9UEwqJL": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D4"
+          },
+          "id": "B1-9UEwqJL",
+          "label": "NS R",
+          "position": {
+            "x": -1,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "B18bnuWHf": {
+          "id": "B18bnuWHf",
+          "label": "Cont",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H11gg7F0M": {
+          "id": "H11gg7F0M",
+          "position": {
+            "x": 5,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "HJve2OWBM": {
+          "id": "HJve2OWBM",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "S15L4v9JL": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D2"
+          },
+          "id": "S15L4v9JL",
+          "label": "NS G",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "S1cOyhObHz": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "S1cOyhObHz",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "SJfcUNv9yL": {
+          "id": "SJfcUNv9yL",
+          "label": "RPort",
+          "position": {
+            "x": -1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SkVcUNvc1L": {
+          "id": "SkVcUNvc1L",
+          "label": "GPort",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SkdJ2_ZHM": {
+          "id": "SkdJ2_ZHM",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/nor"
+        },
+        "r1gq8Ev9JU": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D3"
+          },
+          "id": "r1gq8Ev9JU",
+          "label": "NS Y",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "rkE_13_WBz": {
+          "id": "rkE_13_WBz",
+          "label": "Start",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkQu12dbrf": {
+          "id": "rkQu12dbrf",
+          "label": "Done",
+          "position": {
+            "x": 5,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ry758EPckU": {
+          "id": "ry758EPckU",
+          "label": "YPort",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        }
+      },
+      "path": "@/signal-cont"
+    },
+    "@/signal-cont-gate": {
+      "comments": {
+        "ry3hiwc18": {
+          "content": "Don't continue to yellow light if not green\n* This is the same as signal-cont, except the Cont pulse is filtered by the gate node.\n* The defer node is needed since a loop has been created.when we link to flip-flop-RST.\n* If green light is NOT active (i.e. flip-flop-MEM is false), then gate is disabled and Cont pulse is ignored.\n\nAvoid possible split-pulse bugs like this:\n* Mutex is a locking mechanism that can be used to guarantee we never have green lights in more than one direction.\n* See 8-traffic-mutex for a demonstration.",
+          "id": "ry3hiwc18",
+          "position": {
+            "x": 12,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 3,
+            "width": 8,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "ByThBsvq1L": {
+          "id": "ByThBsvq1L",
+          "input": {
+            "nodeId": "H12riPcJI",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "rJv2HovqJI",
+            "pinKey": "rJqfIRdHwkW"
+          }
+        },
+        "HJWx3HiP5yU": {
+          "id": "HJWx3HiP5yU",
+          "input": {
+            "nodeId": "H12riPcJI",
+            "pinKey": "B1oqkTnIb"
+          },
+          "output": {
+            "nodeId": "SyB3rswqk8",
+            "pinKey": "__out__"
+          }
+        },
+        "HJke3Hivq1I": {
+          "id": "HJke3Hivq1I",
+          "input": {
+            "nodeId": "S1MnSoDqJU",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "BJK3SoPc1I",
+            "pinKey": "__out__"
+          }
+        },
+        "HyDg3SjvqJ8": {
+          "id": "HyDg3SjvqJ8",
+          "input": {
+            "nodeId": "BkQhSsw51I",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "S1MnSoDqJU",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "Hy_g2BsD5JU": {
+          "id": "Hy_g2BsD5JU",
+          "input": {
+            "nodeId": "BkQhSsw51I",
+            "pinKey": "B1oqkTnIb"
+          },
+          "output": {
+            "nodeId": "By82HjPq1I",
+            "pinKey": "__out__"
+          }
+        },
+        "S1mxnSov9k8": {
+          "id": "S1mxnSov9k8",
+          "input": {
+            "nodeId": "BkunrsD9k8",
+            "pinKey": "B1oqkTnIb"
+          },
+          "output": {
+            "nodeId": "Bki2rsv51U",
+            "pinKey": "__out__"
+          }
+        },
+        "S1n3riD9JL": {
+          "id": "S1n3riD9JL",
+          "input": {
+            "nodeId": "Bkc3SjP9kI",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ByW2Sjv5JL",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "SJ4lhriPcyL": {
+          "id": "SJ4lhriPcyL",
+          "input": {
+            "nodeId": "BkunrsD9k8",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "Sk4nHjPcyL",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "SJpusv9kI": {
+          "id": "SJpusv9kI",
+          "input": {
+            "nodeId": "Sk4nHjPcyL",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "BJXwoD9kU",
+            "pinKey": "OkPg7GDaW"
+          }
+        },
+        "SkiOjPcJ8": {
+          "id": "SkiOjPcJ8",
+          "input": {
+            "nodeId": "S1MnSoDqJU",
+            "pinKey": "B1RU0OrDkb"
+          },
+          "output": {
+            "nodeId": "BJXwoD9kU",
+            "pinKey": "OkPg7GDaW"
+          }
+        },
+        "Sy5tjwc1L": {
+          "id": "Sy5tjwc1L",
+          "input": {
+            "nodeId": "BJXwoD9kU",
+            "pinKey": "SJ-1mZPTz"
+          },
+          "output": {
+            "nodeId": "SJg2Howck8",
+            "pinKey": "__out__"
+          }
+        },
+        "SyCnBiv5JI": {
+          "id": "SyCnBiv5JI",
+          "input": {
+            "nodeId": "rJv2HovqJI",
+            "pinKey": "r1tz8CdBDkb"
+          },
+          "output": {
+            "nodeId": "S1MnSoDqJU",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "r1Bl2Hiv5J8": {
+          "id": "r1Bl2Hiv5J8",
+          "input": {
+            "nodeId": "ByW2Sjv5JL",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "Sk4nHjPcyL",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "rk8YsvcyI": {
+          "id": "rk8YsvcyI",
+          "input": {
+            "nodeId": "HJxKoPcJ8",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "S1MnSoDqJU",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "rkPKjw91U": {
+          "id": "rkPKjw91U",
+          "input": {
+            "nodeId": "BJXwoD9kU",
+            "pinKey": "B1P1nFwaM"
+          },
+          "output": {
+            "nodeId": "HJxKoPcJ8",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "ryGlnHiDc1U": {
+          "id": "ryGlnHiDc1U",
+          "input": {
+            "nodeId": "rJv2HovqJI",
+            "pinKey": "S1dG8AOBPJW"
+          },
+          "output": {
+            "nodeId": "Sk4nHjPcyL",
+            "pinKey": "HkU3vNoTW"
+          }
+        }
+      },
+      "nodes": {
+        "BJK3SoPc1I": {
+          "id": "BJK3SoPc1I",
+          "label": "Start",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BJXwoD9kU": {
+          "id": "BJXwoD9kU",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/gate"
+        },
+        "BkQhSsw51I": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D2"
+          },
+          "id": "BkQhSsw51I",
+          "label": "NS Green",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "Bkc3SjP9kI": {
+          "id": "Bkc3SjP9kI",
+          "label": "Done",
+          "position": {
+            "x": 6,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Bki2rsv51U": {
+          "id": "Bki2rsv51U",
+          "label": "YPort",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "BkunrsD9k8": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D3"
+          },
+          "id": "BkunrsD9k8",
+          "label": "NS Yellow",
+          "position": {
+            "x": 1,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "By82HjPq1I": {
+          "id": "By82HjPq1I",
+          "label": "GPort",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "ByW2Sjv5JL": {
+          "id": "ByW2Sjv5JL",
+          "position": {
+            "x": 6,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "H12riPcJI": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D4"
+          },
+          "id": "H12riPcJI",
+          "label": "NS Red",
+          "position": {
+            "x": 0,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "HJxKoPcJ8": {
+          "id": "HJxKoPcJ8",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "S1MnSoDqJU": {
+          "id": "S1MnSoDqJU",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "SJg2Howck8": {
+          "id": "SJg2Howck8",
+          "label": "Cont",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Sk4nHjPcyL": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "Sk4nHjPcyL",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "SyB3rswqk8": {
+          "id": "SyB3rswqk8",
+          "label": "RPort",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rJv2HovqJI": {
+          "id": "rJv2HovqJI",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/nor"
+        }
+      },
+      "path": "@/signal-cont-gate"
+    },
+    "@/signal-cont-mutex": {
+      "comments": {
+        "BkBJ8O9y8": {
+          "content": "Using MUTEX to guarantee only one green light at a time:\n* Mutex is a lock/flag mechanic that allows you to guarantee that muitliple events are not happening at the same time. Each mutex (MUX) can only have one lock, which can only be held by one mutex-* node at a time.\n* By using the same MUX for lights in each direction, we guarantee that only one direction can be non-green at any time. Worst-case, we lose our pulse and all lights stay red (causing a traffic jam, but avoiding fatal crashes).\n* The bottom half of this node is much the same as before, but now all action pulses are filtered through the mutex node.\n* If we are trying to start a light cycle, we first need to aquire a lock; only start cycle if we succeed.\n* If we are trying to continue, we must already have an active lock (mutex-gate-IN is passed to mutex-gate-OUT only if lock is active).\n* This node is done only after mutex has been Released.\n* Since it is possible to force the release of a lock from another node, the mutex-gate-RLSd pin should probably get tied to flip-flop-RST and delay-RST just in case...\n* There are other mutex nodes providing additional options/functionality.\n\nStyle notes:\n* The MUX' output isn't really needed, but it is generally good practice to make it easier to share a single mutex between nodes. It is labled MUX' only because we cannot duplicate pin names and MUX is already taken for the input pin.\n* The input pins could be rearanged to reduce cross-over wires, but that should be balanced with providing a reasonable order for pins when using the patch (or compatibility with similar nodes or older versions of the current node).\n* As you can see, it is not a requirement that input pins be at the top and output pins be at the bottom, but it is generally a good idea to keep them there so they are easier to find/identify. Moving them to the bottom here would pass the wires through multiple nodes making the patch messier. Bus nodes could be used to move them to the bottom without wires passing through nodes. Personally, I would work harder to move them to the bottom if they were data pins rather than just a pass-through value and Done.\n* In this case, MUX' could be moved to the lower-left and wired directly to the MUX input pin rather than the mutex-gate. Done could be moved to the lower-right and a jumper used to route wire around delay node rather than through it.\n* In general, good style is a personal preference, but it is obviously easier to trace wires that don't pass through other nodes. If wires do pass through nodes, at least make sure they don't pass directly through pins they are not wired to.\n* If wires pass between adjacent nodes, moving the nodes at least one space apart can make the wires much easier to see/trace.\n\nI hope this tutorial has been helpful. Good luck as you continue learning and developing your own projects. It can get frustrating at times, but don't forget to have fun!",
+          "id": "BkBJ8O9y8",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 8,
+            "width": 16,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "B1JGBO5kL": {
+          "id": "B1JGBO5kL",
+          "input": {
+            "nodeId": "BJIgS_5y8",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HkL_f4ucJ8",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "BJfxuzNu9kI": {
+          "id": "BJfxuzNu9kI",
+          "input": {
+            "nodeId": "SJWOfEd5kU",
+            "pinKey": "B1oqkTnIb"
+          },
+          "output": {
+            "nodeId": "SJSdfVu5JU",
+            "pinKey": "__out__"
+          }
+        },
+        "BJmgOfE_5yU": {
+          "id": "BJmgOfE_5yU",
+          "input": {
+            "nodeId": "SyEuzEd5yI",
+            "pinKey": "B1oqkTnIb"
+          },
+          "output": {
+            "nodeId": "ByQ_fVucJ8",
+            "pinKey": "__out__"
+          }
+        },
+        "Bk72Bc91U": {
+          "id": "Bk72Bc91U",
+          "input": {
+            "nodeId": "HJK_f4_5JI",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "r17oSqc1U",
+            "pinKey": "H1jVq9FrE"
+          }
+        },
+        "BkOoSqqk8": {
+          "id": "BkOoSqqk8",
+          "input": {
+            "nodeId": "r17oSqc1U",
+            "pinKey": "Bk-GcqKrN"
+          },
+          "output": {
+            "nodeId": "B1X-rdckL",
+            "pinKey": "__out__"
+          }
+        },
+        "H1rgufVuc1L": {
+          "id": "H1rgufVuc1L",
+          "input": {
+            "nodeId": "SyEuzEd5yI",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "SJoOz4_9JI",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "H1tguM4u5JU": {
+          "id": "H1tguM4u5JU",
+          "input": {
+            "nodeId": "rJpOGEdcy8",
+            "pinKey": "r1tz8CdBDkb"
+          },
+          "output": {
+            "nodeId": "HJK_f4_5JI",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "HJn3Hc51L": {
+          "id": "HJn3Hc51L",
+          "input": {
+            "nodeId": "HJK_f4_5JI",
+            "pinKey": "B1RU0OrDkb"
+          },
+          "output": {
+            "nodeId": "r17oSqc1U",
+            "pinKey": "BJsBc5FHE"
+          }
+        },
+        "Hy-xOz4d91I": {
+          "id": "Hy-xOz4d91I",
+          "input": {
+            "nodeId": "SJWOfEd5kU",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "HJK_f4_5JI",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "Hy1lOME_5yI": {
+          "id": "Hy1lOME_5yI",
+          "input": {
+            "nodeId": "ByD_f4d5y8",
+            "pinKey": "B1oqkTnIb"
+          },
+          "output": {
+            "nodeId": "BJhdGNu9J8",
+            "pinKey": "__out__"
+          }
+        },
+        "SJy6SqckI": {
+          "id": "SJy6SqckI",
+          "input": {
+            "nodeId": "SJoOz4_9JI",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "r17oSqc1U",
+            "pinKey": "BJsBc5FHE"
+          }
+        },
+        "Sk2jH991L": {
+          "id": "Sk2jH991L",
+          "input": {
+            "nodeId": "r17oSqc1U",
+            "pinKey": "H1OMflcK4"
+          },
+          "output": {
+            "nodeId": "SymN4_cy8",
+            "pinKey": "__out__"
+          }
+        },
+        "Sk9sS99kL": {
+          "id": "Sk9sS99kL",
+          "input": {
+            "nodeId": "r17oSqc1U",
+            "pinKey": "S1KM9qFBE"
+          },
+          "output": {
+            "nodeId": "rJqOzV_51U",
+            "pinKey": "__out__"
+          }
+        },
+        "Skg2Sq51U": {
+          "id": "Skg2Sq51U",
+          "input": {
+            "nodeId": "rkzOGVO9kL",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r17oSqc1U",
+            "pinKey": "HyESq9FHN"
+          }
+        },
+        "r16l_GNdqkL": {
+          "id": "r16l_GNdqkL",
+          "input": {
+            "nodeId": "rJpOGEdcy8",
+            "pinKey": "S1dG8AOBPJW"
+          },
+          "output": {
+            "nodeId": "SJoOz4_9JI",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "rk9guGV_cJI": {
+          "id": "rk9guGV_cJI",
+          "input": {
+            "nodeId": "HkL_f4ucJ8",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "SJoOz4_9JI",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "rkAuMVd5JL": {
+          "id": "rkAuMVd5JL",
+          "input": {
+            "nodeId": "ByD_f4d5y8",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "rJpOGEdcy8",
+            "pinKey": "rJqfIRdHwkW"
+          }
+        },
+        "ryAiScckI": {
+          "id": "ryAiScckI",
+          "input": {
+            "nodeId": "ByjnHd91U",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r17oSqc1U",
+            "pinKey": "HJAMzx9KN"
+          }
+        },
+        "ryvoH591I": {
+          "id": "ryvoH591I",
+          "input": {
+            "nodeId": "r17oSqc1U",
+            "pinKey": "S15-cqKrV"
+          },
+          "output": {
+            "nodeId": "SJ_fNu5J8",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "B1X-rdckL": {
+          "id": "B1X-rdckL",
+          "label": "RLS",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "BJIgS_5y8": {
+          "id": "BJIgS_5y8",
+          "label": "RLS",
+          "position": {
+            "x": 6,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "BJhdGNu9J8": {
+          "id": "BJhdGNu9J8",
+          "label": "RPort",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "ByD_f4d5y8": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D4"
+          },
+          "id": "ByD_f4d5y8",
+          "label": "NS Red",
+          "position": {
+            "x": 0,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "ByQ_fVucJ8": {
+          "id": "ByQ_fVucJ8",
+          "label": "YPort",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "ByjnHd91U": {
+          "id": "ByjnHd91U",
+          "label": "MUX'",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/mutex/output-mutex"
+        },
+        "HJK_f4_5JI": {
+          "id": "HJK_f4_5JI",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "HkL_f4ucJ8": {
+          "id": "HkL_f4ucJ8",
+          "position": {
+            "x": 6,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "SJSdfVu5JU": {
+          "id": "SJSdfVu5JU",
+          "label": "GPort",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SJWOfEd5kU": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D2"
+          },
+          "id": "SJWOfEd5kU",
+          "label": "NS Green",
+          "position": {
+            "x": 2,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "SJ_fNu5J8": {
+          "id": "SJ_fNu5J8",
+          "label": "Start",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJoOz4_9JI": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "SJoOz4_9JI",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "SyEuzEd5yI": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D3"
+          },
+          "id": "SyEuzEd5yI",
+          "label": "NS Yellow",
+          "position": {
+            "x": 1,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "SymN4_cy8": {
+          "id": "SymN4_cy8",
+          "label": "MUX",
+          "position": {
+            "x": -1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/mutex/input-mutex"
+        },
+        "r17oSqc1U": {
+          "id": "r17oSqc1U",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/mutex/mutex-gate"
+        },
+        "rJpOGEdcy8": {
+          "id": "rJpOGEdcy8",
+          "position": {
+            "x": 7,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/nor"
+        },
+        "rJqOzV_51U": {
+          "id": "rJqOzV_51U",
+          "label": "Cont",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkzOGVO9kL": {
+          "id": "rkzOGVO9kL",
+          "label": "Done",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/signal-cont-mutex"
+    },
+    "@/signal-delay": {
+      "comments": {
+        "HJaN0hA4z": {
+          "content": "Attempt#5, encapsulation:\n* Much cleaner than encapsulation with select statements\n* Now that we have signals cleanly encapsulated, let's explore how easy it is to add more in 6-traffic-turn",
+          "id": "HJaN0hA4z",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 4,
+            "width": 10,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "Signal lights for one direction using delay timers.",
+      "links": {
+        "BkKOXvq1L": {
+          "id": "BkKOXvq1L",
+          "input": {
+            "nodeId": "BkxmHXw9kU",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "rJr6TsC4M",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "ByDuXvc1U": {
+          "id": "ByDuXvc1U",
+          "input": {
+            "nodeId": "rkmBQvcyI",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "HJxBaaiCNM",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "BySZg7KRG": {
+          "id": "BySZg7KRG",
+          "input": {
+            "nodeId": "HkZ-x7tAf",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "rJr6TsC4M",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "ByndQv9yI": {
+          "id": "ByndQv9yI",
+          "input": {
+            "nodeId": "H1bQB7P91I",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "BkIBpTjRVz",
+            "pinKey": "rJqfIRdHwkW"
+          }
+        },
+        "HJGd7DqJL": {
+          "id": "HJGd7DqJL",
+          "input": {
+            "nodeId": "BkxmHXw9kU",
+            "pinKey": "B1oqkTnIb"
+          },
+          "output": {
+            "nodeId": "BJkw7DqJI",
+            "pinKey": "__out__"
+          }
+        },
+        "HkrOmP9JU": {
+          "id": "HkrOmP9JU",
+          "input": {
+            "nodeId": "H1bQB7P91I",
+            "pinKey": "B1oqkTnIb"
+          },
+          "output": {
+            "nodeId": "HySIQv5kI",
+            "pinKey": "__out__"
+          }
+        },
+        "HyV70j0Vz": {
+          "id": "HyV70j0Vz",
+          "input": {
+            "nodeId": "HJxBaaiCNM",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "SJaMRoCEz",
+            "pinKey": "__out__"
+          }
+        },
+        "HywbgQtRz": {
+          "id": "HywbgQtRz",
+          "input": {
+            "nodeId": "HkP9Aj04G",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HkZ-x7tAf",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "S1ggS6ps0Nz": {
+          "id": "S1ggS6ps0Nz",
+          "input": {
+            "nodeId": "BkIBpTjRVz",
+            "pinKey": "S1dG8AOBPJW"
+          },
+          "output": {
+            "nodeId": "HJxBaaiCNM",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "SJJgBTTjRNG": {
+          "id": "SJJgBTTjRNG",
+          "input": {
+            "nodeId": "BkIBpTjRVz",
+            "pinKey": "r1tz8CdBDkb"
+          },
+          "output": {
+            "nodeId": "rJr6TsC4M",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "SJuHTpsCEM": {
+          "id": "SJuHTpsCEM",
+          "input": {
+            "nodeId": "rJr6TsC4M",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "HJxBaaiCNM",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "r1x_Qv9kL": {
+          "id": "r1x_Qv9kL",
+          "input": {
+            "nodeId": "rkmBQvcyI",
+            "pinKey": "B1oqkTnIb"
+          },
+          "output": {
+            "nodeId": "B1lJD7D9k8",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "B1lJD7D9k8": {
+          "id": "B1lJD7D9k8",
+          "label": "GPort",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "BJkw7DqJI": {
+          "id": "BJkw7DqJI",
+          "label": "YPort",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "BkIBpTjRVz": {
+          "id": "BkIBpTjRVz",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/nor"
+        },
+        "BkxmHXw9kU": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D3"
+          },
+          "id": "BkxmHXw9kU",
+          "label": "Yellow",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "H1bQB7P91I": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D4"
+          },
+          "id": "H1bQB7P91I",
+          "label": "Red",
+          "position": {
+            "x": 1,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "HJxBaaiCNM": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "HJxBaaiCNM",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "HkP9Aj04G": {
+          "id": "HkP9Aj04G",
+          "label": "Done",
+          "position": {
+            "x": 7,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HkZ-x7tAf": {
+          "id": "HkZ-x7tAf",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "HySIQv5kI": {
+          "id": "HySIQv5kI",
+          "label": "RPort",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SJaMRoCEz": {
+          "id": "SJaMRoCEz",
+          "label": "Start",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rJr6TsC4M": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "rJr6TsC4M",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "rkmBQvcyI": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D2"
+          },
+          "id": "rkmBQvcyI",
+          "label": "Green",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        }
+      },
+      "path": "@/signal-delay"
+    },
+    "@/signal-select": {
+      "comments": {
+        "BJZ4FD5k8": {
+          "content": "Note: This Start node is only this far to the right so that it appears to the right of all 3 port inputs when used in a patch.",
+          "id": "BJZ4FD5k8",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 8,
+            "units": "slots"
+          }
+        },
+        "H1KtIi0NM": {
+          "content": "When timer is active, switch lights to non-default; switch back to default when Done. Green->Yellow transition can leave Red off.",
+          "id": "H1KtIi0NM",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 2,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "S1_L22C4G": {
+          "content": "Attempt#3, additional insights\n* Select for Yellow & Green are just giving us the state of delay-ACT, so are not really needed.\n\n* Here is where I realized I was an idiot. We do not need to know the state of Yellow and Green lights for other directions (all the cross-connects that prevented encapsulation). All we need to know is that this Red light is on unless this Yellow or Green light is on (an OR followed by NOT, or simply a NOR).\n\n* Proceed to 4-traffic-delay-flat for next attempt",
+          "id": "S1_L22C4G",
+          "position": {
+            "x": 13,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 3,
+            "width": 10,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "Signal lights for one direction using select nodes.",
+      "links": {
+        "BJZjobP5yL": {
+          "id": "BJZjobP5yL",
+          "input": {
+            "nodeId": "BkgiibP5J8",
+            "pinKey": "B1oqkTnIb"
+          },
+          "output": {
+            "nodeId": "HyjiWwqkL",
+            "pinKey": "__out__"
+          }
+        },
+        "BkSx0lTYCEG": {
+          "id": "BkSx0lTYCEG",
+          "input": {
+            "nodeId": "BJZRxpFA4z",
+            "pinKey": "rJUjrCTUb"
+          },
+          "output": {
+            "nodeId": "r1U0lpKR4G",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "HJ3YZwqkU": {
+          "id": "HJ3YZwqkU",
+          "input": {
+            "nodeId": "rkRObv5yI",
+            "pinKey": "B1oqkTnIb"
+          },
+          "output": {
+            "nodeId": "B1QPbvc1I",
+            "pinKey": "__out__"
+          }
+        },
+        "HJEQTYC4f": {
+          "id": "HJEQTYC4f",
+          "input": {
+            "nodeId": "ryrRl6tRNM",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "HJjz6Y04f",
+            "pinKey": "__out__"
+          }
+        },
+        "HJmlAeTY04G": {
+          "id": "HJmlAeTY04G",
+          "input": {
+            "nodeId": "HymRlTY0Vz",
+            "pinKey": "rJUjrCTUb"
+          },
+          "output": {
+            "nodeId": "ryrRl6tRNM",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "HyMeCxpYCEM": {
+          "id": "HyMeCxpYCEM",
+          "input": {
+            "nodeId": "SJRxpKRVf",
+            "pinKey": "rkmiHCaIZ"
+          },
+          "output": {
+            "nodeId": "ryrRl6tRNM",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "Hy_fg7tRG": {
+          "id": "Hy_fg7tRG",
+          "input": {
+            "nodeId": "rkuKat0NM",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ry4zxmtAz",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "S15tbv9kL": {
+          "id": "S15tbv9kL",
+          "input": {
+            "nodeId": "rkRObv5yI",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "SJRxpKRVf",
+            "pinKey": "S1yaHC6UW"
+          }
+        },
+        "S1DhZDckI": {
+          "id": "S1DhZDckI",
+          "input": {
+            "nodeId": "HkxciZw5y8",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "BJZRxpFA4z",
+            "pinKey": "S1yaHC6UW"
+          }
+        },
+        "SJUgRx6KC4M": {
+          "id": "SJUgRx6KC4M",
+          "input": {
+            "nodeId": "SJRxpKRVf",
+            "pinKey": "rJUjrCTUb"
+          },
+          "output": {
+            "nodeId": "r1U0lpKR4G",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "Sk-csWv5yU": {
+          "id": "Sk-csWv5yU",
+          "input": {
+            "nodeId": "HkxciZw5y8",
+            "pinKey": "B1oqkTnIb"
+          },
+          "output": {
+            "nodeId": "By9sZD5kU",
+            "pinKey": "__out__"
+          }
+        },
+        "SkIzgmYCf": {
+          "id": "SkIzgmYCf",
+          "input": {
+            "nodeId": "ry4zxmtAz",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "HymRlTY0Vz",
+            "pinKey": "rkWHDAW_f"
+          }
+        },
+        "rJhCgTt0Vz": {
+          "id": "rJhCgTt0Vz",
+          "input": {
+            "nodeId": "r1U0lpKR4G",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "ryrRl6tRNM",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "rkNxCxTYA4f": {
+          "id": "rkNxCxTYA4f",
+          "input": {
+            "nodeId": "BJZRxpFA4z",
+            "pinKey": "rkmiHCaIZ"
+          },
+          "output": {
+            "nodeId": "r1U0lpKR4G",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "rybxRgTFANM": {
+          "id": "rybxRgTFANM",
+          "input": {
+            "nodeId": "HymRlTY0Vz",
+            "pinKey": "rkmiHCaIZ"
+          },
+          "output": {
+            "nodeId": "ryrRl6tRNM",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "ryt2-wq18": {
+          "id": "ryt2-wq18",
+          "input": {
+            "nodeId": "BkgiibP5J8",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "HymRlTY0Vz",
+            "pinKey": "S1yaHC6UW"
+          }
+        }
+      },
+      "nodes": {
+        "B1QPbvc1I": {
+          "id": "B1QPbvc1I",
+          "label": "RPort",
+          "position": {
+            "x": -1,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "BJZRxpFA4z": {
+          "boundLiterals": {
+            "S10qrR6UZ": "1",
+            "rygjH06LW": "0"
+          },
+          "id": "BJZRxpFA4z",
+          "label": "Yellow; default off",
+          "position": {
+            "x": 4,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/select"
+        },
+        "BkgiibP5J8": {
+          "id": "BkgiibP5J8",
+          "label": "Green",
+          "position": {
+            "x": 7,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "By9sZD5kU": {
+          "id": "By9sZD5kU",
+          "label": "YPort",
+          "position": {
+            "x": 3,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HJjz6Y04f": {
+          "description": "Run through a green, yellow, red cycle of light. Default to red.",
+          "id": "HJjz6Y04f",
+          "label": "Start",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HkxciZw5y8": {
+          "id": "HkxciZw5y8",
+          "label": "Yellow",
+          "position": {
+            "x": 3,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "HyjiWwqkL": {
+          "id": "HyjiWwqkL",
+          "label": "GPort",
+          "position": {
+            "x": 7,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HymRlTY0Vz": {
+          "boundLiterals": {
+            "S10qrR6UZ": "1",
+            "rygjH06LW": "0"
+          },
+          "id": "HymRlTY0Vz",
+          "label": "Green; default off",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/select"
+        },
+        "SJRxpKRVf": {
+          "boundLiterals": {
+            "S10qrR6UZ": "0",
+            "rygjH06LW": "1"
+          },
+          "id": "SJRxpKRVf",
+          "label": "Red; default on",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/select"
+        },
+        "r1U0lpKR4G": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "r1U0lpKR4G",
+          "label": "Yellow Time",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "rkRObv5yI": {
+          "id": "rkRObv5yI",
+          "label": "Red",
+          "position": {
+            "x": -1,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "rkuKat0NM": {
+          "id": "rkuKat0NM",
+          "label": "Done",
+          "position": {
+            "x": 11,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ry4zxmtAz": {
+          "id": "ry4zxmtAz",
+          "position": {
+            "x": 10,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "ryrRl6tRNM": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "ryrRl6tRNM",
+          "label": "Green Time",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        }
+      },
+      "path": "@/signal-select"
+    }
+  },
+  "version": "0.2.3"
+}

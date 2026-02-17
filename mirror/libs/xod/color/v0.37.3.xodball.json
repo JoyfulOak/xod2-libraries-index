@@ -1,0 +1,2514 @@
+{
+  "patches": {
+    "@/color": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "HJ53--ss7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJ53--ss7",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/output-self",
+          "@@type": "xod-project/Node"
+        },
+        "Hyec-WssX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hyec-WssX",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "SymqbZjiQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SymqbZjiQ",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/color",
+      "description": "Color type constructor",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nnode {\n    meta {\n        using Type = XColor;\n    }\n\n    void evaluate(Context ctx) {\n        Type color = getValue<output_OUT>(ctx);\n        emitValue<output_OUT>(ctx, color);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/color-hsl": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJyghZosm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJyghZosm",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/output-color",
+          "@@type": "xod-project/Node"
+        },
+        "HJgyhboim": {
+          "boundLiterals": {},
+          "description": "0 is for red, 0.33 for green, 0.66 for blue, and 0.99 is for red again. Some systems use degrees for the hue component. The value of 1.0 corresponds to 360° of such systems. When out out of [0; 1) range only the fractional part is taken into account",
+          "label": "H",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJgyhboim",
+          "position": {
+            "x": -0.05,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "Hks1nZioQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hks1nZioQ",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "Symyhboj7": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Saturation. Should be in the range [0, 1]. 0.0 corresponds to fully-gray shade and 1.0 to saturated color shade. Values out of the range are truncated to 0 or 1",
+          "label": "S",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Symyhboj7",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "r1g7J3-ii7": {
+          "boundLiterals": {
+            "__out__": "0.5"
+          },
+          "description": "Lightness. Should be in the range [0, 1]. 0.0 corresponds to black; 0.5 to pure color; 1.0 to white. Values out of the range are truncated to 0 or 1",
+          "label": "L",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1g7J3-ii7",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/color-hsl",
+      "description": "Constructs a color value from hue, saturation, and lightness values (HSL model)",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    float hueToRgb(float v1, float v2, float vH) {\n      if (vH < 0) vH += 1.0f;\n\n      if (vH > 1.0f) vH -= 1.0f;\n\n      if ((6.0f * vH) < 1.0f) return (v1 + (v2 - v1) * 6.0f * vH);\n\n      if ((2.0f * vH) < 1.0f) return v2;\n\n      if ((3.0f * vH) < 2.0f) return (v1 + (v2 - v1) * ((2.0f / 3.0f) - vH) * 6.0f);\n\n      return v1;\n    }\n\n    void evaluate(Context ctx) {\n      float h = getValue<input_H>(ctx);\n      float s = getValue<input_S>(ctx);\n      float l = getValue<input_L>(ctx);\n\n      uint8_t r, g, b;\n\n      if (s == 0) {\n        r = g = b = ceil(l * 255.0f);\n      } else {\n        float v2 = (l < 0.5) ? (l * (1.0f + s)) : ((l + s) - (l * s));\n        float v1 = 2.0f * l - v2;\n\n        r = round(255.0f * hueToRgb(v1, v2, h + (1.0f / 3.0f)));\n        g = round(255.0f * hueToRgb(v1, v2, h));\n        b = round(255.0f * hueToRgb(v1, v2, h - (1.0f / 3.0f)));\n      }\n\n      typeof_OUT obj = {r, g, b};\n      emitValue<output_OUT>(ctx, obj);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/color-rgb": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkE95WojQ": {
+          "boundLiterals": {
+            "B1rSeJlnZ": "1",
+            "HkFBgJehW": "255"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkE95WojQ",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/math/map-clip",
+          "@@type": "xod-project/Node"
+        },
+        "HJdd5Zio7": {
+          "boundLiterals": {
+            "B1rSeJlnZ": "1",
+            "HkFBgJehW": "255"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJdd5Zio7",
+          "position": {
+            "x": -4,
+            "y": 1
+          },
+          "type": "xod/math/map-clip",
+          "@@type": "xod-project/Node"
+        },
+        "HyS2vZsoX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyS2vZsoX",
+          "position": {
+            "x": -4,
+            "y": 2
+          },
+          "type": "xod/bits/number-to-u8",
+          "@@type": "xod-project/Node"
+        },
+        "HyquDboo7": {
+          "boundLiterals": {},
+          "description": "Red",
+          "label": "R",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyquDboo7",
+          "position": {
+            "x": -4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "S1yKPZjjQ": {
+          "boundLiterals": {},
+          "description": "Green",
+          "label": "G",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1yKPZjjQ",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "SJjhvWjiQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJjhvWjiQ",
+          "position": {
+            "x": 8,
+            "y": 2
+          },
+          "type": "xod/bits/number-to-u8",
+          "@@type": "xod-project/Node"
+        },
+        "Skk5DZsiQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Skk5DZsiQ",
+          "position": {
+            "x": 1,
+            "y": 4
+          },
+          "type": "@/output-color",
+          "@@type": "xod-project/Node"
+        },
+        "SkqnPZjsX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkqnPZjsX",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/bits/number-to-u8",
+          "@@type": "xod-project/Node"
+        },
+        "SyB5PWio7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyB5PWio7",
+          "position": {
+            "x": 1,
+            "y": 3
+          },
+          "type": "@/color-rgb-bytes",
+          "@@type": "xod-project/Node"
+        },
+        "ryx4c9Wjj7": {
+          "boundLiterals": {
+            "B1rSeJlnZ": "1",
+            "HkFBgJehW": "255"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryx4c9Wjj7",
+          "position": {
+            "x": 8,
+            "y": 1
+          },
+          "type": "xod/math/map-clip",
+          "@@type": "xod-project/Node"
+        },
+        "ryxkYD-joQ": {
+          "boundLiterals": {},
+          "description": "Blue",
+          "label": "B",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryxkYD-joQ",
+          "position": {
+            "x": 8,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "BJK95Wos7": {
+          "id": "BJK95Wos7",
+          "input": {
+            "nodeId": "SkqnPZjsX",
+            "pinKey": "rktX7OWyX"
+          },
+          "output": {
+            "nodeId": "BkE95WojQ",
+            "pinKey": "rJFmgJehW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkwY9-is7": {
+          "id": "BkwY9-is7",
+          "input": {
+            "nodeId": "HyS2vZsoX",
+            "pinKey": "rktX7OWyX"
+          },
+          "output": {
+            "nodeId": "HJdd5Zio7",
+            "pinKey": "rJFmgJehW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Byu9qWio7": {
+          "id": "Byu9qWio7",
+          "input": {
+            "nodeId": "BkE95WojQ",
+            "pinKey": "HJjEe1lnb"
+          },
+          "output": {
+            "nodeId": "S1yKPZjjQ",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1lpwWjom": {
+          "id": "H1lpwWjom",
+          "input": {
+            "nodeId": "SyB5PWio7",
+            "pinKey": "rkhfmWojX"
+          },
+          "output": {
+            "nodeId": "SkqnPZjsX",
+            "pinKey": "By_EX_bk7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hko59bjo7": {
+          "id": "Hko59bjo7",
+          "input": {
+            "nodeId": "SJjhvWjiQ",
+            "pinKey": "rktX7OWyX"
+          },
+          "output": {
+            "nodeId": "ryx4c9Wjj7",
+            "pinKey": "rJFmgJehW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1_tqboi7": {
+          "id": "S1_tqboi7",
+          "input": {
+            "nodeId": "HJdd5Zio7",
+            "pinKey": "HJjEe1lnb"
+          },
+          "output": {
+            "nodeId": "HyquDboo7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJ1pw-oi7": {
+          "id": "SJ1pw-oi7",
+          "input": {
+            "nodeId": "SyB5PWio7",
+            "pinKey": "S1Df7Wso7"
+          },
+          "output": {
+            "nodeId": "HyS2vZsoX",
+            "pinKey": "By_EX_bk7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Skq95-oom": {
+          "id": "Skq95-oom",
+          "input": {
+            "nodeId": "ryx4c9Wjj7",
+            "pinKey": "HJjEe1lnb"
+          },
+          "output": {
+            "nodeId": "ryxkYD-joQ",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyL5vbii7": {
+          "id": "SyL5vbii7",
+          "input": {
+            "nodeId": "Skk5DZsiQ",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SyB5PWio7",
+            "pinKey": "S1f7XZij7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJSTPWis7": {
+          "id": "rJSTPWis7",
+          "input": {
+            "nodeId": "SyB5PWio7",
+            "pinKey": "Hklnz7WjoQ"
+          },
+          "output": {
+            "nodeId": "SJjhvWjiQ",
+            "pinKey": "By_EX_bk7"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/color-rgb",
+      "description": "Constructs a color value from red, green, and blue components. Each component should be in the range [0, 1]. Values out of this range are truncated to 0 or 1",
+      "attachments": []
+    },
+    "@/color-rgb-bytes": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkNQ7-oom": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkNQ7-oom",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "Hklnz7WjoQ": {
+          "boundLiterals": {},
+          "description": "Blue",
+          "label": "B",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hklnz7WjoQ",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "S1Df7Wso7": {
+          "boundLiterals": {},
+          "description": "Red",
+          "label": "R",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1Df7Wso7",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "S1f7XZij7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1f7XZij7",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/output-color",
+          "@@type": "xod-project/Node"
+        },
+        "rkhfmWojX": {
+          "boundLiterals": {},
+          "description": "Green",
+          "label": "G",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkhfmWojX",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/color-rgb-bytes",
+      "description": "Constructs a color value from red, green, and blue components expressed as byte values. Use decimal (0d to 255d) or hexadecimal (00h to FFh) byte literals. For example, if a graphical editor shows a blue as “#287ec9” or “rgb(40, 126, 201)” use the following literals for R/G/B: 28h/7Eh/C9h or 40d/126d/201d",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    void evaluate(Context ctx) {\n        typeof_OUT obj;\n        obj = { (uint8_t)getValue<input_R>(ctx), (uint8_t)getValue<input_G>(ctx), (uint8_t)getValue<input_B>(ctx) };\n        emitValue<output_OUT>(ctx, obj);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/format-color": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "S1YduQsj7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1YduQsj7",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-string",
+          "@@type": "xod-project/Node"
+        },
+        "SyIDdXijQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyIDdXijQ",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-color",
+          "@@type": "xod-project/Node"
+        },
+        "rJU8x4soX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJU8x4soX",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/format-color",
+      "description": "Formats a color as a 6-digit hexadecimal value (ex.: \"FF3300\")",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nnode {\n    char str[7] = { 0, 0, 0, 0, 0, 0, '\\0' };\n    CStringView view = CStringView(str);\n\n    char nibbleToChar(uint8_t nibble) {\n      return (nibble < 10)\n        ? '0' + nibble\n        : 'A' + nibble - 10;\n    }\n\n    void evaluate(Context ctx) {\n        auto color = getValue<input_IN>(ctx);\n\n        str[0] = nibbleToChar(color.r >> 4);\n        str[1] = nibbleToChar(color.r & 0x0F);\n        str[2] = nibbleToChar(color.g >> 4);\n        str[3] = nibbleToChar(color.g & 0x0F);\n        str[4] = nibbleToChar(color.b >> 4);\n        str[5] = nibbleToChar(color.b & 0x0F);\n\n        emitValue<output_OUT>(ctx, XString(&view));\n    }\n}\n"
+        }
+      ]
+    },
+    "@/pulse-on-change(color)": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkLLGg-yU": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkLLGg-yU",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HJWIMgZ1U": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJWIMgZ1U",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "@/input-color",
+          "@@type": "xod-project/Node"
+        },
+        "rkEDGlbyI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkEDGlbyI",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/pulse-on-change(color)",
+      "description": "",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nnode {\n    uint8_t _r = 0;\n    uint8_t _g = 0;\n    uint8_t _b = 0;\n\n    bool isColorEqual(uint8_t r, uint8_t g, uint8_t b) {\n        return (\n            _r == r &&\n            _g == g &&\n            _b == b\n        );\n    }\n\n    void evaluate(Context ctx) {\n        auto newColor = getValue<input_IN>(ctx);\n\n        if (!isSettingUp() && !isColorEqual(newColor.r, newColor.g, newColor.b));\n            emitValue<output_OUT>(ctx, 1);\n\n        _r = newColor.r;\n        _g = newColor.g;\n        _b = newColor.b;\n    }\n}\n"
+        }
+      ]
+    },
+    "@/test-hsl-to-format": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1Zy84yOe4": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1Zy84yOe4",
+          "position": {
+            "x": -0.05,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "BJk8EJOeN": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJk8EJOeN",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "@/color-hsl",
+          "@@type": "xod-project/Node"
+        },
+        "BkGJL4J_gE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkGJL4J_gE",
+          "position": {
+            "x": 4,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "H1ePr4yul4": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1ePr4yul4",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/format-color",
+          "@@type": "xod-project/Node"
+        },
+        "HytGuBMWV": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HytGuBMWV",
+          "position": {
+            "x": 6,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/tabtest",
+          "@@type": "xod-project/Node"
+        },
+        "S1PSVJdxV": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1PSVJdxV",
+          "position": {
+            "x": 0,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-string",
+          "@@type": "xod-project/Node"
+        },
+        "rJmkU4yOgE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJmkU4yOgE",
+          "position": {
+            "x": 2,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "rkxyLEkulV": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkxyLEkulV",
+          "position": {
+            "x": 1,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "S1ZI41_gV": {
+          "id": "S1ZI41_gV",
+          "input": {
+            "nodeId": "H1ePr4yul4",
+            "pinKey": "SyIDdXijQ"
+          },
+          "output": {
+            "nodeId": "BJk8EJOeN",
+            "pinKey": "BJyghZosm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkZvSNyOxN": {
+          "id": "SkZvSNyOxN",
+          "input": {
+            "nodeId": "S1PSVJdxV",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "H1ePr4yul4",
+            "pinKey": "S1YduQsj7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1U1UEkOlN": {
+          "id": "r1U1UEkOlN",
+          "input": {
+            "nodeId": "BJk8EJOeN",
+            "pinKey": "Symyhboj7"
+          },
+          "output": {
+            "nodeId": "rkxyLEkulV",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1V18NJdeV": {
+          "id": "r1V18NJdeV",
+          "input": {
+            "nodeId": "BJk8EJOeN",
+            "pinKey": "r1g7J3-ii7"
+          },
+          "output": {
+            "nodeId": "rJmkU4yOgE",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rySJLV1_eN": {
+          "id": "rySJLV1_eN",
+          "input": {
+            "nodeId": "BJk8EJOeN",
+            "pinKey": "HJgyhboim"
+          },
+          "output": {
+            "nodeId": "B1Zy84yOe4",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/test-hsl-to-format",
+      "description": "",
+      "attachments": [
+        {
+          "filename": "patch.test.tsv",
+          "encoding": "utf8",
+          "content": "IN1\tIN2\tIN3\tOUT\r\n\r\n//main colors\n\n0\t0\t0\t\"000000\"\t//Black\n0\t0\t0.5\t\"808080\"\t//Gray\n0\t0\t0.75\t\"C0C0C0\"\t//Silver\n0\t0\t1\t\"FFFFFF\"\t//White\n0.83333\t1\t0.5\t\"FF00FF\"\t//Fuchsia\n0.83333\t1\t0.25\t\"7F0080\"\t//Purple \t800080 -> 7F8080\n0\t1\t0.5\t\"FF0000\"\t//Red\n0\t1\t0.25\t\"800000\"\t//Maroon\n0.16666\t1\t0.5\t\"FFFF00\"\t//Yellow\n0.16666\t1\t0.25\t\"807F00\"\t//Olive\t808000 -> 807F00\n0.33333\t1\t0.5\t\"00FF00\"\t//Lime\n0.33333\t1\t0.25\t\"008000\"\t//Green\n0.5\t1\t0.5\t\"00FFFF\"\t//Aqua\n0.5\t1\t0.25\t\"00807F\"\t//Teal\t808000 -> 00807F\n0.66666\t1\t0.5\t\"0000FF\"\t//Blue\n0.66666\t1\t0.25\t\"000080\"\t//Navy\n"
+        }
+      ]
+    },
+    "@/test-hsl-to-rgb-bytes": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1-iORDeE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1-iORDeE",
+          "position": {
+            "x": 1,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "B1f__CvlV": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1f__CvlV",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "@/color-hsl",
+          "@@type": "xod-project/Node"
+        },
+        "BJA5dAve4": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJA5dAve4",
+          "position": {
+            "x": 0,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "H1zq_0wg4": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1zq_0wg4",
+          "position": {
+            "x": 1,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "HkTY_Cwe4": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkTY_Cwe4",
+          "position": {
+            "x": -0.05,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "Hy-pPdADgN": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hy-pPdADgN",
+          "position": {
+            "x": 4,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "S1xM9OADeV": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1xM9OADeV",
+          "position": {
+            "x": 2,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "rJxbiORweE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJxbiORweE",
+          "position": {
+            "x": 2,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "rys_O0PxV": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rys_O0PxV",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/to-rgb-bytes",
+          "@@type": "xod-project/Node"
+        },
+        "ryzNOSG-V": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryzNOSG-V",
+          "position": {
+            "x": 6,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/tabtest",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "H14jORPgN": {
+          "id": "H14jORPgN",
+          "input": {
+            "nodeId": "B1-iORDeE",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rys_O0PxV",
+            "pinKey": "Sk7AV-ijX"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H17od0wgN": {
+          "id": "H17od0wgN",
+          "input": {
+            "nodeId": "BJA5dAve4",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rys_O0PxV",
+            "pinKey": "S1Z04Zjsm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1BqOAwx4": {
+          "id": "H1BqOAwx4",
+          "input": {
+            "nodeId": "B1f__CvlV",
+            "pinKey": "r1g7J3-ii7"
+          },
+          "output": {
+            "nodeId": "S1xM9OADeV",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkXcO0Px4": {
+          "id": "HkXcO0Px4",
+          "input": {
+            "nodeId": "B1f__CvlV",
+            "pinKey": "HJgyhboim"
+          },
+          "output": {
+            "nodeId": "HkTY_Cwe4",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJNcOCvxN": {
+          "id": "SJNcOCvxN",
+          "input": {
+            "nodeId": "B1f__CvlV",
+            "pinKey": "Symyhboj7"
+          },
+          "output": {
+            "nodeId": "H1zq_0wg4",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyBj_Cvx4": {
+          "id": "SyBj_Cvx4",
+          "input": {
+            "nodeId": "rJxbiORweE",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rys_O0PxV",
+            "pinKey": "S1ER4-isX"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJ2uOADgV": {
+          "id": "rJ2uOADgV",
+          "input": {
+            "nodeId": "rys_O0PxV",
+            "pinKey": "BkepNZjsQ"
+          },
+          "output": {
+            "nodeId": "B1f__CvlV",
+            "pinKey": "BJyghZosm"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/test-hsl-to-rgb-bytes",
+      "description": "",
+      "attachments": [
+        {
+          "filename": "patch.test.tsv",
+          "encoding": "utf8",
+          "content": "IN1\tIN2\tIN3\tOUT1\tOUT2\tOUT3\r\n\t\t\t\t\t\t\t\t\r\n//main colors\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\t\t\r\n0\t0\t0\t0d\t0d\t0d\t//Black\t000000\n0\t0\t0.5\t128d\t128d\t128d\t//Gray\t808080\n0\t0\t0.75\t192d\t192d\t192d\t//Silver\tC0C0C0\n0\t0\t1\t255d\t255d\t255d\t//White\tFFFFFF\n0.83333\t1\t0.5\t255d\t0d\t255d\t//Fuchsia\tFF00FF\n0.83333\t1\t0.25\t127d\t0d\t128d\t//Purple\t800080\tOUT1 128 to 127\n0\t1\t0.5\t255d\t0d\t0d\t//Red\tFF0000\n0\t1\t0.25\t128d\t0d\t0d\t//Maroon\t800000\n0.16666\t1\t0.5\t255d\t255d\t0d\t//Yellow\tFFFF00\tOUT2 128 to 127\n0.16666\t1\t0.25\t128d\t127d\t0d\t//Olive\t808000\n0.33333\t1\t0.5\t0d\t255d\t0d\t//Lime\t00FF00\n0.33333\t1\t0.25\t0d\t128d\t0d\t//Green\t800000\n0.5\t1\t0.5\t0d\t255d\t255d\t//Aqua\t00FFFF\n0.5\t1\t0.25\t0d\t128d\t127d\t//Teal\t808000\tOUT3 128 to 127\n0.66666\t1\t0.5\t0d\t0d\t255d\t//Blue\t0000FF\n0.66666\t1\t0.25\t0d\t0d\t128d\t//Navy\t800000\n"
+        }
+      ]
+    },
+    "@/test-rgb-bytes-to-hsl": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJVjMpDlE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJVjMpDlE",
+          "position": {
+            "x": 1,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "BJeEsf6DlE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJeEsf6DlE",
+          "position": {
+            "x": 2,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "BkSg9MaPl4": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkSg9MaPl4",
+          "position": {
+            "x": -0.05,
+            "y": 1
+          },
+          "type": "@/color-rgb-bytes",
+          "@@type": "xod-project/Node"
+        },
+        "Bkxx5MpPeE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bkxx5MpPeE",
+          "position": {
+            "x": -0.05,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "HJIlqfpvgN": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJIlqfpvgN",
+          "position": {
+            "x": 2,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "Hk8cG6wgV": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hk8cG6wgV",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/to-hsl",
+          "@@type": "xod-project/Node"
+        },
+        "HkT4OBGZ4": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkT4OBGZ4",
+          "position": {
+            "x": 6,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/tabtest",
+          "@@type": "xod-project/Node"
+        },
+        "Hkbiz6wlV": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hkbiz6wlV",
+          "position": {
+            "x": 0,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "r1xczTDxN": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1xczTDxN",
+          "position": {
+            "x": 1,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "rJblcMpDg4": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJblcMpDg4",
+          "position": {
+            "x": 4,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "HJce5zTwlE": {
+          "id": "HJce5zTwlE",
+          "input": {
+            "nodeId": "BkSg9MaPl4",
+            "pinKey": "Hklnz7WjoQ"
+          },
+          "output": {
+            "nodeId": "HJIlqfpvgN",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HyD9MaDlE": {
+          "id": "HyD9MaDlE",
+          "input": {
+            "nodeId": "Hk8cG6wgV",
+            "pinKey": "SJyVaGjsQ"
+          },
+          "output": {
+            "nodeId": "BkSg9MaPl4",
+            "pinKey": "S1f7XZij7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1wjfaDxE": {
+          "id": "S1wjfaDxE",
+          "input": {
+            "nodeId": "BJeEsf6DlE",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Hk8cG6wgV",
+            "pinKey": "SkeqVaziom"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SypeqfaDl4": {
+          "id": "SypeqfaDl4",
+          "input": {
+            "nodeId": "BkSg9MaPl4",
+            "pinKey": "S1Df7Wso7"
+          },
+          "output": {
+            "nodeId": "Bkxx5MpPeE",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkLjzpwg4": {
+          "id": "rkLjzpwg4",
+          "input": {
+            "nodeId": "BJVjMpDlE",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Hk8cG6wgV",
+            "pinKey": "Hkq4azoom"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkog5f6Dl4": {
+          "id": "rkog5f6Dl4",
+          "input": {
+            "nodeId": "BkSg9MaPl4",
+            "pinKey": "rkhfmWojX"
+          },
+          "output": {
+            "nodeId": "r1xczTDxN",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkriGavx4": {
+          "id": "rkriGavx4",
+          "input": {
+            "nodeId": "Hkbiz6wlV",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Hk8cG6wgV",
+            "pinKey": "S1PNaMjsX"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/test-rgb-bytes-to-hsl",
+      "description": "",
+      "attachments": [
+        {
+          "filename": "patch.test.tsv",
+          "encoding": "utf8",
+          "content": "IN1\tIN2\tIN3\tOUT1\tOUT2\tOUT3\r\n\r\n//main colors\n\n0d\t0d\t0d\t0\t0\t0\t//Black\t#000000\n128d\t128d\t128d\t0\t0\t0.50~\t//Gray\t#808080\n192d\t192d\t192d\t0\t0\t0.75~\t//Silver\t#COCOCO\n255d\t255d\t255d\t0\t0\t1\t//White\t#FFFFFF\n255d\t0d\t255d\t0.833~\t1\t0.50~\t//Fuchsia\t#FF00FF\n128d\t0d\t128d\t0.833~\t1\t0.25~\t//Purple\t#800080\n255d\t0d\t0d\t0\t1\t0.50~\t//Red\t#FF0000\n128d\t0d\t0d\t0\t1\t0.25~\t//Maroon\t#80000\n255d\t255d\t0d\t0.166~\t1\t0.50~\t//Yellow\t#FFFF00\n128d\t128d\t0d\t0.166~\t1\t0.25~\t//Olive\t#808000\n0d\t255d\t0d\t0.333~\t1\t0.50~\t//Lime\t#00FF00\n0d\t128d\t0d\t0.333~\t1\t0.25~\t//Green\t#008000\n0d\t255d\t255d\t0.5\t1\t0.50~\t//Aqua\t#00FFFF\n0d\t128d\t128d\t0.5\t1\t0.25~\t//Teal\t#008080\n0d\t0d\t255d\t0.666~\t1\t0.50~\t//Blue\t#0000FF\n0d\t0d\t128d\t0.666~\t1\t0.25~\t//Navy\t#000080\n\n//red tones\n\n205d\t92d\t92d\t0\t0.53~\t0.58~\t//IndianRed\t#CD5C5C\n240d\t128d\t128d\t0\t0.79~\t0.72~\t//LightCoral\t#F08080\n250d\t128d\t114d\t0.016~\t0.93~\t0.71~\t//Salmon\t#FA8072\n233d\t150d\t122d\t0.041~\t0.72~\t0.7~\t//DarkSalmon\t#E9967A\n255d\t160d\t122d\t0.047~\t1\t0.74~\t//LightSalmon\t#FFA07A\n220d\t20d\t60d\t0.966~\t0.83~\t0.47~\t//Crimson\t#DC143C\n255d\t0d\t0d\t0\t1\t0.5~\t//Red\t#FF0000\n178d\t34d\t34d\t0\t0.68~\t0.42~\t//FireBrick\t#B22222\n139d\t0d\t0d\t0\t1\t0.27~\t//DarkRed\t#8B0000\n\n//pink tones\n\n255d\t192d\t203d\t0.972~\t1\t0.88~\t//Pink\t#FFC0CB\n255d\t182d\t193d\t0.975~\t1\t0.86~\t//LightPink\t#FFB6C1\n255d\t105d\t180d\t0.916~\t1\t0.71~\t//HotPink\t#FF69B4\n255d\t20d\t147d\t0.911~\t1\t0.54~\t//DeepPink\t#FF1493\n199d\t21d\t133d\t0.894~\t0.81~\t0.43~\t//MediumVioletRed\t#C71585\n219d\t112d\t147d\t0.944~\t0.6~\t0.65~\t//PaleVioletRed\t#DB7093\n\n//orange tones\n\n255d\t160d\t122d\t0.047~\t1\t0.74~\t//LightSalmon\t#FFA07A\n255d\t127d\t80d\t0.044~\t1\t0.66~\t//Coral\t#FF7F50\n255d\t99d\t71d\t0.025~\t1\t0.64~\t//Tomato\t#FF6347\n255d\t69d\t0d\t0.044~\t1\t0.5~\t//OrangeRed\t#FF4500\n255d\t140d\t0d\t0.091~\t1\t0.5~\t//DarkOrange\t#FF8C00\n255d\t165d\t0d\t0.108~\t1\t0.5~\t//Orange\t#FFA500\n\n//yellow tones\n\n255d\t215d\t0d\t0.141~\t1\t0.5~\t//Gold\t#FFD700\n255d\t255d\t0d\t0.166~\t1\t0.5~\t//Yellow\t#FFFF00\n255d\t255d\t224d\t0.166~\t1\t0.94~\t//LightYellow\t#FFFFE0\n255d\t250d\t205d\t0.15\t1\t0.9~\t//LemonChiffon\t#FFFACD\n250d\t250d\t210d\t0.166~\t0.8~\t0.9~\t//LightGoldenrodYellow\t#FAFAD2\n255d\t239d\t213d\t0.102~\t1\t0.92~\t//PapayaWhip\t#FFEFD5\n255d\t228d\t181d\t0.105~\t1\t0.85~\t//Moccasin\t#FFE4B5\n255d\t218d\t185d\t0.077~\t1\t0.86~\t//PeachPuff\t#FFDAB9\n238d\t232d\t170d\t0.152~\t0.67~\t0.8~\t//PaleGoldenrod\t#EEE8AA\n240d\t230d\t140d\t0.15\t0.77~\t0.75~\t//Khaki\t#F0E68C\n189d\t183d\t107d\t0.155~\t0.38~\t0.58~\t//DarkKhaki\t#BDB76B\n\n//purple tones\n\n230d\t230d\t250d\t0.666~\t0.67~\t0.94~\t//Lavender\t#E6E6FA\n216d\t191d\t216d\t0.833~\t0.24~\t0.8~\t//Thistle\t#D8BFD8\n221d\t160d\t221d\t0.833~\t0.47~\t0.75~\t//Plum\t#DDA0DD\n238d\t130d\t238d\t0.833~\t0.76~\t0.72~\t//Violet\t#EE82EE\n218d\t112d\t214d\t0.833~\t0.59~\t0.65~\t//Orchid\t#DA70D6\n255d\t0d\t255d\t0.833~\t1\t0.5~\t//Fuchsia\t#FF00FF\n255d\t0d\t255d\t0.833~\t1\t0.5~\t//Magenta\t#FF00FF\n186d\t85d\t211d\t0.800~\t0.59~\t0.58~\t//MediumOrchid\t#BA55D3\n147d\t112d\t219d\t0.722~\t0.6~\t0.65~\t//MediumPurple\t#9370DB\n138d\t43d\t226d\t0.752~\t0.76~\t0.53~\t//BlueViolet\t#8A2BE2\n148d\t0d\t211d\t0.783~\t1\t0.41~\t//DarkViolet\t#9400D3\n153d\t50d\t204d\t0.577~\t0.61~\t0.5~\t//DarkOrchid\t#9932CC\n139d\t0d\t139d\t0.833~\t1\t0.27~\t//DarkMagenta\t#8B008B\n128d\t0d\t128d\t0.833~\t1\t0.25~\t//Purple\t#800080\n75d\t0d\t130d\t0.763~\t1\t0.25~\t//Indigo\t#4B0082\n106d\t90d\t205d\t0.688~\t0.53~\t0.58~\t//SlateBlue\t#6A5ACD\n72d\t61d\t139d\t0.688~\t0.39~\t0.39~\t//DarkSlateBlue\t#483D8B\n"
+        }
+      ]
+    },
+    "@/test-rgb-bytes-to-format": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkfD6dCPlN": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkfD6dCPlN",
+          "position": {
+            "x": -0.05,
+            "y": 1
+          },
+          "type": "@/color-rgb-bytes",
+          "@@type": "xod-project/Node"
+        },
+        "By_VdrfZV": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "By_VdrfZV",
+          "position": {
+            "x": 6,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/tabtest",
+          "@@type": "xod-project/Node"
+        },
+        "Bywp_RwgE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bywp_RwgE",
+          "position": {
+            "x": 1,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "HJQw6ORwx4": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJQw6ORwx4",
+          "position": {
+            "x": 2,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "SJZD6u0Pe4": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJZD6u0Pe4",
+          "position": {
+            "x": 4,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "SJxwp_CPeN": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJxwp_CPeN",
+          "position": {
+            "x": -0.05,
+            "y": -0.05
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "SyD0OAweV": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyD0OAweV",
+          "position": {
+            "x": 0,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-string",
+          "@@type": "xod-project/Node"
+        },
+        "ryjaORDgE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryjaORDgE",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/format-color",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "BJdP6_RDlN": {
+          "id": "BJdP6_RDlN",
+          "input": {
+            "nodeId": "BkfD6dCPlN",
+            "pinKey": "Hklnz7WjoQ"
+          },
+          "output": {
+            "nodeId": "HJQw6ORwx4",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1cPTuRDeN": {
+          "id": "r1cPTuRDeN",
+          "input": {
+            "nodeId": "BkfD6dCPlN",
+            "pinKey": "S1Df7Wso7"
+          },
+          "output": {
+            "nodeId": "SJxwp_CPeN",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkKwpuAPe4": {
+          "id": "rkKwpuAPe4",
+          "input": {
+            "nodeId": "BkfD6dCPlN",
+            "pinKey": "rkhfmWojX"
+          },
+          "output": {
+            "nodeId": "Bywp_RwgE",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ry9Rd0wlN": {
+          "id": "ry9Rd0wlN",
+          "input": {
+            "nodeId": "SyD0OAweV",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ryjaORDgE",
+            "pinKey": "S1YduQsj7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rygAdCPeV": {
+          "id": "rygAdCPeV",
+          "input": {
+            "nodeId": "ryjaORDgE",
+            "pinKey": "SyIDdXijQ"
+          },
+          "output": {
+            "nodeId": "BkfD6dCPlN",
+            "pinKey": "S1f7XZij7"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/test-rgb-bytes-to-format",
+      "description": "",
+      "attachments": [
+        {
+          "filename": "patch.test.tsv",
+          "encoding": "utf8",
+          "content": "IN1\tIN2\tIN3\tOUT\r\n\t\t\t\r\n//main colors\n\n0d\t0d\t0d\t\"000000\"\t//Black\n128d\t128d\t128d\t\"808080\"\t//Gray\n192d\t192d\t192d\t\"C0C0C0\"\t//Silver\n255d\t255d\t255d\t\"FFFFFF\"\t//White\n255d\t0d\t255d\t\"FF00FF\"\t//Fuchsia\n128d\t0d\t128d\t\"800080\"\t//Purple\n255d\t0d\t0d\t\"FF0000\"\t//Red\n128d\t0d\t0d\t\"800000\"\t//Maroon\n255d\t255d\t0d\t\"FFFF00\"\t//Yellow\n128d\t128d\t0d\t\"808000\"\t//Olive\n0d\t255d\t0d\t\"00FF00\"\t//Lime\n0d\t128d\t0d\t\"008000\"\t//Green\n0d\t255d\t255d\t\"00FFFF\"\t//Aqua\n0d\t128d\t128d\t\"008080\"\t//Teal\n0d\t0d\t255d\t\"0000FF\"\t//Blue\n0d\t0d\t128d\t\"000080\"\t//Navy\n\n//red tones\n\n205d\t92d\t92d\t\"CD5C5C\"\t//IndianRed\n240d\t128d\t128d\t\"F08080\"\t//LightCoral\n250d\t128d\t114d\t\"FA8072\"\t//Salmon\n233d\t150d\t122d\t\"E9967A\"\t//DarkSalmon\n255d\t160d\t122d\t\"FFA07A\"\t//LightSalmon\n220d\t20d\t60d\t\"DC143C\"\t//Crimson\n255d\t0d\t0d\t\"FF0000\"\t//Red\n178d\t34d\t34d\t\"B22222\"\t//FireBrick\n139d\t0d\t0d\t\"8B0000\"\t//DarkRed\n\n//pink tones\n\n255d\t192d\t203d\t\"FFC0CB\"\t//Pink\n255d\t182d\t193d\t\"FFB6C1\"\t//LightPink\n255d\t105d\t180d\t\"FF69B4\"\t//HotPink\n255d\t20d\t147d\t\"FF1493\"\t//DeepPink\n199d\t21d\t133d\t\"C71585\"\t//MediumVioletRed\n219d\t112d\t147d\t\"DB7093\"\t//PaleVioletRed\n\n//orange tones\n\n255d\t160d\t122d\t\"FFA07A\"\t//LightSalmon\n255d\t127d\t80d\t\"FF7F50\"\t//Coral\n255d\t99d\t71d\t\"FF6347\"\t//Tomato\n255d\t69d\t0d\t\"FF4500\"\t//OrangeRed\n255d\t140d\t0d\t\"FF8C00\"\t//DarkOrange\n255d\t165d\t0d\t\"FFA500\"\t//Orange\n\n//yellow tones\n\n255d\t215d\t0d\t\"FFD700\"\t//Gold\n255d\t255d\t0d\t\"FFFF00\"\t//Yellow\n255d\t255d\t224d\t\"FFFFE0\"\t//LightYellow\n255d\t250d\t205d\t\"FFFACD\"\t//LemonChiffon\n250d\t250d\t210d\t\"FAFAD2\"\t//LightGoldenrodYellow\n255d\t239d\t213d\t\"FFEFD5\"\t//PapayaWhip\n255d\t228d\t181d\t\"FFE4B5\"\t//Moccasin\n255d\t218d\t185d\t\"FFDAB9\"\t//PeachPuff\n238d\t232d\t170d\t\"EEE8AA\"\t//PaleGoldenrod\n240d\t230d\t140d\t\"F0E68C\"\t//Khaki\n189d\t183d\t107d\t\"BDB76B\"\t//DarkKhaki\n\n//purple tones\n\n230d\t230d\t250d\t\"E6E6FA\"\t//Lavender\n216d\t191d\t216d\t\"D8BFD8\"\t//Thistle\n221d\t160d\t221d\t\"DDA0DD\"\t//Plum\n238d\t130d\t238d\t\"EE82EE\"\t//Violet\n218d\t112d\t214d\t\"DA70D6\"\t//Orchid\n255d\t0d\t255d\t\"FF00FF\"\t//Fuchsia\n255d\t0d\t255d\t\"FF00FF\"\t//Magenta\n186d\t85d\t211d\t\"BA55D3\"\t//MediumOrchid\n147d\t112d\t219d\t\"9370DB\"\t//MediumPurple\n138d\t43d\t226d\t\"8A2BE2\"\t//BlueViolet\n148d\t0d\t211d\t\"9400D3\"\t//DarkViolet\n153d\t50d\t204d\t\"9932CC\"\t//DarkOrchid\n139d\t0d\t139d\t\"8B008B\"\t//DarkMagenta\n128d\t0d\t128d\t\"800080\"\t//Purple\n75d\t0d\t130d\t\"4B0082\"\t//Indigo\n106d\t90d\t205d\t\"6A5ACD\"\t//SlateBlue\n72d\t61d\t139d\t\"483D8B\"\t//DarkSlateBlue\n"
+        }
+      ]
+    },
+    "@/test-rgb-bytes-to-rgb-bytes": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkoU92wg4": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkoU92wg4",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "BytL5hDgN": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BytL5hDgN",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "H1Lmc3PlE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1Lmc3PlE",
+          "position": {
+            "x": 6,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "HJmBOBGWE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJmBOBGWE",
+          "position": {
+            "x": 8,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/tabtest",
+          "@@type": "xod-project/Node"
+        },
+        "HkircnDeN": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkircnDeN",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "@/to-rgb-bytes",
+          "@@type": "xod-project/Node"
+        },
+        "SkvO5hDxV": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkvO5hDxV",
+          "position": {
+            "x": 2,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "Sye5O53DgV": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sye5O53DgV",
+          "position": {
+            "x": 4,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "rJDBc3De4": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJDBc3De4",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "@/color-rgb-bytes",
+          "@@type": "xod-project/Node"
+        },
+        "rJgiL9hweV": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJgiL9hweV",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        },
+        "rk5_9nPeE": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rk5_9nPeE",
+          "position": {
+            "x": 3,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "H1pu92PgE": {
+          "id": "H1pu92PgE",
+          "input": {
+            "nodeId": "Sye5O53DgV",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HkircnDeN",
+            "pinKey": "S1ER4-isX"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1hOc3PxE": {
+          "id": "S1hOc3PxE",
+          "input": {
+            "nodeId": "rk5_9nPeE",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HkircnDeN",
+            "pinKey": "Sk7AV-ijX"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1lLDc2PxN": {
+          "id": "S1lLDc2PxN",
+          "input": {
+            "nodeId": "rJDBc3De4",
+            "pinKey": "Hklnz7WjoQ"
+          },
+          "output": {
+            "nodeId": "rJgiL9hweV",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJ8wc3veE": {
+          "id": "SJ8wc3veE",
+          "input": {
+            "nodeId": "rJDBc3De4",
+            "pinKey": "rkhfmWojX"
+          },
+          "output": {
+            "nodeId": "BkoU92wg4",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyaH53wlN": {
+          "id": "SyaH53wlN",
+          "input": {
+            "nodeId": "HkircnDeN",
+            "pinKey": "BkepNZjsQ"
+          },
+          "output": {
+            "nodeId": "rJDBc3De4",
+            "pinKey": "S1f7XZij7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1HPq3vgV": {
+          "id": "r1HPq3vgV",
+          "input": {
+            "nodeId": "rJDBc3De4",
+            "pinKey": "S1Df7Wso7"
+          },
+          "output": {
+            "nodeId": "BytL5hDgN",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryoO9nweN": {
+          "id": "ryoO9nweN",
+          "input": {
+            "nodeId": "SkvO5hDxV",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HkircnDeN",
+            "pinKey": "S1Z04Zjsm"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/test-rgb-bytes-to-rgb-bytes",
+      "description": "",
+      "attachments": [
+        {
+          "filename": "patch.test.tsv",
+          "encoding": "utf8",
+          "content": "IN1\tIN2\tIN3\tOUT1\tOUT2\tOUT3\n0d\t0d\t0d\t0d\t0d\t0d\n0d\t0d\t128d\t0d\t0d\t128d\n0d\t128d\t128d\t0d\t128d\t128d\n128d\t128d\t128d\t128d\t128d\t128d\n128d\t128d\t0d\t128d\t128d\t0d\n128d\t0d\t0d\t128d\t0d\t0d\n\n0d\t0d\t0d\t0d\t0d\t0d\n0d\t0d\t255d\t0d\t0d\t255d\n0d\t255d\t255d\t0d\t255d\t255d\n255d\t255d\t255d\t255d\t255d\t255d\n255d\t255d\t0d\t255d\t255d\t0d\n255d\t0d\t0d\t255d\t0d\t0d\n\n00h\t00h\t00h\t00h\t00h\t00h\n00h\t00h\t80h\t00h\t00h\t80h\n00h\t80h\t80h\t00h\t80h\t80h\n80h\t80h\t80h\t80h\t80h\t80h\n80h\t80h\t00h\t80h\t80h\t00h\n80h\t00h\t00h\t80h\t00h\t00h\n\n00h\t00h\t00h\t00h\t00h\t00h\n00h\t00h\tFFh\t00h\t00h\tFFh\n00h\tFFh\tFFh\t00h\tFFh\tFFh\nFFh\tFFh\tFFh\tFFh\tFFh\tFFh\nFFh\tFFh\t00h\tFFh\tFFh\t00h\nFFh\t00h\t00h\tFFh\t00h\t00h\n"
+        }
+      ]
+    },
+    "@/to-hsl": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "Hkq4azoom": {
+          "boundLiterals": {},
+          "description": "Saturation",
+          "label": "S",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hkq4azoom",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "S1PNaMjsX": {
+          "boundLiterals": {},
+          "description": "Hue",
+          "label": "H",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1PNaMjsX",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "SJyVaGjsQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJyVaGjsQ",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-color",
+          "@@type": "xod-project/Node"
+        },
+        "SkeqVaziom": {
+          "boundLiterals": {},
+          "description": "Lightness",
+          "label": "L",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkeqVaziom",
+          "position": {
+            "x": 4,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "rkeH6fsiX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkeH6fsiX",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/to-hsl",
+      "description": "Destructs a color value to hue, saturation, and lightness values. See color-hsl docs for more details",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    void evaluate(Context ctx)\n    {\n\n        auto color = getValue<input_IN>(ctx);\n        float r = color.r / 255.0f;\n        float g = color.g / 255.0f;\n        float b = color.b / 255.0f;\n\n        float _min = min(min(r, g), b);\n        float _max = max(max(r, g), b);\n        float delta = _max - _min;\n\n        float l, s;\n        float hue;\n\n        l = (_max + _min) / 2;\n\n        if (delta == 0) {\n            hue = 0;\n            s = 0;\n        }\n        else {\n            s = (l <= 0.5) ? (delta / (_max + _min)) : (delta / (2 - _max - _min));\n\n            if (r == _max) {\n                hue = ((g - b) / 6) / delta;\n            }\n            else if (g == _max) {\n                hue = (1.0f / 3) + ((b - r) / 6) / delta;\n            }\n            else {\n                hue = (2.0f / 3) + ((r - g) / 6) / delta;\n            }\n\n            if (hue < 0)\n                hue += 1;\n            if (hue > 1)\n                hue -= 1;\n        }\n        emitValue<output_H>(ctx, hue);\n        emitValue<output_S>(ctx, s);\n        emitValue<output_L>(ctx, l);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/to-rgb": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B14Poboo7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B14Poboo7",
+          "position": {
+            "x": -4,
+            "y": 1
+          },
+          "type": "xod/bits/u8-to-number",
+          "@@type": "xod-project/Node"
+        },
+        "B1efXsbiom": {
+          "boundLiterals": {},
+          "description": "Blue",
+          "label": "B",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1efXsbiom",
+          "position": {
+            "x": 8,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "BJeOvsbism": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJeOvsbism",
+          "position": {
+            "x": 8,
+            "y": 1
+          },
+          "type": "xod/bits/u8-to-number",
+          "@@type": "xod-project/Node"
+        },
+        "By5GsWjs7": {
+          "boundLiterals": {
+            "B1rSeJlnZ": "255",
+            "HkFBgJehW": "1"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "By5GsWjs7",
+          "position": {
+            "x": -4,
+            "y": 2
+          },
+          "type": "xod/math/map-clip",
+          "@@type": "xod-project/Node"
+        },
+        "ByzXjZjjX": {
+          "boundLiterals": {},
+          "description": "Green",
+          "label": "G",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByzXjZjjX",
+          "position": {
+            "x": 2,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "HJx5fjWjo7": {
+          "boundLiterals": {
+            "B1rSeJlnZ": "255",
+            "HkFBgJehW": "1"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJx5fjWjo7",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/math/map-clip",
+          "@@type": "xod-project/Node"
+        },
+        "HkbyibsjQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkbyibsjQ",
+          "position": {
+            "x": 1,
+            "y": -1
+          },
+          "type": "@/input-color",
+          "@@type": "xod-project/Node"
+        },
+        "S1uwoWoim": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1uwoWoim",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/bits/u8-to-number",
+          "@@type": "xod-project/Node"
+        },
+        "SJKyjZjim": {
+          "boundLiterals": {},
+          "description": "Red",
+          "label": "R",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJKyjZjim",
+          "position": {
+            "x": -4,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "SJWqGi-jo7": {
+          "boundLiterals": {
+            "B1rSeJlnZ": "255",
+            "HkFBgJehW": "1"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJWqGi-jo7",
+          "position": {
+            "x": 8,
+            "y": 2
+          },
+          "type": "xod/math/map-clip",
+          "@@type": "xod-project/Node"
+        },
+        "r13HiWoj7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r13HiWoj7",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "@/to-rgb-bytes",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "BJz_i-jiQ": {
+          "id": "BJz_i-jiQ",
+          "input": {
+            "nodeId": "SJWqGi-jo7",
+            "pinKey": "HJjEe1lnb"
+          },
+          "output": {
+            "nodeId": "BJeOvsbism",
+            "pinKey": "Sk43MO-Jm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1ldobsiX": {
+          "id": "H1ldobsiX",
+          "input": {
+            "nodeId": "BJeOvsbism",
+            "pinKey": "S113G_ZJm"
+          },
+          "output": {
+            "nodeId": "r13HiWoj7",
+            "pinKey": "S1ER4-isX"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1pvjWojQ": {
+          "id": "H1pvjWojQ",
+          "input": {
+            "nodeId": "By5GsWjs7",
+            "pinKey": "HJjEe1lnb"
+          },
+          "output": {
+            "nodeId": "B14Poboo7",
+            "pinKey": "Sk43MO-Jm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJJOs-sjm": {
+          "id": "HJJOs-sjm",
+          "input": {
+            "nodeId": "S1uwoWoim",
+            "pinKey": "S113G_ZJm"
+          },
+          "output": {
+            "nodeId": "r13HiWoj7",
+            "pinKey": "Sk7AV-ijX"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJaXi-ioX": {
+          "id": "HJaXi-ioX",
+          "input": {
+            "nodeId": "ByzXjZjjX",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HJx5fjWjo7",
+            "pinKey": "rJFmgJehW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkiDjbism": {
+          "id": "HkiDjbism",
+          "input": {
+            "nodeId": "HJx5fjWjo7",
+            "pinKey": "HJjEe1lnb"
+          },
+          "output": {
+            "nodeId": "S1uwoWoim",
+            "pinKey": "Sk43MO-Jm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HyRDsWisQ": {
+          "id": "HyRDsWisQ",
+          "input": {
+            "nodeId": "B14Poboo7",
+            "pinKey": "S113G_ZJm"
+          },
+          "output": {
+            "nodeId": "r13HiWoj7",
+            "pinKey": "S1Z04Zjsm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkoXoZooQ": {
+          "id": "SkoXoZooQ",
+          "input": {
+            "nodeId": "SJKyjZjim",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "By5GsWjs7",
+            "pinKey": "rJFmgJehW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkxLsZisX": {
+          "id": "SkxLsZisX",
+          "input": {
+            "nodeId": "r13HiWoj7",
+            "pinKey": "BkepNZjsQ"
+          },
+          "output": {
+            "nodeId": "HkbyibsjQ",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkyVi-som": {
+          "id": "SkyVi-som",
+          "input": {
+            "nodeId": "B1efXsbiom",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJWqGi-jo7",
+            "pinKey": "rJFmgJehW"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/to-rgb",
+      "description": "Destructs a color value into red, green, and blue components. Each component is in range [0, 1]",
+      "attachments": []
+    },
+    "@/to-rgb-bytes": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkepNZjsQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkepNZjsQ",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-color",
+          "@@type": "xod-project/Node"
+        },
+        "S1ER4-isX": {
+          "boundLiterals": {},
+          "description": "Blue",
+          "label": "B",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1ER4-isX",
+          "position": {
+            "x": 4,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "S1Z04Zjsm": {
+          "boundLiterals": {},
+          "description": "Red",
+          "label": "R",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1Z04Zjsm",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "Sk7AV-ijX": {
+          "boundLiterals": {},
+          "description": "Green",
+          "label": "G",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk7AV-ijX",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "rym6VWsim": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rym6VWsim",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/to-rgb-bytes",
+      "description": "Destructs a color value into red, green, and blue components encoded as byte values",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    void evaluate(Context ctx) {\n        auto color = getValue<input_IN>(ctx);\n        emitValue<output_R>(ctx, color.r);\n        emitValue<output_G>(ctx, color.g);\n        emitValue<output_B>(ctx, color.b);\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "authors": [
+    "XOD"
+  ],
+  "license": "AGPL-3.0",
+  "version": "0.37.3",
+  "description": "Library to work with color",
+  "apiKey": "",
+  "name": "color"
+}

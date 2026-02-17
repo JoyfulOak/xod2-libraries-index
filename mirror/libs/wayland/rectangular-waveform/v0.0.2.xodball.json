@@ -1,0 +1,276 @@
+{
+  "patches": {
+    "@/rectangular-waveform": {
+      "nodes": {
+        "ryqIIhKy0": {
+          "id": "ryqIIhKy0",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SyEDL3FkA": {
+          "id": "SyEDL3FkA",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulse on completion."
+        },
+        "ryHuLhKJR": {
+          "id": "ryHuLhKJR",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update."
+        },
+        "Hyz5LnKkC": {
+          "boundLiterals": {
+            "__out__": "1000"
+          },
+          "description": "Period in microseconds. Will be rounded to an integer value.",
+          "label": "Period",
+          "id": "Hyz5LnKkC",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SkNhL3tJ0": {
+          "boundLiterals": {
+            "__out__": "0.5"
+          },
+          "description": "Duty cycle value in range 0.0 … 1.0",
+          "label": "DUTY",
+          "id": "SkNhL3tJ0",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1lN3LnY1A": {
+          "description": "Board port (pin) to write to (consult https://www.pjrc.com/teensy/td_libs_TimerOne.html to find out which ports are linked to timer one on your board).",
+          "label": "PORT",
+          "id": "S1lN3LnY1A",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        }
+      },
+      "path": "@/rectangular-waveform",
+      "description": "Generate a rectangular waveform with the specified duty and period.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/PaulStoffregen/TimerOne\"\n\n#include <TimerOne.h>\n\nnode {\n\n    void evaluate(Context ctx) {\n\n        static_assert(isValidDigitalPort(constant_input_PORT), \"must be a valid digital port\");\n\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto duty = getValue<input_DUTY>(ctx);\n        duty = duty > 1 ? 1 : (duty < 0 ? 0 : duty);\n        int val = (int)(duty * 1023);\n\n        unsigned long period = getValue<input_Period>(ctx);\n\n        Timer1.initialize(period);\n        Timer1.pwm(constant_input_PORT, val);\n        \n        emitValue<output_DONE>(ctx, &Timer1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example": {
+      "nodes": {
+        "SJUfDnFJC": {
+          "id": "SJUfDnFJC",
+          "type": "@/rectangular-waveform",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "S1lN3LnY1A": "D9",
+            "Hyz5LnKkC": "1000000"
+          }
+        },
+        "rymmO2tJR": {
+          "id": "rymmO2tJR",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "rJ9VYhFy0": {
+          "id": "rJ9VYhFy0",
+          "type": "xod/debug/tweak-number",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ByfGSDjQE": "12"
+          }
+        },
+        "r1D3j2KkC": {
+          "id": "r1D3j2KkC",
+          "type": "xod/debug/tweak-number",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ByfGSDjQE": "0.5"
+          }
+        },
+        "rywQz6tJA": {
+          "id": "rywQz6tJA",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/math/round"
+        },
+        "BylP7zpYJC": {
+          "boundLiterals": {
+            "SkdIRuBD1b": "1000000"
+          },
+          "id": "BylP7zpYJC",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/divide"
+        },
+        "BkbD7M6KkR": {
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "id": "BkbD7M6KkR",
+          "position": {
+            "x": 3,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        }
+      },
+      "links": {
+        "BJPmdntJA": {
+          "id": "BJPmdntJA",
+          "output": {
+            "nodeId": "rymmO2tJR",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "SJUfDnFJC",
+            "pinKey": "ryHuLhKJR"
+          }
+        },
+        "H16VK3YyC": {
+          "id": "H16VK3YyC",
+          "output": {
+            "nodeId": "rJ9VYhFy0",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "SJUfDnFJC",
+            "pinKey": "Hyz5LnKkC"
+          }
+        },
+        "H1jnihFkA": {
+          "id": "H1jnihFkA",
+          "output": {
+            "nodeId": "r1D3j2KkC",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "SJUfDnFJC",
+            "pinKey": "SkNhL3tJ0"
+          }
+        },
+        "SJzw7GpYJR": {
+          "id": "SJzw7GpYJR",
+          "input": {
+            "nodeId": "BylP7zpYJC",
+            "pinKey": "BytUCdHD1-"
+          },
+          "output": {
+            "nodeId": "rywQz6tJA",
+            "pinKey": "rkO7L0uSP1Z"
+          }
+        },
+        "Hy7vmGaFyR": {
+          "id": "Hy7vmGaFyR",
+          "input": {
+            "nodeId": "BkbD7M6KkR",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BylP7zpYJC",
+            "pinKey": "BkqLCOSw1W"
+          }
+        },
+        "BykVG6Fk0": {
+          "id": "BykVG6Fk0",
+          "output": {
+            "nodeId": "rJ9VYhFy0",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "rywQz6tJA",
+            "pinKey": "BkF78AurDJW"
+          }
+        }
+      },
+      "comments": {
+        "ry4PQfTK10": {
+          "content": "# Frequency (Hz)",
+          "id": "ry4PQfTK10",
+          "position": {
+            "x": 5,
+            "y": 4,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        },
+        "H1BzgCtyC": {
+          "id": "H1BzgCtyC",
+          "position": {
+            "x": -9,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "width": 9,
+            "height": 3,
+            "units": "slots"
+          },
+          "content": "# TimerOne PWM pins on supported boards\n*Teensy (4.1 & 4.0)*     \t**7, 8**\n*Teensy (3.5 & 3.6)*\t**3, 4**\n*Teensy (3.2 & 3.1)*\t**3, 4**\n*Teensy (3.0)*   **3, 4**\n*Teensy (2.0)*\t**4, 14, 15**\n*Teensy++ (2.0)*\t**25, 26, 27**\n*Arduino Uno*\t**9, 10**\n*Arduino Leonardo*\t**9, 10, 11**\n*Arduino Mega*\t**11, 12, 13**\n*Wiring-S*\t**4, 5**\n*Sanguino*\t**12, 13**\n\nhttps://www.pjrc.com/teensy/td_libs_TimerOne.html"
+        }
+      },
+      "path": "@/example",
+      "description": "Patch to test the rectangular-waveform node. Run in debugger."
+    }
+  },
+  "license": "AGPL-3.0",
+  "version": "0.0.2",
+  "description": "Generates rectangular waveforms of a user-defined duty and period. Waveforms can have a maximum frequency of 1MHz (period of 1 microsecond). Uses Paul Stoffregen's TimeOne library:  https://github.com/PaulStoffregen/TimerOne.",
+  "name": "rectangular-waveform"
+}

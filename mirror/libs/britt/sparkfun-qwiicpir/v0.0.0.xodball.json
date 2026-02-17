@@ -1,0 +1,676 @@
+{
+  "patches": {
+    "@/qwiicpir-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/sparkfun/SparkFun_Qwiic_PIR_Arduino_Library\"\n\n#include <SparkFun_Qwiic_PIR.h>\n#define DEBOUNCE_TIME 750\n\nnode {\n\n    meta {\n    // define the custom type as a pointer\n        using Type = QwiicPIR*;\n    }\n\n    QwiicPIR pir = QwiicPIR();\n\n    void evaluate(Context ctx) {\n\n         if (!isSettingUp())\n            return;\n\n        auto wire = getValue<input_I2C>(ctx);\n\n        // init the pir sensor and returns an error if the i2c can not communicate with sensor\n        if (pir.begin() == false) {\n                raiseError(ctx);\n                return;\n            }\n\n        // returns the the pir function in the output to be used by other nodes via the patch terminal node\n          emitValue<output_DEV>(ctx, &pir);\n\n    }\n}\n"
+        }
+      ],
+      "description": "Creates the qwiic_PIR device and checks for proper i2c communications. ",
+      "nodes": {
+        "Byq1OPZhn": {
+          "id": "Byq1OPZhn",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "ByuedPZh2": {
+          "label": "DEV",
+          "id": "ByuedPZh2",
+          "type": "xod/patch-nodes/output-self",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "Bka5fRzh2": {
+          "label": "I2C",
+          "id": "Bka5fRzh2",
+          "type": "xod/i2c/input-i2c",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/qwiicpir-device"
+    },
+    "@/set-debounce": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    void evaluate(Context ctx) {\n\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto pir = getValue<input_DEV>(ctx);\n        pir -> setDebounceTime(getValue<input_DEB>(ctx));\n\n        emitValue<output_DONE>(ctx,1);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "BkmLeOWn3": {
+          "id": "BkmLeOWn3",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "HyyBWd-3n": {
+          "label": "UPD",
+          "id": "HyyBWd-3n",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rkWLb_Zhh": {
+          "label": "DONE ",
+          "id": "rkWLb_Zhh",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "Bk0R0pf22": {
+          "label": "DEV",
+          "id": "Bk0R0pf22",
+          "type": "@/input-qwiicpir-device",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "r1eM2TQ23": {
+          "id": "r1eM2TQ23",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "DEB"
+        }
+      },
+      "path": "@/set-debounce"
+    },
+    "@/fullpir": {
+      "links": {
+        "SJxI_tfh2": {
+          "id": "SJxI_tfh2",
+          "output": {
+            "nodeId": "rk6HutMnh",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "input": {
+            "nodeId": "rkgovFM22",
+            "pinKey": "HyyBWd-3n"
+          }
+        },
+        "BJHL_Fzhn": {
+          "id": "BJHL_Fzhn",
+          "output": {
+            "nodeId": "rk3NdYfn2",
+            "pinKey": "ByAIWR_UZ"
+          },
+          "input": {
+            "nodeId": "rk6HutMnh",
+            "pinKey": "ryv7IRdSP1b"
+          }
+        },
+        "B1xDdtMh2": {
+          "id": "B1xDdtMh2",
+          "output": {
+            "nodeId": "BkAWOtM22",
+            "pinKey": "ryVmUAOrvkb"
+          },
+          "input": {
+            "nodeId": "BJnLutG3n",
+            "pinKey": "SkSuD6LMb"
+          }
+        },
+        "HkQw_Yfnn": {
+          "id": "HkQw_Yfnn",
+          "output": {
+            "nodeId": "BJnLutG3n",
+            "pinKey": "Bk4gU0drwJ-"
+          },
+          "input": {
+            "nodeId": "rk6HutMnh",
+            "pinKey": "ByU7LRuSPkW"
+          }
+        },
+        "B1DfJAf3n": {
+          "id": "B1DfJAf3n",
+          "output": {
+            "nodeId": "Sk8cwFG3n",
+            "pinKey": "ByuedPZh2"
+          },
+          "input": {
+            "nodeId": "Hy8z1AG2h",
+            "pinKey": "__in__"
+          }
+        },
+        "HJ5f1RMh3": {
+          "id": "HJ5f1RMh3",
+          "output": {
+            "nodeId": "HyHZyCz2h",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rkgovFM22",
+            "pinKey": "Bk0R0pf22"
+          }
+        },
+        "r1LGzRMh2": {
+          "id": "r1LGzRMh2",
+          "output": {
+            "nodeId": "BkVMzRzhh",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "SJSFy0Ghh",
+            "pinKey": "HkREeRM2h"
+          }
+        },
+        "Hko7r0z3h": {
+          "id": "Hko7r0z3h",
+          "output": {
+            "nodeId": "rJKNf0Mh3",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "Sk8cwFG3n",
+            "pinKey": "Bka5fRzh2"
+          }
+        },
+        "r1REBRznh": {
+          "id": "r1REBRznh",
+          "output": {
+            "nodeId": "Sk8cwFG3n",
+            "pinKey": "ByuedPZh2"
+          },
+          "input": {
+            "nodeId": "SJSFy0Ghh",
+            "pinKey": "H1nR10Ghh"
+          }
+        },
+        "B136BAzh3": {
+          "id": "B136BAzh3",
+          "output": {
+            "nodeId": "SJSFy0Ghh",
+            "pinKey": "HkJnrAGhh"
+          },
+          "input": {
+            "nodeId": "B1qaSRMnn",
+            "pinKey": "__in__"
+          }
+        },
+        "SJ1Q8AMhn": {
+          "id": "SJ1Q8AMhn",
+          "output": {
+            "nodeId": "SJSFy0Ghh",
+            "pinKey": "SkFiWCz3h"
+          },
+          "input": {
+            "nodeId": "SkpGLCG33",
+            "pinKey": "__in__"
+          }
+        },
+        "HyWXIAzhn": {
+          "id": "HyWXIAzhn",
+          "output": {
+            "nodeId": "SJSFy0Ghh",
+            "pinKey": "Hk_ZIRf33"
+          },
+          "input": {
+            "nodeId": "HyryICG33",
+            "pinKey": "__in__"
+          }
+        },
+        "rJN7IRzh3": {
+          "id": "rJN7IRzh3",
+          "output": {
+            "nodeId": "SJSFy0Ghh",
+            "pinKey": "SyxZ80z2h"
+          },
+          "input": {
+            "nodeId": "SyzyU0G22",
+            "pinKey": "__in__"
+          }
+        },
+        "ByOEhp7n2": {
+          "id": "ByOEhp7n2",
+          "output": {
+            "nodeId": "Sy8N36Xn2",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rk3NdYfn2",
+            "pinKey": "BkjI-COLb"
+          }
+        },
+        "r1942Tmh2": {
+          "id": "r1942Tmh2",
+          "output": {
+            "nodeId": "Sy8N36Xn2",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rkgovFM22",
+            "pinKey": "r1eM2TQ23"
+          }
+        }
+      },
+      "nodes": {
+        "Sk8cwFG3n": {
+          "id": "Sk8cwFG3n",
+          "type": "@/qwiicpir-device",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "rkgovFM22": {
+          "id": "rkgovFM22",
+          "type": "@/set-debounce",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "BkAWOtM22": {
+          "id": "BkAWOtM22",
+          "type": "xod/core/boot",
+          "position": {
+            "x": 12,
+            "y": -1,
+            "units": "slots"
+          }
+        },
+        "rk3NdYfn2": {
+          "id": "rk3NdYfn2",
+          "position": {
+            "x": 10,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/pulse-on-change"
+        },
+        "rk6HutMnh": {
+          "id": "rk6HutMnh",
+          "type": "xod/core/any",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BJnLutG3n": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "BJnLutG3n",
+          "type": "xod/core/delay",
+          "position": {
+            "x": 13,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "HyHZyCz2h": {
+          "label": "DEV",
+          "id": "HyHZyCz2h",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "Hy8z1AG2h": {
+          "label": "DEV",
+          "id": "Hy8z1AG2h",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "SJSFy0Ghh": {
+          "id": "SJSFy0Ghh",
+          "type": "@/read-pir",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BkVMzRzhh": {
+          "label": "UDP",
+          "id": "BkVMzRzhh",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 3,
+            "y": -1,
+            "units": "slots"
+          }
+        },
+        "rJKNf0Mh3": {
+          "label": "I2C",
+          "id": "rJKNf0Mh3",
+          "type": "xod/i2c/input-i2c",
+          "position": {
+            "x": 1,
+            "y": -1,
+            "units": "slots"
+          }
+        },
+        "B1qaSRMnn": {
+          "label": "DONE",
+          "id": "B1qaSRMnn",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 12,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SyzyU0G22": {
+          "label": "DET",
+          "id": "SyzyU0G22",
+          "type": "xod/patch-nodes/output-boolean",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "HyryICG33": {
+          "label": "REM",
+          "id": "HyryICG33",
+          "type": "xod/patch-nodes/output-boolean",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SkpGLCG33": {
+          "label": "D",
+          "id": "SkpGLCG33",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "Sy8N36Xn2": {
+          "id": "Sy8N36Xn2",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 8,
+            "y": -1,
+            "units": "slots"
+          },
+          "label": "DEB"
+        }
+      },
+      "path": "@/fullpir"
+    },
+    "@/read-pir": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n\n    void evaluate(Context ctx) {\n\n        if (!isInputDirty<input_UPD>(ctx))\n           return;\n        auto pir = getValue<input_DEV>(ctx);\n\n        bool det = pir -> objectDetected();\n        bool rem = pir -> objectDetected();\n        uint16_t deb = pir -> getDebounceTime();\n\n\n        emitValue<output_DET>(ctx, det);\n        emitValue<output_REM>(ctx, rem);\n        emitValue<output_DEB>(ctx, deb);\n        emitValue<output_DONE>(ctx, 1);\n\n\n\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "Hk3FJ0zh2": {
+          "id": "Hk3FJ0zh2",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "H1nR10Ghh": {
+          "label": "DEV",
+          "id": "H1nR10Ghh",
+          "type": "@/input-qwiicpir-device",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HkREeRM2h": {
+          "label": "UPD",
+          "id": "HkREeRM2h",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SkFiWCz3h": {
+          "label": "DEB",
+          "id": "SkFiWCz3h",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "HkJnrAGhh": {
+          "label": "DONE",
+          "id": "HkJnrAGhh",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SyxZ80z2h": {
+          "label": "DET",
+          "id": "SyxZ80z2h",
+          "type": "xod/patch-nodes/output-boolean",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "Hk_ZIRf33": {
+          "label": "REM",
+          "id": "Hk_ZIRf33",
+          "type": "xod/patch-nodes/output-boolean",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/read-pir"
+    },
+    "@/example": {
+      "links": {
+        "HyMpiCG2h": {
+          "id": "HyMpiCG2h",
+          "output": {
+            "nodeId": "HJA3j0z32",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "ryhn8Rz32",
+            "pinKey": "BkVMzRzhh"
+          }
+        },
+        "SkUy30G23": {
+          "id": "SkUy30G23",
+          "output": {
+            "nodeId": "ryhn8Rz32",
+            "pinKey": "SyzyU0G22"
+          },
+          "input": {
+            "nodeId": "SJm1hAfnh",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "HJDk30G2n": {
+          "id": "HJDk30G2n",
+          "output": {
+            "nodeId": "ryhn8Rz32",
+            "pinKey": "HyryICG33"
+          },
+          "input": {
+            "nodeId": "SkSJhAz32",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "B1Y13Cz2h": {
+          "id": "B1Y13Cz2h",
+          "output": {
+            "nodeId": "ryhn8Rz32",
+            "pinKey": "SkpGLCG33"
+          },
+          "input": {
+            "nodeId": "BkerJ3Az23",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "H1wWnRGn3": {
+          "id": "H1wWnRGn3",
+          "output": {
+            "nodeId": "ryhn8Rz32",
+            "pinKey": "B1qaSRMnn"
+          },
+          "input": {
+            "nodeId": "Skb-hRz3n",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "S1jW3Rf2n": {
+          "id": "S1jW3Rf2n",
+          "output": {
+            "nodeId": "Skb-hRz3n",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "SkWrJnRGh2",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "SJ15267nh": {
+          "id": "SJ15267nh",
+          "output": {
+            "nodeId": "SkhKhTX2n",
+            "pinKey": "ByfGSDjQE"
+          },
+          "input": {
+            "nodeId": "ryhn8Rz32",
+            "pinKey": "Sy8N36Xn2"
+          }
+        }
+      },
+      "nodes": {
+        "ryhn8Rz32": {
+          "id": "ryhn8Rz32",
+          "type": "@/fullpir",
+          "position": {
+            "x": 12,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "HJA3j0z32": {
+          "id": "HJA3j0z32",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "SJm1hAfnh": {
+          "id": "SJm1hAfnh",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SkSJhAz32": {
+          "id": "SkSJhAz32",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 11,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "BkerJ3Az23": {
+          "id": "BkerJ3Az23",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 12,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SkWrJnRGh2": {
+          "id": "SkWrJnRGh2",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 16,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "Skb-hRz3n": {
+          "id": "Skb-hRz3n",
+          "position": {
+            "x": 16,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "SkhKhTX2n": {
+          "id": "SkhKhTX2n",
+          "type": "xod/debug/tweak-number",
+          "position": {
+            "x": 14,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ByfGSDjQE": "500"
+          }
+        }
+      },
+      "path": "@/example"
+    }
+  },
+  "name": "sparkfun-qwiicpir"
+}

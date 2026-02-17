@@ -1,0 +1,61 @@
+{
+  "patches": {
+    "@/mlx90614-1b": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/gilcabral/MLX90614-1B\"\n{{#global}}\n#include <Adafruit_MLX90614.h>\n{{/global}}\n\n\nstruct State {\n    uint8_t mem[sizeof(Adafruit_MLX90614)];\n};\n\n// Define our custom type as a pointer on the class instance.\nusing Type = Adafruit_MLX90614*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // It should be evaluated only once on the first (setup) transaction\n    if (isSettingUp()){\n    auto state = getState(ctx);\n    Type MLX90614 = new (state->mem) Adafruit_MLX90614();\n    MLX90614->begin();\n    delay(100);\n    }\n\n    if (isInputDirty<input_INIT>(ctx)){\n    auto state = getState(ctx);\n    auto MLX90614 = reinterpret_cast<Adafruit_MLX90614*>(state->mem);\n    emitValue<output_AmbientTempC>(ctx, MLX90614->readAmbientTempC());\n    emitValue<output_ObjectTempC>(ctx, MLX90614->readObjectTempC());\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "BJwI4GCN_": {
+          "label": "ObjectTempC",
+          "id": "BJwI4GCN_",
+          "position": {
+            "x": 1,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SyxvU4M0Nd": {
+          "label": "AmbientTempC",
+          "id": "SyxvU4M0Nd",
+          "position": {
+            "x": 0,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ByZwIVfAEd": {
+          "id": "ByZwIVfAEd",
+          "position": {
+            "x": 0,
+            "y": 0.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Bkfv8NMAV_": {
+          "description": "Get Reading",
+          "label": "INIT",
+          "id": "Bkfv8NMAV_",
+          "position": {
+            "x": 0,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/mlx90614-1b"
+    }
+  },
+  "license": "iamtech-mlx90614-1b",
+  "version": "0.0.1",
+  "description": "Address 1B of MLX90614-test",
+  "apiKey": "cad251a4-80c0-47e6-b8d3-08c4f2afc67b",
+  "name": "mlx90614-1b"
+}

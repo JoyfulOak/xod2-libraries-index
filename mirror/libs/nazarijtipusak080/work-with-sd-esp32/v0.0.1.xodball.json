@@ -1,0 +1,1246 @@
+{
+  "patches": {
+    "@/main": {
+      "nodes": {
+        "HJoxfnCxlg": {
+          "id": "HJoxfnCxlg",
+          "type": "@/write-5bytes-sd",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "H1K-p20lxl": {
+          "id": "H1K-p20lxl",
+          "type": "@/read-5bytes-sd",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/main"
+    },
+    "@/write-5bytes-sd": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_W\n#pragma XOD error_raise enable\n\n//{{#global}}\n#include <FS.h>\n#include <SD.h>\n#include <SPI.h>\n//{{/global}}\n\nnode {\n    bool begun;\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_W>(ctx))\n            return;\n\n        if (!begun) {\n            // Ініціалізація SPI та SD\n            auto csPin = getValue<input_CS>(ctx);\n            SPI.begin(18, 19, 23, csPin); // SCK, MISO, MOSI, CS\n            begun = SD.begin(csPin);\n        }\n\n      if (!begun) {\n            // Помилка ініціалізації\n            raiseError(ctx);\n            return;\n        }\n\n        // Отримання імені файлу\n        char filename[16] = { 0 };\n        dump(getValue<input_FILE>(ctx), filename);\n\n        // Спроба відкрити файл для запису\n        File file = SD.open(filename, FILE_WRITE);\n        if (!file) {\n            // Помилка відкриття файлу\n           begun = false;\n            raiseError(ctx);\n            return;\n        }\n\n        // Запис рядка у файл\n        uint8_t B0 = getValue<input_b0>(ctx);\n        uint8_t B1 = getValue<input_b1>(ctx);\n        uint8_t B2 = getValue<input_b2>(ctx);\n        uint8_t B3 = getValue<input_b3>(ctx);\n        uint8_t B4 = getValue<input_b4>(ctx);\n        uint8_t array[5] = {B0,B1,B2,B3,B4};\n       \n        file.seek(0);\n        file.write(array,5);\n        \n\n        // Додати новий рядок та завершити\n        \n        file.flush();\n        file.close();\n\n        // Передати сигнал про завершення\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "BydguiAege": {
+          "label": "b0",
+          "id": "BydguiAege",
+          "type": "xod/patch-nodes/input-byte",
+          "position": {
+            "x": 3,
+            "y": -709,
+            "units": "slots"
+          }
+        },
+        "S1JZdj0ell": {
+          "label": "b2",
+          "id": "S1JZdj0ell",
+          "type": "xod/patch-nodes/input-byte",
+          "position": {
+            "x": 5,
+            "y": -709,
+            "units": "slots"
+          }
+        },
+        "B1xJ-OjRxll": {
+          "label": "b3",
+          "id": "B1xJ-OjRxll",
+          "type": "xod/patch-nodes/input-byte",
+          "position": {
+            "x": 6,
+            "y": -709,
+            "units": "slots"
+          }
+        },
+        "BJeZ_s0eel": {
+          "label": "b4",
+          "id": "BJeZ_s0eel",
+          "type": "xod/patch-nodes/input-byte",
+          "position": {
+            "x": 7,
+            "y": -709,
+            "units": "slots"
+          }
+        },
+        "r1xxbdjCgeg": {
+          "label": "b1",
+          "id": "r1xxbdjCgeg",
+          "type": "xod/patch-nodes/input-byte",
+          "position": {
+            "x": 4,
+            "y": -709,
+            "units": "slots"
+          }
+        },
+        "B1fvOsCgel": {
+          "description": "Write data to a file on the SD-Card. Will create the file if it does not exist.",
+          "id": "B1fvOsCgel",
+          "position": {
+            "x": 0,
+            "y": -708,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rklfD_s0lgg": {
+          "boundLiterals": {
+            "__out__": "D4"
+          },
+          "description": "CS (chip select) pin the SD card reader is connected to. Also known as SS (slave select).",
+          "label": "CS",
+          "id": "rklfD_s0lgg",
+          "position": {
+            "x": -1,
+            "y": -709,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rkWfwdsReex": {
+          "description": "Perform file open, write, flush, close cycle",
+          "label": "W",
+          "id": "rkWfwdsReex",
+          "position": {
+            "x": 1,
+            "y": -709,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkQMw_jRxgx": {
+          "description": "File name to append to",
+          "label": "FILE",
+          "id": "rkQMw_jRxgx",
+          "position": {
+            "x": 0,
+            "y": -709,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Sy4zvdjAglx": {
+          "description": "Fires when write is done",
+          "label": "DONE",
+          "id": "Sy4zvdjAglx",
+          "position": {
+            "x": 0,
+            "y": -707,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/write-5bytes-sd"
+    },
+    "@/read-5bytes-sd": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_R\n#pragma XOD error_raise enable\n\n#include <SPI.h>\n#include <SD.h>\n\nnode {\n\n    bool begun;\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_R>(ctx))\n            return;\n\n        if (!begun) {\n            // First time use, initialize\n            auto csPin = getValue<input_CS>(ctx);\n            SPI.begin(18, 19, 23, csPin); // SCK, MISO, MOSI, CS\n            begun = SD.begin(csPin);\n        }\n\n        if (!begun) {\n            // Initialization failed (wrong connection, no SD card)\n            raiseError(ctx);\n            return;\n        }\n\n        char filename[16] = { 0 };\n        dump(getValue<input_FILE>(ctx), filename);\n        File myFile = SD.open(filename, FILE_READ);\n        if (!myFile) {\n            // Failed to open the file. Maybe, SD card gone,\n            // try to reinit next time\n            begun = false;\n            raiseError(ctx); // Can't open file\n            return;\n        }\n\n        // No need for input_START and input_CAP if we are only reading 5 bytes\n        myFile.seek(0);  // Почати з першого байта файлу\n\n        uint8_t byteArray[5] = {0};  // Масив для збереження 5 байт\n\n        uint8_t index = 0;\n        while (myFile.available() && index < 5) {  // Читаємо до 5 байтів\n            byteArray[index] = myFile.read();  // Читаємо байт і записуємо в масив\n            index++;\n        }\n\n        //int pos = myFile.position();  // Отримуємо поточну позицію в файлі\n        myFile.close();  // Закриваємо файл\n\n        // Передаємо 5 байтів через виходи\n        emitValue<output_B0>(ctx, byteArray[0]);\n        emitValue<output_B1>(ctx, byteArray[1]);\n        emitValue<output_B2>(ctx, byteArray[2]);\n        emitValue<output_B3>(ctx, byteArray[3]);\n        emitValue<output_B4>(ctx, byteArray[4]);\n\n        // Передаємо сигнал про завершення\n        emitValue<output_DONE>(ctx, 1);\n        //emitValue<output_POS>(ctx, pos);  // Позиція в файлі\n    }\n}"
+        }
+      ],
+      "nodes": {
+        "ry3Poh0exg": {
+          "id": "ry3Poh0exg",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJx2PinAgxx": {
+          "boundLiterals": {
+            "__out__": "D4"
+          },
+          "description": "CS (chip select) pin the SD card reader is connected to. Also known as SS (slave select).",
+          "label": "CS",
+          "id": "HJx2PinAgxx",
+          "position": {
+            "x": 0,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Bk-2vohRlle": {
+          "description": "Perform file open, read, close cycle",
+          "label": "R",
+          "id": "Bk-2vohRlle",
+          "position": {
+            "x": 4,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S1z3Pj3Axxg": {
+          "description": "File name to append to",
+          "label": "FILE",
+          "id": "S1z3Pj3Axxg",
+          "position": {
+            "x": 1,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Sk73Dj3Reex": {
+          "description": "Fires when write is done",
+          "label": "DONE",
+          "id": "Sk73Dj3Reex",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hy4sh20gxl": {
+          "label": "B0",
+          "id": "Hy4sh20gxl",
+          "type": "xod/patch-nodes/output-byte",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "S1ds220xeg": {
+          "label": "B1",
+          "id": "S1ds220xeg",
+          "type": "xod/patch-nodes/output-byte",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rJasnnRxle": {
+          "label": "B2",
+          "id": "rJasnnRxle",
+          "type": "xod/patch-nodes/output-byte",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "SyxTihn0eel": {
+          "label": "B3",
+          "id": "SyxTihn0eel",
+          "type": "xod/patch-nodes/output-byte",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "Bk1n3nAlxe": {
+          "label": "B4",
+          "id": "Bk1n3nAlxe",
+          "type": "xod/patch-nodes/output-byte",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/read-5bytes-sd"
+    },
+    "@/example-write": {
+      "links": {
+        "ryVwC2JWxg": {
+          "id": "ryVwC2JWxg",
+          "output": {
+            "nodeId": "Hybv02k-el",
+            "pinKey": "Bk4gU0drwJ-"
+          },
+          "input": {
+            "nodeId": "rJcJ02yble",
+            "pinKey": "rkWfwdsReex"
+          }
+        },
+        "H1UyepkZeg": {
+          "id": "H1UyepkZeg",
+          "output": {
+            "nodeId": "rJcJ02yble",
+            "pinKey": "Sy4zvdjAglx"
+          },
+          "input": {
+            "nodeId": "ryg1gTJWeg",
+            "pinKey": "ryTIROHwkW"
+          }
+        },
+        "H14exT1Zxe": {
+          "id": "H14exT1Zxe",
+          "output": {
+            "nodeId": "ryg1gTJWeg",
+            "pinKey": "HkyxURuSPyW"
+          },
+          "input": {
+            "nodeId": "rkAygpkbxe",
+            "pinKey": "HJ6HsEngZ"
+          }
+        }
+      },
+      "nodes": {
+        "rJcJ02yble": {
+          "boundLiterals": {
+            "rkQMw_jRxgx": "\"/monday.txt\"",
+            "BydguiAege": "41h",
+            "r1xxbdjCgeg": "42h",
+            "S1JZdj0ell": "43h",
+            "B1xJ-OjRxll": "44h",
+            "BJeZ_s0eel": "45h"
+          },
+          "id": "rJcJ02yble",
+          "type": "@/write-5bytes-sd",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "Hybv02k-el": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2",
+            "SkSuD6LMb": "On Boot"
+          },
+          "id": "Hybv02k-el",
+          "type": "xod/core/delay",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "ryg1gTJWeg": {
+          "id": "ryg1gTJWeg",
+          "type": "xod/core/flip-flop",
+          "position": {
+            "x": 2,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "rkAygpkbxe": {
+          "boundLiterals": {
+            "rJjXFA9JQ": "D2"
+          },
+          "id": "rkAygpkbxe",
+          "type": "xod/gpio/digital-write",
+          "position": {
+            "x": 1,
+            "y": 6,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example-write"
+    },
+    "@/example-read": {
+      "links": {
+        "SyaGVTJWgx": {
+          "id": "SyaGVTJWgx",
+          "output": {
+            "nodeId": "B1l14TJ-xe",
+            "pinKey": "Hy4sh20gxl"
+          },
+          "input": {
+            "nodeId": "BJuMVpJZgl",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "r1t7E61Wxg": {
+          "id": "r1t7E61Wxg",
+          "output": {
+            "nodeId": "B1l14TJ-xe",
+            "pinKey": "S1ds220xeg"
+          },
+          "input": {
+            "nodeId": "BkmQE6kWex",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "SysQVpJWee": {
+          "id": "SysQVpJWee",
+          "output": {
+            "nodeId": "B1l14TJ-xe",
+            "pinKey": "rJasnnRxle"
+          },
+          "input": {
+            "nodeId": "HJnX7Vay-el",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "r1Tm4aJ-xe": {
+          "id": "r1Tm4aJ-xe",
+          "output": {
+            "nodeId": "B1l14TJ-xe",
+            "pinKey": "SyxTihn0eel"
+          },
+          "input": {
+            "nodeId": "SyB7EpyWlx",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "HykNETyWxe": {
+          "id": "HykNETyWxe",
+          "output": {
+            "nodeId": "B1l14TJ-xe",
+            "pinKey": "Bk1n3nAlxe"
+          },
+          "input": {
+            "nodeId": "r1UmVp1bxx",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "HkLOEpJ-xg": {
+          "id": "HkLOEpJ-xg",
+          "output": {
+            "nodeId": "rkXu4Tk-lg",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "B1l14TJ-xe",
+            "pinKey": "Bk-2vohRlle"
+          }
+        }
+      },
+      "nodes": {
+        "B1l14TJ-xe": {
+          "boundLiterals": {
+            "S1z3Pj3Axxg": "\"/monday.txt\""
+          },
+          "id": "B1l14TJ-xe",
+          "type": "@/read-5bytes-sd",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "BJuMVpJZgl": {
+          "id": "BJuMVpJZgl",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 5,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "BkmQE6kWex": {
+          "id": "BkmQE6kWex",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "HJnX7Vay-el": {
+          "id": "HJnX7Vay-el",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "SyB7EpyWlx": {
+          "id": "SyB7EpyWlx",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 8,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "r1UmVp1bxx": {
+          "id": "r1UmVp1bxx",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 9,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "rkXu4Tk-lg": {
+          "id": "rkXu4Tk-lg",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example-read"
+    },
+    "@/write-buffer1-on-sd": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_W\n#pragma XOD error_raise enable\n\n//{{#global}}\n#include <FS.h>\n#include <SD.h>\n#include <SPI.h>\n//{{/global}}\n\nnode {\n    bool begun;\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_W>(ctx))\n            return;\n\n        if (!begun) {\n            // Ініціалізація SPI та SD\n            auto csPin = getValue<input_CS>(ctx);\n            SPI.begin(18, 19, 23, csPin); // SCK, MISO, MOSI, CS\n            begun = SD.begin(csPin);\n        }\n\n      if (!begun) {\n            // Помилка ініціалізації\n            raiseError(ctx);\n            return;\n        }\n\n        // Отримання імені файлу\n        char filename[16] = { 0 };\n        dump(getValue<input_FILE>(ctx), filename);\n\n        // Спроба відкрити файл для запису\n        File file = SD.open(filename, FILE_WRITE);\n        if (!file) {\n            // Помилка відкриття файлу\n           begun = false;\n            raiseError(ctx);\n            return;\n        }\n\n        auto _object = getValue<input_buffer1>(ctx); // buffer1\n\n \n       \n        file.seek(0);\n        file.write(_object->buffer,_object->len);\n        \n\n        // Додати новий рядок та завершити\n        \n        file.flush();\n        file.close();\n\n        // Передати сигнал про завершення\n        emitValue<output_DONE>(ctx, 1);\n        emitValue<output_buffer>(ctx, _object); // convenience\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "Hy4-_aJ-lg": {
+          "description": "Write data to a file on the SD-Card. Will create the file if it does not exist.",
+          "id": "Hy4-_aJ-lg",
+          "position": {
+            "x": 1,
+            "y": 0.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1xEW_aJWxe": {
+          "boundLiterals": {
+            "__out__": "D4"
+          },
+          "description": "CS (chip select) pin the SD card reader is connected to. Also known as SS (slave select).",
+          "label": "CS",
+          "id": "H1xEW_aJWxe",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "H1ZNWOTybge": {
+          "description": "Perform file open, write, flush, close cycle",
+          "label": "W",
+          "id": "H1ZNWOTybge",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJzVbdTkZlx": {
+          "description": "File name to append to",
+          "label": "FILE",
+          "id": "SJzVbdTkZlx",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "r17EWd6yZgx": {
+          "description": "Fires when write is done",
+          "label": "DONE",
+          "id": "r17EWd6yZgx",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "r1m__T1-gl": {
+          "label": "buffer1",
+          "id": "r1m__T1-gl",
+          "position": {
+            "x": -1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "nazarijtipusak080/buffer1/input-buffer1"
+        },
+        "rJgXddTkZgg": {
+          "label": "buffer",
+          "id": "rJgXddTkZgg",
+          "position": {
+            "x": -1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "nazarijtipusak080/buffer1/output-buffer1"
+        }
+      },
+      "path": "@/write-buffer1-on-sd"
+    },
+    "@/example-write-buffer1-on-sd": {
+      "links": {
+        "rkbM2ay-ge": {
+          "id": "rkbM2ay-ge",
+          "output": {
+            "nodeId": "r1vZh6Jbee",
+            "pinKey": "rymHO_t3pC"
+          },
+          "input": {
+            "nodeId": "BkCWnpJbxl",
+            "pinKey": "rkllntWl0R"
+          }
+        },
+        "H1EfhT1Zle": {
+          "id": "H1EfhT1Zle",
+          "output": {
+            "nodeId": "r1vZh6Jbee",
+            "pinKey": "rymHO_t3pC"
+          },
+          "input": {
+            "nodeId": "SkI2jTJWxg",
+            "pinKey": "r1m__T1-gl"
+          }
+        },
+        "SkbXUhakble": {
+          "id": "SkbXUhakble",
+          "output": {
+            "nodeId": "ry7I3p1Wxe",
+            "pinKey": "HkyxURuSPyW"
+          },
+          "input": {
+            "nodeId": "B1xm8n6yWlx",
+            "pinKey": "HJ6HsEngZ"
+          }
+        },
+        "r1Y8npk-eg": {
+          "id": "r1Y8npk-eg",
+          "output": {
+            "nodeId": "SkI2jTJWxg",
+            "pinKey": "r17EWd6yZgx"
+          },
+          "input": {
+            "nodeId": "ry7I3p1Wxe",
+            "pinKey": "ryTIROHwkW"
+          }
+        },
+        "Skk_3T1-le": {
+          "id": "Skk_3T1-le",
+          "output": {
+            "nodeId": "r1vZh6Jbee",
+            "pinKey": "rJGB__F3pC"
+          },
+          "input": {
+            "nodeId": "BkCWnpJbxl",
+            "pinKey": "rkzx2YWlRR"
+          }
+        },
+        "BJ9KnTyZxe": {
+          "id": "BJ9KnTyZxe",
+          "output": {
+            "nodeId": "Sktu2Ty-xl",
+            "pinKey": "Bk4gU0drwJ-"
+          },
+          "input": {
+            "nodeId": "SkI2jTJWxg",
+            "pinKey": "H1ZNWOTybge"
+          }
+        },
+        "S1fSkCyblx": {
+          "id": "S1fSkCyblx",
+          "output": {
+            "nodeId": "r1vZh6Jbee",
+            "pinKey": "rymHO_t3pC"
+          },
+          "input": {
+            "nodeId": "Hy0V1RyZll",
+            "pinKey": "H1jZYY3pA"
+          }
+        },
+        "Bk8rkCkble": {
+          "id": "Bk8rkCkble",
+          "output": {
+            "nodeId": "BkCWnpJbxl",
+            "pinKey": "Hy7x3Ybe00"
+          },
+          "input": {
+            "nodeId": "Hy0V1RyZll",
+            "pinKey": "SkGvbKKnTC"
+          }
+        },
+        "ryYrJCyWxe": {
+          "id": "ryYrJCyWxe",
+          "output": {
+            "nodeId": "Hy0V1RyZll",
+            "pinKey": "HymwbFthT0"
+          },
+          "input": {
+            "nodeId": "Sktu2Ty-xl",
+            "pinKey": "SkSuD6LMb"
+          }
+        }
+      },
+      "nodes": {
+        "SkI2jTJWxg": {
+          "boundLiterals": {
+            "SJzVbdTkZlx": "\"/monday3.txt\""
+          },
+          "id": "SkI2jTJWxg",
+          "type": "@/write-buffer1-on-sd",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "r1vZh6Jbee": {
+          "boundLiterals": {
+            "Sy-S_uF26C": "10"
+          },
+          "id": "r1vZh6Jbee",
+          "type": "nazarijtipusak080/buffer1/buffer1",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "BkCWnpJbxl": {
+          "boundLiterals": {
+            "HJ-ghYWeRA": "10",
+            "HydjcZxC0": "01h"
+          },
+          "id": "BkCWnpJbxl",
+          "type": "nazarijtipusak080/buffer1/fill-buffer1",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "ry7I3p1Wxe": {
+          "id": "ry7I3p1Wxe",
+          "type": "xod/core/flip-flop",
+          "position": {
+            "x": 3,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "B1xm8n6yWlx": {
+          "boundLiterals": {
+            "rJjXFA9JQ": "D2"
+          },
+          "id": "B1xm8n6yWlx",
+          "type": "xod/gpio/digital-write",
+          "position": {
+            "x": 2,
+            "y": 7,
+            "units": "slots"
+          }
+        },
+        "Sktu2Ty-xl": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "2"
+          },
+          "id": "Sktu2Ty-xl",
+          "type": "xod/core/delay",
+          "position": {
+            "x": 12,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "Hy0V1RyZll": {
+          "boundLiterals": {
+            "H1bvbYK36R": "3"
+          },
+          "id": "Hy0V1RyZll",
+          "type": "nazarijtipusak080/buffer1/set-byte",
+          "position": {
+            "x": 18,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example-write-buffer1-on-sd"
+    },
+    "@/fill-buffer1-from-sd": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_R\n#pragma XOD error_raise enable\n\n#include <SPI.h>\n#include <SD.h>\n\nnode {\n\n    bool begun;\n\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_R>(ctx))\n            return;\n\n        if (!begun) {\n            // First time use, initialize\n            auto csPin = getValue<input_CS>(ctx);\n            SPI.begin(18, 19, 23, csPin); // SCK, MISO, MOSI, CS\n            begun = SD.begin(csPin);\n        }\n\n        if (!begun) {\n            // Initialization failed (wrong connection, no SD card)\n            raiseError(ctx);\n            return;\n        }\n\n        char filename[16] = { 0 };\n        dump(getValue<input_FILE>(ctx), filename);\n        File myFile = SD.open(filename, FILE_READ);\n        if (!myFile) {\n            // Failed to open the file. Maybe, SD card gone,\n            // try to reinit next time\n            begun = false;\n            raiseError(ctx); // Can't open file\n            return;\n        }\n         auto _object = getValue<input_buffer1>(ctx); // буфер\n        // No need for input_START and input_CAP if we are only reading 5 bytes\n        myFile.seek(0);  // Почати з першого байта файлу\n\n        \n\n        uint8_t index = 0;\n        while (myFile.available() && index <_object->len ) {  // Читаємо  \n            _object->buffer[index] = myFile.read();  // Читаємо байт і записуємо в buffer1\n            index++;\n        }\n\n        //int pos = myFile.position();  // Отримуємо поточну позицію в файлі\n        myFile.close();  // Закриваємо файл\n\n       \n        // Передаємо сигнал про завершення\n        emitValue<output_DONE>(ctx, 1);\n        //emitValue<output_POS>(ctx, pos);  // Позиція в файлі\n         emitValue<output_buffer>(ctx, _object); // convenience\n    }\n}"
+        }
+      ],
+      "nodes": {
+        "rJTqGRkbxg": {
+          "label": "buffer1",
+          "id": "rJTqGRkbxg",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "nazarijtipusak080/buffer1/input-buffer1"
+        },
+        "ByeaqzCkZll": {
+          "label": "buffer",
+          "id": "ByeaqzCkZll",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "nazarijtipusak080/buffer1/output-buffer1"
+        },
+        "H1cnMCJbxx": {
+          "boundLiterals": {
+            "__out__": "D4"
+          },
+          "description": "CS (chip select) pin the SD card reader is connected to. Also known as SS (slave select).",
+          "label": "CS",
+          "id": "H1cnMCJbxx",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Byeq2GRyWxe": {
+          "description": "Perform file open, read, close cycle",
+          "label": "R",
+          "id": "Byeq2GRyWxe",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BJW9nGRyWlg": {
+          "description": "File name to append to",
+          "label": "FILE",
+          "id": "BJW9nGRyWlg",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "r1M53GR1Wxx": {
+          "id": "r1M53GR1Wxx",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Hymc3zA1bel": {
+          "description": "Fires when write is done",
+          "label": "DONE",
+          "id": "Hymc3zA1bel",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/fill-buffer1-from-sd"
+    },
+    "@/example-fll-buffer1-from-sd": {
+      "links": {
+        "Syp6rAk-ge": {
+          "id": "Syp6rAk-ge",
+          "output": {
+            "nodeId": "Skd6rR1blx",
+            "pinKey": "rymHO_t3pC"
+          },
+          "input": {
+            "nodeId": "ryttBCkblx",
+            "pinKey": "rJTqGRkbxg"
+          }
+        },
+        "BysCSCyWel": {
+          "id": "BysCSCyWel",
+          "output": {
+            "nodeId": "SJFRHRJblg",
+            "pinKey": "Bkf4BDsmV"
+          },
+          "input": {
+            "nodeId": "ryttBCkblx",
+            "pinKey": "Byeq2GRyWxe"
+          }
+        },
+        "BJgmU0ybgx": {
+          "id": "BJgmU0ybgx",
+          "output": {
+            "nodeId": "ryttBCkblx",
+            "pinKey": "ByeaqzCkZll"
+          },
+          "input": {
+            "nodeId": "BkWGI0kblg",
+            "pinKey": "HkxhXqthTC"
+          }
+        },
+        "S1z7LCJWge": {
+          "id": "S1z7LCJWge",
+          "output": {
+            "nodeId": "ryttBCkblx",
+            "pinKey": "ByeaqzCkZll"
+          },
+          "input": {
+            "nodeId": "SJUf8RJble",
+            "pinKey": "HkxhXqthTC"
+          }
+        },
+        "HyPQURJ-ge": {
+          "id": "HyPQURJ-ge",
+          "output": {
+            "nodeId": "ryttBCkblx",
+            "pinKey": "ByeaqzCkZll"
+          },
+          "input": {
+            "nodeId": "SkvGLAkWeg",
+            "pinKey": "HkxhXqthTC"
+          }
+        },
+        "SkqmICkWle": {
+          "id": "SkqmICkWle",
+          "output": {
+            "nodeId": "ryttBCkblx",
+            "pinKey": "ByeaqzCkZll"
+          },
+          "input": {
+            "nodeId": "BydGLC1Zxx",
+            "pinKey": "HkxhXqthTC"
+          }
+        },
+        "r1TQLAJbxe": {
+          "id": "r1TQLAJbxe",
+          "output": {
+            "nodeId": "ryttBCkblx",
+            "pinKey": "ByeaqzCkZll"
+          },
+          "input": {
+            "nodeId": "H1Ff8Ryble",
+            "pinKey": "HkxhXqthTC"
+          }
+        },
+        "HykNUC1Wxg": {
+          "id": "HykNUC1Wxg",
+          "output": {
+            "nodeId": "ryttBCkblx",
+            "pinKey": "ByeaqzCkZll"
+          },
+          "input": {
+            "nodeId": "Sk5MURybgg",
+            "pinKey": "HkxhXqthTC"
+          }
+        },
+        "B1tBI0k-le": {
+          "id": "B1tBI0k-le",
+          "output": {
+            "nodeId": "BkWGI0kblg",
+            "pinKey": "rkQTz9K2TA"
+          },
+          "input": {
+            "nodeId": "SJUf8RJble",
+            "pinKey": "B1baf5YhTC"
+          }
+        },
+        "Skb8UR1bge": {
+          "id": "Skb8UR1bge",
+          "output": {
+            "nodeId": "SJUf8RJble",
+            "pinKey": "rkQTz9K2TA"
+          },
+          "input": {
+            "nodeId": "SkvGLAkWeg",
+            "pinKey": "B1baf5YhTC"
+          }
+        },
+        "SkNLU0yWlx": {
+          "id": "SkNLU0yWlx",
+          "output": {
+            "nodeId": "SkvGLAkWeg",
+            "pinKey": "rkQTz9K2TA"
+          },
+          "input": {
+            "nodeId": "BydGLC1Zxx",
+            "pinKey": "B1baf5YhTC"
+          }
+        },
+        "r1IIURkZll": {
+          "id": "r1IIURkZll",
+          "output": {
+            "nodeId": "BydGLC1Zxx",
+            "pinKey": "rkQTz9K2TA"
+          },
+          "input": {
+            "nodeId": "H1Ff8Ryble",
+            "pinKey": "B1baf5YhTC"
+          }
+        },
+        "SkK8IRJbee": {
+          "id": "SkK8IRJbee",
+          "output": {
+            "nodeId": "H1Ff8Ryble",
+            "pinKey": "rkQTz9K2TA"
+          },
+          "input": {
+            "nodeId": "Sk5MURybgg",
+            "pinKey": "B1baf5YhTC"
+          }
+        },
+        "HJ1u8Rybxl": {
+          "id": "HJ1u8Rybxl",
+          "output": {
+            "nodeId": "ryttBCkblx",
+            "pinKey": "Hymc3zA1bel"
+          },
+          "input": {
+            "nodeId": "BkWGI0kblg",
+            "pinKey": "B1baf5YhTC"
+          }
+        },
+        "B13OIC1Weg": {
+          "id": "B13OIC1Weg",
+          "output": {
+            "nodeId": "BkWGI0kblg",
+            "pinKey": "r1MTf9tnTA"
+          },
+          "input": {
+            "nodeId": "HkdOUAy-ex",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "S1DsLA1Wle": {
+          "id": "S1DsLA1Wle",
+          "output": {
+            "nodeId": "SJUf8RJble",
+            "pinKey": "r1MTf9tnTA"
+          },
+          "input": {
+            "nodeId": "By1tLRkbxl",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "S1tiUCJblx": {
+          "id": "S1tiUCJblx",
+          "output": {
+            "nodeId": "SkvGLAkWeg",
+            "pinKey": "r1MTf9tnTA"
+          },
+          "input": {
+            "nodeId": "S1lKUR1-lg",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "rkssUC1Wle": {
+          "id": "rkssUC1Wle",
+          "output": {
+            "nodeId": "BydGLC1Zxx",
+            "pinKey": "r1MTf9tnTA"
+          },
+          "input": {
+            "nodeId": "r1ZKI0kbex",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "SknjIAyWee": {
+          "id": "SknjIAyWee",
+          "output": {
+            "nodeId": "H1Ff8Ryble",
+            "pinKey": "r1MTf9tnTA"
+          },
+          "input": {
+            "nodeId": "rkzt8RkWel",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "r1AsLC1Zee": {
+          "id": "r1AsLC1Zee",
+          "output": {
+            "nodeId": "Sk5MURybgg",
+            "pinKey": "r1MTf9tnTA"
+          },
+          "input": {
+            "nodeId": "BJXt801Zxe",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "nodes": {
+        "ryttBCkblx": {
+          "boundLiterals": {
+            "BJW9nGRyWlg": "\"/monday3.txt\""
+          },
+          "id": "ryttBCkblx",
+          "type": "@/fill-buffer1-from-sd",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "Skd6rR1blx": {
+          "boundLiterals": {
+            "Sy-S_uF26C": "10"
+          },
+          "id": "Skd6rR1blx",
+          "type": "nazarijtipusak080/buffer1/buffer1",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SJFRHRJblg": {
+          "id": "SJFRHRJblg",
+          "type": "xod/debug/tweak-pulse",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BkWGI0kblg": {
+          "id": "BkWGI0kblg",
+          "type": "nazarijtipusak080/buffer1/get-byte",
+          "position": {
+            "x": 1,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "SJUf8RJble": {
+          "boundLiterals": {
+            "SJgpf9thp0": "1"
+          },
+          "id": "SJUf8RJble",
+          "type": "nazarijtipusak080/buffer1/get-byte",
+          "position": {
+            "x": 5,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "SkvGLAkWeg": {
+          "boundLiterals": {
+            "SJgpf9thp0": "2"
+          },
+          "id": "SkvGLAkWeg",
+          "type": "nazarijtipusak080/buffer1/get-byte",
+          "position": {
+            "x": 9,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "BydGLC1Zxx": {
+          "boundLiterals": {
+            "SJgpf9thp0": "3"
+          },
+          "id": "BydGLC1Zxx",
+          "type": "nazarijtipusak080/buffer1/get-byte",
+          "position": {
+            "x": 13,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "H1Ff8Ryble": {
+          "boundLiterals": {
+            "SJgpf9thp0": "4"
+          },
+          "id": "H1Ff8Ryble",
+          "type": "nazarijtipusak080/buffer1/get-byte",
+          "position": {
+            "x": 17,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "Sk5MURybgg": {
+          "boundLiterals": {
+            "SJgpf9thp0": "5"
+          },
+          "id": "Sk5MURybgg",
+          "type": "nazarijtipusak080/buffer1/get-byte",
+          "position": {
+            "x": 21,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "HkdOUAy-ex": {
+          "id": "HkdOUAy-ex",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 2,
+            "y": 6,
+            "units": "slots"
+          }
+        },
+        "By1tLRkbxl": {
+          "id": "By1tLRkbxl",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 6,
+            "y": 6,
+            "units": "slots"
+          }
+        },
+        "S1lKUR1-lg": {
+          "id": "S1lKUR1-lg",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 10,
+            "y": 6,
+            "units": "slots"
+          }
+        },
+        "r1ZKI0kbex": {
+          "id": "r1ZKI0kbex",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 14,
+            "y": 6,
+            "units": "slots"
+          }
+        },
+        "rkzt8RkWel": {
+          "id": "rkzt8RkWel",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 18,
+            "y": 6,
+            "units": "slots"
+          }
+        },
+        "BJXt801Zxe": {
+          "id": "BJXt801Zxe",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 22,
+            "y": 6,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example-fll-buffer1-from-sd"
+    }
+  },
+  "version": "0.0.1",
+  "description": "This library contains nodes for (writing) reading bytes from a specified file on a SD card. It is designed to work with ESP32. REMEMBER THAT THE FILE NAME MUST START WITH \"/\".",
+  "apiKey": "4d2cbf6e-e453-41f5-aae6-b96298fb7fdb",
+  "name": "work-with-sd-esp32"
+}

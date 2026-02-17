@@ -1,0 +1,853 @@
+{
+  "description": "Library provides basic nodes to work with gas sensor (MQ2) in Troyka module formfactor. Is useful for gas leakage detection. It is suitable for detecting H2, LPG, CH4 or Smoke.",
+  "license": "AGPL-3.0",
+  "name": "troyka-mq2",
+  "patches": {
+    "@/get-resistance": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto inValue = getValue<input_VAL>(ctx);\n    auto vcc = getValue<input_AVCC>(ctx);\n    auto voltage = inValue * vcc;\n    if (voltage < 0.01) {voltage = 0.01;};\n    auto resistance = 5.0 * (vcc - voltage) / voltage;\n    emitValue<output_OHM>(ctx, resistance);\n}\n"
+        }
+      ],
+      "nodes": {
+        "Bk4B1sg3m": {
+          "id": "Bk4B1sg3m",
+          "label": "AVCC",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BkM81ig2m": {
+          "id": "BkM81ig2m",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SktOyjenX": {
+          "id": "SktOyjenX",
+          "label": "OHM",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "r1d2yjl3X": {
+          "id": "r1d2yjl3X",
+          "label": "VAL",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/get-resistance"
+    },
+    "@/scale-values": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto ratio = getValue<input_RATIO>(ctx);\n    auto Ka = getValue<input_KA>(ctx);\n    auto Kb = getValue<input_KB>(ctx);\n    delay(0);\n    auto scaledOut = exp((log(ratio) - Kb) / Ka);\n\n    emitValue<output_OUT>(ctx, scaledOut);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJXz7il2Q": {
+          "id": "BJXz7il2Q",
+          "label": "KB",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Hk9H7sgnQ": {
+          "id": "Hk9H7sgnQ",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HkcVmjx37": {
+          "id": "HkcVmjx37",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SyylQsenX": {
+          "id": "SyylQsenX",
+          "label": "RATIO",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1PGXoe2Q": {
+          "id": "r1PGXoe2Q",
+          "label": "KA",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/scale-values"
+    },
+    "@/troyka-mq2": {
+      "comments": {
+        "BJ_ehsl27": {
+          "content": "Invalid data before timer is done",
+          "id": "BJ_ehsl27",
+          "position": {
+            "x": 612,
+            "y": 306
+          },
+          "size": {
+            "height": 51,
+            "width": 136
+          }
+        }
+      },
+      "description": "The library allows you to work with a sensor of a wide range of gases.\nIt is suitable for detecting H2, LPG, CH4 or Smoke. Calibration is required for the sensor to work correctly. Calibration occurs 60 seconds after the start of work.\nIf the voltage of the ADC is different from 5 V, you must specify the supply voltage of the ADC",
+      "links": {
+        "B1GPasjl2m": {
+          "id": "B1GPasjl2m",
+          "input": {
+            "nodeId": "BkK7Dqg3Q",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJbPTssen7",
+            "pinKey": "__out__"
+          }
+        },
+        "BJS1wxf6m": {
+          "id": "BJS1wxf6m",
+          "input": {
+            "nodeId": "S1WXtsghX",
+            "pinKey": "HkXm80uHPyb"
+          },
+          "output": {
+            "nodeId": "Hy-zCjjl37",
+            "pinKey": "__out__"
+          }
+        },
+        "BJXTEig2m": {
+          "id": "BJXTEig2m",
+          "input": {
+            "nodeId": "HJlaNie27",
+            "pinKey": "SyylQsenX"
+          },
+          "output": {
+            "nodeId": "B1eVGsenm",
+            "pinKey": "BkqLCOSw1W"
+          }
+        },
+        "BJcnFoxnQ": {
+          "id": "BJcnFoxnQ",
+          "input": {
+            "nodeId": "HJZ2Fjgnm",
+            "pinKey": "BytUCdHD1-"
+          },
+          "output": {
+            "nodeId": "HkPlPcg2m",
+            "pinKey": "__out__"
+          }
+        },
+        "BkIAEsx3Q": {
+          "id": "BkIAEsx3Q",
+          "input": {
+            "nodeId": "SkxuTNjg3X",
+            "pinKey": "SyylQsenX"
+          },
+          "output": {
+            "nodeId": "B1eVGsenm",
+            "pinKey": "BkqLCOSw1W"
+          }
+        },
+        "BkuNZgf6m": {
+          "id": "BkuNZgf6m",
+          "input": {
+            "nodeId": "HkqDhcl2m",
+            "pinKey": "Skre8ROSv1-"
+          },
+          "output": {
+            "nodeId": "SJQXZxf6X",
+            "pinKey": "__out__"
+          }
+        },
+        "By61PxGa7": {
+          "id": "By61PxGa7",
+          "input": {
+            "nodeId": "HkcJvxfpQ",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "S1WXtsghX",
+            "pinKey": "r1lQLAOBwJb"
+          }
+        },
+        "By7EFixn7": {
+          "id": "By7EFixn7",
+          "input": {
+            "nodeId": "S1WXtsghX",
+            "pinKey": "Hy-QUR_BPkZ"
+          },
+          "output": {
+            "nodeId": "HkqDhcl2m",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "H1dREieh7": {
+          "id": "H1dREieh7",
+          "input": {
+            "nodeId": "S1YTNjgnX",
+            "pinKey": "SyylQsenX"
+          },
+          "output": {
+            "nodeId": "B1eVGsenm",
+            "pinKey": "BkqLCOSw1W"
+          }
+        },
+        "H1hBfoen7": {
+          "id": "H1hBfoen7",
+          "input": {
+            "nodeId": "B1eVGsenm",
+            "pinKey": "SkdIRuBD1b"
+          },
+          "output": {
+            "nodeId": "ryhKWslnm",
+            "pinKey": "SktOyjenX"
+          }
+        },
+        "HJE1riln7": {
+          "id": "HJE1riln7",
+          "input": {
+            "nodeId": "B1kIP9g3m",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rydTNilnm",
+            "pinKey": "HkcVmjx37"
+          }
+        },
+        "HJFA6qxhX": {
+          "id": "HJFA6qxhX",
+          "input": {
+            "nodeId": "ByURpqgnm",
+            "pinKey": "ry3zLA_Bv1Z"
+          },
+          "output": {
+            "nodeId": "HkqDhcl2m",
+            "pinKey": "HkU3vNoTW"
+          }
+        },
+        "HJG1Hol37": {
+          "id": "HJG1Hol37",
+          "input": {
+            "nodeId": "SJcSwqgnQ",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HJlaNie27",
+            "pinKey": "HkcVmjx37"
+          }
+        },
+        "HJcZXcgnQ": {
+          "id": "HJcZXcgnQ",
+          "input": {
+            "nodeId": "Byv9fcxhQ",
+            "pinKey": "SkuhqCqym"
+          },
+          "output": {
+            "nodeId": "BJAJ75lhX",
+            "pinKey": "__out__"
+          }
+        },
+        "HkQ3-ien7": {
+          "id": "HkQ3-ien7",
+          "input": {
+            "nodeId": "ryhKWslnm",
+            "pinKey": "r1d2yjl3X"
+          },
+          "output": {
+            "nodeId": "Byv9fcxhQ",
+            "pinKey": "SyBtREhlW"
+          }
+        },
+        "HkRKbienX": {
+          "id": "HkRKbienX",
+          "input": {
+            "nodeId": "ryhKWslnm",
+            "pinKey": "Bk4B1sg3m"
+          },
+          "output": {
+            "nodeId": "HygrXcg2m",
+            "pinKey": "__out__"
+          }
+        },
+        "HkW0Ksg2X": {
+          "id": "HkW0Ksg2X",
+          "input": {
+            "nodeId": "B1eVGsenm",
+            "pinKey": "BytUCdHD1-"
+          },
+          "output": {
+            "nodeId": "HJZ2Fjgnm",
+            "pinKey": "BkqLCOSw1W"
+          }
+        },
+        "Hkgfose27": {
+          "id": "Hkgfose27",
+          "input": {
+            "nodeId": "Bk9goog3X",
+            "pinKey": "B1P1nFwaM"
+          },
+          "output": {
+            "nodeId": "ByURpqgnm",
+            "pinKey": "r1if8ROSDJ-"
+          }
+        },
+        "Hkz6Tsox2m": {
+          "id": "Hkz6Tsox2m",
+          "input": {
+            "nodeId": "Bk9goog3X",
+            "pinKey": "SJ-1mZPTz"
+          },
+          "output": {
+            "nodeId": "H1WTTosgnX",
+            "pinKey": "__out__"
+          }
+        },
+        "S1LJrilnm": {
+          "id": "S1LJrilnm",
+          "input": {
+            "nodeId": "rkg1IP5x27",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SkxuTNjg3X",
+            "pinKey": "HkcVmjx37"
+          }
+        },
+        "S1xDTisxnm": {
+          "id": "S1xDTisxnm",
+          "input": {
+            "nodeId": "H1wajsl2m",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Byv9fcxhQ",
+            "pinKey": "HJgzpqacyX"
+          }
+        },
+        "S1xeDgG67": {
+          "id": "S1xeDgG67",
+          "input": {
+            "nodeId": "HJZ2Fjgnm",
+            "pinKey": "SkdIRuBD1b"
+          },
+          "output": {
+            "nodeId": "HkcJvxfpQ",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "SJDyroeh7": {
+          "id": "SJDyroeh7",
+          "input": {
+            "nodeId": "HJeUv9l27",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "S1YTNjgnX",
+            "pinKey": "HkcVmjx37"
+          }
+        },
+        "SkVX7qxn7": {
+          "id": "SkVX7qxn7",
+          "input": {
+            "nodeId": "Byv9fcxhQ",
+            "pinKey": "SyKd0E2x-"
+          },
+          "output": {
+            "nodeId": "r1mMm9enX",
+            "pinKey": "__out__"
+          }
+        },
+        "SyUWoighX": {
+          "id": "SyUWoighX",
+          "input": {
+            "nodeId": "HyNQPcgnQ",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Bk9goog3X",
+            "pinKey": "OkPg7GDaW"
+          }
+        },
+        "Syxz0sjx27": {
+          "id": "Syxz0sjx27",
+          "input": {
+            "nodeId": "SkzCjox3m",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "ryhKWslnm",
+            "pinKey": "SktOyjenX"
+          }
+        },
+        "rJgpasseh7": {
+          "id": "rJgpasseh7",
+          "input": {
+            "nodeId": "ByTajjehQ",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Byv9fcxhQ",
+            "pinKey": "BkGpcpcJQ"
+          }
+        },
+        "rJmANje3Q": {
+          "id": "rJmANje3Q",
+          "input": {
+            "nodeId": "rydTNilnm",
+            "pinKey": "SyylQsenX"
+          },
+          "output": {
+            "nodeId": "B1eVGsenm",
+            "pinKey": "BkqLCOSw1W"
+          }
+        }
+      },
+      "nodes": {
+        "B1eVGsenm": {
+          "id": "B1eVGsenm",
+          "position": {
+            "x": 170,
+            "y": 306
+          },
+          "type": "xod/core/divide"
+        },
+        "B1kIP9g3m": {
+          "description": "The value of CH4 in the air in ppm.",
+          "id": "B1kIP9g3m",
+          "label": "CH4",
+          "position": {
+            "x": 102,
+            "y": 510
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BJAJ75lhX": {
+          "boundLiterals": {
+            "__out__": "A0"
+          },
+          "description": "Analog port to read from sensor. Should start with `A` to succeed.",
+          "id": "BJAJ75lhX",
+          "label": "PORT",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "Bk9goog3X": {
+          "id": "Bk9goog3X",
+          "position": {
+            "x": 510,
+            "y": 306
+          },
+          "type": "xod/core/gate"
+        },
+        "BkK7Dqg3Q": {
+          "description": "Fires if update failed. E.g. `PORT` is not an ADC port.",
+          "id": "BkK7Dqg3Q",
+          "label": "ERR",
+          "position": {
+            "x": 578,
+            "y": 510
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ByTajjehQ": {
+          "id": "ByTajjehQ",
+          "label": "DONE",
+          "position": {
+            "x": 238,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "ByURpqgnm": {
+          "id": "ByURpqgnm",
+          "position": {
+            "x": 646,
+            "y": 204
+          },
+          "type": "xod/core/not"
+        },
+        "Byv9fcxhQ": {
+          "id": "Byv9fcxhQ",
+          "position": {
+            "x": 204,
+            "y": 102
+          },
+          "type": "xod/gpio/analog-read"
+        },
+        "H1WTTosgnX": {
+          "id": "H1WTTosgnX",
+          "label": "DONE",
+          "position": {
+            "x": 510,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "H1wajsl2m": {
+          "id": "H1wajsl2m",
+          "label": "ERR",
+          "position": {
+            "x": 272,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "HJZ2Fjgnm": {
+          "id": "HJZ2Fjgnm",
+          "position": {
+            "x": 408,
+            "y": 204
+          },
+          "type": "xod/core/divide"
+        },
+        "HJeUv9l27": {
+          "description": "The value of H2 in the air in ppm.",
+          "id": "HJeUv9l27",
+          "label": "H2",
+          "position": {
+            "x": 306,
+            "y": 510
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HJlaNie27": {
+          "boundLiterals": {
+            "BJXz7il2Q": "2.95",
+            "r1PGXoe2Q": "-0.45"
+          },
+          "id": "HJlaNie27",
+          "position": {
+            "x": 0,
+            "y": 408
+          },
+          "type": "@/scale-values"
+        },
+        "HkPlPcg2m": {
+          "boundLiterals": {
+            "__out__": "9.83"
+          },
+          "description": "Sensor resistance in clean air.",
+          "id": "HkPlPcg2m",
+          "label": "R0",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HkcJvxfpQ": {
+          "id": "HkcJvxfpQ",
+          "position": {
+            "x": 510,
+            "y": 102
+          },
+          "type": "xod/core/defer"
+        },
+        "HkqDhcl2m": {
+          "boundLiterals": {
+            "SkSuD6LMb": "On Boot",
+            "Skre8ROSv1-": "60"
+          },
+          "id": "HkqDhcl2m",
+          "label": "delay on boot",
+          "position": {
+            "x": 612,
+            "y": 102
+          },
+          "type": "xod/core/delay"
+        },
+        "Hy-zCjjl37": {
+          "id": "Hy-zCjjl37",
+          "label": "OHM",
+          "position": {
+            "x": 544,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HyNQPcgnQ": {
+          "description": "Fires on reading complete. Start after calibration is complete.",
+          "id": "HyNQPcgnQ",
+          "label": "OK",
+          "position": {
+            "x": 510,
+            "y": 510
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HygrXcg2m": {
+          "boundLiterals": {
+            "__out__": "5"
+          },
+          "description": "Supply voltage of the analog part of the microcontroller.",
+          "id": "HygrXcg2m",
+          "label": "AVCC",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1WXtsghX": {
+          "boundLiterals": {
+            "r1lQLAOBwJb": "1"
+          },
+          "id": "S1WXtsghX",
+          "position": {
+            "x": 544,
+            "y": 102
+          },
+          "type": "xod/core/buffer"
+        },
+        "S1YTNjgnX": {
+          "boundLiterals": {
+            "BJXz7il2Q": "3.32",
+            "r1PGXoe2Q": "-0.48"
+          },
+          "id": "S1YTNjgnX",
+          "position": {
+            "x": 306,
+            "y": 408
+          },
+          "type": "@/scale-values"
+        },
+        "SJQXZxf6X": {
+          "description": "Calibration timeout",
+          "id": "SJQXZxf6X",
+          "label": "T",
+          "position": {
+            "x": 612,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJbPTssen7": {
+          "id": "SJbPTssen7",
+          "label": "ERR",
+          "position": {
+            "x": 578,
+            "y": 408
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJcSwqgnQ": {
+          "description": "The value of LPG in the air in ppm.",
+          "id": "SJcSwqgnQ",
+          "label": "LPG",
+          "position": {
+            "x": 0,
+            "y": 510
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SkxuTNjg3X": {
+          "boundLiterals": {
+            "BJXz7il2Q": "3.54",
+            "r1PGXoe2Q": "-0.42"
+          },
+          "id": "SkxuTNjg3X",
+          "position": {
+            "x": 204,
+            "y": 408
+          },
+          "type": "@/scale-values"
+        },
+        "SkzCjox3m": {
+          "id": "SkzCjox3m",
+          "label": "OHM",
+          "position": {
+            "x": 68,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "r1mMm9enX": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers new read",
+          "id": "r1mMm9enX",
+          "label": "UPD",
+          "position": {
+            "x": 238,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkg1IP5x27": {
+          "description": "The value of smoke in the air in ppm.",
+          "id": "rkg1IP5x27",
+          "label": "SMOK",
+          "position": {
+            "x": 204,
+            "y": 510
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rydTNilnm": {
+          "boundLiterals": {
+            "BJXz7il2Q": "3.21",
+            "r1PGXoe2Q": "-0.38"
+          },
+          "id": "rydTNilnm",
+          "position": {
+            "x": 102,
+            "y": 408
+          },
+          "type": "@/scale-values"
+        },
+        "ryhKWslnm": {
+          "id": "ryhKWslnm",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "@/get-resistance"
+        }
+      },
+      "path": "@/troyka-mq2"
+    },
+    "@/troyka-mq2-example": {
+      "links": {
+        "Skz_ZpzpX": {
+          "id": "Skz_ZpzpX",
+          "input": {
+            "nodeId": "rkf5HognX",
+            "pinKey": "HygrXcg2m"
+          },
+          "output": {
+            "nodeId": "S1WDbpGTQ",
+            "pinKey": "__out__"
+          }
+        },
+        "r16b1lM67": {
+          "id": "r16b1lM67",
+          "input": {
+            "nodeId": "Byv-Jlf6m",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rkf5HognX",
+            "pinKey": "rkg1IP5x27"
+          }
+        },
+        "rJ00GpG6X": {
+          "id": "rJ00GpG6X",
+          "input": {
+            "nodeId": "rkf5HognX",
+            "pinKey": "SJQXZxf6X"
+          },
+          "output": {
+            "nodeId": "S1ZAGpfTX",
+            "pinKey": "__out__"
+          }
+        },
+        "rJV6zTGpm": {
+          "id": "rJV6zTGpm",
+          "input": {
+            "nodeId": "rkf5HognX",
+            "pinKey": "BJAJ75lhX"
+          },
+          "output": {
+            "nodeId": "rJjhzTGTX",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "Byv-Jlf6m": {
+          "id": "Byv-Jlf6m",
+          "position": {
+            "x": 238,
+            "y": 510
+          },
+          "type": "xod/core/watch"
+        },
+        "S1WDbpGTQ": {
+          "boundLiterals": {
+            "__out__": "3.3"
+          },
+          "id": "S1WDbpGTQ",
+          "label": "3V3",
+          "position": {
+            "x": 204,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1ZAGpfTX": {
+          "boundLiterals": {
+            "__out__": "30"
+          },
+          "id": "S1ZAGpfTX",
+          "label": "30 s",
+          "position": {
+            "x": 306,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rJjhzTGTX": {
+          "boundLiterals": {
+            "__out__": "A4"
+          },
+          "id": "rJjhzTGTX",
+          "label": "A4",
+          "position": {
+            "x": 170,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rkf5HognX": {
+          "boundLiterals": {
+            "BJAJ75lhX": "A4",
+            "HygrXcg2m": "3.3",
+            "SJQXZxf6X": "60"
+          },
+          "description": "Get smoke ppm with 3V3 microcontroller",
+          "id": "rkf5HognX",
+          "position": {
+            "x": 170,
+            "y": 408
+          },
+          "type": "@/troyka-mq2"
+        }
+      },
+      "path": "@/troyka-mq2-example"
+    }
+  },
+  "version": "0.1.1"
+}

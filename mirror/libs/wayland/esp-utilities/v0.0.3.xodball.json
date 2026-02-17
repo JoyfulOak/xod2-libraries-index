@@ -1,0 +1,134 @@
+{
+  "patches": {
+    "@/example-restart": {
+      "nodes": {
+        "SJSe_BsF2": {
+          "id": "SJSe_BsF2",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/restart"
+        },
+        "ryS-_roYn": {
+          "id": "ryS-_roYn",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/debug/tweak-pulse"
+        },
+        "S1GTjSiY3": {
+          "id": "S1GTjSiY3",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/boot"
+        },
+        "Hk-CorsY2": {
+          "boundLiterals": {
+            "B1oqkTnIb": "D5",
+            "HyYh1a3LZ": "1"
+          },
+          "id": "Hk-CorsY2",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "S1sM2SiKh": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "1"
+          },
+          "id": "S1sM2SiKh",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        }
+      },
+      "links": {
+        "BJY-OrsYh": {
+          "id": "BJY-OrsYh",
+          "input": {
+            "nodeId": "SJSe_BsF2",
+            "pinKey": "r16qLHst3"
+          },
+          "output": {
+            "nodeId": "ryS-_roYn",
+            "pinKey": "Bkf4BDsmV"
+          }
+        },
+        "Hkimnrot3": {
+          "id": "Hkimnrot3",
+          "input": {
+            "nodeId": "S1sM2SiKh",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "S1GTjSiY3",
+            "pinKey": "ryVmUAOrvkb"
+          }
+        },
+        "H1DnproKn": {
+          "id": "H1DnproKn",
+          "input": {
+            "nodeId": "Hk-CorsY2",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "S1sM2SiKh",
+            "pinKey": "HkU3vNoTW"
+          }
+        }
+      },
+      "path": "@/example-restart",
+      "description": "Patch to demonstrate restart node. Run in debugger. Each time tweak node emits a pulse, the ESP device will be restarted. On boot an LED connected to the appropriate pin will be illuminated for one second."
+    },
+    "@/restart": {
+      "nodes": {
+        "B1wtUHjY2": {
+          "id": "B1wtUHjY2",
+          "position": {
+            "x": -6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r16qLHst3": {
+          "description": "Restart on pulse.",
+          "label": "Restart",
+          "id": "r16qLHst3",
+          "position": {
+            "x": -6,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/restart",
+      "description": "Restart ESP device.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nnode {\n\n    void evaluate(Context ctx) {\n        if (isInputDirty<input_Restart>(ctx)) {\n            ESP.restart();\n        }\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "license": "AGPL-3.0",
+  "version": "0.0.3",
+  "description": "This library will become a collection of utility nodes for the ESP8266 and ESP32.",
+  "name": "esp-utilities"
+}

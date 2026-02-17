@@ -1,0 +1,733 @@
+{
+  "description": "Node for writing to ViSi-Genie scope object. Node has a DONE pulse output to facilitate chaining writes. Minor extension to gabbapeople/4d-ulcd and bradzilla84/visi-genie-extra-library.",
+  "license": "GPL",
+  "name": "visi-genie-scope",
+  "patches": {
+    "@/write": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto _genie = getValue<input_IN>(ctx);\n    uint8_t genieObject = getValue<input_OBJ>(ctx);\n    uint8_t index = getValue<input_IDX>(ctx);\n    int val = getValue<input_VAL>(ctx);\n\n    if (isInputDirty<input_PUSH>(ctx)){\n        _genie.genie->WriteObject(genieObject, index, val);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJ75uXIPKI": {
+          "id": "BJ75uXIPKI",
+          "label": "OBJ",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BkcuQ8PK8": {
+          "id": "BkcuQ8PK8",
+          "label": "PUSH",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ByB5d7LvKU": {
+          "id": "ByB5d7LvKU",
+          "label": "VAL",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ByN9dmLPFI": {
+          "id": "ByN9dmLPFI",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1x5_XUPt8": {
+          "id": "H1x5_XUPt8",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/utility"
+        },
+        "Hk85dQ8wFL": {
+          "description": "Pulse on write.",
+          "id": "Hk85dQ8wFL",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SJG9dQIPYL": {
+          "id": "SJG9dQIPYL",
+          "label": "IDX",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Skb9uX8DK8": {
+          "id": "Skb9uX8DK8",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "gabbapeople/4d-ulcd/input-4d-ulcd"
+        }
+      },
+      "path": "@/write"
+    },
+    "@/write-scope": {
+      "description": "Write to the scope object in 4D systems ViSi-Genie.",
+      "links": {
+        "B1JhmUPFL": {
+          "id": "B1JhmUPFL",
+          "input": {
+            "nodeId": "S18iQUPK8",
+            "pinKey": "ByB5d7LvKU"
+          },
+          "output": {
+            "nodeId": "B1rZf8DK8",
+            "pinKey": "__out__"
+          }
+        },
+        "BJRi7UPFI": {
+          "id": "BJRi7UPFI",
+          "input": {
+            "nodeId": "S18iQUPK8",
+            "pinKey": "SJG9dQIPYL"
+          },
+          "output": {
+            "nodeId": "B1XrZzLwFI",
+            "pinKey": "__out__"
+          }
+        },
+        "HJpomUwYL": {
+          "id": "HJpomUwYL",
+          "input": {
+            "nodeId": "S18iQUPK8",
+            "pinKey": "BJ75uXIPKI"
+          },
+          "output": {
+            "nodeId": "ByeSZGUPYI",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "SJijQ8PK8": {
+          "id": "SJijQ8PK8",
+          "input": {
+            "nodeId": "S18iQUPK8",
+            "pinKey": "Skb9uX8DK8"
+          },
+          "output": {
+            "nodeId": "HkErWz8vt8",
+            "pinKey": "__out__"
+          }
+        },
+        "SkGhXUvFI": {
+          "id": "SkGhXUvFI",
+          "input": {
+            "nodeId": "BJMjGUwKL",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "S18iQUPK8",
+            "pinKey": "Hk85dQ8wFL"
+          }
+        },
+        "rk-hQ8wF8": {
+          "id": "rk-hQ8wF8",
+          "input": {
+            "nodeId": "S18iQUPK8",
+            "pinKey": "BkcuQ8PK8"
+          },
+          "output": {
+            "nodeId": "SybHZG8DFU",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "B1XrZzLwFI": {
+          "description": "Object index",
+          "id": "B1XrZzLwFI",
+          "label": "IDX",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "B1rZf8DK8": {
+          "description": "An integer value in a specified range",
+          "id": "B1rZf8DK8",
+          "label": "VAL",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BJMjGUwKL": {
+          "description": "Pulse on write.",
+          "id": "BJMjGUwKL",
+          "label": "DONE",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ByeSZGUPYI": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "25"
+          },
+          "id": "ByeSZGUPYI",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-number"
+        },
+        "HkErWz8vt8": {
+          "description": "a 4D uLCD device",
+          "id": "HkErWz8vt8",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "gabbapeople/4d-ulcd/input-4d-ulcd"
+        },
+        "S18iQUPK8": {
+          "id": "S18iQUPK8",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/write"
+        },
+        "SybHZG8DFU": {
+          "boundLiterals": {
+            "__out__": "Never"
+          },
+          "description": "Pushes a new value",
+          "id": "SybHZG8DFU",
+          "label": "PUSH",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/write-scope"
+    },
+    "@/example": {
+      "nodes": {
+        "H17hfvDF8": {
+          "id": "H17hfvDF8",
+          "label": "DEV",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rkeQ2GvwKU": {
+          "id": "rkeQ2GvwKU",
+          "label": "DEV",
+          "position": {
+            "x": 16,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "BkZQhGDDYI": {
+          "id": "BkZQhGDDYI",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "rkzQhfvwt8": {
+          "boundLiterals": {
+            "Sy0-yt8ZQ": "115200",
+            "Syz-kKUWX": "D2",
+            "r1mZktLZm": "D3"
+          },
+          "id": "rkzQhfvwt8",
+          "position": {
+            "x": -1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/uart/soft-uart"
+        },
+        "rJXm2zDwY8": {
+          "boundLiterals": {
+            "HJCWLAdSwyW": "1",
+            "rkpbU0OrwyZ": "160"
+          },
+          "id": "rJXm2zDwY8",
+          "position": {
+            "x": 14,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/math/map"
+        },
+        "HyEQ3fDvFL": {
+          "boundLiterals": {
+            "HJCWLAdSwyW": "1",
+            "rkpbU0OrwyZ": "160"
+          },
+          "id": "HyEQ3fDvFL",
+          "position": {
+            "x": 19,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/math/map"
+        },
+        "S1Hm3fDPK8": {
+          "boundLiterals": {
+            "HJCWLAdSwyW": "1",
+            "rkpbU0OrwyZ": "160"
+          },
+          "id": "S1Hm3fDPK8",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/math/map"
+        },
+        "ByUX2zPvYI": {
+          "id": "ByUX2zPvYI",
+          "label": "DEV",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SkvmnGPDK8": {
+          "boundLiterals": {
+            "HJCWLAdSwyW": "1",
+            "rkpbU0OrwyZ": "80"
+          },
+          "id": "SkvmnGPDK8",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/math/map"
+        },
+        "Hyu73zvwYI": {
+          "id": "Hyu73zvwYI",
+          "position": {
+            "x": -1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "bradzilla84/visi-genie-extra-library/int-filtered"
+        },
+        "r1Y7hGvPK8": {
+          "boundLiterals": {
+            "HyMdZFnYkf": "10"
+          },
+          "id": "r1Y7hGvPK8",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/sine-wave"
+        },
+        "By9mnfwvF8": {
+          "id": "By9mnfwvF8",
+          "label": "DEV",
+          "position": {
+            "x": 11,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "H1om3fPwKI": {
+          "id": "H1om3fPwKI",
+          "type": "xod/core/clock",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B13SCNhl-": ".2"
+          }
+        },
+        "S1eeX2GvwKI": {
+          "id": "S1eeX2GvwKI",
+          "type": "xod/core/sine-wave",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "HyMdZFnYkf": "20"
+          }
+        },
+        "Sk-lX3fDDYI": {
+          "id": "Sk-lX3fDDYI",
+          "type": "xod/core/sine-wave",
+          "position": {
+            "x": 14,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "HyMdZFnYkf": "30"
+          }
+        },
+        "rkzxQnfPPtL": {
+          "id": "rkzxQnfPPtL",
+          "type": "xod/core/sine-wave",
+          "position": {
+            "x": 19,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "HyMdZFnYkf": "100"
+          }
+        },
+        "ryJErwvYL": {
+          "id": "ryJErwvYL",
+          "type": "@/write-scope",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SyHEHvwFL": {
+          "id": "SyHEHvwFL",
+          "type": "@/write-scope",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "HkiErwwtI": {
+          "id": "HkiErwwtI",
+          "type": "@/write-scope",
+          "position": {
+            "x": 12,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "HyxSSvvFL": {
+          "id": "HyxSSvvFL",
+          "type": "@/write-scope",
+          "position": {
+            "x": 17,
+            "y": 3,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "B17lm3MPDKI": {
+          "id": "B17lm3MPDKI",
+          "input": {
+            "nodeId": "S1Hm3fDPK8",
+            "pinKey": "BJlzICOSv1-"
+          },
+          "output": {
+            "nodeId": "r1Y7hGvPK8",
+            "pinKey": "BJB_WYnYyM"
+          }
+        },
+        "By4emhMvvYL": {
+          "id": "By4emhMvvYL",
+          "input": {
+            "nodeId": "BkZQhGDDYI",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Hyu73zvwYI",
+            "pinKey": "B1S3qQ4JXV"
+          }
+        },
+        "rJHgmnMvPtL": {
+          "id": "rJHgmnMvPtL",
+          "input": {
+            "nodeId": "Hyu73zvwYI",
+            "pinKey": "HkWhcmVk7E"
+          },
+          "output": {
+            "nodeId": "rkzQhfvwt8",
+            "pinKey": "rycxytIZQ"
+          }
+        },
+        "S1LeXhzPvY8": {
+          "id": "S1LeXhzPvY8",
+          "input": {
+            "nodeId": "Hyu73zvwYI",
+            "pinKey": "Skg35X4JQ4"
+          },
+          "output": {
+            "nodeId": "rkzQhfvwt8",
+            "pinKey": "HJoHCvU_Q"
+          }
+        },
+        "H1PxQ2MPPFI": {
+          "id": "H1PxQ2MPPFI",
+          "output": {
+            "nodeId": "H1om3fPwKI",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "r1Y7hGvPK8",
+            "pinKey": "Sy_ZYhFkM"
+          }
+        },
+        "r1VWmnGDPtI": {
+          "id": "r1VWmnGDPtI",
+          "output": {
+            "nodeId": "S1eeX2GvwKI",
+            "pinKey": "BJB_WYnYyM"
+          },
+          "input": {
+            "nodeId": "SkvmnGPDK8",
+            "pinKey": "BJlzICOSv1-"
+          }
+        },
+        "BkSZX2zPDtL": {
+          "id": "BkSZX2zPDtL",
+          "output": {
+            "nodeId": "H1om3fPwKI",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "S1eeX2GvwKI",
+            "pinKey": "Sy_ZYhFkM"
+          }
+        },
+        "HJUbm2MwPFI": {
+          "id": "HJUbm2MwPFI",
+          "output": {
+            "nodeId": "H1om3fPwKI",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "Sk-lX3fDDYI",
+            "pinKey": "Sy_ZYhFkM"
+          }
+        },
+        "ByD-mnGwDFI": {
+          "id": "ByD-mnGwDFI",
+          "output": {
+            "nodeId": "H1om3fPwKI",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "rkzxQnfPPtL",
+            "pinKey": "Sy_ZYhFkM"
+          }
+        },
+        "ryObXhfDvK8": {
+          "id": "ryObXhfDvK8",
+          "output": {
+            "nodeId": "Sk-lX3fDDYI",
+            "pinKey": "BJB_WYnYyM"
+          },
+          "input": {
+            "nodeId": "rJXm2zDwY8",
+            "pinKey": "BJlzICOSv1-"
+          }
+        },
+        "rkYWQhGwDKI": {
+          "id": "rkYWQhGwDKI",
+          "output": {
+            "nodeId": "rkzxQnfPPtL",
+            "pinKey": "BJB_WYnYyM"
+          },
+          "input": {
+            "nodeId": "HyEQ3fDvFL",
+            "pinKey": "BJlzICOSv1-"
+          }
+        },
+        "H1XHrDDtL": {
+          "id": "H1XHrDDtL",
+          "output": {
+            "nodeId": "S1Hm3fDPK8",
+            "pinKey": "H12bIR_SPyZ"
+          },
+          "input": {
+            "nodeId": "ryJErwvYL",
+            "pinKey": "B1rZf8DK8"
+          }
+        },
+        "BkBrSvDYI": {
+          "id": "BkBrSvDYI",
+          "output": {
+            "nodeId": "SkvmnGPDK8",
+            "pinKey": "H12bIR_SPyZ"
+          },
+          "input": {
+            "nodeId": "SyHEHvwFL",
+            "pinKey": "B1rZf8DK8"
+          }
+        },
+        "S1vBHDvFL": {
+          "id": "S1vBHDvFL",
+          "output": {
+            "nodeId": "rJXm2zDwY8",
+            "pinKey": "H12bIR_SPyZ"
+          },
+          "input": {
+            "nodeId": "HkiErwwtI",
+            "pinKey": "B1rZf8DK8"
+          }
+        },
+        "rJYrSwwFI": {
+          "id": "rJYrSwwFI",
+          "output": {
+            "nodeId": "HyEQ3fDvFL",
+            "pinKey": "H12bIR_SPyZ"
+          },
+          "input": {
+            "nodeId": "HyxSSvvFL",
+            "pinKey": "B1rZf8DK8"
+          }
+        },
+        "ByRSHDPFI": {
+          "id": "ByRSHDPFI",
+          "output": {
+            "nodeId": "H1om3fPwKI",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "ryJErwvYL",
+            "pinKey": "SybHZG8DFU"
+          }
+        },
+        "SJWLBPDF8": {
+          "id": "SJWLBPDF8",
+          "output": {
+            "nodeId": "ryJErwvYL",
+            "pinKey": "BJMjGUwKL"
+          },
+          "input": {
+            "nodeId": "SyHEHvwFL",
+            "pinKey": "SybHZG8DFU"
+          }
+        },
+        "HJXLHwwKI": {
+          "id": "HJXLHwwKI",
+          "output": {
+            "nodeId": "SyHEHvwFL",
+            "pinKey": "BJMjGUwKL"
+          },
+          "input": {
+            "nodeId": "HkiErwwtI",
+            "pinKey": "SybHZG8DFU"
+          }
+        },
+        "rkSLSvvFU": {
+          "id": "rkSLSvvFU",
+          "output": {
+            "nodeId": "HkiErwwtI",
+            "pinKey": "BJMjGUwKL"
+          },
+          "input": {
+            "nodeId": "HyxSSvvFL",
+            "pinKey": "SybHZG8DFU"
+          }
+        },
+        "SJwIBDvYU": {
+          "id": "SJwIBDvYU",
+          "output": {
+            "nodeId": "rkeQ2GvwKU",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HyxSSvvFL",
+            "pinKey": "HkErWz8vt8"
+          }
+        },
+        "SkKUSPvFU": {
+          "id": "SkKUSPvFU",
+          "output": {
+            "nodeId": "By9mnfwvF8",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HkiErwwtI",
+            "pinKey": "HkErWz8vt8"
+          }
+        },
+        "r1oUBvwF8": {
+          "id": "r1oUBvwF8",
+          "output": {
+            "nodeId": "ByUX2zPvYI",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "SyHEHvwFL",
+            "pinKey": "HkErWz8vt8"
+          }
+        },
+        "BJpUHwwKL": {
+          "id": "BJpUHwwKL",
+          "output": {
+            "nodeId": "H17hfvDF8",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ryJErwvYL",
+            "pinKey": "HkErWz8vt8"
+          }
+        }
+      },
+      "path": "@/example",
+      "description": "Example of writing four traces to ViSi-Genie scope.  A ViSi-Genie user interface can be created using the following Workshop4-IDE file: https://gist.github.com/WaylandM/530681f3fed430350c185cd559c4421e"
+    }
+  },
+  "version": "0.0.2"
+}

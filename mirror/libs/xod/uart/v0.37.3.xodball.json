@@ -1,0 +1,4833 @@
+{
+  "patches": {
+    "@/begin": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1SyPhUWm": {
+          "boundLiterals": {},
+          "description": "Pulses when UART communication began",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1SyPhUWm",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "BkpwfDI_X": {
+          "boundLiterals": {},
+          "description": "Just use `uart` constructor nodes directly, they now have `INIT` and `DONE` pins to begin communication",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkpwfDI_X",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/deprecated",
+          "@@type": "xod-project/Node"
+        },
+        "H16YPnI-Q": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Begin UART communication",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H16YPnI-Q",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HJ1ZDhUWm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJ1ZDhUWm",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "rJV3I2I-Q": {
+          "boundLiterals": {},
+          "description": "An UART object",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJV3I2I-Q",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-uart",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/begin",
+      "description": "Begins communication with UART and sets defined baud rate.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n        auto uart = getValue<input_UART>(ctx);\n        uart->begin();\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/change-baud-rate": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1tHLS9Wm": {
+          "boundLiterals": {},
+          "description": "Trigger update baud rate",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1tHLS9Wm",
+          "position": {
+            "x": 5,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Hkkm8Sq-X": {
+          "boundLiterals": {},
+          "description": "An UART object",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hkkm8Sq-X",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "@/input-uart",
+          "@@type": "xod-project/Node"
+        },
+        "HyBX8HqWX": {
+          "boundLiterals": {},
+          "description": "A new baud rate to set",
+          "label": "BAUD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyBX8HqWX",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "rkQEISqZX": {
+          "boundLiterals": {},
+          "description": "Pulses when baud rate changed",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkQEISqZX",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "ryxU8H5-m": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryxU8H5-m",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/change-baud-rate",
+      "description": "Changes baud rate of passed UART object. If UART already has started communication it will end it up and begin again with new baud rate.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto uart = getValue<input_UART>(ctx);\n        long baud = (long)getValue<input_BAUD>(ctx);\n        uart->changeBaudRate(baud);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/end": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "HJO3D3UZX": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "End UART communication",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJO3D3UZX",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Sk9EvnL-7": {
+          "boundLiterals": {},
+          "description": "An UART object",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk9EvnL-7",
+          "position": {
+            "x": -0.05,
+            "y": -0.05
+          },
+          "type": "@/input-uart",
+          "@@type": "xod-project/Node"
+        },
+        "Ske5EPhI-X": {
+          "boundLiterals": {},
+          "description": "Pulses when UART communication ended",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Ske5EPhI-X",
+          "position": {
+            "x": -0.05,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rk-qEvnUWm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rk-qEvnUWm",
+          "position": {
+            "x": -0.05,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/end",
+      "description": "",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto uart = getValue<input_UART>(ctx);\n        uart->end();\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example-print": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1FSwRPId7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1FSwRPId7",
+          "position": {
+            "x": 25,
+            "y": 4
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "B1ebg8Xnwbm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1ebg8Xnwbm",
+          "position": {
+            "x": 13,
+            "y": 5
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "BJEPQ2PWQ": {
+          "boundLiterals": {
+            "ryGwYhIZm": "\"AT\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJEPQ2PWQ",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "@/print",
+          "@@type": "xod-project/Node"
+        },
+        "BJJxBP0D8dm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJJxBP0D8dm",
+          "position": {
+            "x": 1,
+            "y": 4
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "BJVWxLQ3P-X": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJVWxLQ3P-X",
+          "position": {
+            "x": 16,
+            "y": 6
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "BJXx8Q2vWQ": {
+          "boundLiterals": {
+            "Syz-kKUWX": "D8",
+            "r1mZktLZm": "D9"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJXx8Q2vWQ",
+          "position": {
+            "x": 4,
+            "y": -1
+          },
+          "type": "@/soft-uart",
+          "@@type": "xod-project/Node"
+        },
+        "Bk5w0PL_Q": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bk5w0PL_Q",
+          "position": {
+            "x": 3,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "BkHWx8m3vWm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkHWx8m3vWm",
+          "position": {
+            "x": 19,
+            "y": 5
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "BkVg8XhwWm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkVg8XhwWm",
+          "position": {
+            "x": 4,
+            "y": 6
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "BkWrPRv8d7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkWrPRv8d7",
+          "position": {
+            "x": 4,
+            "y": 4
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "BkYWgUQ2DW7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkYWgUQ2DW7",
+          "position": {
+            "x": 25,
+            "y": 5
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "H10geL73wb7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H10geL73wb7",
+          "position": {
+            "x": 7,
+            "y": 6
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "H1plx87hDZX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1plx87hDZX",
+          "position": {
+            "x": 7,
+            "y": 5
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "HJ7SvCvL_m": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJ7SvCvL_m",
+          "position": {
+            "x": 10,
+            "y": 4
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "HJBrD0PLO7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJBrD0PLO7",
+          "position": {
+            "x": 7,
+            "y": 4
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "HJUe87hP-7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJUe87hP-7",
+          "position": {
+            "x": 29,
+            "y": 5
+          },
+          "type": "@/end",
+          "@@type": "xod-project/Node"
+        },
+        "HkKxeUX3vZ7": {
+          "boundLiterals": {
+            "SJ-1mZPTz": "Continuously"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkKxeUX3vZ7",
+          "position": {
+            "x": 2,
+            "y": 4
+          },
+          "type": "xod/core/gate",
+          "@@type": "xod-project/Node"
+        },
+        "HyD-xLQnP-7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyD-xLQnP-7",
+          "position": {
+            "x": 22,
+            "y": 5
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "HyQZlImnvWm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyQZlImnvWm",
+          "position": {
+            "x": 16,
+            "y": 5
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "Hyblrv0PLuX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hyblrv0PLuX",
+          "position": {
+            "x": 16,
+            "y": 4
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "S1HDCwIOQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1HDCwIOQ",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/to-bus",
+          "@@type": "xod-project/Node"
+        },
+        "S1jSD0PUO7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1jSD0PUO7",
+          "position": {
+            "x": 13,
+            "y": 4
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "S1vHw0D8um": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1vHw0D8um",
+          "position": {
+            "x": 22,
+            "y": 4
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "S1wlL7nPbQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1wlL7nPbQ",
+          "position": {
+            "x": 1,
+            "y": 5
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "S1xgIQ3wbQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1xgIQ3wbQ",
+          "position": {
+            "x": 4,
+            "y": 5
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "SJ-WeI72D-7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJ-WeI72D-7",
+          "position": {
+            "x": 10,
+            "y": 6
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "SJ8bgU7nvZQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJ8bgU7nvZQ",
+          "position": {
+            "x": 19,
+            "y": 6
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "SJTSwAvIdX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJTSwAvIdX",
+          "position": {
+            "x": 19,
+            "y": 4
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "SJhle8QnDbm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJhle8QnDbm",
+          "position": {
+            "x": 29,
+            "y": 6
+          },
+          "type": "xod/core/defer",
+          "@@type": "xod-project/Node"
+        },
+        "SJlSN2v-m": {
+          "boundLiterals": {
+            "SkSuD6LMb": "On Boot",
+            "Skre8ROSv1-": "3"
+          },
+          "description": "Hack to make watch nodes works on Leonardo",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJlSN2v-m",
+          "position": {
+            "x": 0,
+            "y": -1
+          },
+          "type": "xod/core/delay",
+          "@@type": "xod-project/Node"
+        },
+        "SkOWxUm2DWm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkOWxUm2DWm",
+          "position": {
+            "x": 22,
+            "y": 6
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "SkcZgU7nwZX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkcZgU7nwZX",
+          "position": {
+            "x": 25,
+            "y": 6
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "SyGWlUmhPWm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyGWlUmhPWm",
+          "position": {
+            "x": 13,
+            "y": 6
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "SyqllLXnwWQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyqllLXnwWQ",
+          "position": {
+            "x": 3,
+            "y": 3
+          },
+          "type": "xod/core/flip-flop",
+          "@@type": "xod-project/Node"
+        },
+        "rJQgrPADI_7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJQgrPADI_7",
+          "position": {
+            "x": 29,
+            "y": 4
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "rJfgUm2DZQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJfgUm2DZQ",
+          "position": {
+            "x": 1,
+            "y": 6
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "rk1bg8m3vbm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rk1bg8m3vbm",
+          "position": {
+            "x": 10,
+            "y": 5
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "BJLNeIm3v-7": {
+          "id": "BJLNeIm3v-7",
+          "input": {
+            "nodeId": "SJ-WeI72D-7",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rk1bg8m3vbm",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Bk-MgUQ2vbm": {
+          "id": "Bk-MgUQ2vbm",
+          "input": {
+            "nodeId": "S1xgIQ3wbQ",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "S1wlL7nPbQ",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Bk3BPRv8_X": {
+          "id": "Bk3BPRv8_X",
+          "input": {
+            "nodeId": "B1ebg8Xnwbm",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "S1jSD0PUO7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkMgHPCP8_m": {
+          "id": "BkMgHPCP8_m",
+          "input": {
+            "nodeId": "HyQZlImnvWm",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "Hyblrv0PLuX",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BksXe872w-X": {
+          "id": "BksXe872w-X",
+          "input": {
+            "nodeId": "HkKxeUX3vZ7",
+            "pinKey": "B1P1nFwaM"
+          },
+          "output": {
+            "nodeId": "SyqllLXnwWQ",
+            "pinKey": "HkyxURuSPyW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Bkw4eI73vbX": {
+          "id": "Bkw4eI73vbX",
+          "input": {
+            "nodeId": "SyGWlUmhPWm",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "B1ebg8Xnwbm",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkzHlLQhwZm": {
+          "id": "BkzHlLQhwZm",
+          "input": {
+            "nodeId": "HJUe87hP-7",
+            "pinKey": "HJO3D3UZX"
+          },
+          "output": {
+            "nodeId": "BkYWgUQ2DW7",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BycVgLXhDZ7": {
+          "id": "BycVgLXhDZ7",
+          "input": {
+            "nodeId": "BJVWxLQ3P-X",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "HyQZlImnvWm",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1ASDAvIOQ": {
+          "id": "H1ASDAvIOQ",
+          "input": {
+            "nodeId": "BkHWx8m3vWm",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "SJTSwAvIdX",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1VOCvUOm": {
+          "id": "H1VOCvUOm",
+          "input": {
+            "nodeId": "BJXx8Q2vWQ",
+            "pinKey": "S1gjHAPL_7"
+          },
+          "output": {
+            "nodeId": "SJlSN2v-m",
+            "pinKey": "Bk4gU0drwJ-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1jP7hDZm": {
+          "id": "H1jP7hDZm",
+          "input": {
+            "nodeId": "SyqllLXnwWQ",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "BJEPQ2PWQ",
+            "pinKey": "rkl6IK3L-7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1sVxUm3DW7": {
+          "id": "H1sVxUm3DW7",
+          "input": {
+            "nodeId": "SJ8bgU7nvZQ",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BkHWx8m3vWm",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJgBxLQ2vZX": {
+          "id": "HJgBxLQ2vZX",
+          "input": {
+            "nodeId": "HyD-xLQnP-7",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "BkHWx8m3vWm",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1-Ne8mhDWQ": {
+          "id": "S1-Ne8mhDWQ",
+          "input": {
+            "nodeId": "H1plx87hDZX",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "S1xgIQ3wbQ",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJ2be8mnwW7": {
+          "id": "SJ2be8mnwW7",
+          "input": {
+            "nodeId": "rJfgUm2DZQ",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "S1wlL7nPbQ",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJ9HvAwLdX": {
+          "id": "SJ9HvAwLdX",
+          "input": {
+            "nodeId": "BkYWgUQ2DW7",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "B1FSwRPId7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJMBvCwUOQ": {
+          "id": "SJMBvCwUOQ",
+          "input": {
+            "nodeId": "S1xgIQ3wbQ",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "BkWrPRv8d7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJRExLm2wbm": {
+          "id": "SJRExLm2wbm",
+          "input": {
+            "nodeId": "HyQZlImnvWm",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "B1ebg8Xnwbm",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJhElI7hwb7": {
+          "id": "SJhElI7hwb7",
+          "input": {
+            "nodeId": "SkOWxUm2DWm",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "HyD-xLQnP-7",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJhme8mnDZm": {
+          "id": "SJhme8mnDZm",
+          "input": {
+            "nodeId": "S1wlL7nPbQ",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "HkKxeUX3vZ7",
+            "pinKey": "OkPg7GDaW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJlBvCw8OQ": {
+          "id": "SJlBvCw8OQ",
+          "input": {
+            "nodeId": "S1HDCwIOQ",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJXx8Q2vWQ",
+            "pinKey": "rycxytIZQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkTNg8QhPb7": {
+          "id": "SkTNg8QhPb7",
+          "input": {
+            "nodeId": "SkcZgU7nwZX",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BkYWgUQ2DW7",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkgNx873DW7": {
+          "id": "SkgNx873DW7",
+          "input": {
+            "nodeId": "SyqllLXnwWQ",
+            "pinKey": "B1RU0OrDkb"
+          },
+          "output": {
+            "nodeId": "SJhle8QnDbm",
+            "pinKey": "HJhXDIY9-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyESPAvLum": {
+          "id": "SyESPAvLum",
+          "input": {
+            "nodeId": "rk1bg8m3vbm",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "HJ7SvCvL_m",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SylxBvCD8_X": {
+          "id": "SylxBvCD8_X",
+          "input": {
+            "nodeId": "S1wlL7nPbQ",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "BJJxBP0D8dm",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1K2CPUuQ": {
+          "id": "r1K2CPUuQ",
+          "input": {
+            "nodeId": "BJEPQ2PWQ",
+            "pinKey": "H1VpIKnLb7"
+          },
+          "output": {
+            "nodeId": "BJXx8Q2vWQ",
+            "pinKey": "HJoHCvU_Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1VEx8Q3wWX": {
+          "id": "r1VEx8Q3wWX",
+          "input": {
+            "nodeId": "rk1bg8m3vbm",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "H1plx87hDZX",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1mEe872P-X": {
+          "id": "r1mEe872P-X",
+          "input": {
+            "nodeId": "H10geL73wb7",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H1plx87hDZX",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJBVlUX3P-7": {
+          "id": "rJBVlUX3P-7",
+          "input": {
+            "nodeId": "B1ebg8Xnwbm",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "rk1bg8m3vbm",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJJgpQWxS": {
+          "id": "rJJgpQWxS",
+          "input": {
+            "nodeId": "SJhle8QnDbm",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "HJUe87hP-7",
+            "pinKey": "Ske5EPhI-X"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJRZlImhPZm": {
+          "id": "rJRZlImhPZm",
+          "input": {
+            "nodeId": "BkVg8XhwWm",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "S1xgIQ3wbQ",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJdHvCwUum": {
+          "id": "rJdHvCwUum",
+          "input": {
+            "nodeId": "HyD-xLQnP-7",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "S1vHw0D8um",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkl5DAD8dQ": {
+          "id": "rkl5DAD8dQ",
+          "input": {
+            "nodeId": "BJEPQ2PWQ",
+            "pinKey": "HkT8KhLWm"
+          },
+          "output": {
+            "nodeId": "Bk5w0PL_Q",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ry-rlI73DW7": {
+          "id": "ry-rlI73DW7",
+          "input": {
+            "nodeId": "BkYWgUQ2DW7",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "HyD-xLQnP-7",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ry8rwCwI_m": {
+          "id": "ry8rwCwI_m",
+          "input": {
+            "nodeId": "H1plx87hDZX",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "HJBrD0PLO7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryVlBv0PIOX": {
+          "id": "ryVlBv0PIOX",
+          "input": {
+            "nodeId": "HJUe87hP-7",
+            "pinKey": "Sk9EvnL-7"
+          },
+          "output": {
+            "nodeId": "rJQgrPADI_7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryyBe8Q3D-7": {
+          "id": "ryyBe8Q3D-7",
+          "input": {
+            "nodeId": "BkHWx8m3vWm",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "HyQZlImnvWm",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/example-print",
+      "description": "",
+      "attachments": []
+    },
+    "@/example-uart": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1SVlxu8_Q": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1SVlxu8_Q",
+          "position": {
+            "x": 7,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "B1bNgeO8_X": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1bNgeO8_X",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "BJAIVuqZm": {
+          "boundLiterals": {
+            "SkSuD6LMb": "On Boot",
+            "Skre8ROSv1-": "1"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJAIVuqZm",
+          "position": {
+            "x": 5,
+            "y": -1
+          },
+          "type": "xod/core/delay",
+          "@@type": "xod-project/Node"
+        },
+        "BJR8Q_c-X": {
+          "boundLiterals": {
+            "r10MWJuW7": "64"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJR8Q_c-X",
+          "position": {
+            "x": 7,
+            "y": 3
+          },
+          "type": "@/read-bytes",
+          "@@type": "xod-project/Node"
+        },
+        "BkwPEuc-Q": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkwPEuc-Q",
+          "position": {
+            "x": 8,
+            "y": -1
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "By_4VdqbX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "By_4VdqbX",
+          "position": {
+            "x": 12,
+            "y": 3
+          },
+          "type": "@/end",
+          "@@type": "xod-project/Node"
+        },
+        "SJB8Quc-X": {
+          "boundLiterals": {
+            "ryGwYhIZm": "\"AT\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJB8Quc-X",
+          "position": {
+            "x": 3,
+            "y": 3
+          },
+          "type": "@/print",
+          "@@type": "xod-project/Node"
+        },
+        "Sk4xluU_X": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk4xluU_X",
+          "position": {
+            "x": 4,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/to-bus",
+          "@@type": "xod-project/Node"
+        },
+        "SkFwQdcZ7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkFwQdcZ7",
+          "position": {
+            "x": 9,
+            "y": 4
+          },
+          "type": "xod/core/console-log",
+          "@@type": "xod-project/Node"
+        },
+        "rJKaK_qWX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJKaK_qWX",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "@/uart",
+          "@@type": "xod-project/Node"
+        },
+        "rJmEll_8_Q": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJmEll_8_Q",
+          "position": {
+            "x": 12,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B1Hy0tXzX": {
+          "id": "B1Hy0tXzX",
+          "input": {
+            "nodeId": "SkFwQdcZ7",
+            "pinKey": "S1n95SDJb"
+          },
+          "output": {
+            "nodeId": "BJR8Q_c-X",
+            "pinKey": "rJ2IpKQMX"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "B1RT1d8dm": {
+          "id": "B1RT1d8dm",
+          "input": {
+            "nodeId": "rJKaK_qWX",
+            "pinKey": "SJCqmwIO7"
+          },
+          "output": {
+            "nodeId": "BJAIVuqZm",
+            "pinKey": "Bk4gU0drwJ-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJ1u7_9Wm": {
+          "id": "BJ1u7_9Wm",
+          "input": {
+            "nodeId": "SkFwQdcZ7",
+            "pinKey": "HJdO9HwJ-"
+          },
+          "output": {
+            "nodeId": "BJR8Q_c-X",
+            "pinKey": "rkVBb1uZ7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1_wEd5Wm": {
+          "id": "H1_wEd5Wm",
+          "input": {
+            "nodeId": "BkwPEuc-Q",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "BJAIVuqZm",
+            "pinKey": "HkU3vNoTW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1nlgdUdm": {
+          "id": "H1nlgdUdm",
+          "input": {
+            "nodeId": "SJB8Quc-X",
+            "pinKey": "H1VpIKnLb7"
+          },
+          "output": {
+            "nodeId": "rJKaK_qWX",
+            "pinKey": "rJAd7vLOQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1xJCt7zX": {
+          "id": "H1xJCt7zX",
+          "input": {
+            "nodeId": "By_4VdqbX",
+            "pinKey": "HJO3D3UZX"
+          },
+          "output": {
+            "nodeId": "BJR8Q_c-X",
+            "pinKey": "rJ2IpKQMX"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJOk0YQGX": {
+          "id": "SJOk0YQGX",
+          "input": {
+            "nodeId": "BJR8Q_c-X",
+            "pinKey": "rkc7Wyu-m"
+          },
+          "output": {
+            "nodeId": "SJB8Quc-X",
+            "pinKey": "rkl6IK3L-7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyzVxlOIdQ": {
+          "id": "SyzVxlOIdQ",
+          "input": {
+            "nodeId": "SJB8Quc-X",
+            "pinKey": "HkT8KhLWm"
+          },
+          "output": {
+            "nodeId": "B1bNgeO8_X",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJ8Nle_I_m": {
+          "id": "rJ8Nle_I_m",
+          "input": {
+            "nodeId": "BJR8Q_c-X",
+            "pinKey": "SJaxW1ubX"
+          },
+          "output": {
+            "nodeId": "B1SVlxu8_Q",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ry4VxxdIdm": {
+          "id": "ry4VxxdIdm",
+          "input": {
+            "nodeId": "By_4VdqbX",
+            "pinKey": "Sk9EvnL-7"
+          },
+          "output": {
+            "nodeId": "rJmEll_8_Q",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryeVleOU_7": {
+          "id": "ryeVleOU_7",
+          "input": {
+            "nodeId": "Sk4xluU_X",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJKaK_qWX",
+            "pinKey": "ByJ65dU-X"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/example-uart",
+      "description": "",
+      "attachments": []
+    },
+    "@/example-read": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "By2yRpDbQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "By2yRpDbQ",
+          "position": {
+            "x": -1,
+            "y": 2
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "H1sZygu-m": {
+          "boundLiterals": {
+            "r10MWJuW7": "10"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1sZygu-m",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "@/read-bytes",
+          "@@type": "xod-project/Node"
+        },
+        "HkdbAKXzQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkdbAKXzQ",
+          "position": {
+            "x": 1,
+            "y": 3
+          },
+          "type": "@/end",
+          "@@type": "xod-project/Node"
+        },
+        "S1XgMnT6DWm": {
+          "boundLiterals": {
+            "SkSuD6LMb": "On Boot",
+            "Skre8ROSv1-": "1"
+          },
+          "description": "Hack to make watch nodes works on Leonardo",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1XgMnT6DWm",
+          "position": {
+            "x": 1,
+            "y": -1
+          },
+          "type": "xod/core/delay",
+          "@@type": "xod-project/Node"
+        },
+        "SylfhpTDZm": {
+          "boundLiterals": {
+            "ryGwYhIZm": "\"AT\""
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SylfhpTDZm",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "@/print",
+          "@@type": "xod-project/Node"
+        },
+        "rJGM36TvZ7": {
+          "boundLiterals": {
+            "Syz-kKUWX": "D8",
+            "r1mZktLZm": "D9"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJGM36TvZ7",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "@/soft-uart",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "Bk6WJeO-m": {
+          "id": "Bk6WJeO-m",
+          "input": {
+            "nodeId": "H1sZygu-m",
+            "pinKey": "SJaxW1ubX"
+          },
+          "output": {
+            "nodeId": "rJGM36TvZ7",
+            "pinKey": "rycxytIZQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkKWAFQz7": {
+          "id": "BkKWAFQz7",
+          "input": {
+            "nodeId": "HkdbAKXzQ",
+            "pinKey": "Sk9EvnL-7"
+          },
+          "output": {
+            "nodeId": "rJGM36TvZ7",
+            "pinKey": "rycxytIZQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJrmJguZm": {
+          "id": "HJrmJguZm",
+          "input": {
+            "nodeId": "By2yRpDbQ",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H1sZygu-m",
+            "pinKey": "rkVBb1uZ7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJxh1_IdX": {
+          "id": "HJxh1_IdX",
+          "input": {
+            "nodeId": "SylfhpTDZm",
+            "pinKey": "H1VpIKnLb7"
+          },
+          "output": {
+            "nodeId": "rJGM36TvZ7",
+            "pinKey": "HJoHCvU_Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJu-G3a6PZm": {
+          "id": "SJu-G3a6PZm",
+          "input": {
+            "nodeId": "SylfhpTDZm",
+            "pinKey": "HkT8KhLWm"
+          },
+          "output": {
+            "nodeId": "rJGM36TvZ7",
+            "pinKey": "rycxytIZQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkMhydLd7": {
+          "id": "SkMhydLd7",
+          "input": {
+            "nodeId": "rJGM36TvZ7",
+            "pinKey": "S1gjHAPL_7"
+          },
+          "output": {
+            "nodeId": "S1XgMnT6DWm",
+            "pinKey": "Bk4gU0drwJ-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Sybf1l_W7": {
+          "id": "Sybf1l_W7",
+          "input": {
+            "nodeId": "H1sZygu-m",
+            "pinKey": "rkc7Wyu-m"
+          },
+          "output": {
+            "nodeId": "SylfhpTDZm",
+            "pinKey": "rkl6IK3L-7"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1kfRKXMQ": {
+          "id": "r1kfRKXMQ",
+          "input": {
+            "nodeId": "HkdbAKXzQ",
+            "pinKey": "HJO3D3UZX"
+          },
+          "output": {
+            "nodeId": "H1sZygu-m",
+            "pinKey": "rJ2IpKQMX"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/example-read",
+      "description": "",
+      "attachments": []
+    },
+    "@/example-write": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1KXG3vZm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1KXG3vZm",
+          "position": {
+            "x": 28,
+            "y": 7
+          },
+          "type": "xod/core/defer",
+          "@@type": "xod-project/Node"
+        },
+        "B1Ueiv8uX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1Ueiv8uX",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/to-bus",
+          "@@type": "xod-project/Node"
+        },
+        "B1ae8xsvU_7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1ae8xsvU_7",
+          "position": {
+            "x": 9,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "B1lrjfnDWX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1lrjfnDWX",
+          "position": {
+            "x": 15,
+            "y": 7
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "BJ1df3v-Q": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJ1df3v-Q",
+          "position": {
+            "x": 12,
+            "y": 7
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "BJQgUeiwLu7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJQgUeiwLu7",
+          "position": {
+            "x": 3,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "BJeDGhvbX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJeDGhvbX",
+          "position": {
+            "x": 6,
+            "y": 7
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "Bk6IgjvUOQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bk6IgjvUOQ",
+          "position": {
+            "x": 24,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "BkWgIgswUum": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkWgIgswUum",
+          "position": {
+            "x": 6,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "BkrUesPLd7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkrUesPLd7",
+          "position": {
+            "x": 12,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "By8z-3Dbm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "By8z-3Dbm",
+          "position": {
+            "x": 12,
+            "y": 3
+          },
+          "type": "@/flush",
+          "@@type": "xod-project/Node"
+        },
+        "ByML3nU-m": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByML3nU-m",
+          "position": {
+            "x": 3,
+            "y": 6
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "Byltif2wbm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Byltif2wbm",
+          "position": {
+            "x": 24,
+            "y": 7
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "BywLesv8dm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BywLesv8dm",
+          "position": {
+            "x": 6,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "H1GNToPWX": {
+          "boundLiterals": {
+            "rJaSP2UZm": "54h"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1GNToPWX",
+          "position": {
+            "x": 3,
+            "y": 3
+          },
+          "type": "@/write-byte",
+          "@@type": "xod-project/Node"
+        },
+        "H1tBTivb7": {
+          "boundLiterals": {
+            "rJaSP2UZm": "0Ah"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1tBTivb7",
+          "position": {
+            "x": 9,
+            "y": 3
+          },
+          "type": "@/write-byte",
+          "@@type": "xod-project/Node"
+        },
+        "HJFIh3U-Q": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJFIh3U-Q",
+          "position": {
+            "x": 0,
+            "y": 7
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "HJdiznwW7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJdiznwW7",
+          "position": {
+            "x": 21,
+            "y": 6
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "HJtfh3LWm": {
+          "boundLiterals": {
+            "Syz-kKUWX": "D8",
+            "r1mZktLZm": "D9"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJtfh3LWm",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "@/soft-uart",
+          "@@type": "xod-project/Node"
+        },
+        "Hk1-UloD8d7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hk1-UloD8d7",
+          "position": {
+            "x": 0,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "HkBxLljPUuQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkBxLljPUuQ",
+          "position": {
+            "x": 21,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "HkovG3Pb7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkovG3Pb7",
+          "position": {
+            "x": 9,
+            "y": 7
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "HkrsG3wZQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkrsG3wZQ",
+          "position": {
+            "x": 15,
+            "y": 6
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "HydubhvbQ": {
+          "boundLiterals": {
+            "SJ-1mZPTz": "Continuously"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HydubhvbQ",
+          "position": {
+            "x": 3,
+            "y": 4
+          },
+          "type": "xod/core/gate",
+          "@@type": "xod-project/Node"
+        },
+        "HyjNTjv-7": {
+          "boundLiterals": {
+            "rJaSP2UZm": "0Dh"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyjNTjv-7",
+          "position": {
+            "x": 6,
+            "y": 3
+          },
+          "type": "@/write-byte",
+          "@@type": "xod-project/Node"
+        },
+        "S1M7powbm": {
+          "boundLiterals": {
+            "rJaSP2UZm": "41h"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1M7powbm",
+          "position": {
+            "x": 0,
+            "y": 3
+          },
+          "type": "@/write-byte",
+          "@@type": "xod-project/Node"
+        },
+        "SJ1xIlsDIOm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJ1xIlsDIOm",
+          "position": {
+            "x": 15,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "SJn83hIZX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJn83hIZX",
+          "position": {
+            "x": 3,
+            "y": 7
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "SJsl8esPIOQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJsl8esPIOQ",
+          "position": {
+            "x": 28,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "SkDe8xsPIuQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkDe8xsPIuQ",
+          "position": {
+            "x": 9,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "SkG9l2DbQ": {
+          "boundLiterals": {
+            "SkSuD6LMb": "On Boot",
+            "Skre8ROSv1-": "3"
+          },
+          "description": "Hack to make watch nodes works on Leonardo",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkG9l2DbQ",
+          "position": {
+            "x": -3,
+            "y": 0
+          },
+          "type": "xod/core/delay",
+          "@@type": "xod-project/Node"
+        },
+        "SkXIgjDIuQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkXIgjDIuQ",
+          "position": {
+            "x": 12,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "SkYIgjDIuX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkYIgjDIuX",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "SyBDM2PZQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyBDM2PZQ",
+          "position": {
+            "x": 12,
+            "y": 6
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "r1vsfnvZX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1vsfnvZX",
+          "position": {
+            "x": 18,
+            "y": 6
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "rJQFZ2wbm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJQFZ2wbm",
+          "position": {
+            "x": 0,
+            "y": 4
+          },
+          "type": "xod/core/flip-flop",
+          "@@type": "xod-project/Node"
+        },
+        "rJYeUeivUdm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJYeUeivUdm",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "rJxDsMhvZ7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJxDsMhvZ7",
+          "position": {
+            "x": 18,
+            "y": 7
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "rkVwG2PZm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkVwG2PZm",
+          "position": {
+            "x": 9,
+            "y": 6
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "rkYoMnDbX": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkYoMnDbX",
+          "position": {
+            "x": 24,
+            "y": 6
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "rkldofnDb7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkldofnDb7",
+          "position": {
+            "x": 21,
+            "y": 7
+          },
+          "type": "xod/core/watch",
+          "@@type": "xod-project/Node"
+        },
+        "ry78znP-Q": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ry78znP-Q",
+          "position": {
+            "x": 6,
+            "y": 6
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "ry7D2nU-X": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ry7D2nU-X",
+          "position": {
+            "x": 28,
+            "y": 6
+          },
+          "type": "@/end",
+          "@@type": "xod-project/Node"
+        },
+        "ryLHh2UWQ": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryLHh2UWQ",
+          "position": {
+            "x": 0,
+            "y": 6
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "ryoUgjwI_7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryoUgjwI_7",
+          "position": {
+            "x": 18,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "BJZdof2wb7": {
+          "id": "BJZdof2wb7",
+          "input": {
+            "nodeId": "rkldofnDb7",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "HJdiznwW7",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJgbLgovIdX": {
+          "id": "BJgbLgovIdX",
+          "input": {
+            "nodeId": "ryLHh2UWQ",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "Hk1-UloD8d7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJmwG3DWX": {
+          "id": "BJmwG3DWX",
+          "input": {
+            "nodeId": "BJeDGhvbX",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "ry78znP-Q",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkVLxoDLum": {
+          "id": "BkVLxoDLum",
+          "input": {
+            "nodeId": "SyBDM2PZQ",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "SkXIgjDIuQ",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkZnz2PZQ": {
+          "id": "BkZnz2PZQ",
+          "input": {
+            "nodeId": "ry7D2nU-X",
+            "pinKey": "HJO3D3UZX"
+          },
+          "output": {
+            "nodeId": "rkYoMnDbX",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Byh8govLdX": {
+          "id": "Byh8govLdX",
+          "input": {
+            "nodeId": "r1vsfnvZX",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "ryoUgjwI_7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Byo8h28-Q": {
+          "id": "Byo8h28-Q",
+          "input": {
+            "nodeId": "HJFIh3U-Q",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "ryLHh2UWQ",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1CIloDLOQ": {
+          "id": "H1CIloDLOQ",
+          "input": {
+            "nodeId": "rkYoMnDbX",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "Bk6IgjvUOQ",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1MgLxiPUdQ": {
+          "id": "H1MgLxiPUdQ",
+          "input": {
+            "nodeId": "HyjNTjv-7",
+            "pinKey": "BkHrP2I-m"
+          },
+          "output": {
+            "nodeId": "BkWgIgswUum",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1qeIxjvLOm": {
+          "id": "H1qeIxjvLOm",
+          "input": {
+            "nodeId": "S1M7powbm",
+            "pinKey": "BkHrP2I-m"
+          },
+          "output": {
+            "nodeId": "rJYeUeivUdm",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1vvM2wZQ": {
+          "id": "H1vvM2wZQ",
+          "input": {
+            "nodeId": "rkVwG2PZm",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "ry78znP-Q",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJ2e8xowU_X": {
+          "id": "HJ2e8xowU_X",
+          "input": {
+            "nodeId": "ry7D2nU-X",
+            "pinKey": "Sk9EvnL-7"
+          },
+          "output": {
+            "nodeId": "SJsl8esPIOQ",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJ2jMnv-7": {
+          "id": "HJ2jMnv-7",
+          "input": {
+            "nodeId": "r1vsfnvZX",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "HkrsG3wZQ",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJOx8eoDLOQ": {
+          "id": "HJOx8eoDLOQ",
+          "input": {
+            "nodeId": "rkVwG2PZm",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "SkDe8xsPIuQ",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJdZpXZlB": {
+          "id": "HJdZpXZlB",
+          "input": {
+            "nodeId": "B1KXG3vZm",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "ry7D2nU-X",
+            "pinKey": "Ske5EPhI-X"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hk5HpovZ7": {
+          "id": "Hk5HpovZ7",
+          "input": {
+            "nodeId": "H1tBTivb7",
+            "pinKey": "Hyz0PhIbm"
+          },
+          "output": {
+            "nodeId": "HyjNTjv-7",
+            "pinKey": "HJxHrv3I-m"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkdLxiD8dm": {
+          "id": "HkdLxiD8dm",
+          "input": {
+            "nodeId": "ry78znP-Q",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "BywLesv8dm",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkrUf3w-Q": {
+          "id": "HkrUf3w-Q",
+          "input": {
+            "nodeId": "ry78znP-Q",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "ByML3nU-m",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HyPqZ2D-m": {
+          "id": "HyPqZ2D-m",
+          "input": {
+            "nodeId": "HydubhvbQ",
+            "pinKey": "B1P1nFwaM"
+          },
+          "output": {
+            "nodeId": "rJQFZ2wbm",
+            "pinKey": "HkyxURuSPyW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1KvfhvbX": {
+          "id": "S1KvfhvbX",
+          "input": {
+            "nodeId": "SyBDM2PZQ",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "rkVwG2PZm",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1WBsMhvW7": {
+          "id": "S1WBsMhvW7",
+          "input": {
+            "nodeId": "B1lrjfnDWX",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "HkrsG3wZQ",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1ooG2DZm": {
+          "id": "S1ooG2DZm",
+          "input": {
+            "nodeId": "HkrsG3wZQ",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "SyBDM2PZQ",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1xgLlsvUuQ": {
+          "id": "S1xgLlsvUuQ",
+          "input": {
+            "nodeId": "HkrsG3wZQ",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "SJ1xIlsDIOm",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJ1nMnvWm": {
+          "id": "SJ1nMnvWm",
+          "input": {
+            "nodeId": "rkYoMnDbX",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "HJdiznwW7",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJ1vhnUbm": {
+          "id": "SJ1vhnUbm",
+          "input": {
+            "nodeId": "SJn83hIZX",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "ByML3nU-m",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJRPz2DWX": {
+          "id": "SJRPz2DWX",
+          "input": {
+            "nodeId": "HkovG3Pb7",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rkVwG2PZm",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkQEaoP-Q": {
+          "id": "SkQEaoP-Q",
+          "input": {
+            "nodeId": "H1GNToPWX",
+            "pinKey": "Hyz0PhIbm"
+          },
+          "output": {
+            "nodeId": "S1M7powbm",
+            "pinKey": "HJxHrv3I-m"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyAXGhP-7": {
+          "id": "SyAXGhP-7",
+          "input": {
+            "nodeId": "rJQFZ2wbm",
+            "pinKey": "B1RU0OrDkb"
+          },
+          "output": {
+            "nodeId": "B1KXG3vZm",
+            "pinKey": "HJhXDIY9-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyLIeiP8dQ": {
+          "id": "SyLIeiP8dQ",
+          "input": {
+            "nodeId": "By8z-3Dbm",
+            "pinKey": "BkiJZ2wWQ"
+          },
+          "output": {
+            "nodeId": "BkrUesPLd7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SycM-3PZm": {
+          "id": "SycM-3PZm",
+          "input": {
+            "nodeId": "By8z-3Dbm",
+            "pinKey": "ryGs1Z2vW7"
+          },
+          "output": {
+            "nodeId": "H1tBTivb7",
+            "pinKey": "HJxHrv3I-m"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyhEasvWX": {
+          "id": "SyhEasvWX",
+          "input": {
+            "nodeId": "HyjNTjv-7",
+            "pinKey": "Hyz0PhIbm"
+          },
+          "output": {
+            "nodeId": "H1GNToPWX",
+            "pinKey": "HJxHrv3I-m"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r10b1dL_7": {
+          "id": "r10b1dL_7",
+          "input": {
+            "nodeId": "S1M7powbm",
+            "pinKey": "Hyz0PhIbm"
+          },
+          "output": {
+            "nodeId": "HJtfh3LWm",
+            "pinKey": "HJoHCvU_Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1NoZnDW7": {
+          "id": "r1NoZnDW7",
+          "input": {
+            "nodeId": "ryLHh2UWQ",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "HydubhvbQ",
+            "pinKey": "OkPg7GDaW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1bvjz3vZm": {
+          "id": "r1bvjz3vZm",
+          "input": {
+            "nodeId": "rJxDsMhvZ7",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "r1vsfnvZX",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1l8esPIu7": {
+          "id": "r1l8esPIu7",
+          "input": {
+            "nodeId": "B1Ueiv8uX",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HJtfh3LWm",
+            "pinKey": "rycxytIZQ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1zdfnw-Q": {
+          "id": "r1zdfnw-Q",
+          "input": {
+            "nodeId": "BJ1df3v-Q",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "SyBDM2PZQ",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJHKbnvWQ": {
+          "id": "rJHKbnvWQ",
+          "input": {
+            "nodeId": "rJQFZ2wbm",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "By8z-3Dbm",
+            "pinKey": "H1gsyZ3PZm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJRjzhvb7": {
+          "id": "rJRjzhvb7",
+          "input": {
+            "nodeId": "HJdiznwW7",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "r1vsfnvZX",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJRxIlovL_m": {
+          "id": "rJRxIlovL_m",
+          "input": {
+            "nodeId": "H1tBTivb7",
+            "pinKey": "BkHrP2I-m"
+          },
+          "output": {
+            "nodeId": "B1ae8xsvU_7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJbtszhPbQ": {
+          "id": "rJbtszhPbQ",
+          "input": {
+            "nodeId": "Byltif2wbm",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rkYoMnDbX",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkGM1uLuQ": {
+          "id": "rkGM1uLuQ",
+          "input": {
+            "nodeId": "HJtfh3LWm",
+            "pinKey": "S1gjHAPL_7"
+          },
+          "output": {
+            "nodeId": "SkG9l2DbQ",
+            "pinKey": "Bk4gU0drwJ-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ry8lUxoDI_X": {
+          "id": "ry8lUxoDI_X",
+          "input": {
+            "nodeId": "HJdiznwW7",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "HkBxLljPUuQ",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ry9IgiPL_m": {
+          "id": "ry9IgiPL_m",
+          "input": {
+            "nodeId": "H1GNToPWX",
+            "pinKey": "BkHrP2I-m"
+          },
+          "output": {
+            "nodeId": "SkYIgjDIuX",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryEL2nIWX": {
+          "id": "ryEL2nIWX",
+          "input": {
+            "nodeId": "ByML3nU-m",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "ryLHh2UWQ",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryElIejP8d7": {
+          "id": "ryElIejP8d7",
+          "input": {
+            "nodeId": "ByML3nU-m",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "BJQgUeiwLu7",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/example-write",
+      "description": "",
+      "attachments": []
+    },
+    "@/is-available": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "By_OfMFW7": {
+          "boundLiterals": {},
+          "description": "An UART object",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "By_OfMFW7",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "@/input-uart",
+          "@@type": "xod-project/Node"
+        },
+        "HJnKfztbm": {
+          "boundLiterals": {},
+          "description": "Pulses when there is nothing to read from UART",
+          "label": "N",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJnKfztbm",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HJrtMztWm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJrtMztWm",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "S1dYzzYWm": {
+          "boundLiterals": {},
+          "description": "Pulses when UART have available bytes",
+          "label": "Y",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1dYzzYWm",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rkytzGK-7": {
+          "boundLiterals": {},
+          "description": "Check does UART have an available bytes to read",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkytzGK-7",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/is-available",
+      "description": "Checks does UART have an available bytes to read",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto uart = getValue<input_UART>(ctx);\n        bool available = uart->available();\n        if (available) {\n            emitValue<output_Y>(ctx, 1);\n        } else {\n            emitValue<output_N>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/print": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1-6LFh8-7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1-6LFh8-7",
+          "position": {
+            "x": -0.05,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "H1VpIKnLb7": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Triggers write of a string into UART",
+          "label": "SEND",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1VpIKnLb7",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HkT8KhLWm": {
+          "boundLiterals": {},
+          "description": "An UART object",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkT8KhLWm",
+          "position": {
+            "x": -0.05,
+            "y": -0.05
+          },
+          "type": "@/input-uart",
+          "@@type": "xod-project/Node"
+        },
+        "rkl6IK3L-7": {
+          "boundLiterals": {},
+          "description": "Pulses when all String has been written",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkl6IK3L-7",
+          "position": {
+            "x": -0.05,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "ryGwYhIZm": {
+          "boundLiterals": {},
+          "description": "String to be sent into UART.\nCould contain \"\\r\\n\" symbols to sent few lines.",
+          "label": "DATA",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryGwYhIZm",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/print",
+      "description": "Writes a string bytes per byte into UART.\n\nPossible errors:\n— No bytes written. Probably due to buffer overflow",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_SEND\n#pragma XOD error_raise enable\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_SEND>(ctx))\n            return;\n\n        auto uart = getValue<input_UART>(ctx);\n        auto data = getValue<input_DATA>(ctx);\n\n        for (auto it = data.iterate(); it; ++it) {\n            bool err = !(uart->writeByte((char)*it));\n            if (err)\n                return raiseError(ctx);\n        }\n        if (!uart->writeByte('\\r'))\n            return raiseError(ctx);\n        if (!uart->writeByte('\\n'))\n            return raiseError(ctx);\n        uart->flush();\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/flush": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkiJZ2wWQ": {
+          "boundLiterals": {},
+          "description": "An UART object",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkiJZ2wWQ",
+          "position": {
+            "x": -0.05,
+            "y": -0.05
+          },
+          "type": "@/input-uart",
+          "@@type": "xod-project/Node"
+        },
+        "H1gsyZ3PZm": {
+          "boundLiterals": {},
+          "description": "Pulses when all outgoing data sent",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1gsyZ3PZm",
+          "position": {
+            "x": -0.05,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rJZjk-hwW7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJZjk-hwW7",
+          "position": {
+            "x": -0.05,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "ryGs1Z2vW7": {
+          "boundLiterals": {
+            "__out__": "Never"
+          },
+          "description": "Flush outgoing buffer when all data transmitted",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryGs1Z2vW7",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/flush",
+      "description": "Waits for the transmission of outgoing serial data to complete and then clears UART buffer.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto uart = getValue<input_UART>(ctx);\n        uart->flush();\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/soft-uart": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "HJoHCvU_Q": {
+          "boundLiterals": {},
+          "description": "Pulses when UART communication began",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJoHCvU_Q",
+          "position": {
+            "x": 4,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "S1gjHAPL_7": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Begin UART communication",
+          "label": "INIT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1gjHAPL_7",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Sy0-yt8ZQ": {
+          "boundLiterals": {
+            "__out__": "9600"
+          },
+          "description": "Speed of data transmission in bits per second (baud rate).",
+          "label": "BAUD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sy0-yt8ZQ",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "Syz-kKUWX": {
+          "boundLiterals": {},
+          "description": "Digital port on the device for receiving data",
+          "label": "RX",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Syz-kKUWX",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "r1mZktLZm": {
+          "boundLiterals": {},
+          "description": "Digital port on the device for transmiting data",
+          "label": "TX",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1mZktLZm",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "rJ6x1t8b7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJ6x1t8b7",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "rycxytIZQ": {
+          "boundLiterals": {},
+          "description": "An UART object",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rycxytIZQ",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "@/output-uart",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/soft-uart",
+      "description": "Constructor of SoftwareUart, provides serial communication on any digital pins.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#include <SoftwareSerial.h>\n\nnamespace xod {\nnamespace uart_software {\nclass SoftwareUart : public Uart {\nprivate:\n    SoftwareSerial _serial;\n    uint8_t _rx;\n    uint8_t _tx;\n\npublic:\n    SoftwareUart(uint8_t rx, uint8_t tx, long baud = 9600)\n        : Uart(baud)\n        , _serial(rx, tx) {\n        _rx = rx;\n        _tx = tx;\n    }\n\n    void begin();\n    void end();\n    void flush();\n\n    bool available() {\n        return (bool)_serial.available();\n    }\n\n    bool writeByte(uint8_t byte) {\n        return (bool)_serial.write(byte);\n    }\n\n    bool readByte(uint8_t* out) {\n        int data = _serial.read();\n        if (data == -1)\n            return false;\n        *out = (uint8_t)data;\n        return true;\n    }\n\n    uint8_t getRX() {\n        return _rx;\n    }\n\n    uint8_t getTX() {\n        return _tx;\n    }\n\n    SoftwareSerial* toSoftwareSerial() {\n        return &_serial;\n    }\n};\n\nvoid SoftwareUart::begin() {\n    _started = true;\n    _serial.begin(getBaudRate());\n};\nvoid SoftwareUart::end() {\n    _started = false;\n    _serial.end();\n};\nvoid SoftwareUart::flush() {\n    _serial.flush();\n}\n\n} // namespace uart_software\n} // namespace xod\n\nnode {\n    uint8_t mem[sizeof(uart_software::SoftwareUart)];\n    uart_software::SoftwareUart* uart;\n\n    void evaluate(Context ctx) {\n        if (isSettingUp()) {\n            uint8_t rx = getValue<input_RX>(ctx);\n            uint8_t tx = getValue<input_TX>(ctx);\n            long baud = (long)getValue<input_BAUD>(ctx);\n            uart = new (mem) uart_software::SoftwareUart(rx, tx, baud);\n            emitValue<output_UART>(ctx, uart);\n        }\n\n        if (isInputDirty<input_INIT>(ctx)) {\n            uart->begin();\n            emitValue<output_DONE>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/uart": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "ByJ65dU-X": {
+          "boundLiterals": {},
+          "description": "An UART object",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByJ65dU-X",
+          "position": {
+            "x": 1,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-self",
+          "@@type": "xod-project/Node"
+        },
+        "H1DwMu5bX": {
+          "boundLiterals": {
+            "__out__": "115200"
+          },
+          "description": "Speed of data transmission in bits per second (baud rate).",
+          "label": "BAUD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1DwMu5bX",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "S1taqd8Z7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1taqd8Z7",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "SJCqmwIO7": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Begin UART communication",
+          "label": "INIT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJCqmwIO7",
+          "position": {
+            "x": 3,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rJAd7vLOQ": {
+          "boundLiterals": {},
+          "description": "Pulses when UART communication began",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJAd7vLOQ",
+          "position": {
+            "x": 3,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/uart",
+      "description": "Constructor of HardwareUart, provides serial communication on default hardware serial ports.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    meta {\n        using Type = Uart*;\n    }\n\n    uint8_t mem[sizeof(HardwareUart)];\n    HardwareUart* uart;\n\n    void evaluate(Context ctx) {\n        if (isSettingUp()) {\n            auto baud = (uint32_t)getValue<input_BAUD>(ctx);\n    #ifdef SERIAL_PORT_HARDWARE_OPEN\n            auto serial = SERIAL_PORT_HARDWARE_OPEN;\n    #else\n            auto serial = SERIAL_PORT_HARDWARE;\n    #endif\n            uart = new (mem) HardwareUart(serial, baud);\n            emitValue<output_UART>(ctx, uart);\n        }\n\n        if (isInputDirty<input_INIT>(ctx)) {\n            uart->begin();\n            emitValue<output_DONE>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/read-byte": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "HkeKDhI-7": {
+          "boundLiterals": {},
+          "description": "An UART object",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkeKDhI-7",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-uart",
+          "@@type": "xod-project/Node"
+        },
+        "Hkeetvn8-Q": {
+          "boundLiterals": {},
+          "description": "Pulses when byte received",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hkeetvn8-Q",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Skw_dnU-Q": {
+          "boundLiterals": {},
+          "description": "Received byte from UART",
+          "label": "BYTE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Skw_dnU-Q",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "r1bXu3LWm": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Trigger reading of one byte from UART",
+          "label": "READ",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1bXu3LWm",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rJWxKD3I-X": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJWxKD3I-X",
+          "position": {
+            "x": -0.05,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/read-byte",
+      "description": "Reads one byte from UART.\n\nPossible errors:\n— Can't read byte",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_READ\n#pragma XOD error_raise enable\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_READ>(ctx))\n            return;\n\n        auto uart = getValue<input_UART>(ctx);\n        if (!uart->available()) {\n            raiseError(ctx);\n            return;\n        }\n\n        uint8_t byte = 0x00;\n        if (uart->readByte(&byte)) {\n            emitValue<output_DONE>(ctx, 1);\n            emitValue<output_BYTE>(ctx, byte);\n        } else {\n            raiseError(ctx); // Can't read byte\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/read-bytes": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "HJKlW1dZm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJKlW1dZm",
+          "position": {
+            "x": 3,
+            "y": 3
+          },
+          "type": "@/read-byte",
+          "@@type": "xod-project/Node"
+        },
+        "HkYbVft-X": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkYbVft-X",
+          "position": {
+            "x": 6,
+            "y": 1
+          },
+          "type": "xod/core/any",
+          "@@type": "xod-project/Node"
+        },
+        "HyXpjQZxS": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyXpjQZxS",
+          "position": {
+            "x": 5,
+            "y": 2
+          },
+          "type": "@/is-available",
+          "@@type": "xod-project/Node"
+        },
+        "SJaxW1ubX": {
+          "boundLiterals": {},
+          "description": "An UART object",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJaxW1ubX",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "@/input-uart",
+          "@@type": "xod-project/Node"
+        },
+        "r1_4-kdbm": {
+          "boundLiterals": {},
+          "description": "Pulses when new byte received",
+          "label": "RCV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1_4-kdbm",
+          "position": {
+            "x": 4,
+            "y": 4
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rJ2IpKQMX": {
+          "boundLiterals": {},
+          "description": "Pulses when UART has no more available bytes to read",
+          "label": "END",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJ2IpKQMX",
+          "position": {
+            "x": 6,
+            "y": 4
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rJQWNzYb7": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJQWNzYb7",
+          "position": {
+            "x": 5,
+            "y": 3
+          },
+          "type": "xod/core/defer",
+          "@@type": "xod-project/Node"
+        },
+        "rkVBb1uZ7": {
+          "boundLiterals": {},
+          "description": "The last received byte from the UART",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkVBb1uZ7",
+          "position": {
+            "x": 3,
+            "y": 4
+          },
+          "type": "xod/patch-nodes/output-byte",
+          "@@type": "xod-project/Node"
+        },
+        "rkc7Wyu-m": {
+          "boundLiterals": {},
+          "description": "Trigger reading bytes from UART",
+          "label": "READ",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkc7Wyu-m",
+          "position": {
+            "x": 9,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B1ronQZxB": {
+          "id": "B1ronQZxB",
+          "input": {
+            "nodeId": "HyXpjQZxS",
+            "pinKey": "By_OfMFW7"
+          },
+          "output": {
+            "nodeId": "SJaxW1ubX",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkbTaFQMQ": {
+          "id": "BkbTaFQMQ",
+          "input": {
+            "nodeId": "rkVBb1uZ7",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HJKlW1dZm",
+            "pinKey": "Skw_dnU-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkpB6K7fX": {
+          "id": "HkpB6K7fX",
+          "input": {
+            "nodeId": "r1_4-kdbm",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HJKlW1dZm",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkzWZJO-Q": {
+          "id": "HkzWZJO-Q",
+          "input": {
+            "nodeId": "HJKlW1dZm",
+            "pinKey": "HkeKDhI-7"
+          },
+          "output": {
+            "nodeId": "SJaxW1ubX",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkjYhQ-eB": {
+          "id": "SkjYhQ-eB",
+          "input": {
+            "nodeId": "rJ2IpKQMX",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HyXpjQZxS",
+            "pinKey": "HJnKfztbm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkxGNzFZX": {
+          "id": "SkxGNzFZX",
+          "input": {
+            "nodeId": "HkYbVft-X",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "rJQWNzYb7",
+            "pinKey": "HJhXDIY9-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1FqhXWgS": {
+          "id": "r1FqhXWgS",
+          "input": {
+            "nodeId": "HkYbVft-X",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "rkc7Wyu-m",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1Hq2Q-lH": {
+          "id": "r1Hq2Q-lH",
+          "input": {
+            "nodeId": "HJKlW1dZm",
+            "pinKey": "r1bXu3LWm"
+          },
+          "output": {
+            "nodeId": "HyXpjQZxS",
+            "pinKey": "S1dYzzYWm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rknV6KXzQ": {
+          "id": "rknV6KXzQ",
+          "input": {
+            "nodeId": "rJQWNzYb7",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "HJKlW1dZm",
+            "pinKey": "Hkeetvn8-Q"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryD9n7WlS": {
+          "id": "ryD9n7WlS",
+          "input": {
+            "nodeId": "HyXpjQZxS",
+            "pinKey": "rkytzGK-7"
+          },
+          "output": {
+            "nodeId": "HkYbVft-X",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/read-bytes",
+      "description": "Reads all available bytes from UART one by one.\n\nPossible errors:\n— Can't read byte",
+      "attachments": []
+    },
+    "@/uart-0": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BytfJKIWX": {
+          "boundLiterals": {
+            "__out__": "115200"
+          },
+          "description": "Speed of data transmission in bits per second (baud rate).",
+          "label": "BAUD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BytfJKIWX",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "HklRJFDLOX": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Begin UART communication",
+          "label": "INIT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HklRJFDLOX",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SJQ39d8bm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJQ39d8bm",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "Sk0ktvLO7": {
+          "boundLiterals": {},
+          "description": "Pulses when UART communication began",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk0ktvLO7",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Sk450OL-X": {
+          "boundLiterals": {},
+          "description": "An UART object",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk450OL-X",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "@/output-uart",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/uart-0",
+      "description": "Constructor of HardwareUart, provides serial communication through Serial.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    uint8_t mem[sizeof(HardwareUart)];\n    HardwareUart* uart;\n\n    void evaluate(Context ctx) {\n        if (isSettingUp()) {\n            uart = new (mem) HardwareUart(Serial, (uint32_t)getValue<input_BAUD>(ctx));\n            emitValue<output_UART>(ctx, uart);\n        }\n\n        if (isInputDirty<input_INIT>(ctx)) {\n            uart->begin();\n            emitValue<output_DONE>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/uart-3": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJengKwLuX": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Begin UART communication",
+          "label": "INIT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJengKwLuX",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "BytfJKIWX": {
+          "boundLiterals": {
+            "__out__": "115200"
+          },
+          "description": "Speed of data transmission in bits per second (baud rate).",
+          "label": "BAUD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BytfJKIWX",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "H12gFvUOQ": {
+          "boundLiterals": {},
+          "description": "Pulses when UART communication began",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H12gFvUOQ",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SJQ39d8bm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJQ39d8bm",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "Sk450OL-X": {
+          "boundLiterals": {},
+          "description": "An UART object\n",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk450OL-X",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "@/output-uart",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/uart-3",
+      "description": "Constructor of HardwareUart, provides serial communication through Serial3.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    uint8_t mem[sizeof(HardwareUart)];\n    HardwareUart* uart;\n\n    void evaluate(Context ctx) {\n        if (isSettingUp()) {\n            uart = new (mem) HardwareUart(Serial3, (uint32_t)getValue<input_BAUD>(ctx));\n            emitValue<output_UART>(ctx, uart);\n        }\n\n        if (isInputDirty<input_INIT>(ctx)) {\n            uart->begin();\n            emitValue<output_DONE>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/uart-2": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BytfJKIWX": {
+          "boundLiterals": {
+            "__out__": "115200"
+          },
+          "description": "Speed of data transmission in bits per second (baud rate).",
+          "label": "BAUD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BytfJKIWX",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "SJQ39d8bm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJQ39d8bm",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "Sk450OL-X": {
+          "boundLiterals": {},
+          "description": "An UART object",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk450OL-X",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "@/output-uart",
+          "@@type": "xod-project/Node"
+        },
+        "SkedxFD8dQ": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Begin UART communication",
+          "label": "INIT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkedxFD8dQ",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "ryulYwIOQ": {
+          "boundLiterals": {},
+          "description": "Pulses when UART communication began",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryulYwIOQ",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/uart-2",
+      "description": "Constructor of HardwareUart, provides serial communication through Serial2.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    uint8_t mem[sizeof(HardwareUart)];\n    HardwareUart* uart;\n\n    void evaluate(Context ctx) {\n        if (isSettingUp()) {\n            uart = new (mem) HardwareUart(Serial2, (uint32_t)getValue<input_BAUD>(ctx));\n            emitValue<output_UART>(ctx, uart);\n        }\n\n        if (isInputDirty<input_INIT>(ctx)) {\n            uart->begin();\n            emitValue<output_DONE>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/write-byte": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkHrP2I-m": {
+          "boundLiterals": {},
+          "description": "An UART object",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkHrP2I-m",
+          "position": {
+            "x": -0.05,
+            "y": -0.05
+          },
+          "type": "@/input-uart",
+          "@@type": "xod-project/Node"
+        },
+        "HJxHrv3I-m": {
+          "boundLiterals": {},
+          "description": "Pulses when byte was successfully written",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJxHrv3I-m",
+          "position": {
+            "x": -0.05,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Hy-rrDnUZm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hy-rrDnUZm",
+          "position": {
+            "x": -0.05,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "Hyz0PhIbm": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Trigger writting of the byte",
+          "label": "SEND",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hyz0PhIbm",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rJaSP2UZm": {
+          "boundLiterals": {},
+          "description": "Byte to write",
+          "label": "BYTE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJaSP2UZm",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-byte",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/write-byte",
+      "description": "Writes a single byte in the UART.\n\nPossible errors:\n— No bytes written. Probably due to buffer overflow",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_SEND\n#pragma XOD error_raise enable\n\nnode {\n    void evaluate(Context ctx) {\n        if (!isInputDirty<input_SEND>(ctx))\n            return;\n\n        auto uart = getValue<input_UART>(ctx);\n        uint8_t byte = getValue<input_BYTE>(ctx);\n        bool res = uart->writeByte(byte);\n        if (res) {\n            emitValue<output_DONE>(ctx, 1);\n        } else {\n            raiseError(ctx); // No bytes written\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/uart-usb": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BytfJKIWX": {
+          "boundLiterals": {
+            "__out__": "115200"
+          },
+          "description": "Speed of data transmission in bits per second (baud rate).",
+          "label": "BAUD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BytfJKIWX",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "SJQ39d8bm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJQ39d8bm",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "Sk450OL-X": {
+          "boundLiterals": {},
+          "description": "An UART object",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk450OL-X",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "@/output-uart",
+          "@@type": "xod-project/Node"
+        },
+        "Sy7H0DUuQ": {
+          "boundLiterals": {},
+          "description": "Pulses when UART communication began",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sy7H0DUuQ",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "ryx7rCvIuQ": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Begin UART communication",
+          "label": "INIT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryx7rCvIuQ",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/uart-usb",
+      "description": "Constructor of HardwareUart or UsbUart, that provides serial communication through SerialUSB.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "namespace xod {\nnamespace uart_usb {\n\nclass UsbUart : public Uart {\nprivate:\n    Serial_ _serial;\n    uint8_t _rx;\n    uint8_t _tx;\n\npublic:\n    UsbUart(Serial_ serial, long baud = 9600)\n        : Uart(baud) {\n        _serial = serial;\n    }\n\n    void begin();\n    void end();\n    void flush();\n\n    bool available() {\n        return (bool)_serial.available();\n    }\n\n    bool writeByte(uint8_t byte) {\n        return (bool)_serial.write(byte);\n    }\n\n    bool readByte(uint8_t* out) {\n        int data = _serial.read();\n        if (data == -1)\n            return false;\n        *out = data;\n        return true;\n    }\n\n    uint8_t getRX() {\n        return _rx;\n    }\n\n    uint8_t getTX() {\n        return _tx;\n    }\n\n    Serial_* toUsbSerial() {\n        return &_serial;\n    }\n};\n\nvoid UsbUart::begin() {\n    _started = true;\n    _serial.begin(getBaudRate());\n};\nvoid UsbUart::end() {\n    _started = false;\n    _serial.end();\n};\nvoid UsbUart::flush() {\n    _serial.flush();\n}\n\n} // namespace uart_usb\n} // namespace xod\n\nnode {\n    template <typename T>\n    struct ChooseUartWrapper {\n        using UartT = HardwareUart;\n    };\n    template <>\n    struct ChooseUartWrapper<Serial_> {\n        using UartT = uart_usb::UsbUart;\n    };\n\n    uint8_t mem[sizeof(ChooseUartWrapper<typeof SerialUSB>::UartT)];\n    ChooseUartWrapper<typeof SerialUSB>::UartT* uart;\n\n    void evaluate(Context ctx) {\n        if (isSettingUp()) {\n            uart = new (mem) ChooseUartWrapper<typeof SerialUSB>::UartT(SerialUSB, (uint32_t)getValue<input_BAUD>(ctx));\n            emitValue<output_UART>(ctx, uart);\n        }\n\n        if (isInputDirty<input_INIT>(ctx)) {\n            uart->begin();\n            emitValue<output_DONE>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/uart-1": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkmeFD8OQ": {
+          "boundLiterals": {},
+          "description": "Pulses when UART communication began",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkmeFD8OQ",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "BytfJKIWX": {
+          "boundLiterals": {
+            "__out__": "115200"
+          },
+          "description": "Speed of data transmission in bits per second (baud rate).",
+          "label": "BAUD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BytfJKIWX",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "S1l7gFPUum": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Begin UART communication",
+          "label": "INIT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1l7gFPUum",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SJQ39d8bm": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJQ39d8bm",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "Sk450OL-X": {
+          "boundLiterals": {},
+          "description": "An UART object",
+          "label": "UART",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk450OL-X",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "@/output-uart",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/uart-1",
+      "description": "Constructor of HardwareUart, provides serial communication through Serial1.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    uint8_t mem[sizeof(HardwareUart)];\n    HardwareUart* uart;\n\n    void evaluate(Context ctx) {\n        if (isSettingUp()) {\n            uart = new (mem) HardwareUart(Serial1, (uint32_t)getValue<input_BAUD>(ctx));\n            emitValue<output_UART>(ctx, uart);\n        }\n\n        if (isInputDirty<input_INIT>(ctx)) {\n            uart->begin();\n            emitValue<output_DONE>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "authors": [
+    "XOD"
+  ],
+  "license": "AGPL-3.0",
+  "version": "0.37.3",
+  "description": "Provides constructors and Nodes to interact with UARTs (Software, Hardware, USB) in XOD.",
+  "apiKey": "",
+  "name": "uart"
+}

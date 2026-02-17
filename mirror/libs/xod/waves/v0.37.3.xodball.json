@@ -1,0 +1,1740 @@
+{
+  "patches": {
+    "@/dividable-timer": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkS494HTU": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkS494HTU",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "BkbfIgfuf": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkbfIgfuf",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "Byv-UlMuf": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "",
+          "label": "DIV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Byv-UlMuf",
+          "position": {
+            "x": 1,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "HkthQeGdf": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "RST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkthQeGdf",
+          "position": {
+            "x": 5,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Hy_D84B6I": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hy_D84B6I",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "SkgpmxzOG": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkgpmxzOG",
+          "position": {
+            "x": 7,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rJrg4xzOM": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "EN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJrg4xzOM",
+          "position": {
+            "x": 3,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-boolean",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/dividable-timer",
+      "description": "",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nnode {\n    TimeMs lastUpdateTime;\n\n    void evaluate(Context ctx) {\n        TimeMs t = transactionTime();\n        Number divider = getValue<input_DIV>(ctx);\n\n        if (divider <= 0 || isInputDirty<input_RST>(ctx)) {\n            emitValue<output_OUT>(ctx, 0);\n        }\n        else if (getValue<input_EN>(ctx) && isInputDirty<input_UPD>(ctx)) {\n            Number currentOutput = getValue<output_OUT>(ctx);\n            Number dtSeconds = (t - lastUpdateTime) / 1000.0;\n            emitValue<output_OUT>(ctx, currentOutput + (dtSeconds / divider));\n        }\n\n        lastUpdateTime = t;\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example-1-frequency-modulation": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1-bxkraU": {
+          "boundLiterals": {
+            "HylpvPgMOM": "10"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1-bxkraU",
+          "position": {
+            "x": 3,
+            "y": 1
+          },
+          "type": "@/sine-wave",
+          "@@type": "xod-project/Node"
+        },
+        "HJVZlyr6I": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJVZlyr6I",
+          "position": {
+            "x": 3,
+            "y": 3
+          },
+          "type": "@/sine-wave",
+          "@@type": "xod-project/Node"
+        },
+        "HkqbgJrTL": {
+          "boundLiterals": {
+            "HJCWLAdSwyW": "1",
+            "rJbGU0_Hv1Z": "1.5",
+            "rkpbU0OrwyZ": "6"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkqbgJrTL",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/math/map",
+          "@@type": "xod-project/Node"
+        },
+        "HyaNeyraI": {
+          "boundLiterals": {
+            "rJ2uOpk1L": "4",
+            "ryD_dp118": "D2"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyaNeyraI",
+          "position": {
+            "x": 1,
+            "y": 5
+          },
+          "type": "xod-dev/ws2812/ws2812-mono",
+          "@@type": "xod-project/Node"
+        },
+        "S1apE1BaL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1apE1BaL",
+          "position": {
+            "x": 3,
+            "y": 4
+          },
+          "type": "xod/color/color-hsl",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "BJsbekrTI": {
+          "id": "BJsbekrTI",
+          "input": {
+            "nodeId": "HkqbgJrTL",
+            "pinKey": "BJlzICOSv1-"
+          },
+          "output": {
+            "nodeId": "B1-bxkraU",
+            "pinKey": "HyaDDeM_M"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJpZeJS6I": {
+          "id": "HJpZeJS6I",
+          "input": {
+            "nodeId": "HJVZlyr6I",
+            "pinKey": "HylpvPgMOM"
+          },
+          "output": {
+            "nodeId": "HkqbgJrTL",
+            "pinKey": "H12bIR_SPyZ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyfCV1SpI": {
+          "id": "SyfCV1SpI",
+          "input": {
+            "nodeId": "HyaNeyraI",
+            "pinKey": "BJZY_6J1L"
+          },
+          "output": {
+            "nodeId": "S1apE1BaL",
+            "pinKey": "BJyghZosm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1SA41H68": {
+          "id": "r1SA41H68",
+          "input": {
+            "nodeId": "S1apE1BaL",
+            "pinKey": "HJgyhboim"
+          },
+          "output": {
+            "nodeId": "HJVZlyr6I",
+            "pinKey": "HyaDDeM_M"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/example-1-frequency-modulation",
+      "description": "",
+      "attachments": []
+    },
+    "@/example-2-peak-position": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1s3mgSaL": {
+          "boundLiterals": {
+            "SJ4zUC_BD1-": "0.5"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1s3mgSaL",
+          "position": {
+            "x": 4,
+            "y": 3
+          },
+          "type": "xod/core/multiply",
+          "@@type": "xod-project/Node"
+        },
+        "BJNlMJrTU": {
+          "boundLiterals": {
+            "rk-jxTQsuz": "2"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJNlMJrTU",
+          "position": {
+            "x": 4,
+            "y": 2
+          },
+          "type": "@/tri-wave",
+          "@@type": "xod-project/Node"
+        },
+        "HkSCWera8": {
+          "boundLiterals": {
+            "HJgyhboim": "0.4"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkSCWera8",
+          "position": {
+            "x": 2,
+            "y": 4
+          },
+          "type": "xod/color/color-hsl",
+          "@@type": "xod-project/Node"
+        },
+        "HkZmX1SpL": {
+          "boundLiterals": {
+            "ByfGSDjQE": "0.5"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkZmX1SpL",
+          "position": {
+            "x": 5,
+            "y": 1
+          },
+          "type": "xod/debug/tweak-number",
+          "@@type": "xod-project/Node"
+        },
+        "SymbCWJr6L": {
+          "boundLiterals": {
+            "rJ2uOpk1L": "4",
+            "ryD_dp118": "D2"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SymbCWJr6L",
+          "position": {
+            "x": 0,
+            "y": 5
+          },
+          "type": "xod-dev/ws2812/ws2812-mono",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "ByWpXxH6L": {
+          "id": "ByWpXxH6L",
+          "input": {
+            "nodeId": "B1s3mgSaL",
+            "pinKey": "B1GfLR_SPk-"
+          },
+          "output": {
+            "nodeId": "BJNlMJrTU",
+            "pinKey": "r1ljgpXjOM"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hkx6mlH6I": {
+          "id": "Hkx6mlH6I",
+          "input": {
+            "nodeId": "HkSCWera8",
+            "pinKey": "r1g7J3-ii7"
+          },
+          "output": {
+            "nodeId": "B1s3mgSaL",
+            "pinKey": "BkQzLCurwJZ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyfXXyBTI": {
+          "id": "SyfXXyBTI",
+          "input": {
+            "nodeId": "BJNlMJrTU",
+            "pinKey": "HkBzTQjuf"
+          },
+          "output": {
+            "nodeId": "HkZmX1SpL",
+            "pinKey": "ByfGSDjQE"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkA0WeHpI": {
+          "id": "rkA0WeHpI",
+          "input": {
+            "nodeId": "SymbCWJr6L",
+            "pinKey": "BJZY_6J1L"
+          },
+          "output": {
+            "nodeId": "HkSCWera8",
+            "pinKey": "BJyghZosm"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {
+        "rJnEElB6L": {
+          "content": "try different values between 0 and 1 and see how it affects the wave shape",
+          "id": "rJnEElB6L",
+          "position": {
+            "x": 6,
+            "y": 1
+          },
+          "size": {
+            "height": 1,
+            "width": 5
+          }
+        }
+      },
+      "path": "@/example-2-peak-position",
+      "description": "",
+      "attachments": []
+    },
+    "@/example-3-freeze": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJ_BUyHTL": {
+          "boundLiterals": {
+            "HylpvPgMOM": "3"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJ_BUyHTL",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "@/sine-wave",
+          "@@type": "xod-project/Node"
+        },
+        "HyNrLJSaU": {
+          "boundLiterals": {
+            "rkKiaaETU": "0.9"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyNrLJSaU",
+          "position": {
+            "x": 4,
+            "y": 1
+          },
+          "type": "@/square-wave",
+          "@@type": "xod-project/Node"
+        },
+        "SyFOUJBpL": {
+          "boundLiterals": {
+            "rJ2uOpk1L": "4",
+            "ryD_dp118": "D2"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyFOUJBpL",
+          "position": {
+            "x": 1,
+            "y": 4
+          },
+          "type": "xod-dev/ws2812/ws2812-mono",
+          "@@type": "xod-project/Node"
+        },
+        "r1xK_U1ra8": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1xK_U1ra8",
+          "position": {
+            "x": 3,
+            "y": 3
+          },
+          "type": "xod/color/color-hsl",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "ByjSUkrpU": {
+          "id": "ByjSUkrpU",
+          "input": {
+            "nodeId": "BJ_BUyHTL",
+            "pinKey": "BkzTvDlGdf"
+          },
+          "output": {
+            "nodeId": "HyNrLJSaU",
+            "pinKey": "SJfYoapVaU"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hkbt_IyBaL": {
+          "id": "Hkbt_IyBaL",
+          "input": {
+            "nodeId": "SyFOUJBpL",
+            "pinKey": "BJZY_6J1L"
+          },
+          "output": {
+            "nodeId": "r1xK_U1ra8",
+            "pinKey": "BJyghZosm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkTu8kHaL": {
+          "id": "rkTu8kHaL",
+          "input": {
+            "nodeId": "r1xK_U1ra8",
+            "pinKey": "HJgyhboim"
+          },
+          "output": {
+            "nodeId": "BJ_BUyHTL",
+            "pinKey": "HyaDDeM_M"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/example-3-freeze",
+      "description": "",
+      "attachments": []
+    },
+    "@/saw-wave": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1G-jwgz_M": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Enabled or not. If set to `false` pulses on `UPD` do not change the output value. Effectively that means the generator is paused. Set to `true` again to continue generation.\n",
+          "label": "EN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1G-jwgz_M",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "H1gboDlzOM": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "An interval between wave peaks, i.e. the period of the signal",
+          "label": "T",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1gboDlzOM",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "H1m-sPgGdM": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers the generator update. It will update the output values.",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1m-sPgGdM",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "HkEkipVp8": {
+          "boundLiterals": {
+            "HkBzTQjuf": "1"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkEkipVp8",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "@/tri-wave",
+          "@@type": "xod-project/Node"
+        },
+        "SkZowlzOM": {
+          "boundLiterals": {},
+          "description": "The signal value in [0, 1] range. Starts from 0.",
+          "label": "OUT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkZowlzOM",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "rkSWsDxz_G": {
+          "boundLiterals": {},
+          "description": "Resets the current `OUT` and `N` to zero.",
+          "label": "RST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkSWsDxz_G",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B1FgjpVpI": {
+          "id": "B1FgjpVpI",
+          "input": {
+            "nodeId": "HkEkipVp8",
+            "pinKey": "BJ4ixaQjOf"
+          },
+          "output": {
+            "nodeId": "H1m-sPgGdM",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S1PgsT4p8": {
+          "id": "S1PgsT4p8",
+          "input": {
+            "nodeId": "HkEkipVp8",
+            "pinKey": "Syjea7idG"
+          },
+          "output": {
+            "nodeId": "rkSWsDxz_G",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJLls6ETU": {
+          "id": "SJLls6ETU",
+          "input": {
+            "nodeId": "HkEkipVp8",
+            "pinKey": "HJHig6QidG"
+          },
+          "output": {
+            "nodeId": "B1G-jwgz_M",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJmxopNa8": {
+          "id": "SJmxopNa8",
+          "input": {
+            "nodeId": "HkEkipVp8",
+            "pinKey": "rk-jxTQsuz"
+          },
+          "output": {
+            "nodeId": "H1gboDlzOM",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r16gipVa8": {
+          "id": "r16gipVa8",
+          "input": {
+            "nodeId": "SkZowlzOM",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HkEkipVp8",
+            "pinKey": "r1ljgpXjOM"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/saw-wave",
+      "description": "Generates sawtooth wave signal",
+      "attachments": []
+    },
+    "@/sine-wave": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkzTvDlGdf": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Enabled or not. If set to `false` pulses on `UPD` do not change the output value. Effectively that means the generator is paused. Set to `true` again to continue generation.\n",
+          "label": "EN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkzTvDlGdf",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "H1tXsXKTI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1tXsXKTI",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/sine-wave-map",
+          "@@type": "xod-project/Node"
+        },
+        "HkQuDlfuz": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkQuDlfuz",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "@/dividable-timer",
+          "@@type": "xod-project/Node"
+        },
+        "HyaDDeM_M": {
+          "boundLiterals": {},
+          "description": "The signal value in [0, 1] range. Starts from 0.",
+          "label": "OUT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyaDDeM_M",
+          "position": {
+            "x": 0,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "HylpvPgMOM": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "An interval between wave peaks, i.e. the period of the signal",
+          "label": "T",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HylpvPgMOM",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "SJVTPwxzdz": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers the generator update. It will update the output values.",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJVTPwxzdz",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "r1UavwlfuM": {
+          "boundLiterals": {},
+          "description": "Resets the current `OUT` and `N` to zero.",
+          "label": "RST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1UavwlfuM",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "BkHtDlMdf": {
+          "id": "BkHtDlMdf",
+          "input": {
+            "nodeId": "HkQuDlfuz",
+            "pinKey": "HkthQeGdf"
+          },
+          "output": {
+            "nodeId": "r1UavwlfuM",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1EFvgfOM": {
+          "id": "H1EFvgfOM",
+          "input": {
+            "nodeId": "HkQuDlfuz",
+            "pinKey": "rJrg4xzOM"
+          },
+          "output": {
+            "nodeId": "BkzTvDlGdf",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hy3Xs7K6I": {
+          "id": "Hy3Xs7K6I",
+          "input": {
+            "nodeId": "H1tXsXKTI",
+            "pinKey": "ByfZjQFaI"
+          },
+          "output": {
+            "nodeId": "HkQuDlfuz",
+            "pinKey": "BkbfIgfuf"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HyQKPgfuz": {
+          "id": "HyQKPgfuz",
+          "input": {
+            "nodeId": "HkQuDlfuz",
+            "pinKey": "Byv-UlMuf"
+          },
+          "output": {
+            "nodeId": "HylpvPgMOM",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1IYDezOG": {
+          "id": "r1IYDezOG",
+          "input": {
+            "nodeId": "HkQuDlfuz",
+            "pinKey": "SkgpmxzOG"
+          },
+          "output": {
+            "nodeId": "SJVTPwxzdz",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ry6msXK68": {
+          "id": "ry6msXK68",
+          "input": {
+            "nodeId": "HyaDDeM_M",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "H1tXsXKTI",
+            "pinKey": "SkgGWsQK68"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/sine-wave",
+      "description": "Generates sine wave (sinusoid) signal",
+      "attachments": []
+    },
+    "@/sine-wave-map": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1zRZjXFTI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1zRZjXFTI",
+          "position": {
+            "x": 0,
+            "y": 3
+          },
+          "type": "xod/math/cos",
+          "@@type": "xod-project/Node"
+        },
+        "BJRbomFaI": {
+          "boundLiterals": {
+            "B1GfLR_SPk-": "0",
+            "SJ4zUC_BD1-": "0"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJRbomFaI",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/core/multiply",
+          "@@type": "xod-project/Node"
+        },
+        "ByfZjQFaI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "X",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByfZjQFaI",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "SkgGWsQK68": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkgGWsQK68",
+          "position": {
+            "x": 0,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "r1bAbsmYT8": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "6.283185307179"
+          },
+          "description": "",
+          "label": "2𝜋",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1bAbsmYT8",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/core/constant-number",
+          "@@type": "xod-project/Node"
+        },
+        "rkWIOqimD": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkWIOqimD",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "rkgRWoXK68": {
+          "boundLiterals": {
+            "HJCWLAdSwyW": "-1",
+            "rkpbU0OrwyZ": "1",
+            "ry1z8CuBDy-": "1"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkgRWoXK68",
+          "position": {
+            "x": 0,
+            "y": 4
+          },
+          "type": "xod/math/map",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "BkVCbo7tTI": {
+          "id": "BkVCbo7tTI",
+          "input": {
+            "nodeId": "BJRbomFaI",
+            "pinKey": "B1GfLR_SPk-"
+          },
+          "output": {
+            "nodeId": "r1bAbsmYT8",
+            "pinKey": "B1x2RV3eZ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkVGoXFTI": {
+          "id": "SkVGoXFTI",
+          "input": {
+            "nodeId": "BJRbomFaI",
+            "pinKey": "SJ4zUC_BD1-"
+          },
+          "output": {
+            "nodeId": "ByfZjQFaI",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1HA-sQYTL": {
+          "id": "r1HA-sQYTL",
+          "input": {
+            "nodeId": "B1zRZjXFTI",
+            "pinKey": "HJiwJ33LW"
+          },
+          "output": {
+            "nodeId": "BJRbomFaI",
+            "pinKey": "BkQzLCurwJZ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1X0Zj7tpL": {
+          "id": "r1X0Zj7tpL",
+          "input": {
+            "nodeId": "rkgRWoXK68",
+            "pinKey": "BJlzICOSv1-"
+          },
+          "output": {
+            "nodeId": "B1zRZjXFTI",
+            "pinKey": "Bkpwy22I-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkMMj7K6L": {
+          "id": "rkMMj7K6L",
+          "input": {
+            "nodeId": "SkgGWsQK68",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkgRWoXK68",
+            "pinKey": "H12bIR_SPyZ"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/sine-wave-map",
+      "description": "",
+      "attachments": []
+    },
+    "@/tri-wave": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJ4ixaQjOf": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers the generator update. It will update the output values.",
+          "label": "UPD",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJ4ixaQjOf",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "BJRYiQFpI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJRYiQFpI",
+          "position": {
+            "x": -1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/jumper",
+          "@@type": "xod-project/Node"
+        },
+        "HJHig6QidG": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Enabled or not. If set to `false` pulses on `UPD` do not change the output value. Effectively that means the generator is paused. Set to `true` again to continue generation.\n",
+          "label": "EN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJHig6QidG",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "HkBzTQjuf": {
+          "boundLiterals": {
+            "__out__": "0.5"
+          },
+          "description": "Peak position, from 0 to 1.\n1 for sawtooth, 0.5 for triangle, 0 for reverse sawtooth.",
+          "label": "PP",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkBzTQjuf",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "HyZe8oaVaL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "PP",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyZe8oaVaL",
+          "position": {
+            "x": 1,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/from-bus",
+          "@@type": "xod-project/Node"
+        },
+        "Hymox67jOM": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hymox67jOM",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/dividable-timer",
+          "@@type": "xod-project/Node"
+        },
+        "SklLiaNaL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "PP",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SklLiaNaL",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/to-bus",
+          "@@type": "xod-project/Node"
+        },
+        "Syjea7idG": {
+          "boundLiterals": {},
+          "description": "Resets the current `OUT` and `N` to zero.",
+          "label": "RST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Syjea7idG",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "r1ljgpXjOM": {
+          "boundLiterals": {},
+          "description": "The signal value in [0, 1] range. Starts from 0.",
+          "label": "OUT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1ljgpXjOM",
+          "position": {
+            "x": 0,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "rk-jxTQsuz": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "An interval between wave peaks, i.e. the period of the signal",
+          "label": "T",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rk-jxTQsuz",
+          "position": {
+            "x": -1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "rksWpQiuz": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rksWpQiuz",
+          "position": {
+            "x": 0,
+            "y": 4
+          },
+          "type": "@/tri-wave-map",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B1PsxpXjuM": {
+          "id": "B1PsxpXjuM",
+          "input": {
+            "nodeId": "Hymox67jOM",
+            "pinKey": "rJrg4xzOM"
+          },
+          "output": {
+            "nodeId": "HJHig6QidG",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJ-5o7tpU": {
+          "id": "BJ-5o7tpU",
+          "input": {
+            "nodeId": "Hymox67jOM",
+            "pinKey": "Byv-UlMuf"
+          },
+          "output": {
+            "nodeId": "BJRYiQFpI",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJLjlaXoOM": {
+          "id": "BJLjlaXoOM",
+          "input": {
+            "nodeId": "Hymox67jOM",
+            "pinKey": "HkthQeGdf"
+          },
+          "output": {
+            "nodeId": "Syjea7idG",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BJpZTQjOM": {
+          "id": "BJpZTQjOM",
+          "input": {
+            "nodeId": "r1ljgpXjOM",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rksWpQiuz",
+            "pinKey": "BJBQqPQiOG"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1zlLoaNpL": {
+          "id": "H1zlLoaNpL",
+          "input": {
+            "nodeId": "rksWpQiuz",
+            "pinKey": "HkxX5P7idf"
+          },
+          "output": {
+            "nodeId": "HyZe8oaVaL",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJx9oXt6U": {
+          "id": "HJx9oXt6U",
+          "input": {
+            "nodeId": "BJRYiQFpI",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rk-jxTQsuz",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyoieamsOz": {
+          "id": "SyoieamsOz",
+          "input": {
+            "nodeId": "Hymox67jOM",
+            "pinKey": "SkgpmxzOG"
+          },
+          "output": {
+            "nodeId": "BJ4ixaQjOf",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rklMaQiOz": {
+          "id": "rklMaQiOz",
+          "input": {
+            "nodeId": "rksWpQiuz",
+            "pinKey": "r1Xqv7o_G"
+          },
+          "output": {
+            "nodeId": "Hymox67jOM",
+            "pinKey": "BkbfIgfuf"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rklxIoT4TU": {
+          "id": "rklxIoT4TU",
+          "input": {
+            "nodeId": "SklLiaNaL",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HkBzTQjuf",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {},
+      "path": "@/tri-wave",
+      "description": "Generates triangle wave signal with adjustable peak position",
+      "attachments": []
+    },
+    "@/tri-wave-map": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJBQqPQiOG": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJBQqPQiOG",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "HJkXG6E6L": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJkXG6E6L",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "HkxX5P7idf": {
+          "boundLiterals": {
+            "__out__": "0.5"
+          },
+          "description": "Peak position, from 0 to 1.\n1 for sawtooth, 0.5 for triangle, 0 for reverse sawtooth.",
+          "label": "PP",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkxX5P7idf",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "r1Xqv7o_G": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "X",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1Xqv7o_G",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "rJtxzAVpI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJtxzAVpI",
+          "position": {
+            "x": 4,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/tri-wave-map",
+      "description": "",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\nnode {\n    void evaluate(Context ctx) {\n        auto fractionalPart = fmod(getValue<input_X>(ctx), 1);\n        auto peakPosition = constrain(getValue<input_PP>(ctx), 0.0, 1.0);\n\n        // https://www.desmos.com/calculator/zddgvfpyao\n        Number out = fractionalPart < peakPosition\n            ? fractionalPart / peakPosition\n            : ((fractionalPart - peakPosition) / (peakPosition - 1.0)) + 1.0;\n\n        emitValue<output_OUT>(ctx, out);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/square-wave": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BkHYoTT4TI": {
+          "boundLiterals": {},
+          "description": "Resets the wave phase and `N` to zero.",
+          "label": "RST",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkHYoTT4TI",
+          "position": {
+            "x": 5,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "BkZYippVaI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BkZYippVaI",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "HJxKop6EaL": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Enabled or not. When set to `false` pauses generation preserving the current phase. When set to `true` again continues counting from the saved phase.\n",
+          "label": "EN",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJxKop6EaL",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "Hk7Fo6aNp8": {
+          "boundLiterals": {},
+          "description": "The number of current cycle.  Starts from 0. The cycle is considered to start with the `true` value.",
+          "label": "N",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hk7Fo6aNp8",
+          "position": {
+            "x": 2,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-number",
+          "@@type": "xod-project/Node"
+        },
+        "SJfYoapVaU": {
+          "boundLiterals": {},
+          "description": "The signal value: `true` or `false`. When the phase is at switch boundary, the value is the same as `EN`, i.e. `false` if paused and `true` if active.",
+          "label": "OUT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJfYoapVaU",
+          "position": {
+            "x": 0,
+            "y": 3
+          },
+          "type": "xod/patch-nodes/output-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "Sy4Yi6a4pI": {
+          "boundLiterals": {
+            "__out__": "0.5"
+          },
+          "description": "Duty cycle. Ratio of `true` signal duration to the whole `IVAL`.",
+          "label": "DUTY",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sy4Yi6a4pI",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "rkKiaaETU": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Time interval between switches to `true`, i.e. the period of the square wave.",
+          "label": "T",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkKiaaETU",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/square-wave",
+      "description": "Generates square wave signal",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    bool wasEnabled;\n    TimeMs timeToSwitch;\n    TimeMs nextSwitchTime;\n\n    void evaluate(Context ctx) {\n        TimeMs t = transactionTime();\n\n        bool enabled = getValue<input_EN>(ctx);\n        bool reset = isInputDirty<input_RST>(ctx);\n        Number period = getValue<input_T>(ctx);\n        Number duty = getValue<input_DUTY>(ctx);\n\n        if (reset) {\n            emitValue<output_OUT>(ctx, enabled);\n            emitValue<output_N>(ctx, 0);\n            clearTimeout(ctx);\n            // enforce rescheduling at the next stage if enabled\n            wasEnabled = false;\n        }\n\n        if (enabled && !wasEnabled) {\n            // just enabled/resumed\n            timeToSwitch = (period * duty) * 1000.0;\n            setTimeout(ctx, timeToSwitch);\n            nextSwitchTime = t + timeToSwitch;\n            emitValue<output_OUT>(ctx, true);\n        } else if (!enabled && wasEnabled) {\n            // just paused\n            // TODO: we can get rid of storing nextSwitchTime if API would\n            // have a function to fetch current scheduled time for a ctx\n            timeToSwitch = nextSwitchTime - t;\n            clearTimeout(ctx);\n        } else if (isTimedOut(ctx)) {\n            // switch time\n            auto newValue = !getValue<output_OUT>(ctx);\n            auto k = newValue ? duty : (1.0 - duty);\n            timeToSwitch = period * k * 1000.0;\n\n            setTimeout(ctx, timeToSwitch);\n            nextSwitchTime = t + timeToSwitch;\n\n            emitValue<output_OUT>(ctx, newValue);\n            if (newValue)\n                emitValue<output_N>(ctx, getValue<output_N>(ctx) + 1);\n        }\n\n        wasEnabled = enabled;\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "authors": [
+    "XOD"
+  ],
+  "license": "AGPL",
+  "version": "0.37.3",
+  "description": "A collection of nodes that generate wave signals",
+  "apiKey": "",
+  "name": "waves"
+}

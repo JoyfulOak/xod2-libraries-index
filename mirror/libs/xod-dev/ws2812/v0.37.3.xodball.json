@@ -1,0 +1,2412 @@
+{
+  "patches": {
+    "@/clear": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "By6jbVYCB": {
+          "boundLiterals": {},
+          "description": "The device",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "By6jbVYCB",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-ws2812-device",
+          "@@type": "xod-project/Node"
+        },
+        "Hk46jWVFAS": {
+          "boundLiterals": {},
+          "description": "Fires when the operation is done\n",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hk46jWVFAS",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "Symaj-NYCB": {
+          "boundLiterals": {},
+          "description": "The device",
+          "label": "DEV'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Symaj-NYCB",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/output-ws2812-device",
+          "@@type": "xod-project/Node"
+        },
+        "SyxTsWNFRr": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyxTsWNFRr",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "SyzTjbEKCH": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Trigger to turn all pixels off",
+          "label": "DO",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyzTjbEKCH",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/clear",
+      "description": "Clears (turns off) of all pixels in the device.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    void evaluate(Context ctx) {\n        auto dev = getValue<input_DEV>(ctx);\n        if (isInputDirty<input_DO>(ctx)) {\n            dev->fill(0, 0, 0);\n            emitValue<output_DONE>(ctx, 1);\n        }\n        emitValue<output_DEVU0027>(ctx, dev);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/color-pattern": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJBsHZ5gI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJBsHZ5gI",
+          "position": {
+            "x": 3,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "HJqn9NzJU": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "PAT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HJqn9NzJU",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-self",
+          "@@type": "xod-project/Node"
+        },
+        "rkbhqEMy8": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkbhqEMy8",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/color-pattern",
+      "description": "Pattern type constructor.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#include <XColorPattern.h>\n\nnode {\n    meta {\n        using Type = Pattern*;\n    }\n\n    Pattern pattern;\n\n    void evaluate(Context ctx) {\n        emitValue<output_PAT>(ctx, &pattern);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example-fill-controlled": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BybEn2kkI": {
+          "boundLiterals": {
+            "Hkry2AJhW": "A2"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BybEn2kkI",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "type": "xod/common-hardware/pot",
+          "@@type": "xod-project/Node"
+        },
+        "SJ3ZO2plL": {
+          "boundLiterals": {
+            "rJ2uOpk1L": "16",
+            "ryD_dp118": "A4"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJ3ZO2plL",
+          "position": {
+            "x": 3,
+            "y": 3
+          },
+          "type": "@/ws2812-mono",
+          "@@type": "xod-project/Node"
+        },
+        "SyPVu3TgU": {
+          "boundLiterals": {
+            "r1AgIROHDJW": "#000000",
+            "ryTeUROHD1b": "#000000"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyPVu3TgU",
+          "position": {
+            "x": 5,
+            "y": 2
+          },
+          "type": "xod/core/if-else",
+          "@@type": "xod-project/Node"
+        },
+        "r1NE2hJk8": {
+          "boundLiterals": {
+            "Symyhboj7": "1",
+            "r1g7J3-ii7": "0.05"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1NE2hJk8",
+          "position": {
+            "x": 6,
+            "y": 1
+          },
+          "type": "xod/color/color-hsl",
+          "@@type": "xod-project/Node"
+        },
+        "rJ7Pn21kI": {
+          "boundLiterals": {
+            "HkyxURuSPyW": "True"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJ7Pn21kI",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/core/flip-flop",
+          "@@type": "xod-project/Node"
+        },
+        "rJrUh31kL": {
+          "boundLiterals": {
+            "ByNiWkt8Z": "A3"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJrUh31kL",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/common-hardware/button",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "BJ2Vd3aeI": {
+          "id": "BJ2Vd3aeI",
+          "input": {
+            "nodeId": "SyPVu3TgU",
+            "pinKey": "S1yZIA_rDJZ"
+          },
+          "output": {
+            "nodeId": "rJ7Pn21kI",
+            "pinKey": "HkyxURuSPyW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkSmZ6pg8": {
+          "id": "HkSmZ6pg8",
+          "input": {
+            "nodeId": "SyPVu3TgU",
+            "pinKey": "ryTeUROHD1b"
+          },
+          "output": {
+            "nodeId": "r1NE2hJk8",
+            "pinKey": "BJyghZosm"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Sk1r_nTl8": {
+          "id": "Sk1r_nTl8",
+          "input": {
+            "nodeId": "SJ3ZO2plL",
+            "pinKey": "BJZY_6J1L"
+          },
+          "output": {
+            "nodeId": "SyPVu3TgU",
+            "pinKey": "S13xLCuHvkW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1wV2hk18": {
+          "id": "r1wV2hk18",
+          "input": {
+            "nodeId": "r1NE2hJk8",
+            "pinKey": "HJgyhboim"
+          },
+          "output": {
+            "nodeId": "BybEn2kkI",
+            "pinKey": "H1sM2A12-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkBvn2ykI": {
+          "id": "rkBvn2ykI",
+          "input": {
+            "nodeId": "rJ7Pn21kI",
+            "pinKey": "ryTIROHwkW"
+          },
+          "output": {
+            "nodeId": "rJrUh31kL",
+            "pinKey": "BJ--G1tI-"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {
+        "BJMAxa6eI": {
+          "content": "This example shows how to control the color of whole LED strip with a potentiometer and turn it on or off with a button.",
+          "id": "BJMAxa6eI",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "size": {
+            "height": 1,
+            "width": 13
+          }
+        },
+        "H1G-8pykU": {
+          "content": "A button turns the LEDs on or off.",
+          "id": "H1G-8pykU",
+          "position": {
+            "x": -1,
+            "y": 0
+          },
+          "size": {
+            "height": 1,
+            "width": 4
+          }
+        },
+        "S1CbJaalU": {
+          "content": "A quick-start node to fill all LEDs with the selected solid color.",
+          "id": "S1CbJaalU",
+          "position": {
+            "x": -1,
+            "y": 3
+          },
+          "size": {
+            "height": 1,
+            "width": 4
+          }
+        },
+        "SyzoyppgL": {
+          "content": "When LEDs is turned off — just fill with the black color.",
+          "id": "SyzoyppgL",
+          "position": {
+            "x": 9,
+            "y": 2
+          },
+          "size": {
+            "height": 1,
+            "width": 4
+          }
+        },
+        "rJ-r1aaeL": {
+          "content": "Potentiometer to select the Hue of the color.",
+          "id": "rJ-r1aaeL",
+          "position": {
+            "x": 8,
+            "y": 0
+          },
+          "size": {
+            "height": 1,
+            "width": 4
+          }
+        }
+      },
+      "path": "@/example-fill-controlled",
+      "description": "",
+      "attachments": []
+    },
+    "@/example-fill-part": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "ByxryXe9e8": {
+          "boundLiterals": {
+            "SyzTjbEKCH": "On Boot"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByxryXe9e8",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "@/clear",
+          "@@type": "xod-project/Node"
+        },
+        "S1BkQl5e8": {
+          "boundLiterals": {
+            "HyI-5XSAr": "A4",
+            "S1C-cQBRB": "16"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1BkQl5e8",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/ws2812-device",
+          "@@type": "xod-project/Node"
+        },
+        "rJ-Hymxqx8": {
+          "boundLiterals": {
+            "SJxhUmIcCr": "#FF0000",
+            "SkcHZece8": "-4"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJ-Hymxqx8",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/fill-solid",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "Hy7HJmgceI": {
+          "id": "Hy7HJmgceI",
+          "input": {
+            "nodeId": "rJ-Hymxqx8",
+            "pinKey": "B1387L5RS"
+          },
+          "output": {
+            "nodeId": "ByxryXe9e8",
+            "pinKey": "Symaj-NYCB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SyGrJQgqgL": {
+          "id": "SyGrJQgqgL",
+          "input": {
+            "nodeId": "ByxryXe9e8",
+            "pinKey": "By6jbVYCB"
+          },
+          "output": {
+            "nodeId": "S1BkQl5e8",
+            "pinKey": "SJxz8XtRS"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1spDhTeU": {
+          "id": "r1spDhTeU",
+          "input": {
+            "nodeId": "rJ-Hymxqx8",
+            "pinKey": "rJWh8XIqAB"
+          },
+          "output": {
+            "nodeId": "ByxryXe9e8",
+            "pinKey": "Hk46jWVFAS"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {
+        "SJe1xTTeI": {
+          "content": "This example shows how to clear the whole LED strip and then fill with the red color only last four LEDs.",
+          "id": "SJe1xTTeI",
+          "position": {
+            "x": 0,
+            "y": -1
+          },
+          "size": {
+            "height": 1,
+            "width": 10
+          }
+        },
+        "SJeBeTpl8": {
+          "content": "<- Clear all LEDs.",
+          "id": "SJeBeTpl8",
+          "position": {
+            "x": 5,
+            "y": 1
+          },
+          "size": {
+            "height": 1,
+            "width": 5
+          }
+        },
+        "SkUHe66gL": {
+          "content": "<- Fill only last 4 LEDs.",
+          "id": "SkUHe66gL",
+          "position": {
+            "x": 5,
+            "y": 2
+          },
+          "size": {
+            "height": 1,
+            "width": 5
+          }
+        },
+        "rkXNe66l8": {
+          "content": "<- Setup the device.",
+          "id": "rkXNe66l8",
+          "position": {
+            "x": 5,
+            "y": 0
+          },
+          "size": {
+            "height": 1,
+            "width": 5
+          }
+        }
+      },
+      "path": "@/example-fill-part",
+      "description": "",
+      "attachments": []
+    },
+    "@/example-pattern-crawling": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "Bke2KtwyI": {
+          "boundLiterals": {
+            "B13SCNhl-": "0.2"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Bke2KtwyI",
+          "position": {
+            "x": 4,
+            "y": 1
+          },
+          "type": "xod/core/clock",
+          "@@type": "xod-project/Node"
+        },
+        "Hkb3YRPGJL": {
+          "boundLiterals": {
+            "HkGg2NGyL": "On Boot"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hkb3YRPGJL",
+          "position": {
+            "x": -2,
+            "y": 3
+          },
+          "type": "@/fill-pattern",
+          "@@type": "xod-project/Node"
+        },
+        "HyQQZuMJI": {
+          "boundLiterals": {
+            "ByH-jEMk8": "#550000",
+            "ByH-jEMk8-$1": "#150000",
+            "ByH-jEMk8-$2": "#000000",
+            "ByH-jEMk8-$3": "#000000",
+            "ByH-jEMk8-$4": "#000000",
+            "ByH-jEMk8-$5": "#000000",
+            "ByH-jEMk8-$6": "#000000",
+            "ByH-jEMk8-$7": "#000000",
+            "ByH-jEMk8-$8": "#000000"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 4,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyQQZuMJI",
+          "position": {
+            "x": -1,
+            "y": 0
+          },
+          "type": "@/pattern",
+          "@@type": "xod-project/Node"
+        },
+        "HyqAcb9gI": {
+          "boundLiterals": {
+            "HyI-5XSAr": "A4",
+            "S1C-cQBRB": "16"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyqAcb9gI",
+          "position": {
+            "x": -3,
+            "y": 2
+          },
+          "type": "@/ws2812-device",
+          "@@type": "xod-project/Node"
+        },
+        "SyzFlpplI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyzFlpplI",
+          "position": {
+            "x": 4,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/jumper",
+          "@@type": "xod-project/Node"
+        },
+        "rkc3KFvyI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkc3KFvyI",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "xod/core/count",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "BynhtFDkU": {
+          "id": "BynhtFDkU",
+          "input": {
+            "nodeId": "rkc3KFvyI",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "Bke2KtwyI",
+            "pinKey": "HJU8CE2lW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1BKla6lI": {
+          "id": "H1BKla6lI",
+          "input": {
+            "nodeId": "Hkb3YRPGJL",
+            "pinKey": "r1WVLv-9lL"
+          },
+          "output": {
+            "nodeId": "SyzFlpplI",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1P69-5xU": {
+          "id": "H1P69-5xU",
+          "input": {
+            "nodeId": "Hkb3YRPGJL",
+            "pinKey": "Sy1uD-qx8"
+          },
+          "output": {
+            "nodeId": "HyQQZuMJI",
+            "pinKey": "HyxZiEGyL"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HJIYlT6gI": {
+          "id": "HJIYlT6gI",
+          "input": {
+            "nodeId": "SyzFlpplI",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Bke2KtwyI",
+            "pinKey": "HJU8CE2lW"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "S176qZ9gU": {
+          "id": "S176qZ9gU",
+          "input": {
+            "nodeId": "Hkb3YRPGJL",
+            "pinKey": "Sk7EUvWceI"
+          },
+          "output": {
+            "nodeId": "rkc3KFvyI",
+            "pinKey": "r1yhZRd8W"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1jCcW5eU": {
+          "id": "r1jCcW5eU",
+          "input": {
+            "nodeId": "Hkb3YRPGJL",
+            "pinKey": "H1xmDPZcxU"
+          },
+          "output": {
+            "nodeId": "HyqAcb9gI",
+            "pinKey": "SJxz8XtRS"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {
+        "HJhS-p6lI": {
+          "content": "A crawling red dots example.",
+          "id": "HJhS-p6lI",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "size": {
+            "height": 1,
+            "width": 5
+          }
+        },
+        "r1yLKRplL": {
+          "content": "Increment a shift value and fill the LEDs each 200 milliseconds.",
+          "id": "r1yLKRplL",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "size": {
+            "height": 1,
+            "width": 4
+          }
+        }
+      },
+      "path": "@/example-pattern-crawling",
+      "description": "",
+      "attachments": []
+    },
+    "@/example-pattern-police": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1ynkJCgI": {
+          "boundLiterals": {
+            "Byd2jbapxU": "A4",
+            "HymhoWTal8": "16"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1ynkJCgI",
+          "position": {
+            "x": -2,
+            "y": 8
+          },
+          "type": "@/ws2812-pattern",
+          "@@type": "xod-project/Node"
+        },
+        "By4q3Xt6L": {
+          "boundLiterals": {
+            "HylpvPgMOM": "0.5"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "By4q3Xt6L",
+          "position": {
+            "x": 1,
+            "y": 5
+          },
+          "type": "xod/waves/sine-wave",
+          "@@type": "xod-project/Node"
+        },
+        "HkMwqJcgU": {
+          "boundLiterals": {
+            "HJCWLAdSwyW": "1",
+            "rkpbU0OrwyZ": "3"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkMwqJcgU",
+          "position": {
+            "x": 1,
+            "y": 6
+          },
+          "type": "xod/math/map",
+          "@@type": "xod-project/Node"
+        },
+        "SJZPh4z1L": {
+          "boundLiterals": {
+            "ByH-jEMk8": "#0000FF",
+            "ByH-jEMk8-$1": "#0000FF",
+            "ByH-jEMk8-$2": "#0000FF",
+            "ByH-jEMk8-$3": "#FF0000"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 4,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJZPh4z1L",
+          "position": {
+            "x": 0,
+            "y": 4
+          },
+          "type": "@/pattern",
+          "@@type": "xod-project/Node"
+        },
+        "rkR-jk9eI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkR-jk9eI",
+          "position": {
+            "x": 1,
+            "y": 7
+          },
+          "type": "xod/math/round",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "SyVnkyRxU": {
+          "id": "SyVnkyRxU",
+          "input": {
+            "nodeId": "B1ynkJCgI",
+            "pinKey": "Sky6-pTeU"
+          },
+          "output": {
+            "nodeId": "SJZPh4z1L",
+            "pinKey": "HyxZiEGyL"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJPc3XK6I": {
+          "id": "rJPc3XK6I",
+          "input": {
+            "nodeId": "HkMwqJcgU",
+            "pinKey": "BJlzICOSv1-"
+          },
+          "output": {
+            "nodeId": "By4q3Xt6L",
+            "pinKey": "HyaDDeM_M"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryMzi19xI": {
+          "id": "ryMzi19xI",
+          "input": {
+            "nodeId": "rkR-jk9eI",
+            "pinKey": "BkF78AurDJW"
+          },
+          "output": {
+            "nodeId": "HkMwqJcgU",
+            "pinKey": "H12bIR_SPyZ"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rywnykRg8": {
+          "id": "rywnykRg8",
+          "input": {
+            "nodeId": "B1ynkJCgI",
+            "pinKey": "rJHdTRTeU"
+          },
+          "output": {
+            "nodeId": "rkR-jk9eI",
+            "pinKey": "rkO7L0uSP1Z"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {
+        "BkgW2C6l8": {
+          "content": "<- Convert values between 0...1 into values 0...3. The range of 0...3 corresponds to first...last position of the RED color in the pattern.\n\n<- Get an integer.",
+          "id": "BkgW2C6l8",
+          "position": {
+            "x": 6,
+            "y": 6
+          },
+          "size": {
+            "height": 2,
+            "width": 5
+          }
+        },
+        "SkPGiCalL": {
+          "content": "A police flashing light example.",
+          "id": "SkPGiCalL",
+          "position": {
+            "x": -2,
+            "y": 3
+          },
+          "size": {
+            "height": 1,
+            "width": 13
+          }
+        },
+        "SkwAhRpeU": {
+          "content": "<- Fill the LED strip.",
+          "id": "SkwAhRpeU",
+          "position": {
+            "x": 6,
+            "y": 8
+          },
+          "size": {
+            "height": 1,
+            "width": 5
+          }
+        },
+        "rJPci06e8": {
+          "content": "<- Pattern with colors: RED, BLUE, BLUE, BLUE",
+          "id": "rJPci06e8",
+          "position": {
+            "x": 6,
+            "y": 4
+          },
+          "size": {
+            "height": 1,
+            "width": 5
+          }
+        },
+        "rkf2j0pgI": {
+          "content": "<- The sine-wave generator is a shift value for the pattern.",
+          "id": "rkf2j0pgI",
+          "position": {
+            "x": 6,
+            "y": 5
+          },
+          "size": {
+            "height": 1,
+            "width": 5
+          }
+        }
+      },
+      "path": "@/example-pattern-police",
+      "description": "",
+      "attachments": []
+    },
+    "@/fill-pattern": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "H1xmDPZcxU": {
+          "boundLiterals": {},
+          "description": "The device",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1xmDPZcxU",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-ws2812-device",
+          "@@type": "xod-project/Node"
+        },
+        "HkGEUDbqgI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkGEUDbqgI",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "HyQPv-5xI": {
+          "boundLiterals": {},
+          "description": "The device",
+          "label": "DEV'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyQPv-5xI",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/output-ws2812-device",
+          "@@type": "xod-project/Node"
+        },
+        "Sk7EUvWceI": {
+          "boundLiterals": {},
+          "description": "The number of pixels to shift/wrap in the pattern. It should be an integer. If it is negative or greater than the pattern length the shift is wrapped over. Use shift to create a crawler animation.",
+          "label": "SHFT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sk7EUvWceI",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "Sy1uD-qx8": {
+          "boundLiterals": {},
+          "description": "The color pattern. If the pattern is shorter than the number of LEDs it repeats.",
+          "label": "PAT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sy1uD-qx8",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "@/input-color-pattern",
+          "@@type": "xod-project/Node"
+        },
+        "r1WVLv-9lL": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Trigger to fill pixels of the device with the pattern",
+          "label": "DO",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1WVLv-9lL",
+          "position": {
+            "x": 6,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rklN8DZ9eL": {
+          "boundLiterals": {},
+          "description": "Fires when the fill is done",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rklN8DZ9eL",
+          "position": {
+            "x": 2,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/fill-pattern",
+      "description": "Fills the device LEDs with a repeative color pattern.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    void evaluate(Context ctx) {\n        auto dev = getValue<input_DEV>(ctx);\n\n        if (isInputDirty<input_DO>(ctx)) {\n            auto pat = getValue<input_PAT>(ctx);\n            uint32_t shift = (uint32_t)getValue<input_SHFT>(ctx);\n            dev->fillPattern(pat, shift);\n        }\n\n        emitValue<output_DEVU0027>(ctx, dev);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/fill-solid": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1387L5RS": {
+          "boundLiterals": {},
+          "description": "The device",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1387L5RS",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "@/input-ws2812-device",
+          "@@type": "xod-project/Node"
+        },
+        "B1Qn8XUqCH": {
+          "boundLiterals": {},
+          "description": "Fires when the fill is done",
+          "label": "DONE",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1Qn8XUqCH",
+          "position": {
+            "x": 3,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SJxhUmIcCr": {
+          "boundLiterals": {},
+          "description": "The color",
+          "label": "C",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJxhUmIcCr",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/color/input-color",
+          "@@type": "xod-project/Node"
+        },
+        "SkcHZece8": {
+          "boundLiterals": {
+            "__out__": "Inf"
+          },
+          "description": "Number of LEDs to fill up with the solid color. Set `Inf` to fill all LEDs. Set to a negative value to fill from the tail.",
+          "label": "NUM",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkcHZece8",
+          "position": {
+            "x": 5,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "SkplWUcRH": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkplWUcRH",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "r1znU7I9Ar": {
+          "boundLiterals": {},
+          "description": "The device",
+          "label": "DEV'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "r1znU7I9Ar",
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "type": "@/output-ws2812-device",
+          "@@type": "xod-project/Node"
+        },
+        "rJWh8XIqAB": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Trigger to fill pixels of the device",
+          "label": "DO",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJWh8XIqAB",
+          "position": {
+            "x": 7,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-pulse",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/fill-solid",
+      "description": "Sets the color of pixels in the device to the same value.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    void evaluate(Context ctx) {\n        auto dev = getValue<input_DEV>(ctx);\n        if (isInputDirty<input_DO>(ctx)) {\n            auto color = getValue<input_C>(ctx);\n            auto num = getValue<input_NUM>(ctx);\n            if (isinf(num)) {\n                // Fill all the LEDs\n                dev->fill(color);\n            } else {\n                // Fill only specified number of LEDs\n                bool fromTail = num < 0;\n                uint32_t pixelsCount = (uint32_t) abs(num);\n                dev->fill(color, pixelsCount, fromTail);\n            }\n\n            emitValue<output_DONE>(ctx, 1);\n        }\n        emitValue<output_DEVU0027>(ctx, dev);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/pattern": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "ByH-jEMk8": {
+          "boundLiterals": {},
+          "description": "The color to add.",
+          "label": "C",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByH-jEMk8",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/color/input-color",
+          "@@type": "xod-project/Node"
+        },
+        "HyRWoEMkL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyRWoEMkL",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "HyxZiEGyL": {
+          "boundLiterals": {},
+          "description": "The resulting pattern.",
+          "label": "PAT'",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyxZiEGyL",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/output-color-pattern",
+          "@@type": "xod-project/Node"
+        },
+        "S19bjEzkL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S19bjEzkL",
+          "position": {
+            "x": 4,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/variadic-1",
+          "@@type": "xod-project/Node"
+        },
+        "SJhxjVMJI": {
+          "boundLiterals": {},
+          "description": "The pattern to extend. Leave empty to create a new pattern.",
+          "label": "PAT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJhxjVMJI",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-color-pattern",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/pattern",
+      "description": "Adds new colors to the tail of a given pattern.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#include <XColorPattern.h>\n\nnode {\n    PatternNode node;\n\n    void evaluate(Context ctx) {\n        auto pattern = getValue<input_PAT>(ctx);\n        auto color = getValue<input_C>(ctx);\n\n        if (isInputDirty<input_C>(ctx)) {\n            node.setColor(color);\n        }\n        if (isSettingUp()) {\n            pattern->add(&node);\n        }\n\n        emitValue<output_PATU0027>(ctx, pattern);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/pulse-on-change(color-pattern)": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJoGWJAxU": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJoGWJAxU",
+          "position": {
+            "x": 1,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/utility",
+          "@@type": "xod-project/Node"
+        },
+        "HyrhpC6lU": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyrhpC6lU",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "@/input-color-pattern",
+          "@@type": "xod-project/Node"
+        },
+        "SJcnT06l8": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJcnT06l8",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "SyAnaAagI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SyAnaAagI",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/pulse-on-change(color-pattern)",
+      "description": "",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "node {\n    void evaluate(Context ctx) {\n        // Storing all colors of \"previous\" pattern\n        // to compare with the \"next\" one is uneffective\n        // by the RAM. So it expects that the same pattern\n        // will not be sent at all.\n\n        if (isInputDirty<input_IN>(ctx))\n            emitValue<output_OUT>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/ws2812-device": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B1SEcQS0r": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B1SEcQS0r",
+          "position": {
+            "x": 0,
+            "y": 1
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "@@type": "xod-project/Node"
+        },
+        "HyI-5XSAr": {
+          "boundLiterals": {},
+          "description": "The board port DI is connected to",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HyI-5XSAr",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "S1C-cQBRB": {
+          "boundLiterals": {
+            "__out__": "8"
+          },
+          "description": "Number of LEDs in the strip",
+          "label": "W",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1C-cQBRB",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "SJxz8XtRS": {
+          "boundLiterals": {},
+          "description": "The device",
+          "label": "DEV",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SJxz8XtRS",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "xod/patch-nodes/output-self",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {},
+      "comments": {},
+      "path": "@/ws2812-device",
+      "description": "Represents a chained sequence of WS2812 pixels.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#include <WS2812.h>\n\nnode {\n    static_assert(isValidDigitalPort(constant_input_PORT), \"must be a valid digital port\");\n\n    meta {\n        using Type = WS2812*;\n    }\n\n    uint8_t mem[sizeof(WS2812)];\n\n    void evaluate(Context ctx) {\n        if (!isSettingUp()) return;\n        uint32_t w = (uint32_t)getValue<input_W>(ctx);\n        Type t = new (mem) WS2812(constant_input_PORT, w);\n        emitValue<output_DEV>(ctx, t);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/ws2812-pattern": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "B14hiWTalI": {
+          "boundLiterals": {},
+          "description": "Fires when an update operation is done",
+          "label": "OK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "B14hiWTalI",
+          "position": {
+            "x": 2,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "By-hjWp6gU": {
+          "boundLiterals": {
+            "HyI-5XSAr": "A4",
+            "S1C-cQBRB": "16"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "By-hjWp6gU",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/ws2812-device",
+          "@@type": "xod-project/Node"
+        },
+        "Byd2jbapxU": {
+          "boundLiterals": {},
+          "description": "The board port `DI` is connected to",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Byd2jbapxU",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        },
+        "Byg2sbpTlU": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Byg2sbpTlU",
+          "position": {
+            "x": 6,
+            "y": 2
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "HkP3jb6aeI": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HkP3jb6aeI",
+          "position": {
+            "x": 4,
+            "y": 2
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "HymhoWTal8": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Number of LEDs in the strip",
+          "label": "W",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "HymhoWTal8",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "Hyznb6axU": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Hyznb6axU",
+          "position": {
+            "x": 1,
+            "y": 4
+          },
+          "type": "@/fill-pattern",
+          "@@type": "xod-project/Node"
+        },
+        "S1M2jZTaxI": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "When set to True the LEDs follow changes of `C` as they happen",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "S1M2jZTaxI",
+          "position": {
+            "x": 7,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "Sky6-pTeU": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "PAT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "Sky6-pTeU",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "@/input-color-pattern",
+          "@@type": "xod-project/Node"
+        },
+        "rJHdTRTeU": {
+          "boundLiterals": {},
+          "description": "The number of pixels to shift/wrap in the pattern. It should be an integer. If it is negative or greater than the pattern length the shift is wrapped over. Use shift to create a crawler animation.",
+          "label": "SHFT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJHdTRTeU",
+          "position": {
+            "x": 3,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "rkB3iWT6g8": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 2,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkB3iWT6g8",
+          "position": {
+            "x": 4,
+            "y": 3
+          },
+          "type": "xod/core/any",
+          "@@type": "xod-project/Node"
+        },
+        "rko_aRag8": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rko_aRag8",
+          "position": {
+            "x": 8,
+            "y": 2
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "rybsTEP-I": {
+          "boundLiterals": {
+            "ByYWULHUr": "0.05"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rybsTEP-I",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/core/throttle",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B132iW6Tg8": {
+          "id": "B132iW6Tg8",
+          "input": {
+            "nodeId": "rkB3iWT6g8",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "Byg2sbpTlU",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "B15oa4PZI": {
+          "id": "B15oa4PZI",
+          "input": {
+            "nodeId": "rybsTEP-I",
+            "pinKey": "rkzZUUHLB"
+          },
+          "output": {
+            "nodeId": "Sky6-pTeU",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkAO6Rpe8": {
+          "id": "BkAO6Rpe8",
+          "input": {
+            "nodeId": "rko_aRag8",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "S1M2jZTaxI",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ByJha4wZ8": {
+          "id": "ByJha4wZ8",
+          "input": {
+            "nodeId": "Byg2sbpTlU",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "rybsTEP-I",
+            "pinKey": "H1H-LLHUr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1tDpA6gI": {
+          "id": "H1tDpA6gI",
+          "input": {
+            "nodeId": "Hyznb6axU",
+            "pinKey": "r1WVLv-9lL"
+          },
+          "output": {
+            "nodeId": "rkB3iWT6g8",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HyvgGpTgU": {
+          "id": "HyvgGpTgU",
+          "input": {
+            "nodeId": "B14hiWTalI",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Hyznb6axU",
+            "pinKey": "rklN8DZ9eL"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJKnoZTTxI": {
+          "id": "SJKnoZTTxI",
+          "input": {
+            "nodeId": "By-hjWp6gU",
+            "pinKey": "HyI-5XSAr"
+          },
+          "output": {
+            "nodeId": "Byd2jbapxU",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJcnsbaTl8": {
+          "id": "SJcnsbaTl8",
+          "input": {
+            "nodeId": "Byg2sbpTlU",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "S1M2jZTaxI",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SJinob6aeU": {
+          "id": "SJinob6aeU",
+          "input": {
+            "nodeId": "rkB3iWT6g8",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "HkP3jb6aeI",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Sk6iTEwb8": {
+          "id": "Sk6iTEwb8",
+          "input": {
+            "nodeId": "Hyznb6axU",
+            "pinKey": "Sy1uD-qx8"
+          },
+          "output": {
+            "nodeId": "rybsTEP-I",
+            "pinKey": "H1H-LLHUr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1C3j-palL": {
+          "id": "r1C3j-palL",
+          "input": {
+            "nodeId": "HkP3jb6aeI",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "HymhoWTal8",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "r1bxhiWp6xI": {
+          "id": "r1bxhiWp6xI",
+          "input": {
+            "nodeId": "HkP3jb6aeI",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "S1M2jZTaxI",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJNh-pae8": {
+          "id": "rJNh-pae8",
+          "input": {
+            "nodeId": "Hyznb6axU",
+            "pinKey": "H1xmDPZcxU"
+          },
+          "output": {
+            "nodeId": "By-hjWp6gU",
+            "pinKey": "SJxz8XtRS"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJVg3jbpagL": {
+          "id": "rJVg3jbpagL",
+          "input": {
+            "nodeId": "By-hjWp6gU",
+            "pinKey": "S1C-cQBRB"
+          },
+          "output": {
+            "nodeId": "HymhoWTal8",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkuO6CpgU": {
+          "id": "rkuO6CpgU",
+          "input": {
+            "nodeId": "Hyznb6axU",
+            "pinKey": "Sk7EUvWceI"
+          },
+          "output": {
+            "nodeId": "rJHdTRTeU",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryMK6AaxI": {
+          "id": "ryMK6AaxI",
+          "input": {
+            "nodeId": "rko_aRag8",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "rJHdTRTeU",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "ryyqT0agL": {
+          "id": "ryyqT0agL",
+          "input": {
+            "nodeId": "rkB3iWT6g8",
+            "pinKey": "ByU7LRuSPkW-$1"
+          },
+          "output": {
+            "nodeId": "rko_aRag8",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {
+        "HJ_36EvWU": {
+          "content": "<-- Throttle a pattern to avoid excessive refills, which causes skipping interrupts and other calculations.",
+          "id": "HJ_36EvWU",
+          "position": {
+            "x": 10,
+            "y": 1
+          },
+          "size": {
+            "height": 1,
+            "width": 7
+          }
+        }
+      },
+      "path": "@/ws2812-pattern",
+      "description": "",
+      "attachments": []
+    },
+    "@/ws2812-mono": {
+      "@@type": "xod-project/Patch",
+      "nodes": {
+        "BJZY_6J1L": {
+          "boundLiterals": {},
+          "description": "Color value",
+          "label": "C",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "BJZY_6J1L",
+          "position": {
+            "x": 2,
+            "y": 0
+          },
+          "type": "xod/color/input-color",
+          "@@type": "xod-project/Node"
+        },
+        "ByK2veb18": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByK2veb18",
+          "position": {
+            "x": 6,
+            "y": 2
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "ByVkFakyL": {
+          "boundLiterals": {
+            "HyI-5XSAr": "A4",
+            "S1C-cQBRB": "16"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ByVkFakyL",
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "type": "@/ws2812-device",
+          "@@type": "xod-project/Node"
+        },
+        "H1wKu611L": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "When set to True the LEDs follow changes of `C` as they happen",
+          "label": "ACT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "H1wKu611L",
+          "position": {
+            "x": 5,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean",
+          "@@type": "xod-project/Node"
+        },
+        "SkxM4CNDZI": {
+          "boundLiterals": {
+            "ByYWULHUr": "0.05"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "SkxM4CNDZI",
+          "position": {
+            "x": 2,
+            "y": 1
+          },
+          "type": "xod/core/throttle",
+          "@@type": "xod-project/Node"
+        },
+        "rJ2uOpk1L": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Number of LEDs in the strip",
+          "label": "W",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJ2uOpk1L",
+          "position": {
+            "x": 1,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number",
+          "@@type": "xod-project/Node"
+        },
+        "rJAY_pJJ8": {
+          "boundLiterals": {},
+          "description": "Fires when an update operation is done",
+          "label": "OK",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJAY_pJJ8",
+          "position": {
+            "x": 2,
+            "y": 5
+          },
+          "type": "xod/patch-nodes/output-pulse",
+          "@@type": "xod-project/Node"
+        },
+        "rJVqwxWkL": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJVqwxWkL",
+          "position": {
+            "x": 4,
+            "y": 3
+          },
+          "type": "xod/core/any",
+          "@@type": "xod-project/Node"
+        },
+        "rJlVJtpkyU": {
+          "boundLiterals": {
+            "SkcHZece8": "Inf"
+          },
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rJlVJtpkyU",
+          "position": {
+            "x": 1,
+            "y": 4
+          },
+          "type": "@/fill-solid",
+          "@@type": "xod-project/Node"
+        },
+        "rkijPgZk8": {
+          "boundLiterals": {},
+          "description": "",
+          "label": "",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "rkijPgZk8",
+          "position": {
+            "x": 4,
+            "y": 2
+          },
+          "type": "xod/core/act",
+          "@@type": "xod-project/Node"
+        },
+        "ryD_dp118": {
+          "boundLiterals": {},
+          "description": "The board port `DI` is connected to",
+          "label": "PORT",
+          "arityLevel": 1,
+          "size": {
+            "width": 0,
+            "height": 0
+          },
+          "id": "ryD_dp118",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-port",
+          "@@type": "xod-project/Node"
+        }
+      },
+      "links": {
+        "B1dkY6Jy8": {
+          "id": "B1dkY6Jy8",
+          "input": {
+            "nodeId": "ByVkFakyL",
+            "pinKey": "HyI-5XSAr"
+          },
+          "output": {
+            "nodeId": "ryD_dp118",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Bk0N0EPZU": {
+          "id": "Bk0N0EPZU",
+          "input": {
+            "nodeId": "SkxM4CNDZI",
+            "pinKey": "rkzZUUHLB"
+          },
+          "output": {
+            "nodeId": "BJZY_6J1L",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "BkA2vxZ1L": {
+          "id": "BkA2vxZ1L",
+          "input": {
+            "nodeId": "ByK2veb18",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "H1wKu611L",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1Z6Pl-JL": {
+          "id": "H1Z6Pl-JL",
+          "input": {
+            "nodeId": "rJVqwxWkL",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "rkijPgZk8",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "H1z6wx-1L": {
+          "id": "H1z6wx-1L",
+          "input": {
+            "nodeId": "rJVqwxWkL",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "ByK2veb18",
+            "pinKey": "H1fx68wzB"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HkkeYT1JI": {
+          "id": "HkkeYT1JI",
+          "input": {
+            "nodeId": "rJlVJtpkyU",
+            "pinKey": "B1387L5RS"
+          },
+          "output": {
+            "nodeId": "ByVkFakyL",
+            "pinKey": "SJxz8XtRS"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "HklHAVPWU": {
+          "id": "HklHAVPWU",
+          "input": {
+            "nodeId": "rJlVJtpkyU",
+            "pinKey": "SJxhUmIcCr"
+          },
+          "output": {
+            "nodeId": "SkxM4CNDZI",
+            "pinKey": "H1H-LLHUr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Hylawebk8": {
+          "id": "Hylawebk8",
+          "input": {
+            "nodeId": "rkijPgZk8",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "rJ2uOpk1L",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "SkfeKpky8": {
+          "id": "SkfeKpky8",
+          "input": {
+            "nodeId": "rJAY_pJJ8",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rJlVJtpkyU",
+            "pinKey": "B1Qn8XUqCH"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "Sknhvg-k8": {
+          "id": "Sknhvg-k8",
+          "input": {
+            "nodeId": "rkijPgZk8",
+            "pinKey": "H13R3IvGB"
+          },
+          "output": {
+            "nodeId": "H1wKu611L",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rJmpvl-kU": {
+          "id": "rJmpvl-kU",
+          "input": {
+            "nodeId": "rJlVJtpkyU",
+            "pinKey": "rJWh8XIqAB"
+          },
+          "output": {
+            "nodeId": "rJVqwxWkL",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkZSCEvZ8": {
+          "id": "rkZSCEvZ8",
+          "input": {
+            "nodeId": "ByK2veb18",
+            "pinKey": "BytC28DfH"
+          },
+          "output": {
+            "nodeId": "SkxM4CNDZI",
+            "pinKey": "H1H-LLHUr"
+          },
+          "@@type": "xod-project/Link"
+        },
+        "rkwyt6kkL": {
+          "id": "rkwyt6kkL",
+          "input": {
+            "nodeId": "ByVkFakyL",
+            "pinKey": "S1C-cQBRB"
+          },
+          "output": {
+            "nodeId": "rJ2uOpk1L",
+            "pinKey": "__out__"
+          },
+          "@@type": "xod-project/Link"
+        }
+      },
+      "comments": {
+        "Bk-MERVw-L": {
+          "content": "<-- Throttle a color to avoid excessive refills, which causes skipping interrupts and other calculations.",
+          "id": "Bk-MERVw-L",
+          "position": {
+            "x": 10,
+            "y": 1
+          },
+          "size": {
+            "height": 1,
+            "width": 7
+          }
+        }
+      },
+      "path": "@/ws2812-mono",
+      "description": "A quickstart node to control a LED strip which is always filled with a single color",
+      "attachments": []
+    }
+  },
+  "authors": [],
+  "license": "AGPL-3.0",
+  "version": "0.37.3",
+  "description": "Nodes to work with WS2812 (NeoPixel). The main difference from the other libraries that this library does not use a buffer to light up the LEDs. So it gives a possibility to light up a really long LED strip with a small microcontroller without a huge amount of RAM.",
+  "apiKey": "",
+  "name": "ws2812"
+}

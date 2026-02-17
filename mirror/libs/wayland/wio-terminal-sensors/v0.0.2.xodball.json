@@ -1,0 +1,1327 @@
+{
+  "description": "Nodes for the Wio Terminal's built-in sensors (accelerometer, light meter and microphone). Wio Terminal is an ATSAMD51-based microcontroller with wireless connectivity powered by Realtek RTL8720DN (https://www.seeedstudio.com/Wio-Terminal-p-4509.html).",
+  "license": "BSD",
+  "version": "0.0.2",
+  "patches": {
+    "@/microphone": {
+      "nodes": {
+        "r1z1RSwv_": {
+          "description": "Fires on reading complete",
+          "label": "DONE",
+          "id": "r1z1RSwv_",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SklzyCSPDO": {
+          "id": "SklzyCSPDO",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJzzJRrwvu": {
+          "description": "The latest read value in range 0.0 … 1.0",
+          "label": "VAL",
+          "id": "rJzzJRrwvu",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SyXzJ0BwDO": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers new read",
+          "label": "UPD",
+          "id": "SyXzJ0BwDO",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/microphone",
+      "description": "Wio Terminal's built-in microphone.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n         if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        ::pinMode(WIO_MIC, INPUT);\n        emitValue<output_VAL>(ctx, ::analogRead(WIO_MIC) / 1023.);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/light-sensor": {
+      "nodes": {
+        "HyPV3Lvv_": {
+          "description": "Fires on reading complete",
+          "label": "DONE",
+          "id": "HyPV3Lvv_",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HklDE3UDv_": {
+          "id": "HklDE3UDv_",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Sk-D43UPPO": {
+          "description": "The latest read value in range 0.0 … 1.0",
+          "label": "VAL",
+          "id": "Sk-D43UPPO",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BkfvV2LDD_": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Triggers new read",
+          "label": "UPD",
+          "id": "BkfvV2LDD_",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/light-sensor",
+      "description": "Wio Terminal's built-in light sensor.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n         if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        ::pinMode(WIO_LIGHT, INPUT);\n        emitValue<output_VAL>(ctx, ::analogRead(WIO_LIGHT) / 1023.);\n        emitValue<output_DONE>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/imu-accelerometer": {
+      "nodes": {
+        "SJxRVkODd": {
+          "label": "DEV",
+          "id": "SJxRVkODd",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SyleAEJdwu": {
+          "id": "SyleAEJdwu",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "wayland/lis3dh-accelerometer/set-data-rate"
+        },
+        "BJWxRN1OP_": {
+          "boundLiterals": {
+            "HJUg4Q_zD": "18h"
+          },
+          "id": "BJWxRN1OP_",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "wayland/lis3dh-accelerometer/lis3dh-device"
+        },
+        "B1zgC41dP_": {
+          "description": "Acceleration (metre per second squared) in z-axis.",
+          "label": "Z",
+          "id": "B1zgC41dP_",
+          "position": {
+            "x": 2,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SkXgAVk_v_": {
+          "label": "DEV",
+          "id": "SkXgAVk_v_",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "S1Ex0EJODO": {
+          "label": "DEV",
+          "id": "S1Ex0EJODO",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "HJreR4Juvu": {
+          "id": "HJreR4Juvu",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/boot"
+        },
+        "r1IlC4kuDu": {
+          "description": "Acceleration (metre per second squared) in y-axis.",
+          "label": "Y",
+          "id": "r1IlC4kuDu",
+          "position": {
+            "x": 1,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SJvlAN1uwd": {
+          "description": "Acceleration (metre per second squared) in x-axis.",
+          "label": "X",
+          "id": "SJvlAN1uwd",
+          "position": {
+            "x": 0,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BJde04JuDd": {
+          "id": "BJde04JuDd",
+          "position": {
+            "x": 1,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/wait-all"
+        },
+        "Hysx0V1uv_": {
+          "id": "Hysx0V1uv_",
+          "position": {
+            "x": 0,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "wayland/lis3dh-accelerometer/read-acceleration"
+        },
+        "Sk2g0V1_DO": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "0.1"
+          },
+          "id": "Sk2g0V1_DO",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "Sk6lR4kdwO": {
+          "description": "Range. Options:  00h = +/- 2g (default), 01h = +/- 4g, 02h = +/- 8g, 03h = +/- 16g.",
+          "label": "RANGE",
+          "id": "Sk6lR4kdwO",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HyCx0EkdDu": {
+          "boundLiterals": {
+            "__out__": "07h"
+          },
+          "description": "Data rate. Options: 01h = 1 Hz, 02h = 10 Hz, 03h = 25 Hz, 04h = 50 Hz, 05h= 100 Hz, 06h = 200 Hz, 07h = 400 Hz (default), 00h = powered down, 08h = 1.6 kHz (low power), 09h = 5 kHz (low power).",
+          "label": "RATE",
+          "id": "HyCx0EkdDu",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "rJJeeCNk_wd": {
+          "id": "rJJeeCNk_wd",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "wayland/lis3dh-accelerometer/set-range"
+        },
+        "B1wJByODd": {
+          "id": "B1wJByODd",
+          "type": "wayland/i2c-additional-buses/i2c-wire1",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "ry2rPk_v_": {
+          "id": "ry2rPk_v_",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update. Trigger read."
+        },
+        "BkdPPk_PO": {
+          "id": "BkdPPk_PO",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "TRIG"
+        },
+        "Hyf5DyOvO": {
+          "id": "Hyf5DyOvO",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "TRIG"
+        }
+      },
+      "links": {
+        "BJWgl0E1OD_": {
+          "id": "BJWgl0E1OD_",
+          "input": {
+            "nodeId": "rJJeeCNk_wd",
+            "pinKey": "S1gUQfhfD"
+          },
+          "output": {
+            "nodeId": "Sk2g0V1_DO",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "H1GleREyODu": {
+          "id": "H1GleREyODu",
+          "input": {
+            "nodeId": "Hysx0V1uv_",
+            "pinKey": "HyWYfzXhGv"
+          },
+          "output": {
+            "nodeId": "BJde04JuDd",
+            "pinKey": "SJVql9lXr"
+          }
+        },
+        "B1XglCVJdvO": {
+          "id": "B1XglCVJdvO",
+          "input": {
+            "nodeId": "rJJeeCNk_wd",
+            "pinKey": "Hkv_uf3fw"
+          },
+          "output": {
+            "nodeId": "Sk6lR4kdwO",
+            "pinKey": "__out__"
+          }
+        },
+        "B1LleCE1dw_": {
+          "id": "B1LleCE1dw_",
+          "input": {
+            "nodeId": "S1Ex0EJODO",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "BJWxRN1OP_",
+            "pinKey": "HkIVcXdfP"
+          }
+        },
+        "SkwlgAN1Ovd": {
+          "id": "SkwlgAN1Ovd",
+          "input": {
+            "nodeId": "SyleAEJdwu",
+            "pinKey": "HkqN3tYzP"
+          },
+          "output": {
+            "nodeId": "rJJeeCNk_wd",
+            "pinKey": "rk6KOG2zD"
+          }
+        },
+        "H1_xlCVydD_": {
+          "id": "H1_xlCVydD_",
+          "input": {
+            "nodeId": "Sk2g0V1_DO",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "HJreR4Juvu",
+            "pinKey": "ryVmUAOrvkb"
+          }
+        },
+        "r1YggCNk_D_": {
+          "id": "r1YggCNk_D_",
+          "input": {
+            "nodeId": "B1zgC41dP_",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Hysx0V1uv_",
+            "pinKey": "rJmFzfXnfw"
+          }
+        },
+        "H15xxCEJOwu": {
+          "id": "H15xxCEJOwu",
+          "input": {
+            "nodeId": "Hysx0V1uv_",
+            "pinKey": "ryrYfzX2zw"
+          },
+          "output": {
+            "nodeId": "BJWxRN1OP_",
+            "pinKey": "HkIVcXdfP"
+          }
+        },
+        "B1slgANyuPO": {
+          "id": "B1slgANyuPO",
+          "input": {
+            "nodeId": "r1IlC4kuDu",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Hysx0V1uv_",
+            "pinKey": "S1KzGX3MP"
+          }
+        },
+        "S1nge0Vyuwu": {
+          "id": "S1nge0Vyuwu",
+          "input": {
+            "nodeId": "rJJeeCNk_wd",
+            "pinKey": "B1dMbX2MP"
+          },
+          "output": {
+            "nodeId": "SkXgAVk_v_",
+            "pinKey": "__out__"
+          }
+        },
+        "SJpxgAEJOwO": {
+          "id": "SJpxgAEJOwO",
+          "input": {
+            "nodeId": "BJde04JuDd",
+            "pinKey": "ByFqg5eXr"
+          },
+          "output": {
+            "nodeId": "SyleAEJdwu",
+            "pinKey": "BkLB3KKzv"
+          }
+        },
+        "HyCexRV1OPO": {
+          "id": "HyCexRV1OPO",
+          "input": {
+            "nodeId": "SyleAEJdwu",
+            "pinKey": "S1ikWX2zv"
+          },
+          "output": {
+            "nodeId": "SJxRVkODd",
+            "pinKey": "__out__"
+          }
+        },
+        "Syk-xCVy_vO": {
+          "id": "Syk-xCVy_vO",
+          "input": {
+            "nodeId": "SJvlAN1uwd",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Hysx0V1uv_",
+            "pinKey": "ByeYzMQnzw"
+          }
+        },
+        "SyeZxREkOPO": {
+          "id": "SyeZxREkOPO",
+          "input": {
+            "nodeId": "SyleAEJdwu",
+            "pinKey": "SktnAtKzP"
+          },
+          "output": {
+            "nodeId": "HyCx0EkdDu",
+            "pinKey": "__out__"
+          }
+        },
+        "HkMeryOv_": {
+          "id": "HkMeryOv_",
+          "output": {
+            "nodeId": "B1wJByODd",
+            "pinKey": "HkzqwgmD_"
+          },
+          "input": {
+            "nodeId": "BJWxRN1OP_",
+            "pinKey": "ry-5PGXvO"
+          }
+        },
+        "HknDPJODO": {
+          "id": "HknDPJODO",
+          "output": {
+            "nodeId": "ry2rPk_v_",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BkdPPk_PO",
+            "pinKey": "__in__"
+          }
+        },
+        "SyF2wkOPu": {
+          "id": "SyF2wkOPu",
+          "output": {
+            "nodeId": "Hyf5DyOvO",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BJde04JuDd",
+            "pinKey": "HkFFgqx7B"
+          }
+        }
+      },
+      "path": "@/imu-accelerometer",
+      "description": "Read triaxial acceleration using inertial measurement unit (LIS3DH)."
+    },
+    "@/imu-click-detector": {
+      "nodes": {
+        "HkJTr1_P_": {
+          "boundLiterals": {
+            "__out__": "10d"
+          },
+          "description": "Time limit (default = 10). To convert to seconds divide by data rate. For example, if the data rate is 400Hz, then the default value of 10 is equivalent to a time limit of 25 ms.",
+          "label": "T-LIMIT",
+          "id": "HkJTr1_P_",
+          "position": {
+            "x": 12,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "BJlJaBy_PO": {
+          "label": "DEV",
+          "id": "BJlJaBy_PO",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rk-J6S1dPu": {
+          "boundLiterals": {
+            "SyZ31_YGv": "Continuously"
+          },
+          "id": "rk-J6S1dPu",
+          "position": {
+            "x": 1,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "wayland/lis3dh-accelerometer/get-click"
+        },
+        "BJzk6H1dDd": {
+          "boundLiterals": {
+            "Skre8ROSv1-": "0.1"
+          },
+          "id": "BJzk6H1dDd",
+          "position": {
+            "x": 15,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/delay"
+        },
+        "S1mJTBy_D_": {
+          "id": "S1mJTBy_D_",
+          "position": {
+            "x": 2,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/core/wait-all"
+        },
+        "B1N1aSk_vd": {
+          "boundLiterals": {
+            "__out__": "20d"
+          },
+          "description": "Time latency (default = 20).  To convert to seconds divide by data rate. For example, if the data rate is 400Hz, then the default value of 20 is equivalent to a latency of 50 ms.",
+          "label": "T-LATENCY",
+          "id": "B1N1aSk_vd",
+          "position": {
+            "x": 13,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HJry6SJdD_": {
+          "boundLiterals": {
+            "__out__": "07h"
+          },
+          "description": "Data rate. Options: 01h = 1 Hz, 02h = 10 Hz, 03h = 25 Hz, 04h = 50 Hz, 05h= 100 Hz, 06h = 200 Hz, 07h = 400 Hz (default), 00h = powered down, 08h = 1.6 kHz (low power), 09h = 5 kHz (low power).",
+          "label": "RATE",
+          "id": "HJry6SJdD_",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SyLk6HkODd": {
+          "id": "SyLk6HkODd",
+          "position": {
+            "x": 5,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "wayland/lis3dh-accelerometer/set-data-rate"
+        },
+        "rkDy6Hk_Du": {
+          "label": "DEV",
+          "id": "rkDy6Hk_Du",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "Bkd1pHk_wu": {
+          "label": "DEV",
+          "id": "Bkd1pHk_wu",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SytJTSydwd": {
+          "id": "SytJTSydwd",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "wayland/lis3dh-accelerometer/set-range"
+        },
+        "SkqyarJdwu": {
+          "boundLiterals": {
+            "rJBp-KFfv": "60d"
+          },
+          "id": "SkqyarJdwu",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "wayland/lis3dh-accelerometer/set-click"
+        },
+        "SyiyaSkOw_": {
+          "boundLiterals": {
+            "HJUg4Q_zD": "18h"
+          },
+          "id": "SyiyaSkOw_",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "wayland/lis3dh-accelerometer/lis3dh-device"
+        },
+        "Hyn1aB1dPu": {
+          "label": "DEV",
+          "id": "Hyn1aB1dPu",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HyaJTS1_PO": {
+          "boundLiterals": {
+            "__out__": "60d"
+          },
+          "description": "Adjust this number for the sensitivity of the 'click' force. This strongly depends on the range! For 16G, try 5-10; for 8G, try 10-20; for 4G, try 20-40; for 2G, try 40-80.",
+          "label": "THRESHOLD",
+          "id": "HyaJTS1_PO",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "rJRJpByOPO": {
+          "description": "Range. Options:  00h = +/- 2g (default), 01h = +/- 4g, 02h = +/- 8g, 03h = +/- 16g.",
+          "label": "RANGE",
+          "id": "rJRJpByOPO",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HJJekaHkOv_": {
+          "boundLiterals": {
+            "__out__": "255d"
+          },
+          "description": "Time window (default = 255).  To convert to seconds divide by data rate. For example, if the data rate is 400Hz, then the default value of 255 is equivalent to a time window of 637.5 ms.",
+          "label": "T-WINDOW",
+          "id": "HJJekaHkOv_",
+          "position": {
+            "x": 14,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SkglkTryOP_": {
+          "description": "Pulse after checking for click (tap).",
+          "label": "DONE",
+          "id": "SkglkTryOP_",
+          "position": {
+            "x": 3,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hy-lJ6ry_wO": {
+          "id": "Hy-lJ6ry_wO",
+          "position": {
+            "x": 16,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/boot"
+        },
+        "HyXeJ6SyuvO": {
+          "description": "Pulse if double \"click\" (tap) detected.",
+          "label": "DBL",
+          "id": "HyXeJ6SyuvO",
+          "position": {
+            "x": 2,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SJ4xyaSy_vu": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Enable the click-detector.",
+          "label": "EN",
+          "id": "SJ4xyaSy_vu",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "ByrekTrJdPd": {
+          "boundLiterals": {
+            "B13SCNhl-": "0.1"
+          },
+          "id": "ByrekTrJdPd",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "ryIgy6SJ_PO": {
+          "description": "Pulse if single \"click\" (tap) detected.",
+          "label": "SNG",
+          "id": "ryIgy6SJ_PO",
+          "position": {
+            "x": 1,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Sk2CBy_wd": {
+          "id": "Sk2CBy_wd",
+          "type": "wayland/i2c-additional-buses/i2c-wire1",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "H1_g1pr1dv_": {
+          "id": "H1_g1pr1dv_",
+          "input": {
+            "nodeId": "S1mJTBy_D_",
+            "pinKey": "ByFqg5eXr"
+          },
+          "output": {
+            "nodeId": "SyLk6HkODd",
+            "pinKey": "BkLB3KKzv"
+          }
+        },
+        "HJtlJTBkuv_": {
+          "id": "HJtlJTBkuv_",
+          "input": {
+            "nodeId": "rk-J6S1dPu",
+            "pinKey": "S123yOYMw"
+          },
+          "output": {
+            "nodeId": "SyiyaSkOw_",
+            "pinKey": "HkIVcXdfP"
+          }
+        },
+        "rkclJTr1_PO": {
+          "id": "rkclJTr1_PO",
+          "input": {
+            "nodeId": "SyLk6HkODd",
+            "pinKey": "SktnAtKzP"
+          },
+          "output": {
+            "nodeId": "HJry6SJdD_",
+            "pinKey": "__out__"
+          }
+        },
+        "HksgyaBydwO": {
+          "id": "HksgyaBydwO",
+          "input": {
+            "nodeId": "rk-J6S1dPu",
+            "pinKey": "SyZ31_YGv"
+          },
+          "output": {
+            "nodeId": "S1mJTBy_D_",
+            "pinKey": "SJVql9lXr"
+          }
+        },
+        "rkhxkTByuvd": {
+          "id": "rkhxkTByuvd",
+          "input": {
+            "nodeId": "S1mJTBy_D_",
+            "pinKey": "HkFFgqx7B"
+          },
+          "output": {
+            "nodeId": "ByrekTrJdPd",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "HkplkaSkuwu": {
+          "id": "HkplkaSkuwu",
+          "input": {
+            "nodeId": "BJzk6H1dDd",
+            "pinKey": "SkSuD6LMb"
+          },
+          "output": {
+            "nodeId": "Hy-lJ6ry_wO",
+            "pinKey": "ryVmUAOrvkb"
+          }
+        },
+        "B10ey6Sk_Pd": {
+          "id": "B10ey6Sk_Pd",
+          "input": {
+            "nodeId": "ByrekTrJdPd",
+            "pinKey": "r1jzp_DTZ"
+          },
+          "output": {
+            "nodeId": "SJ4xyaSy_vu",
+            "pinKey": "__out__"
+          }
+        },
+        "Bykbk6BJdD_": {
+          "id": "Bykbk6BJdD_",
+          "input": {
+            "nodeId": "SyLk6HkODd",
+            "pinKey": "S1ikWX2zv"
+          },
+          "output": {
+            "nodeId": "Bkd1pHk_wu",
+            "pinKey": "__out__"
+          }
+        },
+        "HkxWkaB1_wd": {
+          "id": "HkxWkaB1_wd",
+          "input": {
+            "nodeId": "SytJTSydwd",
+            "pinKey": "Hkv_uf3fw"
+          },
+          "output": {
+            "nodeId": "rJRJpByOPO",
+            "pinKey": "__out__"
+          }
+        },
+        "rkW-1aB1uwu": {
+          "id": "rkW-1aB1uwu",
+          "input": {
+            "nodeId": "ryIgy6SJ_PO",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rk-J6S1dPu",
+            "pinKey": "r1nHxuKzw"
+          }
+        },
+        "rkM-kpr1OPd": {
+          "id": "rkM-kpr1OPd",
+          "input": {
+            "nodeId": "rkDy6Hk_Du",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SyiyaSkOw_",
+            "pinKey": "HkIVcXdfP"
+          }
+        },
+        "HJQbypBkODu": {
+          "id": "HJQbypBkODu",
+          "input": {
+            "nodeId": "SkqyarJdwu",
+            "pinKey": "ryyxzFtfv"
+          },
+          "output": {
+            "nodeId": "HkJTr1_P_",
+            "pinKey": "__out__"
+          }
+        },
+        "B14-J6BJ_vO": {
+          "id": "B14-J6BJ_vO",
+          "input": {
+            "nodeId": "SkqyarJdwu",
+            "pinKey": "Hyt4MYtMv"
+          },
+          "output": {
+            "nodeId": "HJJekaHkOv_",
+            "pinKey": "__out__"
+          }
+        },
+        "rJBW1aHJ_Pd": {
+          "id": "rJBW1aHJ_Pd",
+          "input": {
+            "nodeId": "HyXeJ6SyuvO",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rk-J6S1dPu",
+            "pinKey": "ByD_gOFMP"
+          }
+        },
+        "B18Z16Hy_vO": {
+          "id": "B18Z16Hy_vO",
+          "input": {
+            "nodeId": "SytJTSydwd",
+            "pinKey": "S1gUQfhfD"
+          },
+          "output": {
+            "nodeId": "SkqyarJdwu",
+            "pinKey": "SkjYZYFGv"
+          }
+        },
+        "SydWkpSJ_vu": {
+          "id": "SydWkpSJ_vu",
+          "input": {
+            "nodeId": "SkqyarJdwu",
+            "pinKey": "ryYOZFYfD"
+          },
+          "output": {
+            "nodeId": "Hyn1aB1dPu",
+            "pinKey": "__out__"
+          }
+        },
+        "HkYWy6Skdvu": {
+          "id": "HkYWy6Skdvu",
+          "input": {
+            "nodeId": "SytJTSydwd",
+            "pinKey": "B1dMbX2MP"
+          },
+          "output": {
+            "nodeId": "BJlJaBy_PO",
+            "pinKey": "__out__"
+          }
+        },
+        "S15-kaBkODO": {
+          "id": "S15-kaBkODO",
+          "input": {
+            "nodeId": "SkqyarJdwu",
+            "pinKey": "HJPfMKFzP"
+          },
+          "output": {
+            "nodeId": "B1N1aSk_vd",
+            "pinKey": "__out__"
+          }
+        },
+        "Hyo-1TB1uPu": {
+          "id": "Hyo-1TB1uPu",
+          "input": {
+            "nodeId": "SyLk6HkODd",
+            "pinKey": "HkqN3tYzP"
+          },
+          "output": {
+            "nodeId": "SytJTSydwd",
+            "pinKey": "rk6KOG2zD"
+          }
+        },
+        "HynZk6B1dwO": {
+          "id": "HynZk6B1dwO",
+          "input": {
+            "nodeId": "SkglkTryOP_",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rk-J6S1dPu",
+            "pinKey": "B1Oil_Kfv"
+          }
+        },
+        "S16Z1pr1dwO": {
+          "id": "S16Z1pr1dwO",
+          "input": {
+            "nodeId": "SkqyarJdwu",
+            "pinKey": "HJ25WKYfD"
+          },
+          "output": {
+            "nodeId": "BJzk6H1dDd",
+            "pinKey": "Bk4gU0drwJ-"
+          }
+        },
+        "r1A-JaHJuP_": {
+          "id": "r1A-JaHJuP_",
+          "input": {
+            "nodeId": "SkqyarJdwu",
+            "pinKey": "rJBp-KFfv"
+          },
+          "output": {
+            "nodeId": "HyaJTS1_PO",
+            "pinKey": "__out__"
+          }
+        },
+        "ryl1LyODu": {
+          "id": "ryl1LyODu",
+          "output": {
+            "nodeId": "Sk2CBy_wd",
+            "pinKey": "HkzqwgmD_"
+          },
+          "input": {
+            "nodeId": "SyiyaSkOw_",
+            "pinKey": "ry-5PGXvO"
+          }
+        }
+      },
+      "path": "@/imu-click-detector",
+      "description": "Click detector using inertial measurement unit (LIS3DH)."
+    },
+    "@/example-all-sensors": {
+      "nodes": {
+        "By3928vDd": {
+          "id": "By3928vDd",
+          "type": "@/light-sensor",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "ry-snUDwd": {
+          "id": "ry-snUDwd",
+          "type": "@/microphone",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BJLj3IDP_": {
+          "id": "BJLj3IDP_",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "SyWhn8wDd": {
+          "id": "SyWhn8wDd",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rJ7lRUvP_": {
+          "id": "rJ7lRUvP_",
+          "type": "xod/core/clock",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B13SCNhl-": "0.1"
+          }
+        },
+        "HJZ9LyOv_": {
+          "id": "HJZ9LyOv_",
+          "type": "@/imu-accelerometer",
+          "position": {
+            "x": -1,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BJ2RD1_Du": {
+          "id": "BJ2RD1_Du",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": -1,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "Bkgk_kuwO": {
+          "id": "Bkgk_kuwO",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "By-y_yuvu": {
+          "id": "By-y_yuvu",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "SyE3nIwDu": {
+          "id": "SyE3nIwDu",
+          "output": {
+            "nodeId": "ry-snUDwd",
+            "pinKey": "rJzzJRrwvu"
+          },
+          "input": {
+            "nodeId": "SyWhn8wDd",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "SkU2h8Pv_": {
+          "id": "SkU2h8Pv_",
+          "output": {
+            "nodeId": "By3928vDd",
+            "pinKey": "Sk-D43UPPO"
+          },
+          "input": {
+            "nodeId": "BJLj3IDP_",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "BkSZAUwwd": {
+          "id": "BkSZAUwwd",
+          "output": {
+            "nodeId": "rJ7lRUvP_",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "By3928vDd",
+            "pinKey": "BkfvV2LDD_"
+          }
+        },
+        "Byd-CLPPd": {
+          "id": "Byd-CLPPd",
+          "output": {
+            "nodeId": "rJ7lRUvP_",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "ry-snUDwd",
+            "pinKey": "SyXzJ0BwDO"
+          }
+        },
+        "ByICwJ_Du": {
+          "id": "ByICwJ_Du",
+          "output": {
+            "nodeId": "rJ7lRUvP_",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "HJZ9LyOv_",
+            "pinKey": "ry2rPk_v_"
+          }
+        },
+        "B1GJuyuDd": {
+          "id": "B1GJuyuDd",
+          "output": {
+            "nodeId": "HJZ9LyOv_",
+            "pinKey": "SJvlAN1uwd"
+          },
+          "input": {
+            "nodeId": "BJ2RD1_Du",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "rkQ1Oyuvu": {
+          "id": "rkQ1Oyuvu",
+          "output": {
+            "nodeId": "HJZ9LyOv_",
+            "pinKey": "r1IlC4kuDu"
+          },
+          "input": {
+            "nodeId": "Bkgk_kuwO",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "S1S1_JdDu": {
+          "id": "S1S1_JdDu",
+          "output": {
+            "nodeId": "HJZ9LyOv_",
+            "pinKey": "B1zgC41dP_"
+          },
+          "input": {
+            "nodeId": "By-y_yuvu",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/example-all-sensors",
+      "description": "Patch to test reading from all three onboard sensors (IMU, light and microphone). Run in debugger."
+    },
+    "@/example-click-detector": {
+      "nodes": {
+        "HkWKukuv_": {
+          "id": "HkWKukuv_",
+          "type": "@/imu-click-detector",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "r10o_ydvu": {
+          "id": "r10o_ydvu",
+          "type": "xod/core/count",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "BkLhukdv_": {
+          "id": "BkLhukdv_",
+          "type": "xod/core/count",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "B1x6d1uDd": {
+          "id": "B1x6d1uDd",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "SkOTO1_Dd": {
+          "id": "SkOTO1_Dd",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "Byd3_1_wu": {
+          "id": "Byd3_1_wu",
+          "output": {
+            "nodeId": "HkWKukuv_",
+            "pinKey": "ryIgy6SJ_PO"
+          },
+          "input": {
+            "nodeId": "r10o_ydvu",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "BJq3_1OvO": {
+          "id": "BJq3_1OvO",
+          "output": {
+            "nodeId": "HkWKukuv_",
+            "pinKey": "HyXeJ6SyuvO"
+          },
+          "input": {
+            "nodeId": "BkLhukdv_",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "H1N6dJOPu": {
+          "id": "H1N6dJOPu",
+          "output": {
+            "nodeId": "r10o_ydvu",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "B1x6d1uDd",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "HJi6dJuDd": {
+          "id": "HJi6dJuDd",
+          "output": {
+            "nodeId": "BkLhukdv_",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "SkOTO1_Dd",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/example-click-detector",
+      "description": "Patch to test click-detector. Run in debugger."
+    }
+  },
+  "name": "wio-terminal-sensors"
+}

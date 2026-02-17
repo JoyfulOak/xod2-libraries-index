@@ -1,0 +1,655 @@
+{
+  "description": "Micropressure sensor. Arduino library for the Adafruit_MPRLS micropressure sensor.  Wraps a modified version of: https://github.com/adafruit/Adafruit_MPRLS",
+  "license": "MIT",
+  "name": "mprls-pressure-sensor",
+  "patches": {
+    "@/example-test-sensor": {
+      "description": "Test of sensor.",
+      "links": {
+        "Sk3tazq34": {
+          "id": "Sk3tazq34",
+          "output": {
+            "nodeId": "SywYpfc3V",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "B1gFTz5nE",
+            "pinKey": "BJFuWM9nV"
+          }
+        },
+        "rJTn6zqnV": {
+          "id": "rJTn6zqnV",
+          "output": {
+            "nodeId": "B1gFTz5nE",
+            "pinKey": "Sy-8gf52V"
+          },
+          "input": {
+            "nodeId": "HyD2af5nV",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "ByGA6Gc24": {
+          "id": "ByGA6Gc24",
+          "output": {
+            "nodeId": "B1gFTz5nE",
+            "pinKey": "rJIPlMqhE"
+          },
+          "input": {
+            "nodeId": "SJjTpG92V",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "rJGy0f5hN": {
+          "id": "rJGy0f5hN",
+          "output": {
+            "nodeId": "B1gFTz5nE",
+            "pinKey": "Hkv9xG53N"
+          },
+          "input": {
+            "nodeId": "H1HRaMqnN",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "ry9lRz92E": {
+          "id": "ry9lRz92E",
+          "output": {
+            "nodeId": "H1HRaMqnN",
+            "pinKey": "r1yhZRd8W"
+          },
+          "input": {
+            "nodeId": "rkDJCf92N",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "nodes": {
+        "B1gFTz5nE": {
+          "id": "B1gFTz5nE",
+          "type": "@/pressure-sensor",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SywYpfc3V": {
+          "id": "SywYpfc3V",
+          "type": "xod/core/clock",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "HyD2af5nV": {
+          "id": "HyD2af5nV",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        },
+        "SJjTpG92V": {
+          "id": "SJjTpG92V",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        },
+        "H1HRaMqnN": {
+          "id": "H1HRaMqnN",
+          "type": "xod/core/count",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rkDJCf92N": {
+          "id": "rkDJCf92N",
+          "type": "xod/debug/watch",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "width": 2,
+            "height": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example-test-sensor"
+    },
+    "@/init": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_INIT>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_MPRLS` class instance\n    auto sensor = getValue<input_DEV>(ctx);\n\n    // Attempt to initialize aos module; if attempt fails emit pulse from error port\n    if (!sensor->begin()) {\n        emitValue<output_ERR>(ctx, 1);\n        return;\n    }\n\n    // Pulse that module initialized successfully\n    emitValue<output_OK>(ctx, 1);\n}\n"
+        }
+      ],
+      "description": "Initializes MPRLS device.",
+      "nodes": {
+        "ByOWcZqnE": {
+          "id": "ByOWcZqnE",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "ByyXq-chE": {
+          "id": "ByyXq-chE",
+          "type": "@/input-mprls-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An MPRLS device."
+        },
+        "H1wEcb93E": {
+          "id": "H1wEcb93E",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "INIT",
+          "description": "Trigger for initialization. Default is to initialize on boot.",
+          "boundLiterals": {
+            "__out__": "On Boot"
+          }
+        },
+        "B1vBcZ9h4": {
+          "id": "B1vBcZ9h4",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "OK",
+          "description": "Pulse if initialization successful."
+        },
+        "BkbUqZcn4": {
+          "id": "BkbUqZcn4",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "ERR",
+          "description": "Pulse if initialization failed."
+        }
+      },
+      "path": "@/init"
+    },
+    "@/mprls-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/WaylandM/MTW_Adafruit_MPRLS\"\n\n//Include C++ libraries\n{{#global}}\n#include <Wire.h>\n#include <MTW_Adafruit_MPRLS.h>\n{{/global}}\n\n// Reserve memory to store an instance of the class,\n// and create the instance later:\nstruct State {\n    uint8_t mem[sizeof(Adafruit_MPRLS)];\n};\n\n// Define our custom type as a pointer on the class instance.\nusing Type = Adafruit_MPRLS*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // It should be evaluated only once on the first (setup) transaction\n    if (!isSettingUp())\n        return;\n\n    auto state = getState(ctx);\n\n    // Create a new object in the memory area reserved previously.\n    Type sensor = new (state->mem) Adafruit_MPRLS();\n\n    emitValue<output_DEV>(ctx, sensor);\n}\n"
+        }
+      ],
+      "description": "Creates an MPRLS device.",
+      "nodes": {
+        "BkjCkyqhV": {
+          "id": "BkjCkyqhV",
+          "position": {
+            "x": -1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "By4Rzb52N": {
+          "id": "By4Rzb52N",
+          "type": "xod/patch-nodes/output-self",
+          "position": {
+            "x": -1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An MPRLS device."
+        }
+      },
+      "path": "@/mprls-device"
+    },
+    "@/read-pressure": {
+      "nodes": {
+        "S10Eob93E": {
+          "id": "S10Eob93E",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SJwSs-c2E": {
+          "id": "SJwSs-c2E",
+          "type": "@/input-mprls-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "An MPRLS device."
+        },
+        "SkJhoZcn4": {
+          "id": "SkJhoZcn4",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update. Trigger reading."
+        },
+        "SkkaoW92N": {
+          "id": "SkkaoW92N",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "hPa",
+          "description": "Pressure in  hectopascals."
+        },
+        "BJnAsbq3N": {
+          "id": "BJnAsbq3N",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "PSI",
+          "description": "Pressure in pounds per square inch."
+        },
+        "Skskhb5nV": {
+          "id": "Skskhb5nV",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DONE",
+          "description": "Pulse on completion of reading."
+        }
+      },
+      "path": "@/read-pressure",
+      "description": "Read pressure.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_MPRLS` class instance\n    auto sensor = getValue<input_DEV>(ctx);\n\n    float pressure_PSI = sensor->readPressure();\n\n    emitValue<output_hPa>(ctx,pressure_PSI * 68.947572932);\n    emitValue<output_PSI>(ctx,pressure_PSI);\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/pressure-sensor": {
+      "nodes": {
+        "HJomJMqhV": {
+          "id": "HJomJMqhV",
+          "type": "@/mprls-device",
+          "position": {
+            "x": -7,
+            "y": -8,
+            "units": "slots"
+          }
+        },
+        "S1fPyG5hN": {
+          "id": "S1fPyG5hN",
+          "type": "@/init",
+          "position": {
+            "x": -6,
+            "y": -7,
+            "units": "slots"
+          }
+        },
+        "B1Zs1zc34": {
+          "id": "B1Zs1zc34",
+          "type": "@/read-pressure",
+          "position": {
+            "x": -2,
+            "y": -6,
+            "units": "slots"
+          }
+        },
+        "Sy-8gf52V": {
+          "id": "Sy-8gf52V",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": -2,
+            "y": -5,
+            "units": "slots"
+          },
+          "label": "hPa",
+          "description": "Pressure in hectopascals."
+        },
+        "rJIPlMqhE": {
+          "id": "rJIPlMqhE",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": -1,
+            "y": -5,
+            "units": "slots"
+          },
+          "label": "PSI",
+          "description": "Pressure in pounds per square inch."
+        },
+        "Hkv9xG53N": {
+          "id": "Hkv9xG53N",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 0,
+            "y": -5,
+            "units": "slots"
+          },
+          "label": "OK",
+          "description": "Pulses after each read of sensor."
+        },
+        "S1c8Wzc2V": {
+          "id": "S1c8Wzc2V",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": -5,
+            "y": -8,
+            "units": "slots"
+          },
+          "label": "INIT",
+          "description": "Initializes MPRLS device.",
+          "boundLiterals": {
+            "__out__": "On Boot"
+          }
+        },
+        "BJFuWM9nV": {
+          "id": "BJFuWM9nV",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": -1,
+            "y": -8,
+            "units": "slots"
+          },
+          "label": "UPD",
+          "description": "Update. Triggers reading."
+        },
+        "BJqgMGqhV": {
+          "id": "BJqgMGqhV",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 1,
+            "y": -5,
+            "units": "slots"
+          },
+          "label": "ERR",
+          "description": "Pulses if device fails to initialize."
+        },
+        "HJ8IMMq3V": {
+          "id": "HJ8IMMq3V",
+          "type": "xod/core/flip-flop",
+          "position": {
+            "x": -7,
+            "y": -6,
+            "units": "slots"
+          }
+        },
+        "HkmFMz5h4": {
+          "id": "HkmFMz5h4",
+          "position": {
+            "x": -1,
+            "y": -7,
+            "units": "slots"
+          },
+          "type": "xod/core/gate"
+        },
+        "H1_cMG53V": {
+          "id": "H1_cMG53V",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": -7,
+            "y": -7,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "BJaRMz9hV": {
+          "id": "BJaRMz9hV",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": -2,
+            "y": -7,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "rJSrmMqnN": {
+          "id": "rJSrmMqnN",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": -7,
+            "y": -5,
+            "units": "slots"
+          },
+          "label": "INITD"
+        },
+        "rJjU7fcn4": {
+          "id": "rJjU7fcn4",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 0,
+            "y": -8,
+            "units": "slots"
+          },
+          "label": "INITD"
+        },
+        "BJslaGc3E": {
+          "id": "BJslaGc3E",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": -4,
+            "y": -6,
+            "units": "slots"
+          },
+          "label": "ERR"
+        },
+        "rJyfpz5n4": {
+          "id": "rJyfpz5n4",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 1,
+            "y": -6,
+            "units": "slots"
+          },
+          "label": "ERR"
+        }
+      },
+      "links": {
+        "S1-ueMq2V": {
+          "id": "S1-ueMq2V",
+          "output": {
+            "nodeId": "B1Zs1zc34",
+            "pinKey": "SkkaoW92N"
+          },
+          "input": {
+            "nodeId": "Sy-8gf52V",
+            "pinKey": "__in__"
+          }
+        },
+        "SyMdgz92N": {
+          "id": "SyMdgz92N",
+          "output": {
+            "nodeId": "B1Zs1zc34",
+            "pinKey": "BJnAsbq3N"
+          },
+          "input": {
+            "nodeId": "rJIPlMqhE",
+            "pinKey": "__in__"
+          }
+        },
+        "Hk-sgMchN": {
+          "id": "Hk-sgMchN",
+          "output": {
+            "nodeId": "B1Zs1zc34",
+            "pinKey": "Skskhb5nV"
+          },
+          "input": {
+            "nodeId": "Hkv9xG53N",
+            "pinKey": "__in__"
+          }
+        },
+        "SyowWzq3V": {
+          "id": "SyowWzq3V",
+          "output": {
+            "nodeId": "S1c8Wzc2V",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "S1fPyG5hN",
+            "pinKey": "H1wEcb93E"
+          }
+        },
+        "BkJuzGcnN": {
+          "id": "BkJuzGcnN",
+          "output": {
+            "nodeId": "S1fPyG5hN",
+            "pinKey": "B1vBcZ9h4"
+          },
+          "input": {
+            "nodeId": "HJ8IMMq3V",
+            "pinKey": "Bkh8A_Sv1-"
+          }
+        },
+        "S1zofMq3V": {
+          "id": "S1zofMq3V",
+          "output": {
+            "nodeId": "HJomJMqhV",
+            "pinKey": "By4Rzb52N"
+          },
+          "input": {
+            "nodeId": "H1_cMG53V",
+            "pinKey": "__in__"
+          }
+        },
+        "SkWJXM5hV": {
+          "id": "SkWJXM5hV",
+          "output": {
+            "nodeId": "BJaRMz9hV",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "B1Zs1zc34",
+            "pinKey": "SJwSs-c2E"
+          }
+        },
+        "S19bmz924": {
+          "id": "S19bmz924",
+          "output": {
+            "nodeId": "BJFuWM9nV",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HkmFMz5h4",
+            "pinKey": "SJ-1mZPTz"
+          }
+        },
+        "SylX7z5nV": {
+          "id": "SylX7z5nV",
+          "output": {
+            "nodeId": "HkmFMz5h4",
+            "pinKey": "OkPg7GDaW"
+          },
+          "input": {
+            "nodeId": "B1Zs1zc34",
+            "pinKey": "SkJhoZcn4"
+          }
+        },
+        "SyG8XGcnN": {
+          "id": "SyG8XGcnN",
+          "output": {
+            "nodeId": "HJ8IMMq3V",
+            "pinKey": "HkyxURuSPyW"
+          },
+          "input": {
+            "nodeId": "rJSrmMqnN",
+            "pinKey": "__in__"
+          }
+        },
+        "SJKvmM92E": {
+          "id": "SJKvmM92E",
+          "output": {
+            "nodeId": "rJjU7fcn4",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HkmFMz5h4",
+            "pinKey": "B1P1nFwaM"
+          }
+        },
+        "rJ3F7MqnE": {
+          "id": "rJ3F7MqnE",
+          "output": {
+            "nodeId": "HJomJMqhV",
+            "pinKey": "By4Rzb52N"
+          },
+          "input": {
+            "nodeId": "S1fPyG5hN",
+            "pinKey": "ByyXq-chE"
+          }
+        },
+        "SyrbTM93N": {
+          "id": "SyrbTM93N",
+          "output": {
+            "nodeId": "S1fPyG5hN",
+            "pinKey": "BkbUqZcn4"
+          },
+          "input": {
+            "nodeId": "BJslaGc3E",
+            "pinKey": "__in__"
+          }
+        },
+        "HJnMpzc3N": {
+          "id": "HJnMpzc3N",
+          "output": {
+            "nodeId": "rJyfpz5n4",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "BJqgMGqhV",
+            "pinKey": "__in__"
+          }
+        }
+      },
+      "path": "@/pressure-sensor",
+      "description": "Combines lower level nodes to create a ready to use sensor."
+    }
+  },
+  "version": "0.0.2"
+}

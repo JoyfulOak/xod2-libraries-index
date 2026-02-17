@@ -1,0 +1,1971 @@
+{
+  "description": "A library for a gps receiver NEO6MV2",
+  "name": "gps-receiver",
+  "patches": {
+    "@/gpsaltitude": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n    \n    auto gps = getValue<input_DEV>(ctx);\n    auto MeterFeet = getValue<input_MF>(ctx);\n\n    if(gps->altitude.isValid()){\n        if(MeterFeet){\n            emitValue<output_ALT>(ctx, gps->altitude.meters());\n        }\n        else{\n            emitValue<output_ALT>(ctx, gps->altitude.feet());\n        }\n    }\n        \n    emitValue<output_MorF>(ctx, MeterFeet);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJXrbFjJS": {
+          "id": "BJXrbFjJS",
+          "label": "DEV",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-neo6mv2-device"
+        },
+        "H1GwZts1B": {
+          "boundLiterals": {
+            "__in__": "True"
+          },
+          "id": "H1GwZts1B",
+          "label": "MorF",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "HkjvZFoJH": {
+          "id": "HkjvZFoJH",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJ-IbYjJH": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "id": "SJ-IbYjJH",
+          "label": "MF",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rJLwWti1S": {
+          "id": "rJLwWti1S",
+          "label": "ALT",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ryH8bKikS": {
+          "id": "ryH8bKikS",
+          "label": "UPD",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/gpsaltitude"
+    },
+    "@/gpsdata": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    auto uart = getValue<input_UART>(ctx);\n    auto gps = getValue<input_DEV>(ctx);\n    \n    uint8_t byte = 0x00;\n    unsigned long start = millis();\n    \n    do \n    {\n      while (uart->available()){\n          uart->readByte(&byte);\n          gps->encode(byte);\n        }\n    } while (millis() - start < 1000);\n\n    emitValue<output_DONE>(ctx, 1);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJ500J5Jr": {
+          "id": "BJ500J5Jr",
+          "label": "DEV",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-neo6mv2-device"
+        },
+        "BJYkyl5kH": {
+          "id": "BJYkyl5kH",
+          "label": "UART",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/uart/input-uart"
+        },
+        "Hk3bkl9kr": {
+          "id": "Hk3bkl9kr",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SkY71eqyB": {
+          "id": "SkY71eqyB",
+          "label": "DONE",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rJBjylckr": {
+          "id": "rJBjylckr",
+          "label": "UPD",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/gpsdata"
+    },
+    "@/gpsdate": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n       if (!isInputDirty<input_UPD>(ctx))\n        return;\n   \n    auto gps = getValue<input_DEV>(ctx);\n\n    TinyGPSDate date = gps->date;\n   \n    \n    if (date.isValid())\n  {\n        emitValue<output_DAY>(ctx, date.day());\n        emitValue<output_MONTH>(ctx, date.month());\n        emitValue<output_YEAR>(ctx, date.year());\n  }\n  \n\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "By44gko1B": {
+          "id": "By44gko1B",
+          "label": "DAY",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SkFdV_qJS": {
+          "id": "SkFdV_qJS",
+          "label": "DEV",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-neo6mv2-device"
+        },
+        "SyhvVd9JB": {
+          "id": "SyhvVd9JB",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "r1AXeJsyr": {
+          "id": "r1AXeJsyr",
+          "label": "MONTH",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "r1oXgyi1S": {
+          "id": "r1oXgyi1S",
+          "label": "YEAR",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ryg_4u5yH": {
+          "id": "ryg_4u5yH",
+          "label": "UPD",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/gpsdate"
+    },
+    "@/gpslatitude": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n     if (!isInputDirty<input_UPD>(ctx))\n        return;\n    \n    auto gps = getValue<input_DEV>(ctx);\n\n    if(gps->location.isValid()){\n    emitValue<output_LAT>(ctx, gps->location.lat());\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJwxEnsyB": {
+          "id": "BJwxEnsyB",
+          "label": "UPD",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkHb4hjyS": {
+          "id": "BkHb4hjyS",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJjJEhi1B": {
+          "id": "HJjJEhi1B",
+          "label": "DEV",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-neo6mv2-device"
+        },
+        "rkeZNhiJr": {
+          "id": "rkeZNhiJr",
+          "label": "LAT",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/gpslatitude"
+    },
+    "@/gpslocaltime": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/PaulStoffregen/Time\"\n\n// Include C++ library:\n{{#global}}\n#include <TimeLib.h>\n{{/global}}\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    \n    byte last_second, Second, Minute, Hour, Day, Month;\n    int Year; \n    \n     if (!isInputDirty<input_UPD>(ctx))\n        return;\n    \n    auto gps = getValue<input_DEV>(ctx);\n    TinyGPSTime time = gps->time;\n    TinyGPSDate date = gps->date;\n    auto time_offset = getValue<input_LTC>(ctx) * 3600;\n    \n     if (time.isValid())\n      {\n        Minute = time.minute();\n        Second = time.second();\n        Hour   = time.hour();\n      }\n \n      // get date drom GPS module\n      if (date.isValid())\n      {\n        Day   = date.day();\n        Month = date.month();\n        Year  = date.year();\n      }\n \n      if(last_second != time.second())  // if time has changed\n      {\n        last_second = time.second();\n \n        // set current UTC time\n        setTime(Hour, Minute, Second, Day, Month, Year);\n        // add the offset to get local time\n        adjustTime(time_offset);\n        emitValue<output_HOUR>(ctx, hour());\n        emitValue<output_MIN>(ctx, minute());\n        emitValue<output_SEC>(ctx, second());\n        emitValue<output_DAY>(ctx, day());\n        emitValue<output_MONTH>(ctx, month());\n        emitValue<output_YEAR>(ctx, year());\n        emitValue<output_WDAY>(ctx, weekday());\n      }\n                    \n\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJVxK4skr": {
+          "id": "BJVxK4skr",
+          "label": "MIN",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BJ_XAEjyB": {
+          "id": "BJ_XAEjyB",
+          "label": "UPD",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BJyZYEs1H": {
+          "id": "BJyZYEs1H",
+          "label": "MONTH",
+          "position": {
+            "x": 11,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ByQ-KNi1B": {
+          "id": "ByQ-KNi1B",
+          "label": "YEAR",
+          "position": {
+            "x": 13,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HyDlt4skS": {
+          "id": "HyDlt4skS",
+          "label": "SEC",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "S1rJFEiyH": {
+          "id": "S1rJFEiyH",
+          "label": "LTC",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "SJRRuEsJH": {
+          "id": "SJRRuEsJH",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rkeftEsyB": {
+          "id": "rkeftEsyB",
+          "label": "DEV",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-neo6mv2-device"
+        },
+        "ryO--ds1H": {
+          "id": "ryO--ds1H",
+          "label": "WDAY",
+          "position": {
+            "x": 15,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rybgFNiJB": {
+          "id": "rybgFNiJB",
+          "label": "HOUR",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rysgYNikS": {
+          "id": "rysgYNikS",
+          "label": "DAY",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/gpslocaltime"
+    },
+    "@/gpslongitude": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n     if (!isInputDirty<input_UPD>(ctx))\n        return;\n    \n    auto gps = getValue<input_DEV>(ctx);\n\n    if(gps->location.isValid()){\n    emitValue<output_LNG>(ctx, gps->location.lng());\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJBu8hokB": {
+          "id": "BJBu8hokB",
+          "label": "UPD",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJCu83jkB": {
+          "id": "SJCu83jkB",
+          "label": "LNG",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SJFOUhsyr": {
+          "id": "SJFOUhsyr",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rknDI3ikS": {
+          "id": "rknDI3ikS",
+          "label": "DEV",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-neo6mv2-device"
+        }
+      },
+      "path": "@/gpslongitude"
+    },
+    "@/gpssatellites": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n     if (!isInputDirty<input_UPD>(ctx))\n        return;\n    \n    auto gps = getValue<input_DEV>(ctx);\n\n    if(gps->satellites.isValid()){\n    emitValue<output_SAT>(ctx, gps->satellites.value());\n    }\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJQpNuoJr": {
+          "id": "BJQpNuoJr",
+          "label": "DEV",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-neo6mv2-device"
+        },
+        "BkyyruiJr": {
+          "id": "BkyyruiJr",
+          "label": "UPD",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HJ7CN_oyB": {
+          "id": "HJ7CN_oyB",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJU1r_skH": {
+          "id": "SJU1r_skH",
+          "label": "SAT",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/gpssatellites"
+    },
+    "@/gpsspeed": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n     if (!isInputDirty<input_UPD>(ctx))\n        return;\n    \n    auto gps = getValue<input_DEV>(ctx);\n    auto kmphmph = getValue<input_KM>(ctx);\n\n    if(gps->speed.isValid()){\n        if(kmphmph){\n            emitValue<output_SPE>(ctx, gps->speed.kmph());\n        }\n        else{\n            emitValue<output_SPE>(ctx, gps->speed.mph());\n        }\n    }\n        \n    emitValue<output_KorM>(ctx, kmphmph);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1jqw_jyH": {
+          "id": "B1jqw_jyH",
+          "label": "DEV",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-neo6mv2-device"
+        },
+        "HJLpwOoyr": {
+          "id": "HJLpwOoyr",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HkD2v_okS": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "id": "HkD2v_okS",
+          "label": "KM",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "SkdkudsJH": {
+          "boundLiterals": {
+            "__in__": "True"
+          },
+          "id": "SkdkudsJH",
+          "label": "KorM",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "rJT6POs1r": {
+          "id": "rJT6POs1r",
+          "label": "SPE",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ryeLd_jyS": {
+          "id": "ryeLd_jyS",
+          "label": "UPD",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/gpsspeed"
+    },
+    "@/gpstime": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n     if (!isInputDirty<input_UPD>(ctx))\n        return;\n    \n    auto gps = getValue<input_DEV>(ctx);\n\n    TinyGPSTime time = gps->time;\n    //auto hour = time.hour() + 10;\n    \n    if (time.isValid())\n  {\n        emitValue<output_HOUR>(ctx,time.hour());\n        emitValue<output_MIN>(ctx, time.minute());\n        emitValue<output_SEC>(ctx, time.second());\n  }\n  \n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1wyR45JH": {
+          "id": "B1wyR45JH",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Hy026V5JS": {
+          "id": "Hy026V5JS",
+          "label": "UPD",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "Hya2DUckH": {
+          "id": "Hya2DUckH",
+          "label": "HOUR",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SJEopE9kB": {
+          "id": "SJEopE9kB",
+          "label": "DEV",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/input-neo6mv2-device"
+        },
+        "SkWTwU51r": {
+          "id": "SkWTwU51r",
+          "label": "MIN",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "Sy4aw8qkS": {
+          "id": "Sy4aw8qkS",
+          "label": "SEC",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/gpstime"
+    },
+    "@/main": {
+      "links": {
+        "B16PfHo1S": {
+          "id": "B16PfHo1S",
+          "input": {
+            "nodeId": "rkHNUGHjyB",
+            "pinKey": "H1DWqMVw7"
+          },
+          "output": {
+            "nodeId": "BklBMBsyS",
+            "pinKey": "rysgYNikS"
+          }
+        },
+        "B1Ns8S5kH": {
+          "id": "B1Ns8S5kH",
+          "input": {
+            "nodeId": "r10c8r5JB",
+            "pinKey": "BJI7P8t9Z"
+          },
+          "output": {
+            "nodeId": "HkNDbg51H",
+            "pinKey": "SkY71eqyB"
+          }
+        },
+        "B1PVIGrokH": {
+          "id": "B1PVIGrokH",
+          "input": {
+            "nodeId": "SkM4LMrsJB",
+            "pinKey": "rJJHNrVuM"
+          },
+          "output": {
+            "nodeId": "SJW4UfBjkr",
+            "pinKey": "Hk2bcGVDm"
+          }
+        },
+        "B1XeOD2o1H": {
+          "id": "B1XeOD2o1H",
+          "input": {
+            "nodeId": "r1WlOvnoJS",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "Hylx_vnjkH",
+            "pinKey": "HJrBNr4dG"
+          }
+        },
+        "B1qAwBs1B": {
+          "id": "B1qAwBs1B",
+          "input": {
+            "nodeId": "Byl4IfSjkB",
+            "pinKey": "BJlHojaWZ"
+          },
+          "output": {
+            "nodeId": "rJBhvrskS",
+            "pinKey": "S16OEYrPX"
+          }
+        },
+        "B1xFGOj1B": {
+          "id": "B1xFGOj1B",
+          "input": {
+            "nodeId": "ryQAZOj1H",
+            "pinKey": "SJHSSZ8f3f"
+          },
+          "output": {
+            "nodeId": "BklBMBsyS",
+            "pinKey": "ryO--ds1H"
+          }
+        },
+        "BJNvfrsyH": {
+          "id": "BJNvfrsyH",
+          "input": {
+            "nodeId": "SJW4UfBjkr",
+            "pinKey": "H1DWqMVw7"
+          },
+          "output": {
+            "nodeId": "BklBMBsyS",
+            "pinKey": "BJVxK4skr"
+          }
+        },
+        "BJSUmXFskH": {
+          "id": "BJSUmXFskH",
+          "input": {
+            "nodeId": "S1GI7QYs1B",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "H1WUQXKo1S",
+            "pinKey": "HJrBNr4dG"
+          }
+        },
+        "BJ_e7uikr": {
+          "id": "BJ_e7uikr",
+          "input": {
+            "nodeId": "rJQszHj1r",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rkx5MOsyS",
+            "pinKey": "HJrBNr4dG"
+          }
+        },
+        "Bk5LSOnoJS": {
+          "id": "Bk5LSOnoJS",
+          "input": {
+            "nodeId": "S1ZIH2i1S",
+            "pinKey": "BJwxEnsyB"
+          },
+          "output": {
+            "nodeId": "SkFIr_3o1B",
+            "pinKey": "__out__"
+          }
+        },
+        "Bkzx-OhikS": {
+          "id": "Bkzx-OhikS",
+          "input": {
+            "nodeId": "HkNDbg51H",
+            "pinKey": "BJ500J5Jr"
+          },
+          "output": {
+            "nodeId": "HkZxZu3skB",
+            "pinKey": "__out__"
+          }
+        },
+        "By3g-d3o1H": {
+          "id": "By3g-d3o1H",
+          "input": {
+            "nodeId": "S1ZIH2i1S",
+            "pinKey": "HJjJEhi1B"
+          },
+          "output": {
+            "nodeId": "SJilbu2jyB",
+            "pinKey": "__out__"
+          }
+        },
+        "BydIBu2iJS": {
+          "id": "BydIBu2iJS",
+          "input": {
+            "nodeId": "SJSbXtjJS",
+            "pinKey": "ryH8bKikS"
+          },
+          "output": {
+            "nodeId": "ryP8Su3j1r",
+            "pinKey": "__out__"
+          }
+        },
+        "Byn8r_2sJB": {
+          "id": "Byn8r_2sJB",
+          "input": {
+            "nodeId": "ryGPwhoJS",
+            "pinKey": "BJBu8hokB"
+          },
+          "output": {
+            "nodeId": "rJiLBd2syB",
+            "pinKey": "__out__"
+          }
+        },
+        "Byyv_rikB": {
+          "id": "Byyv_rikB",
+          "input": {
+            "nodeId": "S1wLuroyr",
+            "pinKey": "H1SnkoxC-"
+          },
+          "output": {
+            "nodeId": "rJBhvrskS",
+            "pinKey": "ByN3wtHPm"
+          }
+        },
+        "H1KNLMrs1B": {
+          "id": "H1KNLMrs1B",
+          "input": {
+            "nodeId": "SkM4LMrsJB",
+            "pinKey": "rJJHNrVuM-$1"
+          },
+          "output": {
+            "nodeId": "ByEIGSo1H",
+            "pinKey": "Hk2bcGVDm"
+          }
+        },
+        "H1QU7QYjkS": {
+          "id": "H1QU7QYjkS",
+          "input": {
+            "nodeId": "H1WUQXKo1S",
+            "pinKey": "rJJHNrVuM"
+          },
+          "output": {
+            "nodeId": "SklU7XKiJr",
+            "pinKey": "rkPlxjg0W"
+          }
+        },
+        "H1dvL_skH": {
+          "id": "H1dvL_skH",
+          "input": {
+            "nodeId": "H1Qv8_i1r",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "SyzU8_syr",
+            "pinKey": "r1H_oipZb"
+          }
+        },
+        "H1vFDnsJB": {
+          "id": "H1vFDnsJB",
+          "input": {
+            "nodeId": "Sye_PniyB",
+            "pinKey": "BJlHojaWZ"
+          },
+          "output": {
+            "nodeId": "ryGPwhoJS",
+            "pinKey": "SJCu83jkB"
+          }
+        },
+        "HJ3m_SikH": {
+          "id": "HJ3m_SikH",
+          "input": {
+            "nodeId": "Bk29MSjJH",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "r1YbOri1S",
+            "pinKey": "HJrBNr4dG"
+          }
+        },
+        "HJMgdD2o1S": {
+          "id": "HJMgdD2o1S",
+          "input": {
+            "nodeId": "Hylx_vnjkH",
+            "pinKey": "HynENHNOz"
+          },
+          "output": {
+            "nodeId": "Sye_PniyB",
+            "pinKey": "r1H_oipZb"
+          }
+        },
+        "HJn4LGBokB": {
+          "id": "HJn4LGBokB",
+          "input": {
+            "nodeId": "rJ8VUzHokr",
+            "pinKey": "rJJHNrVuM-$1"
+          },
+          "output": {
+            "nodeId": "SJmNLfHsJS",
+            "pinKey": "r1H_oipZb"
+          }
+        },
+        "HJsUurs1H": {
+          "id": "HJsUurs1H",
+          "input": {
+            "nodeId": "r1YbOri1S",
+            "pinKey": "rJJHNrVuM"
+          },
+          "output": {
+            "nodeId": "S1wLuroyr",
+            "pinKey": "rkPlxjg0W"
+          }
+        },
+        "HkfUB_3jJS": {
+          "id": "HkfUB_3jJS",
+          "input": {
+            "nodeId": "BklBMBsyS",
+            "pinKey": "BJ_XAEjyB"
+          },
+          "output": {
+            "nodeId": "r1bUS_hjJH",
+            "pinKey": "__out__"
+          }
+        },
+        "Hkql-_3sJB": {
+          "id": "Hkql-_3sJB",
+          "input": {
+            "nodeId": "SJSbXtjJS",
+            "pinKey": "BJXrbFjJS"
+          },
+          "output": {
+            "nodeId": "HJKeZ_njJH",
+            "pinKey": "__out__"
+          }
+        },
+        "Hkuxbuhikr": {
+          "id": "Hkuxbuhikr",
+          "input": {
+            "nodeId": "rkM_1Fj1r",
+            "pinKey": "B1jqw_jyH"
+          },
+          "output": {
+            "nodeId": "rJvxW_2iyr",
+            "pinKey": "__out__"
+          }
+        },
+        "Hy1oMusyS": {
+          "id": "Hy1oMusyS",
+          "input": {
+            "nodeId": "rkx5MOsyS",
+            "pinKey": "HynENHNOz"
+          },
+          "output": {
+            "nodeId": "ryQAZOj1H",
+            "pinKey": "r1g3WLf2G"
+          }
+        },
+        "Hy8dfHjkH": {
+          "id": "Hy8dfHjkH",
+          "input": {
+            "nodeId": "SJmNLfHsJS",
+            "pinKey": "BJlHojaWZ"
+          },
+          "output": {
+            "nodeId": "BklBMBsyS",
+            "pinKey": "ByQ-KNi1B"
+          }
+        },
+        "HyL47FokH": {
+          "id": "HyL47FokH",
+          "input": {
+            "nodeId": "SklU7XKiJr",
+            "pinKey": "H1SnkoxC-"
+          },
+          "output": {
+            "nodeId": "SJSbXtjJS",
+            "pinKey": "H1GwZts1B"
+          }
+        },
+        "S1V8Bd3jJH": {
+          "id": "S1V8Bd3jJH",
+          "input": {
+            "nodeId": "H1_VUOsyS",
+            "pinKey": "BkyyruiJr"
+          },
+          "output": {
+            "nodeId": "H17LS_nikH",
+            "pinKey": "__out__"
+          }
+        },
+        "S1WRIH9yB": {
+          "id": "S1WRIH9yB",
+          "input": {
+            "nodeId": "HkNDbg51H",
+            "pinKey": "rJBjylckr"
+          },
+          "output": {
+            "nodeId": "r1D6LHqkB",
+            "pinKey": "ByHmL0uHPk-"
+          }
+        },
+        "S1as1tjyH": {
+          "id": "S1as1tjyH",
+          "input": {
+            "nodeId": "BJQjyKo1H",
+            "pinKey": "H1SnkoxC-"
+          },
+          "output": {
+            "nodeId": "rkM_1Fj1r",
+            "pinKey": "SkdkudsJH"
+          }
+        },
+        "S1dDMHjkB": {
+          "id": "S1dDMHjkB",
+          "input": {
+            "nodeId": "ByEIGSo1H",
+            "pinKey": "H1DWqMVw7"
+          },
+          "output": {
+            "nodeId": "BklBMBsyS",
+            "pinKey": "HyDlt4skS"
+          }
+        },
+        "S1rAIBc1B": {
+          "id": "S1rAIBc1B",
+          "input": {
+            "nodeId": "r1D6LHqkB",
+            "pinKey": "ByU7LRuSPkW"
+          },
+          "output": {
+            "nodeId": "r10c8r5JB",
+            "pinKey": "HJhXDIY9-"
+          }
+        },
+        "SJ-dzSikr": {
+          "id": "SJ-dzSikr",
+          "input": {
+            "nodeId": "SJ4VLfHsyS",
+            "pinKey": "H1DWqMVw7"
+          },
+          "output": {
+            "nodeId": "BklBMBsyS",
+            "pinKey": "BJyZYEs1H"
+          }
+        },
+        "SJF7OSikH": {
+          "id": "SJF7OSikH",
+          "input": {
+            "nodeId": "r1YbOri1S",
+            "pinKey": "HynENHNOz"
+          },
+          "output": {
+            "nodeId": "SkM4LMrsJB",
+            "pinKey": "HJrBNr4dG"
+          }
+        },
+        "SJVjMdoyH": {
+          "id": "SJVjMdoyH",
+          "input": {
+            "nodeId": "rkx5MOsyS",
+            "pinKey": "rJJHNrVuM"
+          },
+          "output": {
+            "nodeId": "rJ8VUzHokr",
+            "pinKey": "HJrBNr4dG"
+          }
+        },
+        "SJaOrhsJr": {
+          "id": "SJaOrhsJr",
+          "input": {
+            "nodeId": "rkSur3jkr",
+            "pinKey": "BJlHojaWZ"
+          },
+          "output": {
+            "nodeId": "S1ZIH2i1S",
+            "pinKey": "rkeZNhiJr"
+          }
+        },
+        "SJap-6jyS": {
+          "id": "SJap-6jyS",
+          "input": {
+            "nodeId": "HkNDbg51H",
+            "pinKey": "BJYkyl5kH"
+          },
+          "output": {
+            "nodeId": "rkmh-aokH",
+            "pinKey": "Sk450OL-X"
+          }
+        },
+        "SkG4mKs1r": {
+          "id": "SkG4mKs1r",
+          "input": {
+            "nodeId": "HyLQXYsJS",
+            "pinKey": "BJlHojaWZ"
+          },
+          "output": {
+            "nodeId": "SJSbXtjJS",
+            "pinKey": "rJLwWti1S"
+          }
+        },
+        "SkUeWOnjkr": {
+          "id": "SkUeWOnjkr",
+          "input": {
+            "nodeId": "H1_VUOsyS",
+            "pinKey": "BJQpNuoJr"
+          },
+          "output": {
+            "nodeId": "HJSeZOhs1r",
+            "pinKey": "__out__"
+          }
+        },
+        "SkggZu2j1r": {
+          "id": "SkggZu2j1r",
+          "input": {
+            "nodeId": "SyxWd2iyH",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "rkq-sCtyH",
+            "pinKey": "SyOCO0KJH"
+          }
+        },
+        "SkoULOiJr": {
+          "id": "SkoULOiJr",
+          "input": {
+            "nodeId": "SyzU8_syr",
+            "pinKey": "BJlHojaWZ"
+          },
+          "output": {
+            "nodeId": "H1_VUOsyS",
+            "pinKey": "SJU1r_skH"
+          }
+        },
+        "SyB6Shoyr": {
+          "id": "SyB6Shoyr",
+          "input": {
+            "nodeId": "rJ52HnsJS",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rJv5rhs1r",
+            "pinKey": "HJrBNr4dG"
+          }
+        },
+        "SybglFsyB": {
+          "id": "SybglFsyB",
+          "input": {
+            "nodeId": "rk6yxKjyB",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "r1D0yFi1r",
+            "pinKey": "HJrBNr4dG"
+          }
+        },
+        "rJCeWdhikr": {
+          "id": "rJCeWdhikr",
+          "input": {
+            "nodeId": "ryGPwhoJS",
+            "pinKey": "rknDI3ikS"
+          },
+          "output": {
+            "nodeId": "Hkag-u2jkB",
+            "pinKey": "__out__"
+          }
+        },
+        "rJExbdhj1B": {
+          "id": "rJExbdhj1B",
+          "input": {
+            "nodeId": "BklBMBsyS",
+            "pinKey": "rkeftEsyB"
+          },
+          "output": {
+            "nodeId": "Bk7eWdhokB",
+            "pinKey": "__out__"
+          }
+        },
+        "rJI8SO2o1r": {
+          "id": "rJI8SO2o1r",
+          "input": {
+            "nodeId": "rkM_1Fj1r",
+            "pinKey": "ryeLd_jyS"
+          },
+          "output": {
+            "nodeId": "HJHLS_2skr",
+            "pinKey": "__out__"
+          }
+        },
+        "rJNUQQKsJr": {
+          "id": "rJNUQQKsJr",
+          "input": {
+            "nodeId": "H1WUQXKo1S",
+            "pinKey": "HynENHNOz"
+          },
+          "output": {
+            "nodeId": "HyLQXYsJS",
+            "pinKey": "r1H_oipZb"
+          }
+        },
+        "rJg8rdns1S": {
+          "id": "rJg8rdns1S",
+          "input": {
+            "nodeId": "H18rdniyS",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "HkNDbg51H",
+            "pinKey": "SkY71eqyB"
+          }
+        },
+        "rk8keFsyS": {
+          "id": "rk8keFsyS",
+          "input": {
+            "nodeId": "r1D0yFi1r",
+            "pinKey": "HynENHNOz"
+          },
+          "output": {
+            "nodeId": "Bk0YyFiJr",
+            "pinKey": "r1H_oipZb"
+          }
+        },
+        "rkFabpiyr": {
+          "id": "rkFabpiyr",
+          "input": {
+            "nodeId": "r1D6LHqkB",
+            "pinKey": "ryv7IRdSP1b"
+          },
+          "output": {
+            "nodeId": "rkmh-aokH",
+            "pinKey": "BkmeFD8OQ"
+          }
+        },
+        "rkH9JFjyH": {
+          "id": "rkH9JFjyH",
+          "input": {
+            "nodeId": "Bk0YyFiJr",
+            "pinKey": "BJlHojaWZ"
+          },
+          "output": {
+            "nodeId": "rkM_1Fj1r",
+            "pinKey": "rJT6POs1r"
+          }
+        },
+        "rkHADBjJS": {
+          "id": "rkHADBjJS",
+          "input": {
+            "nodeId": "rJBhvrskS",
+            "pinKey": "ry3w4Frv7"
+          },
+          "output": {
+            "nodeId": "BklBMBsyS",
+            "pinKey": "rybgFNiJB"
+          }
+        },
+        "rkgjHnikH": {
+          "id": "rkgjHnikH",
+          "input": {
+            "nodeId": "rJv5rhs1r",
+            "pinKey": "HynENHNOz"
+          },
+          "output": {
+            "nodeId": "rkSur3jkr",
+            "pinKey": "r1H_oipZb"
+          }
+        },
+        "ry5E8friyH": {
+          "id": "ry5E8friyH",
+          "input": {
+            "nodeId": "rJ8VUzHokr",
+            "pinKey": "HynENHNOz"
+          },
+          "output": {
+            "nodeId": "rkHNUGHjyB",
+            "pinKey": "Hk2bcGVDm"
+          }
+        },
+        "ryMyxtskr": {
+          "id": "ryMyxtskr",
+          "input": {
+            "nodeId": "r1D0yFi1r",
+            "pinKey": "rJJHNrVuM"
+          },
+          "output": {
+            "nodeId": "BJQjyKo1H",
+            "pinKey": "rkPlxjg0W"
+          }
+        },
+        "ryd4LzSokH": {
+          "id": "ryd4LzSokH",
+          "input": {
+            "nodeId": "SkM4LMrsJB",
+            "pinKey": "HynENHNOz"
+          },
+          "output": {
+            "nodeId": "Byl4IfSjkB",
+            "pinKey": "r1H_oipZb"
+          }
+        },
+        "ryoVIfrjyH": {
+          "id": "ryoVIfrjyH",
+          "input": {
+            "nodeId": "rJ8VUzHokr",
+            "pinKey": "rJJHNrVuM"
+          },
+          "output": {
+            "nodeId": "SJ4VLfHsyS",
+            "pinKey": "Hk2bcGVDm"
+          }
+        }
+      },
+      "nodes": {
+        "BJQjyKo1H": {
+          "boundLiterals": {
+            "H1k6ksgA-": "\"Kmph\"",
+            "S151eoeAW": "\"MPH\""
+          },
+          "id": "BJQjyKo1H",
+          "position": {
+            "x": 18,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/core/if-else(string)"
+        },
+        "Bk0YyFiJr": {
+          "boundLiterals": {
+            "HJTIija-W": "0"
+          },
+          "id": "Bk0YyFiJr",
+          "position": {
+            "x": 16,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/core/format-number"
+        },
+        "Bk29MSjJH": {
+          "id": "Bk29MSjJH",
+          "position": {
+            "x": -1,
+            "y": 9,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "Bk7eWdhokB": {
+          "id": "Bk7eWdhokB",
+          "label": "DEV",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "BklBMBsyS": {
+          "boundLiterals": {
+            "S1rJFEiyH": "10"
+          },
+          "id": "BklBMBsyS",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/gpslocaltime"
+        },
+        "ByEIGSo1H": {
+          "boundLiterals": {
+            "BkKz5GVwX": "2"
+          },
+          "id": "ByEIGSo1H",
+          "position": {
+            "x": 4,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/pad-with-zeroes"
+        },
+        "Byl4IfSjkB": {
+          "boundLiterals": {
+            "HJTIija-W": "0"
+          },
+          "id": "Byl4IfSjkB",
+          "position": {
+            "x": 0,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/format-number"
+        },
+        "H17LS_nikH": {
+          "id": "H17LS_nikH",
+          "label": "DONE",
+          "position": {
+            "x": 14,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "H18rdniyS": {
+          "id": "H18rdniyS",
+          "label": "DONE",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "H1Qv8_i1r": {
+          "id": "H1Qv8_i1r",
+          "position": {
+            "x": 13,
+            "y": 9,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "H1WUQXKo1S": {
+          "boundLiterals": {
+            "rJGQNB4df": "\"   \""
+          },
+          "id": "H1WUQXKo1S",
+          "position": {
+            "x": 22,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/core/join"
+        },
+        "H1_VUOsyS": {
+          "id": "H1_VUOsyS",
+          "position": {
+            "x": 13,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/gpssatellites"
+        },
+        "HJHLS_2skr": {
+          "id": "HJHLS_2skr",
+          "label": "DONE",
+          "position": {
+            "x": 18,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJKeZ_njJH": {
+          "id": "HJKeZ_njJH",
+          "label": "DEV",
+          "position": {
+            "x": 22,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HJSeZOhs1r": {
+          "id": "HJSeZOhs1r",
+          "label": "DEV",
+          "position": {
+            "x": 13,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HkNDbg51H": {
+          "id": "HkNDbg51H",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/gpsdata"
+        },
+        "HkZxZu3skB": {
+          "id": "HkZxZu3skB",
+          "label": "DEV",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "Hkag-u2jkB": {
+          "id": "Hkag-u2jkB",
+          "label": "DEV",
+          "position": {
+            "x": 32,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "HyLQXYsJS": {
+          "boundLiterals": {
+            "HJTIija-W": "0"
+          },
+          "id": "HyLQXYsJS",
+          "position": {
+            "x": 22,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/core/format-number"
+        },
+        "Hylx_vnjkH": {
+          "boundLiterals": {
+            "rJGQNB4df": "\"   \"",
+            "rJJHNrVuM": "\"Lng\""
+          },
+          "id": "Hylx_vnjkH",
+          "position": {
+            "x": 32,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/core/join"
+        },
+        "S1GI7QYs1B": {
+          "id": "S1GI7QYs1B",
+          "position": {
+            "x": 22,
+            "y": 9,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "S1ZIH2i1S": {
+          "id": "S1ZIH2i1S",
+          "position": {
+            "x": 28,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/gpslatitude"
+        },
+        "S1wLuroyr": {
+          "boundLiterals": {
+            "H1k6ksgA-": "\"AM\"",
+            "S151eoeAW": "\"PM\""
+          },
+          "id": "S1wLuroyr",
+          "position": {
+            "x": 3,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/core/if-else(string)"
+        },
+        "SJ4VLfHsyS": {
+          "boundLiterals": {
+            "BkKz5GVwX": "2"
+          },
+          "id": "SJ4VLfHsyS",
+          "position": {
+            "x": 8,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/pad-with-zeroes"
+        },
+        "SJSbXtjJS": {
+          "id": "SJSbXtjJS",
+          "position": {
+            "x": 22,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/gpsaltitude"
+        },
+        "SJW4UfBjkr": {
+          "boundLiterals": {
+            "BkKz5GVwX": "2"
+          },
+          "id": "SJW4UfBjkr",
+          "position": {
+            "x": 2,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/pad-with-zeroes"
+        },
+        "SJilbu2jyB": {
+          "id": "SJilbu2jyB",
+          "label": "DEV",
+          "position": {
+            "x": 28,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SJmNLfHsJS": {
+          "boundLiterals": {
+            "HJTIija-W": "0"
+          },
+          "id": "SJmNLfHsJS",
+          "position": {
+            "x": 10,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/format-number"
+        },
+        "SkFIr_3o1B": {
+          "id": "SkFIr_3o1B",
+          "label": "DONE",
+          "position": {
+            "x": 29,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "SkM4LMrsJB": {
+          "arityLevel": 2,
+          "boundLiterals": {
+            "rJGQNB4df": "\" :\""
+          },
+          "id": "SkM4LMrsJB",
+          "position": {
+            "x": 0,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/core/join"
+        },
+        "SklU7XKiJr": {
+          "boundLiterals": {
+            "H1k6ksgA-": "\"Meters\"",
+            "S151eoeAW": "\"Feet\""
+          },
+          "id": "SklU7XKiJr",
+          "position": {
+            "x": 24,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/core/if-else(string)"
+        },
+        "Sye_PniyB": {
+          "boundLiterals": {
+            "HJTIija-W": "6"
+          },
+          "id": "Sye_PniyB",
+          "position": {
+            "x": 32,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/core/format-number"
+        },
+        "SyxWd2iyH": {
+          "id": "SyxWd2iyH",
+          "label": "DEV",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "SyzU8_syr": {
+          "boundLiterals": {
+            "HJTIija-W": "0"
+          },
+          "id": "SyzU8_syr",
+          "position": {
+            "x": 13,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/core/format-number"
+        },
+        "r10c8r5JB": {
+          "id": "r10c8r5JB",
+          "position": {
+            "x": 13,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/defer"
+        },
+        "r1D0yFi1r": {
+          "boundLiterals": {
+            "rJGQNB4df": "\"   \""
+          },
+          "id": "r1D0yFi1r",
+          "position": {
+            "x": 16,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/core/join"
+        },
+        "r1D6LHqkB": {
+          "id": "r1D6LHqkB",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/any"
+        },
+        "r1WlOvnoJS": {
+          "id": "r1WlOvnoJS",
+          "position": {
+            "x": 32,
+            "y": 9,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "r1YbOri1S": {
+          "boundLiterals": {
+            "rJGQNB4df": "\"  \""
+          },
+          "id": "r1YbOri1S",
+          "position": {
+            "x": -1,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/core/join"
+        },
+        "r1bUS_hjJH": {
+          "id": "r1bUS_hjJH",
+          "label": "DONE",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rJ52HnsJS": {
+          "id": "rJ52HnsJS",
+          "position": {
+            "x": 28,
+            "y": 9,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "rJ8VUzHokr": {
+          "arityLevel": 2,
+          "boundLiterals": {
+            "rJGQNB4df": "\" /\""
+          },
+          "id": "rJ8VUzHokr",
+          "position": {
+            "x": 7,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/core/join"
+        },
+        "rJBhvrskS": {
+          "id": "rJBhvrskS",
+          "position": {
+            "x": 0,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/datetime/am-pm"
+        },
+        "rJQszHj1r": {
+          "id": "rJQszHj1r",
+          "position": {
+            "x": 7,
+            "y": 9,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "rJiLBd2syB": {
+          "id": "rJiLBd2syB",
+          "label": "DONE",
+          "position": {
+            "x": 33,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rJv5rhs1r": {
+          "boundLiterals": {
+            "rJGQNB4df": "\"   \"",
+            "rJJHNrVuM": "\"Lat\""
+          },
+          "id": "rJv5rhs1r",
+          "position": {
+            "x": 28,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/core/join"
+        },
+        "rJvxW_2iyr": {
+          "id": "rJvxW_2iyr",
+          "label": "DEV",
+          "position": {
+            "x": 16,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "rk6yxKjyB": {
+          "id": "rk6yxKjyB",
+          "position": {
+            "x": 16,
+            "y": 9,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "rkHNUGHjyB": {
+          "boundLiterals": {
+            "BkKz5GVwX": "2"
+          },
+          "id": "rkHNUGHjyB",
+          "position": {
+            "x": 6,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "xod/core/pad-with-zeroes"
+        },
+        "rkM_1Fj1r": {
+          "id": "rkM_1Fj1r",
+          "position": {
+            "x": 16,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/gpsspeed"
+        },
+        "rkSur3jkr": {
+          "boundLiterals": {
+            "HJTIija-W": "6"
+          },
+          "id": "rkSur3jkr",
+          "position": {
+            "x": 28,
+            "y": 7,
+            "units": "slots"
+          },
+          "type": "xod/core/format-number"
+        },
+        "rkmh-aokH": {
+          "boundLiterals": {
+            "BytfJKIWX": "9600"
+          },
+          "id": "rkmh-aokH",
+          "position": {
+            "x": 10,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/uart/uart-1"
+        },
+        "rkq-sCtyH": {
+          "id": "rkq-sCtyH",
+          "position": {
+            "x": 9,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "@/neo6mv2-device"
+        },
+        "rkx5MOsyS": {
+          "boundLiterals": {
+            "rJGQNB4df": "\"   \""
+          },
+          "id": "rkx5MOsyS",
+          "position": {
+            "x": 7,
+            "y": 8,
+            "units": "slots"
+          },
+          "type": "xod/core/join"
+        },
+        "ryGPwhoJS": {
+          "id": "ryGPwhoJS",
+          "position": {
+            "x": 32,
+            "y": 6,
+            "units": "slots"
+          },
+          "type": "@/gpslongitude"
+        },
+        "ryP8Su3j1r": {
+          "id": "ryP8Su3j1r",
+          "label": "DONE",
+          "position": {
+            "x": 24,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "ryQAZOj1H": {
+          "arityLevel": 7,
+          "boundLiterals": {
+            "rkhYW8f3f": "\"Sunday\"",
+            "rkhYW8f3f-$1": "\"Monday\"",
+            "rkhYW8f3f-$2": "\"Tuesday\"",
+            "rkhYW8f3f-$3": "\"Wednesday\"",
+            "rkhYW8f3f-$4": "\"Thursday\"",
+            "rkhYW8f3f-$5": "\"Friday\"",
+            "rkhYW8f3f-$6": "\"Saturday\""
+          },
+          "id": "ryQAZOj1H",
+          "position": {
+            "x": 8,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/core/nth-input(string)"
+        }
+      },
+      "path": "@/main"
+    },
+    "@/neo6mv2-device": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/mikalhart/TinyGPSPlus\"\n\n// Include C++ library:\n{{#global}}\n#include <TinyGPS++.h>\n{{/global}}\n\nstruct State {\n    uint8_t mem[sizeof(TinyGPSPlus)];\n};\n\nusing Type = TinyGPSPlus*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // It should be evaluated only once on the first (setup) transaction\n    if (!isSettingUp())\n        return;\n\n    auto state = getState(ctx);\n\n    // Create a new object in the memory area reserved previously.\n    Type gps = new (state->mem) TinyGPSPlus();\n    emitValue<output_DEV>(ctx, gps);\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "BJzAOAtkB": {
+          "id": "BJzAOAtkB",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SyOCO0KJH": {
+          "id": "SyOCO0KJH",
+          "label": "DEV",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/neo6mv2-device"
+    }
+  }
+}

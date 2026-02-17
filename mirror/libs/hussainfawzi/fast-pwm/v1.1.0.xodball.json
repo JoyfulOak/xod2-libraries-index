@@ -1,0 +1,310 @@
+{
+  "apiKey": "c3d0c6f1-2bd7-49b9-94fe-f5d189bd849f",
+  "description": "PWM node for an existing Adruino PWM library on Github by Terry J Myers.\nFrequency: 0Hz - up to 500kHz",
+  "license": "Freeware",
+  "name": "fast-pwm",
+  "patches": {
+    "@/hr-fast-pwm": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n     if (!isInputDirty<input_UPDATE>(ctx))\n        return;\n    const uint8_t port = getValue<input_PORT>(ctx);\n    if (!isValidDigitalPort(port)) {\n        raiseError(ctx);\n        return;\n    };\n    auto duty = getValue<input_DUTY>(ctx);\n    if(duty>65535){duty=65535;}\n    if(duty<0){duty=0;}\n    auto freq = getValue<input_FREQUENCY>(ctx);\n    SetPinFrequencySafe(port, freq);\n    pwmWriteHR(port, duty);\n    emitValue<output_DONE>(ctx, 1);\n};"
+        }
+      ],
+      "nodes": {
+        "BkZUEajK48": {
+          "description": "High resolution fast PWM node\nFrequency range: 0Hz - 500kHz\nDuty cycle: 0 - 255",
+          "id": "BkZUEajK48",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Hk4LVpst4I": {
+          "boundLiterals": {
+            "__out__": "D3"
+          },
+          "description": "Select the Port to use for PWM",
+          "id": "Hk4LVpst4I",
+          "label": "PORT",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "HyG8VastE8": {
+          "boundLiterals": {
+            "__out__": "1000"
+          },
+          "description": "Set the frequency (range 0Hz - 500kHz)",
+          "id": "HyG8VastE8",
+          "label": "FREQUENCY",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S18NTsYNL": {
+          "boundLiterals": {
+            "__out__": "10000"
+          },
+          "description": "Set the duty cycle (range 0 - 65535)",
+          "id": "S18NTsYNL",
+          "label": "DUTY",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "rkeINTjFVL": {
+          "description": "Spits a pulse when done",
+          "id": "rkeINTjFVL",
+          "label": "DONE",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ry7IETiYVI": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Feed a pusle along with required frequency and duty cycle.",
+          "id": "ry7IETiYVI",
+          "label": "UPDATE",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/hr-fast-pwm"
+    },
+    "@/lr-fast-pwm": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n     if (!isInputDirty<input_UPDATE>(ctx))\n        return;\n    const uint8_t port = getValue<input_PORT>(ctx);\n    if (!isValidDigitalPort(port)) {\n        raiseError(ctx);\n        return;\n    };\n    auto duty = getValue<input_DUTY>(ctx);\n    if(duty>255){duty=255;}\n    if(duty<0){duty=0;}\n    auto freq = getValue<input_FREQUENCY>(ctx);\n    SetPinFrequencySafe(port, freq);\n    pwmWrite(port, duty);\n    emitValue<output_DONE>(ctx, 1);\n};"
+        }
+      ],
+      "nodes": {
+        "B1qMkBQ4U": {
+          "boundLiterals": {
+            "__out__": "100"
+          },
+          "description": "Set the duty cycle (range 0 - 255)",
+          "id": "B1qMkBQ4U",
+          "label": "DUTY",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BySj-HQVU": {
+          "description": "Spits a pulse when done",
+          "id": "BySj-HQVU",
+          "label": "DONE",
+          "position": {
+            "x": 8,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "ByZRAVX4I": {
+          "description": "Low resolution fast PWM node\nFrequency range: 0Hz - 500kHz\nDuty cycle: 0 - 255",
+          "id": "ByZRAVX4I",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1FRCV7N8": {
+          "boundLiterals": {
+            "__out__": "1000"
+          },
+          "description": "Set the frequency (range 0Hz - 500kHz)",
+          "id": "S1FRCV7N8",
+          "label": "FREQUENCY",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "r1PhQiYEU": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Feed a pusle along with required frequency and duty cycle.",
+          "id": "r1PhQiYEU",
+          "label": "UPDATE",
+          "position": {
+            "x": 11,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "ry26C47EL": {
+          "boundLiterals": {
+            "__out__": "D3"
+          },
+          "description": "Select the Port to use for PWM",
+          "id": "ry26C47EL",
+          "label": "PORT",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        }
+      },
+      "path": "@/lr-fast-pwm"
+    },
+    "@/main": {
+      "comments": {
+        "S1lwqiKN8": {
+          "content": "Low resolution fast PWM node\nFrequency range: 0Hz - 500kHz\nDuty cycle: 0 - 255\n--------------------------------\nArduino Uno compatible pins:\nD3\nD9\nD10",
+          "id": "S1lwqiKN8",
+          "position": {
+            "x": 13,
+            "y": 4,
+            "units": "slots"
+          },
+          "size": {
+            "height": 2,
+            "width": 5,
+            "units": "slots"
+          }
+        },
+        "rJD1Ent4L": {
+          "content": "High resolution fast PWM node\nFrequency range: 0Hz - 500kHz\nDuty cycle: 0 - 65535\n--------------------------------\nArduino Uno compatible pins:\nD3\nD9\nD10",
+          "id": "rJD1Ent4L",
+          "position": {
+            "x": 21,
+            "y": 4,
+            "units": "slots"
+          },
+          "size": {
+            "height": 2,
+            "width": 5,
+            "units": "slots"
+          }
+        },
+        "ryEwY59tL": {
+          "content": "Node for initializing the fast PWM function.\n(required once at bootup)\n--------------------------------\nArduino Uno compatible pins:\nD3\nD9\nD10",
+          "id": "ryEwY59tL",
+          "position": {
+            "x": 7,
+            "y": 4,
+            "units": "slots"
+          },
+          "size": {
+            "height": 2,
+            "width": 5,
+            "units": "slots"
+          }
+        }
+      },
+      "nodes": {
+        "H1dR72KEU": {
+          "id": "H1dR72KEU",
+          "position": {
+            "x": 13,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/lr-fast-pwm"
+        },
+        "rybJV3tE8": {
+          "id": "rybJV3tE8",
+          "position": {
+            "x": 21,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "@/hr-fast-pwm"
+        },
+        "ryRUYccYI": {
+          "id": "ryRUYccYI",
+          "type": "@/init-pwm",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/main"
+    },
+    "@/init-pwm": {
+      "nodes": {
+        "r1E2I9cFL": {
+          "description": "High resolution fast PWM node\nFrequency range: 0Hz - 500kHz\nDuty cycle: 0 - 255",
+          "id": "r1E2I9cFL",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BJQ43I5cYU": {
+          "description": "Spits a pulse when done",
+          "id": "BJQ43I5cYU",
+          "label": "DONE",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BkE4n89qFL": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Feed a pusle along with required frequency and duty cycle.",
+          "id": "BkE4n89qFL",
+          "label": "INIT",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/init-pwm",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/terryjmyers/PWM\"\n\n{{#global}}\n#include <PWM.h>\n{{/global}}\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n     if (!isInputDirty<input_INIT>(ctx))\n        return;\n    InitTimersSafe();\n    emitValue<output_DONE>(ctx, 1);\n};"
+        }
+      ]
+    }
+  },
+  "version": "1.1.0"
+}

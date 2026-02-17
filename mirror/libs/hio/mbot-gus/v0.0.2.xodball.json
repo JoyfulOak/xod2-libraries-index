@@ -1,0 +1,1851 @@
+{
+  "patches": {
+    "@/mbot-motor1-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/Makeblock-official/Makeblock-Libraries\"\n\n//Include C++ libraries\n#include <MeMCore.h>\n#include <MePort.h>\n#include <MeDCMotor.h>\n\nnode {\n    meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = MeDCMotor*;\n    }\n    \n    uint8_t mem[sizeof(MeDCMotor)];\n\n    void evaluate(Context ctx) {\n        // It should be evaluated only once on the first (setup) transaction\n        if (!isSettingUp())\n            return;\n        \n        Type motor1 = new (mem) MeDCMotor(M1);\n        \n        emitValue<output_DEV>(ctx, motor1);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "ByeKE4BAi": {
+          "id": "ByeKE4BAi",
+          "position": {
+            "x": -16,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1_F4VBCo": {
+          "label": "DEV",
+          "id": "S1_F4VBCo",
+          "position": {
+            "x": -16,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "HJ9lTb5zyl": {
+          "id": "HJ9lTb5zyl",
+          "type": "xod/patch-nodes/utility",
+          "position": {
+            "x": -14,
+            "y": -2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/mbot-motor1-device"
+    },
+    "@/mbot-motor2-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/Makeblock-official/Makeblock-Libraries\"\n\n//Include C++ libraries\n#include <MeMCore.h>\n#include <MePort.h>\n#include <MeDCMotor.h>\n\nnode {\n    meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = MeDCMotor*;\n    }\n    \n    uint8_t mem[sizeof(MeDCMotor)];\n\n    void evaluate(Context ctx) {\n        // It should be evaluated only once on the first (setup) transaction\n        if (!isSettingUp())\n            return;\n        \n        Type motor2 = new (mem) MeDCMotor(M2);\n        \n        emitValue<output_DEV>(ctx, motor2);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "ByeKE4BAi": {
+          "id": "ByeKE4BAi",
+          "position": {
+            "x": -16,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1_F4VBCo": {
+          "label": "DEV",
+          "id": "S1_F4VBCo",
+          "position": {
+            "x": -16,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "HJee-6WcG1e": {
+          "id": "HJee-6WcG1e",
+          "type": "xod/patch-nodes/utility",
+          "position": {
+            "x": -14,
+            "y": -2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/mbot-motor2-device"
+    },
+    "@/mbot-motor1-orders": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "node {\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n           return;\n        \n\n        auto motor1 = getValue<input_DEV>(ctx);\n        auto sp = getValue<input_S1>(ctx);\n\n        motor1-> run(sp);\n\n        emitValue<output_Done>(ctx, 1);\n   }\n}\n"
+        }
+      ],
+      "nodes": {
+        "B1U3o1u-yl": {
+          "id": "B1U3o1u-yl",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "S1YnsJdZ1g": {
+          "label": "DEV",
+          "id": "S1YnsJdZ1g",
+          "type": "@/input-mbot-motor1-device",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SJ5q2Jd-kl": {
+          "label": "S1",
+          "id": "SJ5q2Jd-kl",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "S1d63JOZke": {
+          "label": "Done",
+          "id": "S1d63JOZke",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "rkqS6kuZJg": {
+          "label": "UPD",
+          "id": "rkqS6kuZJg",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "SylneaW5fye": {
+          "id": "SylneaW5fye",
+          "type": "xod/patch-nodes/utility",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/mbot-motor1-orders"
+    },
+    "@/mbot-motor2-orders": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "node {\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n           return;\n        \n\n        auto motor2 = getValue<input_DEV>(ctx);\n        auto sp = getValue<input_S2>(ctx);\n\n        motor2-> run(sp);\n\n        emitValue<output_Done>(ctx, 1);\n   }\n}\n"
+        }
+      ],
+      "nodes": {
+        "B1U3o1u-yl": {
+          "id": "B1U3o1u-yl",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "SJ5q2Jd-kl": {
+          "label": "S2",
+          "id": "SJ5q2Jd-kl",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "S1d63JOZke": {
+          "label": "Done",
+          "id": "S1d63JOZke",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "rkcxTk_-Je": {
+          "label": "DEV",
+          "id": "rkcxTk_-Je",
+          "type": "@/input-mbot-motor2-device",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "Skc8TkOWyx": {
+          "label": "UPD",
+          "id": "Skc8TkOWyx",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rymWpZqfJe": {
+          "id": "rymWpZqfJe",
+          "type": "xod/patch-nodes/utility",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/mbot-motor2-orders"
+    },
+    "@/mbot-motoren": {
+      "description": "Node hat bereits ein gewisses Fading und Kompensation für niedrige PWM-Werte. Ist aber noch nicht perfekt.",
+      "links": {
+        "Sk2f1x_-ye": {
+          "id": "Sk2f1x_-ye",
+          "output": {
+            "nodeId": "r1l6uJO-kx",
+            "pinKey": "S1_F4VBCo"
+          },
+          "input": {
+            "nodeId": "HJczyx_byl",
+            "pinKey": "rkcxTk_-Je"
+          }
+        },
+        "rkcBrldZkl": {
+          "id": "rkcBrldZkl",
+          "output": {
+            "nodeId": "Byl3UyuWJg",
+            "pinKey": "S1_F4VBCo"
+          },
+          "input": {
+            "nodeId": "rJtrSgOW1e",
+            "pinKey": "S1YnsJdZ1g"
+          }
+        },
+        "H1zRxvlOZJx": {
+          "id": "H1zRxvlOZJx",
+          "output": {
+            "nodeId": "BkZRePeu-yg",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJtrSgOW1e",
+            "pinKey": "rkqS6kuZJg"
+          }
+        },
+        "SJxAeDg_-1g": {
+          "id": "SJxAeDg_-1g",
+          "output": {
+            "nodeId": "BydCIeOWJg",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "r10xve_Zkx",
+            "pinKey": "__in__"
+          }
+        },
+        "B1x--wgubke": {
+          "id": "B1x--wgubke",
+          "output": {
+            "nodeId": "HJW-ve_-1x",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJczyx_byl",
+            "pinKey": "Skc8TkOWyx"
+          }
+        },
+        "rkGcFeuWkg": {
+          "id": "rkGcFeuWkg",
+          "output": {
+            "nodeId": "S1GCwld-ke",
+            "pinKey": "S13xLCuHvkW"
+          },
+          "input": {
+            "nodeId": "ByuRPg_bye",
+            "pinKey": "SJ4zUC_BD1-"
+          }
+        },
+        "rkDVTldbJl": {
+          "id": "rkDVTldbJl",
+          "output": {
+            "nodeId": "SJrVpldWyl",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "Hy8gpluW1g",
+            "pinKey": "S1yZIA_rDJZ"
+          }
+        },
+        "Sk5N6xd-Je": {
+          "id": "Sk5N6xd-Je",
+          "output": {
+            "nodeId": "rk_VTl_ZJl",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "S1GCwld-ke",
+            "pinKey": "S1yZIA_rDJZ"
+          }
+        },
+        "rkal0e_-kg": {
+          "id": "rkal0e_-kg",
+          "output": {
+            "nodeId": "Hy8gpluW1g",
+            "pinKey": "S13xLCuHvkW"
+          },
+          "input": {
+            "nodeId": "H1Ez6lOZ1e",
+            "pinKey": "SJ4zUC_BD1-"
+          }
+        },
+        "BkMZe-uWye": {
+          "id": "BkMZe-uWye",
+          "output": {
+            "nodeId": "BkmpyW_ZJx",
+            "pinKey": "S1gs26myDM"
+          },
+          "input": {
+            "nodeId": "SykWlbuW1l",
+            "pinKey": "S1yZIA_rDJZ"
+          }
+        },
+        "SkDHgbdZJl": {
+          "id": "SkDHgbdZJl",
+          "output": {
+            "nodeId": "ryHMg-uZkl",
+            "pinKey": "S1gs26myDM"
+          },
+          "input": {
+            "nodeId": "ByHBx-dW1g",
+            "pinKey": "S1yZIA_rDJZ"
+          }
+        },
+        "Hydt8Etbyl": {
+          "id": "Hydt8Etbyl",
+          "output": {
+            "nodeId": "rk9lagdWyg",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ryHMg-uZkl",
+            "pinKey": "HJx50mkvz"
+          }
+        },
+        "Hk_qLEFZJe": {
+          "id": "Hk_qLEFZJe",
+          "output": {
+            "nodeId": "ByHBx-dW1g",
+            "pinKey": "S13xLCuHvkW"
+          },
+          "input": {
+            "nodeId": "BkmpyW_ZJx",
+            "pinKey": "HJx50mkvz"
+          }
+        },
+        "Sk4oLEtZye": {
+          "id": "Sk4oLEtZye",
+          "output": {
+            "nodeId": "ByHBx-dW1g",
+            "pinKey": "S13xLCuHvkW"
+          },
+          "input": {
+            "nodeId": "SykWlbuW1l",
+            "pinKey": "r1AgIROHDJW"
+          }
+        },
+        "Bk7BzvVYbkl": {
+          "id": "Bk7BzvVYbkl",
+          "output": {
+            "nodeId": "SJrzPVYbJl",
+            "pinKey": "S1gs26myDM"
+          },
+          "input": {
+            "nodeId": "HkeBfvVFb1g",
+            "pinKey": "S1yZIA_rDJZ"
+          }
+        },
+        "SyNrzwNFZke": {
+          "id": "SyNrzwNFZke",
+          "output": {
+            "nodeId": "HyZrfPEKWJg",
+            "pinKey": "S1gs26myDM"
+          },
+          "input": {
+            "nodeId": "SJzBMv4tZkx",
+            "pinKey": "S1yZIA_rDJZ"
+          }
+        },
+        "SJHrGP4KZyx": {
+          "id": "SJHrGP4KZyx",
+          "output": {
+            "nodeId": "SJzBMv4tZkx",
+            "pinKey": "S13xLCuHvkW"
+          },
+          "input": {
+            "nodeId": "SJrzPVYbJl",
+            "pinKey": "HJx50mkvz"
+          }
+        },
+        "SJIrzDEK-kg": {
+          "id": "SJIrzDEK-kg",
+          "output": {
+            "nodeId": "SJzBMv4tZkx",
+            "pinKey": "S13xLCuHvkW"
+          },
+          "input": {
+            "nodeId": "HkeBfvVFb1g",
+            "pinKey": "r1AgIROHDJW"
+          }
+        },
+        "Hy0zD4tWye": {
+          "id": "Hy0zD4tWye",
+          "output": {
+            "nodeId": "HyYqtgu-kg",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HyZrfPEKWJg",
+            "pinKey": "HJx50mkvz"
+          }
+        },
+        "Sk4QDEYZyl": {
+          "id": "Sk4QDEYZyl",
+          "output": {
+            "nodeId": "HyYqtgu-kg",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "SJzBMv4tZkx",
+            "pinKey": "r1AgIROHDJW"
+          }
+        },
+        "rkLmDNYZkl": {
+          "id": "rkLmDNYZkl",
+          "output": {
+            "nodeId": "rk9lagdWyg",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "ByHBx-dW1g",
+            "pinKey": "r1AgIROHDJW"
+          }
+        },
+        "Hye_u4Ybye": {
+          "id": "Hye_u4Ybye",
+          "output": {
+            "nodeId": "H1Ez6lOZ1e",
+            "pinKey": "BkQzLCurwJZ"
+          },
+          "input": {
+            "nodeId": "SJFDONY-kx",
+            "pinKey": "HyYJqJFLZ"
+          }
+        },
+        "S1Zuu4FWke": {
+          "id": "S1Zuu4FWke",
+          "output": {
+            "nodeId": "SJFDONY-kx",
+            "pinKey": "BJ0M5JKUW"
+          },
+          "input": {
+            "nodeId": "rJtrSgOW1e",
+            "pinKey": "SJ5q2Jd-kl"
+          }
+        },
+        "rJDddEY-1e": {
+          "id": "rJDddEY-1e",
+          "output": {
+            "nodeId": "ByuRPg_bye",
+            "pinKey": "BkQzLCurwJZ"
+          },
+          "input": {
+            "nodeId": "HJBOu4tbkx",
+            "pinKey": "HyYJqJFLZ"
+          }
+        },
+        "ryOu_VK-kg": {
+          "id": "ryOu_VK-kg",
+          "output": {
+            "nodeId": "HJBOu4tbkx",
+            "pinKey": "BJ0M5JKUW"
+          },
+          "input": {
+            "nodeId": "HJczyx_byl",
+            "pinKey": "SJ5q2Jd-kl"
+          }
+        },
+        "SkkNiVFbyx": {
+          "id": "SkkNiVFbyx",
+          "output": {
+            "nodeId": "SykWlbuW1l",
+            "pinKey": "S13xLCuHvkW"
+          },
+          "input": {
+            "nodeId": "rk8MoVK-1l",
+            "pinKey": "HJjEe1lnb"
+          }
+        },
+        "HJ3VsVFbkx": {
+          "id": "HJ3VsVFbkx",
+          "output": {
+            "nodeId": "HkeBfvVFb1g",
+            "pinKey": "S13xLCuHvkW"
+          },
+          "input": {
+            "nodeId": "B1nQjVK-1e",
+            "pinKey": "HJjEe1lnb"
+          }
+        },
+        "rkTVi4FbJx": {
+          "id": "rkTVi4FbJx",
+          "output": {
+            "nodeId": "B1nQjVK-1e",
+            "pinKey": "rJFmgJehW"
+          },
+          "input": {
+            "nodeId": "ByuRPg_bye",
+            "pinKey": "B1GfLR_SPk-"
+          }
+        },
+        "SyyHoEYZkg": {
+          "id": "SyyHoEYZkg",
+          "output": {
+            "nodeId": "rk8MoVK-1l",
+            "pinKey": "rJFmgJehW"
+          },
+          "input": {
+            "nodeId": "H1Ez6lOZ1e",
+            "pinKey": "B1GfLR_SPk-"
+          }
+        },
+        "HykgqZczye": {
+          "id": "HykgqZczye",
+          "output": {
+            "nodeId": "rJtrSgOW1e",
+            "pinKey": "S1d63JOZke"
+          },
+          "input": {
+            "nodeId": "B13kqZqGkx",
+            "pinKey": "ryv7IRdSP1b"
+          }
+        },
+        "H1gl9Zqz1l": {
+          "id": "H1gl9Zqz1l",
+          "output": {
+            "nodeId": "HJczyx_byl",
+            "pinKey": "S1d63JOZke"
+          },
+          "input": {
+            "nodeId": "B13kqZqGkx",
+            "pinKey": "ByU7LRuSPkW"
+          }
+        },
+        "H1ue5bcGyx": {
+          "id": "H1ue5bcGyx",
+          "output": {
+            "nodeId": "B13kqZqGkx",
+            "pinKey": "ByHmL0uHPk-"
+          },
+          "input": {
+            "nodeId": "ByBgqb9fke",
+            "pinKey": "__in__"
+          }
+        }
+      },
+      "nodes": {
+        "Byl3UyuWJg": {
+          "id": "Byl3UyuWJg",
+          "type": "@/mbot-motor1-device",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "r1l6uJO-kx": {
+          "id": "r1l6uJO-kx",
+          "type": "@/mbot-motor2-device",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "HJczyx_byl": {
+          "boundLiterals": {
+            "Skc8TkOWyx": "Continuously",
+            "SJ5q2Jd-kl": "0"
+          },
+          "id": "HJczyx_byl",
+          "type": "@/mbot-motor2-orders",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "rJtrSgOW1e": {
+          "boundLiterals": {
+            "rkqS6kuZJg": "Continuously",
+            "SJ5q2Jd-kl": "0"
+          },
+          "id": "rJtrSgOW1e",
+          "type": "@/mbot-motor1-orders",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "BydCIeOWJg": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "Wann soll der Node updaten?",
+          "label": "Update",
+          "id": "BydCIeOWJg",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 20,
+            "y": -5,
+            "units": "slots"
+          }
+        },
+        "BkZRePeu-yg": {
+          "id": "BkZRePeu-yg",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "r10xve_Zkx": {
+          "id": "r10xve_Zkx",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 20,
+            "y": -4,
+            "units": "slots"
+          }
+        },
+        "HJW-ve_-1x": {
+          "id": "HJW-ve_-1x",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "S1GCwld-ke": {
+          "boundLiterals": {
+            "ryTeUROHD1b": "1",
+            "r1AgIROHDJW": "-1"
+          },
+          "id": "S1GCwld-ke",
+          "type": "xod/core/if-else",
+          "position": {
+            "x": 10,
+            "y": -1,
+            "units": "slots"
+          }
+        },
+        "ByuRPg_bye": {
+          "id": "ByuRPg_bye",
+          "type": "xod/core/multiply",
+          "position": {
+            "x": 9,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "HyYqtgu-kg": {
+          "description": "Geschwindigkeit Motor 2 zwischen 0-1. Ist bereits für niedrige Werte angepasst.",
+          "label": "M2 Geschwindigkeit",
+          "id": "HyYqtgu-kg",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 16,
+            "y": -5,
+            "units": "slots"
+          }
+        },
+        "Hy8gpluW1g": {
+          "boundLiterals": {
+            "ryTeUROHD1b": "1",
+            "r1AgIROHDJW": "-1"
+          },
+          "id": "Hy8gpluW1g",
+          "type": "xod/core/if-else",
+          "position": {
+            "x": 5,
+            "y": -1,
+            "units": "slots"
+          }
+        },
+        "rk9lagdWyg": {
+          "description": "Geschwindigkeit Motor 1 zwischen 0-1. Ist bereits für niedrige Werte angepasst.",
+          "label": "M1 Geschwindigkeit",
+          "id": "rk9lagdWyg",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": -4,
+            "y": -5,
+            "units": "slots"
+          }
+        },
+        "H1Ez6lOZ1e": {
+          "id": "H1Ez6lOZ1e",
+          "type": "xod/core/multiply",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SJrVpldWyl": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Richtung Motor 1. Je nach Anschluss des Motors kann True vorwärts oder rückwärts sein. Dies muss getestet werden.",
+          "label": "R.M1",
+          "id": "SJrVpldWyl",
+          "type": "xod/patch-nodes/input-boolean",
+          "position": {
+            "x": 5,
+            "y": -5,
+            "units": "slots"
+          }
+        },
+        "rk_VTl_ZJl": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Richtung Motor 2. Je nach Anschluss des Motors kann True vorwärts oder rückwärts sein. Dies muss getestet werden.",
+          "label": "R.M2",
+          "id": "rk_VTl_ZJl",
+          "type": "xod/patch-nodes/input-boolean",
+          "position": {
+            "x": 10,
+            "y": -5,
+            "units": "slots"
+          }
+        },
+        "BkmpyW_ZJx": {
+          "boundLiterals": {
+            "S1jhaXJvf": "0.01",
+            "Bybo3pXywM": "0.29"
+          },
+          "id": "BkmpyW_ZJx",
+          "type": "e/comparison/between",
+          "position": {
+            "x": -4,
+            "y": -2,
+            "units": "slots"
+          }
+        },
+        "SykWlbuW1l": {
+          "boundLiterals": {
+            "ryTeUROHD1b": "0.3"
+          },
+          "id": "SykWlbuW1l",
+          "type": "xod/core/if-else",
+          "position": {
+            "x": -4,
+            "y": -1,
+            "units": "slots"
+          }
+        },
+        "ryHMg-uZkl": {
+          "boundLiterals": {
+            "S1jhaXJvf": "-0.29",
+            "Bybo3pXywM": "-0.01"
+          },
+          "id": "ryHMg-uZkl",
+          "type": "e/comparison/between",
+          "position": {
+            "x": -4,
+            "y": -4,
+            "units": "slots"
+          }
+        },
+        "ByHBx-dW1g": {
+          "boundLiterals": {
+            "ryTeUROHD1b": "-0.3"
+          },
+          "id": "ByHBx-dW1g",
+          "type": "xod/core/if-else",
+          "position": {
+            "x": -4,
+            "y": -3,
+            "units": "slots"
+          }
+        },
+        "SJrzPVYbJl": {
+          "boundLiterals": {
+            "S1jhaXJvf": "0.01",
+            "Bybo3pXywM": "0.29"
+          },
+          "id": "SJrzPVYbJl",
+          "type": "e/comparison/between",
+          "position": {
+            "x": 16,
+            "y": -2,
+            "units": "slots"
+          }
+        },
+        "HkeBfvVFb1g": {
+          "boundLiterals": {
+            "ryTeUROHD1b": "0.3"
+          },
+          "id": "HkeBfvVFb1g",
+          "type": "xod/core/if-else",
+          "position": {
+            "x": 16,
+            "y": -1,
+            "units": "slots"
+          }
+        },
+        "HyZrfPEKWJg": {
+          "boundLiterals": {
+            "S1jhaXJvf": "-0.29",
+            "Bybo3pXywM": "-0.01"
+          },
+          "id": "HyZrfPEKWJg",
+          "type": "e/comparison/between",
+          "position": {
+            "x": 16,
+            "y": -4,
+            "units": "slots"
+          }
+        },
+        "SJzBMv4tZkx": {
+          "boundLiterals": {
+            "ryTeUROHD1b": "-0.3"
+          },
+          "id": "SJzBMv4tZkx",
+          "type": "xod/core/if-else",
+          "position": {
+            "x": 16,
+            "y": -3,
+            "units": "slots"
+          }
+        },
+        "SJFDONY-kx": {
+          "boundLiterals": {
+            "BkweckF8-": "255"
+          },
+          "id": "SJFDONY-kx",
+          "type": "xod/core/fade",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "HJBOu4tbkx": {
+          "boundLiterals": {
+            "BkweckF8-": "255"
+          },
+          "id": "HJBOu4tbkx",
+          "type": "xod/core/fade",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rk8MoVK-1l": {
+          "boundLiterals": {
+            "SJbSlJxh-": "-1",
+            "B1rSeJlnZ": "1",
+            "BJTBgke3b": "-255",
+            "HkFBgJehW": "255"
+          },
+          "id": "rk8MoVK-1l",
+          "type": "xod/math/map-clip",
+          "position": {
+            "x": 4,
+            "y": -2,
+            "units": "slots"
+          }
+        },
+        "B1nQjVK-1e": {
+          "boundLiterals": {
+            "SJbSlJxh-": "-1",
+            "B1rSeJlnZ": "1",
+            "BJTBgke3b": "-255",
+            "HkFBgJehW": "255"
+          },
+          "id": "B1nQjVK-1e",
+          "type": "xod/math/map-clip",
+          "position": {
+            "x": 9,
+            "y": -2,
+            "units": "slots"
+          }
+        },
+        "B13kqZqGkx": {
+          "id": "B13kqZqGkx",
+          "type": "xod/core/any",
+          "position": {
+            "x": 6,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "ByBgqb9fke": {
+          "description": "Schickt einen Pulse, wenn der Node fertig ist.",
+          "label": "Fertig",
+          "id": "ByBgqb9fke",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 6,
+            "y": 5,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/mbot-motoren"
+    },
+    "@/mbot-gyro-device": {
+      "nodes": {
+        "BkeSlpb5Mkx": {
+          "id": "BkeSlpb5Mkx",
+          "type": "xod/patch-nodes/utility",
+          "position": {
+            "x": 0,
+            "y": -0.25,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/mbot-gyro-device"
+    },
+    "@/mbot-buzzer-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/Makeblock-official/Makeblock-Libraries\"\n\n//Include C++ libraries\n#include <MeMCore.h>\n#include <MePort.h>\n#include <MeBuzzer.h>\n\nnode {\n    meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = MeBuzzer*;\n    }\n    \n    uint8_t mem[sizeof(MeBuzzer)];\n\n    void evaluate(Context ctx) {\n        // It should be evaluated only once on the first (setup) transaction\n        if (!isSettingUp())\n            return;\n        \n        Type buzzer = new (mem) MeBuzzer();\n\n        buzzer-> setpin(8);\n\n        emitValue<output_DEV>(ctx, buzzer);\n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "ByeKE4BAi": {
+          "id": "ByeKE4BAi",
+          "position": {
+            "x": -16,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1_F4VBCo": {
+          "label": "DEV",
+          "id": "S1_F4VBCo",
+          "position": {
+            "x": -16,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "HkleTZcMJx": {
+          "id": "HkleTZcMJx",
+          "type": "xod/patch-nodes/utility",
+          "position": {
+            "x": -13,
+            "y": -2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/mbot-buzzer-device"
+    },
+    "@/mbot-buzzer-tone": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "node {\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n           return;\n        \n\n        auto buzzer = getValue<input_DEV>(ctx);\n        auto freq = getValue<input_FREQ>(ctx);\n        auto dur = getValue<input_DUR>(ctx);\n\n        buzzer-> tone(freq,dur);\n\n        emitValue<output_Done>(ctx, 1);\n   }\n}\n"
+        }
+      ],
+      "nodes": {
+        "B1U3o1u-yl": {
+          "id": "B1U3o1u-yl",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "SJ5q2Jd-kl": {
+          "label": "FREQ",
+          "id": "SJ5q2Jd-kl",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "S1d63JOZke": {
+          "label": "Done",
+          "id": "S1d63JOZke",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "rkqS6kuZJg": {
+          "label": "UPD",
+          "id": "rkqS6kuZJg",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 15,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "r1Gn1Stbke": {
+          "label": "DEV",
+          "id": "r1Gn1Stbke",
+          "type": "@/input-mbot-buzzer-device",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "B1j3JHtbyl": {
+          "label": "DUR",
+          "id": "B1j3JHtbyl",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BkSIGHFbkx": {
+          "label": "NO",
+          "id": "BkSIGHFbkx",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 13,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/mbot-buzzer-tone"
+    },
+    "@/mbot-ultrasonic-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/Makeblock-official/Makeblock-Libraries\"\n\n//Include C++ libraries\n#include <MeMCore.h>\n#include <MePort.h>\n#include <MeUltrasonicSensor.h>\n\nnode {\n    meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = MeUltrasonicSensor*;\n    }\n    \n    uint8_t mem[sizeof(MeUltrasonicSensor)];\n\n    void evaluate(Context ctx) {\n        // It should be evaluated only once on the first (setup) transaction\n        if (!isSettingUp())\n            return;\n\n        auto port = getValue<input_Port>(ctx);\n\n         if (port == 1)\n             port = PORT_1;\n         if (port == 2)\n             port = PORT_2;\n         if (port == 3)\n             port = PORT_3;\n         if (port == 4)\n             port = PORT_4;\n\n        \n        Type sensor = new (mem) MeUltrasonicSensor(port);\n        \n        emitValue<output_DEV>(ctx, sensor);\n    }\n}\n\n"
+        }
+      ],
+      "nodes": {
+        "ryD8cW9Gyg": {
+          "id": "ryD8cW9Gyg",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "By8Go-5zkl": {
+          "label": "Port",
+          "id": "By8Go-5zkl",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SkjMs-qM1g": {
+          "label": "DEV",
+          "id": "SkjMs-qM1g",
+          "type": "xod/patch-nodes/output-self",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "Byvb6-qMyx": {
+          "id": "Byvb6-qMyx",
+          "type": "xod/patch-nodes/utility",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/mbot-ultrasonic-device"
+    },
+    "@/mbot-ultrasonic": {
+      "links": {
+        "SygTsZqfye": {
+          "id": "SygTsZqfye",
+          "output": {
+            "nodeId": "Sk6VibqGyg",
+            "pinKey": "SkjMs-qM1g"
+          },
+          "input": {
+            "nodeId": "HJyTi-5MJe",
+            "pinKey": "B1yIi-5GJg"
+          }
+        },
+        "SyWx3-qf1l": {
+          "id": "SyWx3-qf1l",
+          "output": {
+            "nodeId": "H1R1nbcf1l",
+            "pinKey": "H1H-LLHUr"
+          },
+          "input": {
+            "nodeId": "HJyTi-5MJe",
+            "pinKey": "B1ZiiWcfyx"
+          }
+        },
+        "Sklb2-9fJe": {
+          "id": "Sklb2-9fJe",
+          "output": {
+            "nodeId": "HJyTi-5MJe",
+            "pinKey": "B13csWcGyx"
+          },
+          "input": {
+            "nodeId": "rJkbhWczke",
+            "pinKey": "BJlHojaWZ"
+          }
+        },
+        "SkiW2-cfke": {
+          "id": "SkiW2-cfke",
+          "output": {
+            "nodeId": "rJkbhWczke",
+            "pinKey": "r1H_oipZb"
+          },
+          "input": {
+            "nodeId": "BJ_Z2Z5zkx",
+            "pinKey": "Hkqu9oaWb"
+          }
+        },
+        "rJsSQnZ9fJg": {
+          "id": "rJsSQnZ9fJg",
+          "output": {
+            "nodeId": "BJ_Z2Z5zkx",
+            "pinKey": "rksccsp-W"
+          },
+          "input": {
+            "nodeId": "SyGm2-5MJg",
+            "pinKey": "__in__"
+          }
+        },
+        "r1t72-5Mye": {
+          "id": "r1t72-5Mye",
+          "output": {
+            "nodeId": "HJyTi-5MJe",
+            "pinKey": "B13csWcGyx"
+          },
+          "input": {
+            "nodeId": "Bk8M2WqfJx",
+            "pinKey": "__in__"
+          }
+        },
+        "ryaXhZ5zyx": {
+          "id": "ryaXhZ5zyx",
+          "output": {
+            "nodeId": "HJyTi-5MJe",
+            "pinKey": "BkRjobcz1x"
+          },
+          "input": {
+            "nodeId": "B1jM2Zczyg",
+            "pinKey": "__in__"
+          }
+        },
+        "Hkf92W9MJg": {
+          "id": "Hkf92W9MJg",
+          "output": {
+            "nodeId": "S1vV3b5MJx",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "H1R1nbcf1l",
+            "pinKey": "rkzZUUHLB"
+          }
+        },
+        "ry49n-5Myl": {
+          "id": "ry49n-5Myl",
+          "output": {
+            "nodeId": "ry04nZqMyl",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "Sk6VibqGyg",
+            "pinKey": "By8Go-5zkl"
+          }
+        }
+      },
+      "nodes": {
+        "Sk6VibqGyg": {
+          "boundLiterals": {
+            "By8Go-5zkl": "1"
+          },
+          "id": "Sk6VibqGyg",
+          "type": "@/mbot-ultrasonic-device",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "HJyTi-5MJe": {
+          "boundLiterals": {
+            "B1ZiiWcfyx": "Continuously"
+          },
+          "id": "HJyTi-5MJe",
+          "type": "@/mbot-ultrasonic-read",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "H1R1nbcf1l": {
+          "boundLiterals": {
+            "ByYWULHUr": "0.2"
+          },
+          "id": "H1R1nbcf1l",
+          "type": "hio/gus-xodnodes-hi/throttle-copy",
+          "position": {
+            "x": 10,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "rJkbhWczke": {
+          "boundLiterals": {
+            "HJTIija-W": "0"
+          },
+          "id": "rJkbhWczke",
+          "type": "xod/core/format-number",
+          "position": {
+            "x": 10,
+            "y": 4,
+            "units": "slots"
+          }
+        },
+        "BJ_Z2Z5zkx": {
+          "boundLiterals": {
+            "BkeKcj6ZZ": "\" cm\""
+          },
+          "id": "BJ_Z2Z5zkx",
+          "type": "xod/core/concat",
+          "position": {
+            "x": 10,
+            "y": 5,
+            "units": "slots"
+          }
+        },
+        "Bk8M2WqfJx": {
+          "label": "cm",
+          "id": "Bk8M2WqfJx",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 9,
+            "y": 6,
+            "units": "slots"
+          }
+        },
+        "B1jM2Zczyg": {
+          "label": "Fertig",
+          "id": "B1jM2Zczyg",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 11,
+            "y": 6,
+            "units": "slots"
+          }
+        },
+        "SyGm2-5MJg": {
+          "label": "cm Text",
+          "id": "SyGm2-5MJg",
+          "type": "xod/patch-nodes/output-string",
+          "position": {
+            "x": 10,
+            "y": 6,
+            "units": "slots"
+          }
+        },
+        "S1vV3b5MJx": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "label": "Update",
+          "id": "S1vV3b5MJx",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "ry04nZqMyl": {
+          "label": "Port",
+          "id": "ry04nZqMyl",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/mbot-ultrasonic"
+    },
+    "@/mbot-ultrasonic-read": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        auto sensor = getValue<input_DEV>(ctx);\n       \n        emitValue<output_cm>(ctx, sensor->distanceCm());\n        emitValue<output_Done>(ctx, 1);\n        \n    }\n}\n"
+        }
+      ],
+      "nodes": {
+        "BJtHjZ5fkg": {
+          "id": "BJtHjZ5fkg",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 9,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "B1yIi-5GJg": {
+          "label": "DEV",
+          "id": "B1yIi-5GJg",
+          "type": "@/input-mbot-ultrasonic-device",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "B13csWcGyx": {
+          "label": "cm",
+          "id": "B13csWcGyx",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "B1ZiiWcfyx": {
+          "label": "UPD",
+          "id": "B1ZiiWcfyx",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BkRjobcz1x": {
+          "label": "Done",
+          "id": "BkRjobcz1x",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "B1g5-ab5Gyg": {
+          "id": "B1g5-ab5Gyg",
+          "type": "xod/patch-nodes/utility",
+          "position": {
+            "x": 11,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/mbot-ultrasonic-read"
+    },
+    "@/mbot-ledmatrix-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/Makeblock-official/Makeblock-Libraries\"\n\n//Include C++ libraries\n#include <MeMCore.h>\n#include <MePort.h>\n#include <MeLEDMatrix.h>\n\nnode {\n    meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = MeLEDMatrix*;\n    }\n    \n    uint8_t mem[sizeof(MeLEDMatrix)];\n\n    void evaluate(Context ctx) {\n        // It should be evaluated only once on the first (setup) transaction\n        if (!isSettingUp())\n            return;\n\n        auto port = getValue<input_Port>(ctx);\n\n         if (port == 1)\n             port = PORT_1;\n         if (port == 2)\n             port = PORT_2;\n         if (port == 3)\n             port = PORT_3;\n         if (port == 4)\n             port = PORT_4;\n\n        \n        Type display = new (mem) MeLEDMatrix(port);\n        \n        emitValue<output_DEV>(ctx, display);\n    }\n}\n\n"
+        }
+      ],
+      "nodes": {
+        "ryD8cW9Gyg": {
+          "id": "ryD8cW9Gyg",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "By8Go-5zkl": {
+          "label": "Port",
+          "id": "By8Go-5zkl",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SkjMs-qM1g": {
+          "label": "DEV",
+          "id": "SkjMs-qM1g",
+          "type": "xod/patch-nodes/output-self",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "B1JIfBcMJl": {
+          "id": "B1JIfBcMJl",
+          "type": "xod/patch-nodes/utility",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/mbot-ledmatrix-device"
+    },
+    "@/mbot-ledmatrix-init": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "node {\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n           return;\n        \n\n        auto display = getValue<input_DEV>(ctx);\n        auto bright = getValue<input_bright>(ctx);\n\n        if (bright == 0)\n            bright = Brightness_0;\n        if (bright == 1)\n            bright = Brightness_1;\n        if (bright == 2)\n            bright = Brightness_2;\n        if (bright == 3)\n            bright = Brightness_3;\n        if (bright == 4)\n            bright = Brightness_4;\n        if (bright == 5)\n            bright = Brightness_5;\n        if (bright == 6)\n            bright = Brightness_6;\n        if (bright == 7)\n            bright = Brightness_7;\n        if (bright == 8)\n            bright = Brightness_8;\n\n        if (!isInputDirty<input_Clear>(ctx))\n        display-> clearScreen();\n        \n        display-> setBrightness(bright);\n\n        emitValue<output_Done>(ctx, 1);\n   }\n}\n"
+        }
+      ],
+      "nodes": {
+        "B1U3o1u-yl": {
+          "id": "B1U3o1u-yl",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "S1d63JOZke": {
+          "label": "Done",
+          "id": "S1d63JOZke",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "Skc8TkOWyx": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "label": "UPD",
+          "id": "Skc8TkOWyx",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rymWpZqfJe": {
+          "id": "rymWpZqfJe",
+          "type": "xod/patch-nodes/utility",
+          "position": {
+            "x": 18,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "B11Hfr9Mke": {
+          "id": "B11Hfr9Mke",
+          "type": "@/input-mbot-ledmatrix-device",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "B1eSQB5G1l": {
+          "label": "Clear",
+          "id": "B1eSQB5G1l",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "ryS_mH5Myx": {
+          "id": "ryS_mH5Myx",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "bright"
+        }
+      },
+      "path": "@/mbot-ledmatrix-init"
+    },
+    "@/mbot-ledmatrix": {
+      "nodes": {
+        "By9L7S9Gyg": {
+          "id": "By9L7S9Gyg",
+          "type": "@/mbot-ledmatrix-device",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "By8Go-5zkl": "1"
+          }
+        },
+        "rJ0L7Scz1e": {
+          "id": "rJ0L7Scz1e",
+          "type": "@/mbot-ledmatrix-init",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "ryS_mH5Myx": "8"
+          }
+        },
+        "HJT0LHqfJl": {
+          "id": "HJT0LHqfJl",
+          "type": "@/mbot-ledmatrix-numbers",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "Skc8TkOWyx": "Continuously"
+          }
+        },
+        "HJy-DB9G1x": {
+          "id": "HJy-DB9G1x",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Port"
+        },
+        "rkSbvB9f1g": {
+          "id": "rkSbvB9f1g",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Helligkeit",
+          "description": "Helligkeit zwischen 0-8."
+        },
+        "r18-vr5Gyx": {
+          "id": "r18-vr5Gyx",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Zahl",
+          "description": "Darzustellende Zahl"
+        },
+        "H1hIZwScfke": {
+          "id": "H1hIZwScfke",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Dezimal",
+          "description": "Darzustellende Dezimalstellen"
+        },
+        "H1AVvHcfkx": {
+          "id": "H1AVvHcfkx",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Clear",
+          "description": "Leert die Matrix"
+        },
+        "rk_8Dr9zkg": {
+          "id": "rk_8Dr9zkg",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "Update",
+          "description": "Wann soll der Node reagieren?",
+          "boundLiterals": {
+            "__out__": "Continuously"
+          }
+        },
+        "B1GOvH5fyg": {
+          "id": "B1GOvH5fyg",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 1,
+            "y": 4,
+            "units": "slots"
+          },
+          "label": "Fertig",
+          "description": "Schickt einen Pulse, wenn der Node fertig ist."
+        }
+      },
+      "links": {
+        "B1Jw7B5fyx": {
+          "id": "B1Jw7B5fyx",
+          "output": {
+            "nodeId": "By9L7S9Gyg",
+            "pinKey": "SkjMs-qM1g"
+          },
+          "input": {
+            "nodeId": "rJ0L7Scz1e",
+            "pinKey": "B11Hfr9Mke"
+          }
+        },
+        "H10RLScMyg": {
+          "id": "H10RLScMyg",
+          "output": {
+            "nodeId": "By9L7S9Gyg",
+            "pinKey": "SkjMs-qM1g"
+          },
+          "input": {
+            "nodeId": "HJT0LHqfJl",
+            "pinKey": "B11Hfr9Mke"
+          }
+        },
+        "ByWbvSqzJl": {
+          "id": "ByWbvSqzJl",
+          "output": {
+            "nodeId": "HJy-DB9G1x",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "By9L7S9Gyg",
+            "pinKey": "By8Go-5zkl"
+          }
+        },
+        "BJPHDB9Gyl": {
+          "id": "BJPHDB9Gyl",
+          "output": {
+            "nodeId": "H1AVvHcfkx",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJ0L7Scz1e",
+            "pinKey": "B1eSQB5G1l"
+          }
+        },
+        "HycDDBqMyl": {
+          "id": "HycDDBqMyl",
+          "output": {
+            "nodeId": "rk_8Dr9zkg",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJT0LHqfJl",
+            "pinKey": "Skc8TkOWyx"
+          }
+        },
+        "SyEuvHcfye": {
+          "id": "SyEuvHcfye",
+          "output": {
+            "nodeId": "HJT0LHqfJl",
+            "pinKey": "S1d63JOZke"
+          },
+          "input": {
+            "nodeId": "B1GOvH5fyg",
+            "pinKey": "__in__"
+          }
+        },
+        "B1JqvB9zye": {
+          "id": "B1JqvB9zye",
+          "output": {
+            "nodeId": "rkSbvB9f1g",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rJ0L7Scz1e",
+            "pinKey": "ryS_mH5Myx"
+          }
+        },
+        "r1g9vHcGkg": {
+          "id": "r1g9vHcGkg",
+          "output": {
+            "nodeId": "r18-vr5Gyx",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJT0LHqfJl",
+            "pinKey": "ryS_mH5Myx"
+          }
+        },
+        "Byz9vHcGkx": {
+          "id": "Byz9vHcGkx",
+          "output": {
+            "nodeId": "H1hIZwScfke",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HJT0LHqfJl",
+            "pinKey": "Hk53IBqfkl"
+          }
+        }
+      },
+      "path": "@/mbot-ledmatrix"
+    },
+    "@/mbot-ledmatrix-numbers": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "node {\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n           return;\n        \n\n        auto display = getValue<input_DEV>(ctx);\n        auto number = getValue<input_number>(ctx);\n        auto digit = getValue<input_digit>(ctx);\n        \n        display-> showNum(number,digit);\n\n        emitValue<output_Done>(ctx, 1);\n   }\n}\n"
+        }
+      ],
+      "nodes": {
+        "B1U3o1u-yl": {
+          "id": "B1U3o1u-yl",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "S1d63JOZke": {
+          "label": "Done",
+          "id": "S1d63JOZke",
+          "type": "xod/patch-nodes/output-pulse",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          }
+        },
+        "Skc8TkOWyx": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "label": "UPD",
+          "id": "Skc8TkOWyx",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 10,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rymWpZqfJe": {
+          "id": "rymWpZqfJe",
+          "type": "xod/patch-nodes/utility",
+          "position": {
+            "x": 18,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "B11Hfr9Mke": {
+          "id": "B11Hfr9Mke",
+          "type": "@/input-mbot-ledmatrix-device",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "ryS_mH5Myx": {
+          "id": "ryS_mH5Myx",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "number"
+        },
+        "Hk53IBqfkl": {
+          "id": "Hk53IBqfkl",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "digit"
+        }
+      },
+      "path": "@/mbot-ledmatrix-numbers"
+    }
+  },
+  "version": "0.0.2",
+  "description": "Not complete. Just for testing",
+  "name": "mbot-gus"
+}

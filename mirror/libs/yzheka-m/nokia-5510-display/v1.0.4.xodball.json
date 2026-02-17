@@ -1,0 +1,767 @@
+{
+  "description": "Library for nokia 5510 monochrome display",
+  "license": "MIT",
+  "name": "nokia-5510-display",
+  "patches": {
+    "@/circle": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n    int x,y,radius;\n    bool fill,black,set=false;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto display = getValue<input_DISPLAY>(ctx);\n    auto state = getState(ctx);\n    if(state->set){\n        if(state->fill)display->fillCircle(state->x,state->y,state->radius,state->black?WHITE:BLACK);\n        else display->drawCircle(state->x,state->y,state->radius,state->black?WHITE:BLACK);\n    }\n    auto point = getValue<input_POSITION>(ctx);\n    state->x=point->x; state->y=point->y;\n    state->radius=getValue<input_RADIUS>(ctx);\n    state->fill=getValue<input_FILL>(ctx);\n    state->black=getValue<input_BLACK>(ctx);\n    state->set=true;\n    if(state->fill)display->fillCircle(state->x,state->y,state->radius,state->black?BLACK:WHITE);\n    else display->drawCircle(state->x,state->y,state->radius,state->black?BLACK:WHITE);\n    display->display();\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ],
+      "nodes": {
+        "B1AGie3yV": {
+          "description": "Position of the center on screen",
+          "id": "B1AGie3yV",
+          "label": "POSITION",
+          "position": {
+            "x": 102,
+            "y": 102
+          },
+          "type": "@/input-point"
+        },
+        "B1jSsg2y4": {
+          "description": "Draw circle on the screen",
+          "id": "B1jSsg2y4",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1nVig3kV": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Black or white color",
+          "id": "H1nVig3kV",
+          "label": "BLACK",
+          "position": {
+            "x": 204,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "HJ84ien1E": {
+          "description": "Fill circle or not",
+          "id": "HJ84ien1E",
+          "label": "FILL",
+          "position": {
+            "x": 170,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "Hk8GienyV": {
+          "description": "display object",
+          "id": "Hk8GienyV",
+          "label": "DISPLAY",
+          "position": {
+            "x": 68,
+            "y": 102
+          },
+          "type": "@/input-display"
+        },
+        "S1IBil2k4": {
+          "description": "Pulse when circle placed on the screen",
+          "id": "S1IBil2k4",
+          "label": "DONE",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SyxNil3JN": {
+          "description": "circle radius",
+          "id": "SyxNil3JN",
+          "label": "RADIUS",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/circle"
+    },
+    "@/display": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library\"\n#pragma XOD require \"https://github.com/adafruit/Adafruit-GFX-Library\"\n\n{{#global}}\n#include <SPI.h>\n#include <Adafruit_GFX.h>\n#include <Adafruit_PCD8544.h>\n{{/global}}\n\nusing Type = Adafruit_PCD8544*;\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if(isSettingUp()){\n        auto clk=getValue<input_CLK>(ctx);\n        auto din=getValue<input_DIN>(ctx);\n        auto dc=getValue<input_DC>(ctx);\n        auto ce=getValue<input_CE>(ctx);\n        auto rst=getValue<input_RST>(ctx);\n        Type display=new Adafruit_PCD8544(clk, din, dc, ce, rst);\n        display->begin();\n        display->display();\n        emitValue<output_DISPLAY>(ctx,display);\n        emitValue<output_WIDTH>(ctx,display->width());\n        emitValue<output_HEIGHT>(ctx,display->height());\n    }\n    auto display=getValue<output_DISPLAY>(ctx);\n    display->setContrast(getValue<input_CTR>(ctx));\n    if(isInputDirty<input_RST>(ctx))display->clearDisplay();\n}\n",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B10LWxnJV": {
+          "boundLiterals": {
+            "__out__": "D6"
+          },
+          "description": "Serial data out",
+          "id": "B10LWxnJV",
+          "label": "DIN",
+          "position": {
+            "x": 170,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "B1NoCenk4": {
+          "description": "Display width",
+          "id": "B1NoCenk4",
+          "label": "WIDTH",
+          "position": {
+            "x": 204,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "B1odZgnyN": {
+          "boundLiterals": {
+            "__out__": "D5"
+          },
+          "description": "Data/Command select",
+          "id": "B1odZgnyN",
+          "label": "DC",
+          "position": {
+            "x": 204,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "BJHsbenyV": {
+          "boundLiterals": {
+            "__out__": "D3"
+          },
+          "description": "LCD reset",
+          "id": "BJHsbenyV",
+          "label": "RST",
+          "position": {
+            "x": 272,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "BkQlZl2JN": {
+          "id": "BkQlZl2JN",
+          "position": {
+            "x": 136,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJ-1zehyN": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Clear display",
+          "id": "HJ-1zehyN",
+          "label": "CLR",
+          "position": {
+            "x": 374,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HJvgZg2JN": {
+          "description": "Display object",
+          "id": "HJvgZg2JN",
+          "label": "DISPLAY",
+          "position": {
+            "x": 136,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "HkhoRxhy4": {
+          "description": "Display height",
+          "id": "HkhoRxhy4",
+          "label": "HEIGHT",
+          "position": {
+            "x": 238,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HkjSbx2kN": {
+          "boundLiterals": {
+            "__out__": "D7"
+          },
+          "description": "Serial clock out",
+          "id": "HkjSbx2kN",
+          "label": "CLK",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rkCY-lhJV": {
+          "boundLiterals": {
+            "__out__": "D4"
+          },
+          "description": "LCD chip select",
+          "id": "rkCY-lhJV",
+          "label": "CE",
+          "position": {
+            "x": 238,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "ry0hWxhJV": {
+          "boundLiterals": {
+            "__out__": "55"
+          },
+          "description": "Contrast (0-100)",
+          "id": "ry0hWxhJV",
+          "label": "CTR",
+          "position": {
+            "x": 340,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/display"
+    },
+    "@/line": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n    int x1,y1,x2,y2;\n    bool black,set=false;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto display = getValue<input_DISPLAY>(ctx);\n    auto state=getState(ctx);\n    if(state->set){\n        display->drawLine(state->x1,state->y1,state->x2,state->y2,state->black?WHITE:BLACK);\n    }\n    auto start=getValue<input_START>(ctx);\n    auto end=getValue<input_END>(ctx);\n    state->x1=start->x; state->y1=start->y;\n    state->x2=end->x; state->y2=end->y;\n    state->black=getValue<input_BLACK>(ctx);\n    state->set=true;\n    display->drawLine(state->x1,state->y1,state->x2,state->y2,state->black?BLACK:WHITE);\n    display->display();\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ],
+      "nodes": {
+        "H16ywlnJV": {
+          "description": "coordinate of the start of the line",
+          "id": "H16ywlnJV",
+          "label": "START",
+          "position": {
+            "x": 68,
+            "y": 102
+          },
+          "type": "@/input-point"
+        },
+        "Hk6bvlhy4": {
+          "id": "Hk6bvlhy4",
+          "label": "DONE",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hy6fDln14": {
+          "description": "display object",
+          "id": "Hy6fDln14",
+          "label": "DISPLAY",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "@/input-display"
+        },
+        "S1mGDl31E": {
+          "description": "Draw line on the screen",
+          "id": "S1mGDl31E",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Sk--wxhk4": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Black or white color",
+          "id": "Sk--wxhk4",
+          "label": "BLACK",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rk7lPehJE": {
+          "description": "coordinate of the end of the line",
+          "id": "rk7lPehJE",
+          "label": "END",
+          "position": {
+            "x": 102,
+            "y": 102
+          },
+          "type": "@/input-point"
+        }
+      },
+      "path": "@/line"
+    },
+    "@/pixel": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n    int x,y;\n    bool black,set=false;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto display = getValue<input_DISPLAY>(ctx);\n    auto state=getState(ctx);\n    if(state->set){\n        display->drawPixel(state->x,state->y,state->black?WHITE:BLACK);\n    }\n    auto point = getValue<input_POSITION>(ctx);\n    state->x=point->x; state->y=point->y;\n    state->black=getValue<input_BLACK>(ctx);\n    state->set=true;\n    display->drawPixel(state->x,state->y,state->black?BLACK:WHITE);\n    display->display();\n    emitValue<output_DONE>(ctx,1);\n}\n"
+        }
+      ],
+      "nodes": {
+        "Bk5zBxh1N": {
+          "description": "position on screen",
+          "id": "Bk5zBxh1N",
+          "label": "POSITION",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "@/input-point"
+        },
+        "HyHNHlhJV": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Black or white color",
+          "id": "HyHNHlhJV",
+          "label": "BLACK",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "S1HQBenyV": {
+          "description": "pulse when pixel in on the screen",
+          "id": "S1HQBenyV",
+          "label": "DONE",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SkDEVxnJ4": {
+          "description": "Display object",
+          "id": "SkDEVxnJ4",
+          "label": "DISPLAY",
+          "position": {
+            "x": 34,
+            "y": 0
+          },
+          "type": "@/input-display"
+        },
+        "rkAESgh14": {
+          "description": "Draw a single pixel at position",
+          "id": "rkAESgh14",
+          "position": {
+            "x": 102,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/pixel"
+    },
+    "@/point": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "{{#global}}\nclass Point {\n    public:\n    int x, y;\n    Point ();\n    Point (int,int);\n};\n\nPoint::Point () {\n  x = 0;\n  x = 0;\n}\n\nPoint::Point (int a, int b) {\n  x = a;\n  y = b;\n}\n{{/global}}\n\nusing Type = Point*;\n\nstruct State {\n    Type point;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto x = getValue<input_X>(ctx);\n    auto y = getValue<input_Y>(ctx);\n    auto state=getState(ctx);\n    state->point = new Point(x,y);\n    emitValue<output_POINT>(ctx, state->point);\n}\n"
+        }
+      ],
+      "nodes": {
+        "BkAUQgnyE": {
+          "description": "X coordinate",
+          "id": "BkAUQgnyE",
+          "label": "X",
+          "position": {
+            "x": 68,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "H1yO7g314": {
+          "description": "2D point",
+          "id": "H1yO7g314",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1zvme21E": {
+          "description": "Y coordinate",
+          "id": "H1zvme21E",
+          "label": "Y",
+          "position": {
+            "x": 102,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "S1FP7e3J4": {
+          "description": "Point object",
+          "id": "S1FP7e3J4",
+          "label": "POINT",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/point"
+    },
+    "@/rect": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n    int x,y,width,height,radius;\n    bool fill,black,set=false;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto display = getValue<input_DISPLAY>(ctx);\n    auto point = getValue<input_POSITION>(ctx);\n    auto state = getState(ctx);\n    if(state->set){\n        if(state->fill)display->fillRoundRect(state->x,state->y,state->width,state->height,state->radius,state->black?WHITE:BLACK);\n        else display->drawRoundRect(state->x,state->y,state->width,state->height,state->radius,state->black?WHITE:BLACK);\n    }\n    state->x=point->x; state->y=point->y;\n    state->width=getValue<input_WIDTH>(ctx);\n    state->height=getValue<input_HEIGHT>(ctx);\n    state->radius=getValue<input_CORNERS>(ctx);\n    state->fill=getValue<input_FILL>(ctx);\n    state->black=getValue<input_BLACK>(ctx);\n    state->set=true;\n    if(state->fill)display->fillRoundRect(state->x,state->y,state->width,state->height,state->radius,state->black?BLACK:WHITE);\n    else display->drawRoundRect(state->x,state->y,state->width,state->height,state->radius,state->black?BLACK:WHITE);\n    display->display();\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ],
+      "nodes": {
+        "By3hOx31V": {
+          "description": "position of top left corner",
+          "id": "By3hOx31V",
+          "label": "POSITION",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "@/input-point"
+        },
+        "ByKkYg2JN": {
+          "description": "Height of the rectangle",
+          "id": "ByKkYg2JN",
+          "label": "HEIGHT",
+          "position": {
+            "x": 170,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Byz1KxnyN": {
+          "description": "Width of the rectangle",
+          "id": "Byz1KxnyN",
+          "label": "WIDTH",
+          "position": {
+            "x": 136,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "HJBgKe214": {
+          "description": "Fill the rect or not",
+          "id": "HJBgKe214",
+          "label": "FILL",
+          "position": {
+            "x": 238,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "HkUZYe2JE": {
+          "description": "Draw rectangle on screen",
+          "id": "HkUZYe2JE",
+          "position": {
+            "x": 102,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Sk9gtl2JE": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Black or white color",
+          "id": "Sk9gtl2JE",
+          "label": "BLACK",
+          "position": {
+            "x": 272,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "r1aoOe2JE": {
+          "description": "Display object",
+          "id": "r1aoOe2JE",
+          "label": "DISPLAY",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "@/input-display"
+        },
+        "rJJlYg2k4": {
+          "description": "Corners radius",
+          "id": "rJJlYg2k4",
+          "label": "CORNERS",
+          "position": {
+            "x": 204,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "ry7Zte3JV": {
+          "description": "Pulse when rect is placed on screen",
+          "id": "ry7Zte3JV",
+          "label": "DONE",
+          "position": {
+            "x": 68,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/rect"
+    },
+    "@/text": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n    int size,x,y,rotation;\n    bool black,set=false;\n    char* text;\n};\n\n{{ GENERATED_CODE }}\n\nchar* toString(XString text){\n    int count=length(text);\n    char* t = malloc((count + 1) * sizeof(char));\n    dump(text, t);\n    t[count]=0;\n    return t;\n}\n\nvoid evaluate(Context ctx) {\n    auto display = getValue<input_DISPLAY>(ctx);\n    auto state=getState(ctx);\n    if(state->set){\n        display->setTextSize(state->size);\n        display->setTextColor(state->black?WHITE:BLACK);\n        display->setCursor(state->x,state->y);\n        display->setRotation(state->rotation);\n        display->print(state->text);\n    }\n    auto point = getValue<input_POSITION>(ctx);\n    state->text=toString(getValue<input_TEXT>(ctx));\n    state->x=point->x; state->y=point->y;\n    state->size=getValue<input_SIZE>(ctx);\n    state->rotation=getValue<input_ROTATION>(ctx);\n    state->black=getValue<input_BLACK>(ctx);\n    state->set=true;\n    display->setTextSize(state->size);\n    display->setTextColor(state->black?BLACK:WHITE);\n    display->setCursor(state->x,state->y);\n    display->setRotation(state->rotation);\n    display->print(state->text);\n    display->display();\n    display->setRotation(0);\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ],
+      "nodes": {
+        "BkNG1-21N": {
+          "description": "position of tpo left of the text",
+          "id": "BkNG1-21N",
+          "label": "POSITION",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "type": "@/input-point"
+        },
+        "By4c1WnyE": {
+          "description": "Text rotation (coordinates are rotated too)\n0 - 0 degrees\n1 - 90 degrees ccw\n2 - 180 degrees ccw\n3 - 270 degrees ccw",
+          "id": "By4c1WnyE",
+          "label": "ROTATION",
+          "position": {
+            "x": 306,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BywekZ314": {
+          "description": "Display object",
+          "id": "BywekZ314",
+          "label": "DISPLAY",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "type": "@/input-display"
+        },
+        "HyRmJWnJE": {
+          "description": "Text string",
+          "id": "HyRmJWnJE",
+          "label": "TEXT",
+          "position": {
+            "x": 238,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "HyrBy-h1E": {
+          "description": "Draw text on screen",
+          "id": "HyrBy-h1E",
+          "position": {
+            "x": 204,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "S1lSyZnk4": {
+          "description": "Pulse when text is placed on screen",
+          "id": "S1lSyZnk4",
+          "label": "DONE",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SJImyZ2JN": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Black or white color",
+          "id": "SJImyZ2JN",
+          "label": "BLACK",
+          "position": {
+            "x": 272,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rJEZJb2kE": {
+          "boundLiterals": {
+            "__out__": "1"
+          },
+          "description": "Text size",
+          "id": "rJEZJb2kE",
+          "label": "SIZE",
+          "position": {
+            "x": 204,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/text"
+    },
+    "@/triangle": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n    int x1,y1,x2,y2,x3,y3;\n    bool fill,black,set=false;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto display = getValue<input_DISPLAY>(ctx);\n    auto p1 = getValue<input_P1>(ctx);\n    auto p2 = getValue<input_P2>(ctx);\n    auto p3 = getValue<input_P3>(ctx);\n    auto state=getState(ctx);\n    if(state->set){\n        if(state->fill)display->fillTriangle(state->x1,state->y1,state->x2,state->y2,state->x3,state->y3,state->black?WHITE:BLACK);\n        else display->drawTriangle(state->x1,state->y1,state->x2,state->y2,state->x3,state->y3,state->black?WHITE:BLACK);\n    }\n    state->x1=p1->x; state->y1=p1->y;\n    state->x2=p2->x; state->y2=p2->y;\n    state->x3=p3->x; state->y3=p3->y;\n    state->fill=getValue<input_FILL>(ctx);\n    state->black=getValue<input_BLACK>(ctx);\n    state->set=true;\n    if(state->fill)display->fillTriangle(state->x1,state->y1,state->x2,state->y2,state->x3,state->y3,state->black?BLACK:WHITE);\n    else display->drawTriangle(state->x1,state->y1,state->x2,state->y2,state->x3,state->y3,state->black?BLACK:WHITE);\n    display->display();\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ],
+      "nodes": {
+        "HJvj3g2kN": {
+          "description": "Fill triangle or not",
+          "id": "HJvj3g2kN",
+          "label": "FILL",
+          "position": {
+            "x": 272,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "HJx93lhJ4": {
+          "description": "position of the 1st corner",
+          "id": "HJx93lhJ4",
+          "label": "P1",
+          "position": {
+            "x": 136,
+            "y": 204
+          },
+          "type": "@/input-point"
+        },
+        "Hkc3nln1N": {
+          "description": "Pulse when triangle is placed on the screen",
+          "id": "Hkc3nln1N",
+          "label": "DONE",
+          "position": {
+            "x": 68,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hkuqhg2yN": {
+          "description": "position of the 3rd corner",
+          "id": "Hkuqhg2yN",
+          "label": "P3",
+          "position": {
+            "x": 204,
+            "y": 204
+          },
+          "type": "@/input-point"
+        },
+        "S1kT3gn1E": {
+          "description": "Draw triangle on the screen",
+          "id": "S1kT3gn1E",
+          "position": {
+            "x": 136,
+            "y": 306
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SyZh2x31V": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "Black or white color",
+          "id": "SyZh2x31V",
+          "label": "BLACK",
+          "position": {
+            "x": 306,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rkvKhg2JN": {
+          "description": "Display object",
+          "id": "rkvKhg2JN",
+          "label": "DISPLAY",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "@/input-display"
+        },
+        "ry4c3enk4": {
+          "description": "position of the 2nd corner",
+          "id": "ry4c3enk4",
+          "label": "P2",
+          "position": {
+            "x": 170,
+            "y": 204
+          },
+          "type": "@/input-point"
+        }
+      },
+      "path": "@/triangle"
+    },
+    "@/get-position": {
+      "nodes": {
+        "B1WoEfT1N": {
+          "id": "B1WoEfT1N",
+          "type": "@/input-point",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "label": "POSITION",
+          "description": "Point object"
+        },
+        "B1wj4zTkV": {
+          "id": "B1wj4zTkV",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 68,
+            "y": 306
+          },
+          "label": "X",
+          "description": "X coordinate"
+        },
+        "Sklh4Gpy4": {
+          "id": "Sklh4Gpy4",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 102,
+            "y": 306
+          },
+          "label": "Y",
+          "description": "Y coordinate"
+        },
+        "SyU2VM6JV": {
+          "id": "SyU2VM6JV",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 136,
+            "y": 204
+          },
+          "description": "Get x y coordinates from point object"
+        }
+      },
+      "path": "@/get-position",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto position = getValue<input_POSITION>(ctx);\n    emitValue<output_X>(ctx, position->x);\n    emitValue<output_Y>(ctx, position->y);\n}\n"
+        }
+      ]
+    }
+  },
+  "version": "1.0.4"
+}

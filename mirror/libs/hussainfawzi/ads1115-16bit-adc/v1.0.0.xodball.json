@@ -1,0 +1,177 @@
+{
+  "apiKey": "3cddd12c-0ede-4950-b5c6-dc830f4b9206",
+  "description": "Node for ADS1115 16bit ADC by utilizing Adafruit Library on Github",
+  "license": "Freeware",
+  "name": "ads1115-16bit-adc",
+  "patches": {
+    "@/ads1115-16bit-adc": {
+      "attachments": [
+        {
+          "content": "#pragma XOD require \"https://github.com/adafruit/Adafruit_ADS1X15\"\n\n#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPDATE\n#pragma XOD error_raise enable\n\n{{#global}}\n#include <Wire.h>\n#include <Adafruit_ADS1015.h>\n{{/global}}\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isInputDirty<input_UPDATE>(ctx))\n        return;\n\n    Number address = getValue<input_ADDR>(ctx);\n    Adafruit_ADS1115 ads(address);\n    ads.begin();\n    auto gain = getValue<input_GAIN>(ctx);\n    if(gain==0.66){ads.setGain(GAIN_TWOTHIRDS);}    // 2/3x gain +/- 6.144V  1 bit = 0.1875mV\n    else if(gain==1){ads.setGain(GAIN_ONE);}             // 1x gain   +/- 4.096V  1 bit = 0.125mV\n    else if(gain==2){ads.setGain(GAIN_TWO);}             // 2x gain   +/- 2.048V  1 bit = 0.0625mV\n    else if(gain==4){ads.setGain(GAIN_FOUR);}            // 4x gain   +/- 1.024V  1 bit = 0.03125mV\n    else if(gain==8){ads.setGain(GAIN_EIGHT);}           // 8x gain   +/- 0.512V  1 bit = 0.015625mV\n    else if(gain==16){ads.setGain(GAIN_SIXTEEN);}        // 16x gain  +/- 0.256V  1 bit = 0.0078125mV\n    int16_t buffer;\n    buffer=ads.readADC_SingleEnded(0); emitValue<output_A0>(ctx, buffer);\n    buffer=ads.readADC_SingleEnded(1); emitValue<output_A1>(ctx, buffer);\n    buffer=ads.readADC_SingleEnded(2); emitValue<output_A2>(ctx, buffer);\n    buffer=ads.readADC_SingleEnded(3); emitValue<output_A3>(ctx, buffer);\n    buffer=ads.readADC_Differential_0_1(); emitValue<output_A0_1>(ctx, buffer);\n    buffer=ads.readADC_Differential_2_3(); emitValue<output_A2_3>(ctx, buffer);\n    emitValue<output_DONE>(ctx, 1);\n};",
+          "encoding": "utf-8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "nodes": {
+        "B1989hdV8": {
+          "description": "Spits the latest value of channel A2 - A3 (differential reading).",
+          "id": "B1989hdV8",
+          "label": "A2-3",
+          "position": {
+            "x": 13,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "B1AGvhdV8": {
+          "boundLiterals": {
+            "__out__": "48h"
+          },
+          "description": "Device adress on I2C bus.",
+          "id": "B1AGvhdV8",
+          "label": "ADDR",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "H120huON8": {
+          "description": "Spits a pulse when done reading.",
+          "id": "H120huON8",
+          "label": "DONE",
+          "position": {
+            "x": 14,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HkAkmKONI": {
+          "description": "Spits the latest value of channel A2",
+          "id": "HkAkmKONI",
+          "label": "A2",
+          "position": {
+            "x": 10,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HkKvRFdVU": {
+          "boundLiterals": {
+            "__out__": "0.66"
+          },
+          "description": "Set the PGA gain",
+          "id": "HkKvRFdVU",
+          "label": "GAIN",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Hke7Fj_EL": {
+          "description": "Spits the latest value of channel A0 - A1 (differential reading).",
+          "id": "Hke7Fj_EL",
+          "label": "A0-1",
+          "position": {
+            "x": 12,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HyJww_ONL": {
+          "description": "Spits the latest value of channel A0",
+          "id": "HyJww_ONL",
+          "label": "A0",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "Hyg0yQYO4L": {
+          "description": "Spits the latest value of channel A3",
+          "id": "Hyg0yQYO4L",
+          "label": "A3",
+          "position": {
+            "x": 11,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SJQQDOuNL": {
+          "description": "ADS1115 Chip",
+          "id": "SJQQDOuNL",
+          "position": {
+            "x": 11,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SkKDvuuEU": {
+          "description": "Spits the latest value of channel A1",
+          "id": "SkKDvuuEU",
+          "label": "A1",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SkrrDOdNU": {
+          "description": "Feed a pulse signal to conduct analog reading.",
+          "id": "SkrrDOdNU",
+          "label": "UPDATE",
+          "position": {
+            "x": 13,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/ads1115-16bit-adc"
+    },
+    "@/main": {
+      "comments": {
+        "BkvgPsuNU": {
+          "content": "Device Address:-\n0X48 - ADDR connected to GND (default)\n0X49 - ADDR connected to VDD\n0X4A - ADDR connected to SDA\n0X4B - ADDR connected to SCL\n----------------------------------------------------------\nGain setting:-\nTWOTHIRDS - range +/-6.144V / 1 bit = 0.1875mV (default)\nGAIN_ONE - range +/-4.096V / 1 bit = 0.125mV\nGAIN_TWO - range +/-2.048V / 1 bit = 0.0625mV\nGAIN_FOUR - range +/-1.024V / 1 bit = 0.03125mV\nGAIN_EIGHT - range +/-0.512V / 1 bit = 0.015625mV\nGAIN_SIXTEEN - range +/-0.256V / 1 bit = 0.0078125mV",
+          "id": "BkvgPsuNU",
+          "position": {
+            "x": 16,
+            "y": 1,
+            "units": "slots"
+          },
+          "size": {
+            "height": 3,
+            "width": 10,
+            "units": "slots"
+          }
+        }
+      },
+      "nodes": {
+        "H1ai2a_48": {
+          "id": "H1ai2a_48",
+          "type": "@/ads1115-16bit-adc",
+          "position": {
+            "x": 16,
+            "y": 0,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/main"
+    }
+  },
+  "version": "1.0.0"
+}

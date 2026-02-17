@@ -1,0 +1,354 @@
+{
+  "patches": {
+    "@/encoder": {
+      "nodes": {
+        "SJXQjn7o6": {
+          "id": "SJXQjn7o6",
+          "position": {
+            "x": -6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJgFshXs6": {
+          "boundLiterals": {
+            "__out__": "D2"
+          },
+          "description": "Port for signal one. Use a hardware interrupt pin for best performance.",
+          "label": "P1",
+          "id": "rJgFshXs6",
+          "position": {
+            "x": -6,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "S1Qtsn7i6": {
+          "boundLiterals": {
+            "__out__": "D3"
+          },
+          "description": "Port for signal 2. Use a hardware interrupt pin for best performance.",
+          "label": "P2",
+          "id": "S1Qtsn7i6",
+          "position": {
+            "x": -5,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SytKshms6": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "A pulse to this input triggers a read of position.",
+          "label": "Read",
+          "id": "SytKshms6",
+          "position": {
+            "x": -4,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJdr3n7sT": {
+          "description": "Position.",
+          "label": "Pos",
+          "id": "SJdr3n7sT",
+          "position": {
+            "x": -6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "r1jcbCmsa": {
+          "description": "Pulse on read.",
+          "label": "Done",
+          "id": "r1jcbCmsa",
+          "position": {
+            "x": -5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/encoder",
+      "description": "Quadrature encoder.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/PaulStoffregen/Encoder\"\n\n//Include C++ libraries\n#include <Encoder.h>\n\nnode {\n    meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = Encoder*;\n    }\n    \n    static_assert(isValidDigitalPort(constant_input_P1), \"must be a valid digital port\");\n    static_assert(isValidDigitalPort(constant_input_P2), \"must be a valid digitial port\");\n\n    Encoder enc = Encoder(constant_input_P1, constant_input_P2);\n\n    void evaluate(Context ctx) {\n\n        if (isInputDirty<input_Read>(ctx)) {\n            emitValue<output_Pos>(ctx, enc.read());\n            emitValue<output_Done>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example-encoder": {
+      "nodes": {
+        "SJjJC37sp": {
+          "id": "SJjJC37sp",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/encoder"
+        },
+        "H1CGC3XoT": {
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "id": "H1CGC3XoT",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "Hk8oT0Xs6": {
+          "id": "Hk8oT0Xs6",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "BJeUiTRXja": {
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "id": "BJeUiTRXja",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        }
+      },
+      "links": {
+        "rJ4mRnmsT": {
+          "id": "rJ4mRnmsT",
+          "input": {
+            "nodeId": "H1CGC3XoT",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "SJjJC37sp",
+            "pinKey": "SJdr3n7sT"
+          }
+        },
+        "HyZLjpRmiT": {
+          "id": "HyZLjpRmiT",
+          "input": {
+            "nodeId": "BJeUiTRXja",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "Hk8oT0Xs6",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "BJ0sTRXoT": {
+          "id": "BJ0sTRXoT",
+          "input": {
+            "nodeId": "Hk8oT0Xs6",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "SJjJC37sp",
+            "pinKey": "r1jcbCmsa"
+          }
+        }
+      },
+      "path": "@/example-encoder",
+      "description": "Patch to test encoder. Run in debugger."
+    },
+    "@/encoder-optimized": {
+      "nodes": {
+        "SJXQjn7o6": {
+          "id": "SJXQjn7o6",
+          "position": {
+            "x": -6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJgFshXs6": {
+          "boundLiterals": {
+            "__out__": "D2"
+          },
+          "description": "Port for signal one. Use a hardware interrupt pin for best performance.",
+          "label": "P1",
+          "id": "rJgFshXs6",
+          "position": {
+            "x": -6,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "S1Qtsn7i6": {
+          "boundLiterals": {
+            "__out__": "D3"
+          },
+          "description": "Port for signal 2. Use a hardware interrupt pin for best performance.",
+          "label": "P2",
+          "id": "S1Qtsn7i6",
+          "position": {
+            "x": -5,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "SytKshms6": {
+          "boundLiterals": {
+            "__out__": "Continuously"
+          },
+          "description": "A pulse to this input triggers a read of position.",
+          "label": "Read",
+          "id": "SytKshms6",
+          "position": {
+            "x": -4,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJdr3n7sT": {
+          "description": "Position.",
+          "label": "Pos",
+          "id": "SJdr3n7sT",
+          "position": {
+            "x": -6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "r1jcbCmsa": {
+          "description": "Pulse on read.",
+          "label": "Done",
+          "id": "r1jcbCmsa",
+          "position": {
+            "x": -5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/encoder-optimized",
+      "description": "Quadrature encoder with optimized interrupt routines. Encoder will directly define interrupts to minimize overhead. N.B. there is a conflict if any other code in your patch or any libraries you use require attachInterrupt(). ",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/PaulStoffregen/Encoder\"\n\n// User optimized interrupt code\n#define ENCODER_OPTIMIZE_INTERRUPTS\n\n//Include C++ libraries\n#include <Encoder.h>\n\nnode {\n    meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = Encoder*;\n    }\n    \n    static_assert(isValidDigitalPort(constant_input_P1), \"must be a valid digital port\");\n    static_assert(isValidDigitalPort(constant_input_P2), \"must be a valid digitial port\");\n\n    Encoder enc = Encoder(constant_input_P1, constant_input_P2);\n\n    void evaluate(Context ctx) {\n\n        if (isInputDirty<input_Read>(ctx)) {\n            emitValue<output_Pos>(ctx, enc.read());\n            emitValue<output_Done>(ctx, 1);\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example-encoder-optimized": {
+      "nodes": {
+        "H1CGC3XoT": {
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "id": "H1CGC3XoT",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "ry8vp0mjp": {
+          "id": "ry8vp0mjp",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/encoder-optimized"
+        },
+        "r1PtTRXoT": {
+          "id": "r1PtTRXoT",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "BkS96C7ip": {
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "id": "BkS96C7ip",
+          "position": {
+            "x": 9,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        }
+      },
+      "links": {
+        "SJdPaR7sa": {
+          "id": "SJdPaR7sa",
+          "input": {
+            "nodeId": "H1CGC3XoT",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "ry8vp0mjp",
+            "pinKey": "SJdr3n7sT"
+          }
+        },
+        "BJ7960Qi6": {
+          "id": "BJ7960Qi6",
+          "input": {
+            "nodeId": "r1PtTRXoT",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "ry8vp0mjp",
+            "pinKey": "r1jcbCmsa"
+          }
+        },
+        "H1vcaAQop": {
+          "id": "H1vcaAQop",
+          "input": {
+            "nodeId": "BkS96C7ip",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "r1PtTRXoT",
+            "pinKey": "r1yhZRd8W"
+          }
+        }
+      },
+      "path": "@/example-encoder-optimized",
+      "description": "Patch to test optimized interrupt encoder. Run in debugger."
+    }
+  },
+  "license": "GNU General Public License v3.0",
+  "version": "0.0.3",
+  "description": "Quadrature Encoder Library for Arduino. Wraps https://github.com/PaulStoffregen/Encoder.",
+  "name": "encoder"
+}

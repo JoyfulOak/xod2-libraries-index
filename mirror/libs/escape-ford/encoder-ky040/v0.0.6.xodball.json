@@ -1,0 +1,306 @@
+{
+  "description": "Contains encoder KY040 patch, digital pullup input patch, example of usage. Encoder reads boolean inputs to obtain numerical value of revolution. Boolean outputs are used for clockwise and counterclockwise direction detection respectively.",
+  "name": "encoder-ky040",
+  "patches": {
+    "@/encoder-ky040": {
+      "nodes": {
+        "H1DdF_8Fz": {
+          "id": "H1DdF_8Fz",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "H1ewOKO8YG": {
+          "description": "Reset input",
+          "id": "H1ewOKO8YG",
+          "label": "RES",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "B1-w_KdIFz": {
+          "description": "Counterclockwise detection",
+          "id": "B1-w_KdIFz",
+          "label": "CCW",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "rJGw_FOItM": {
+          "description": "Data input node",
+          "id": "rJGw_FOItM",
+          "label": "DT",
+          "position": {
+            "x": 33,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "SJmD_Yu8Kz": {
+          "description": "Increments output",
+          "id": "SJmD_Yu8Kz",
+          "label": "OUT",
+          "position": {
+            "x": 0,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "ryVPutOLYf": {
+          "description": "Clockwise detection",
+          "id": "ryVPutOLYf",
+          "label": "CW",
+          "position": {
+            "x": 34,
+            "y": 204
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "SJrDuKuUtM": {
+          "description": "Clock input node",
+          "id": "SJrDuKuUtM",
+          "label": "CLK",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        }
+      },
+      "path": "@/encoder-ky040",
+      "description": "Encoder ky040 patch",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\n    bool lastState=false;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto state = getState(ctx);\n\n    auto CLK = (bool)getValue<input_CLK>(ctx);  // boolean digital inputs\n    auto DT = (bool)getValue<input_DT>(ctx);\n    auto RES = (bool)getValue<input_RES>(ctx);\n    Number count = getValue<output_OUT>(ctx);   // count declaration\n    auto CW=(bool)getValue<output_CW>(ctx);     // clockwise declaration\n    auto CCW=(bool)getValue<output_CCW>(ctx);   // counterclockwise declaration\n\n    auto currentState = CLK; // actual state storage\n    if ((state->lastState== true) && (currentState == false)) {\n        if (DT == true){\n            count++; // clockwise increment\n            CW=true;\n            CCW=false;\n       }else{\n            count--; // counterclockwise decrement\n            CW=false;\n            CCW=true;\n        }\n        //if (count<0) {    // uncoment this to obtain only values above zero\n        //count=0;\n        //}\n        emitValue<output_OUT>(ctx,count);\n        emitValue<output_CW>(ctx,CW);\n        emitValue<output_CCW>(ctx,CCW);\n     }\n    if (RES==true){\n        count=0;\n        emitValue<output_OUT>(ctx,count);\n    }\n    state->lastState = currentState;\n} "
+        }
+      ]
+    },
+    "@/digital-pullup-input": {
+      "nodes": {
+        "Sy85F_LtG": {
+          "description": "Board GPIO port number to read from",
+          "id": "Sy85F_LtG",
+          "label": "PORT",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "BygU5tOLFM": {
+          "boundValues": {
+            "__in__": false
+          },
+          "description": "The last read signal value",
+          "id": "BygU5tOLFM",
+          "label": "SIG",
+          "position": {
+            "x": -1,
+            "y": 207
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "HkZ89tuUtM": {
+          "boundValues": {
+            "__out__": "CONTINUOUSLY"
+          },
+          "description": "Triggers new read",
+          "id": "HkZ89tuUtM",
+          "label": "UPD",
+          "position": {
+            "x": 127,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "HJGU5Kd8tG": {
+          "id": "HJGU5Kd8tG",
+          "position": {
+            "x": 34,
+            "y": 102
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/digital-pullup-input",
+      "description": "Standard digital input node with pullup modification",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "struct State {\r\n    int configuredPort = -1;\r\n};\r\n\r\n{{ GENERATED_CODE }}\r\n\r\nvoid evaluate(Context ctx) {\r\n    if (!isInputDirty<input_UPD>(ctx))\r\n        return;\r\n\r\n    State* state = getState(ctx);\r\n    const int port = (int)getValue<input_PORT>(ctx);\r\n    if (port != state->configuredPort) {\r\n        ::pinMode(port, INPUT_PULLUP);\r\n        // Store configured port so to avoid repeating `pinMode` on\r\n        // subsequent requests\r\n        state->configuredPort = port;\r\n    }\r\n\r\n    emitValue<output_SIG>(ctx, ::digitalRead(port));\r\n}\r\n"
+        }
+      ]
+    },
+    "@/example-encoder-usage": {
+      "nodes": {
+        "rklpKuIFz": {
+          "id": "rklpKuIFz",
+          "type": "@/digital-pullup-input",
+          "position": {
+            "x": 0,
+            "y": 0
+          },
+          "label": "CLK",
+          "boundValues": {
+            "Sy85F_LtG": 7
+          }
+        },
+        "H1jy5dUKf": {
+          "id": "H1jy5dUKf",
+          "type": "@/digital-pullup-input",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "label": "DT",
+          "boundValues": {
+            "Sy85F_LtG": 8
+          }
+        },
+        "H1aycuItf": {
+          "id": "H1aycuItf",
+          "type": "@/digital-pullup-input",
+          "position": {
+            "x": 170,
+            "y": 0
+          },
+          "label": "SW",
+          "boundValues": {
+            "Sy85F_LtG": 4
+          }
+        },
+        "HJDe9OUKM": {
+          "id": "HJDe9OUKM",
+          "type": "xod/core/not",
+          "position": {
+            "x": 136,
+            "y": 0
+          }
+        },
+        "By1Z9OIKM": {
+          "id": "By1Z9OIKM",
+          "type": "@/encoder-ky040",
+          "position": {
+            "x": 34,
+            "y": 102
+          }
+        },
+        "HyDW5OUYM": {
+          "id": "HyDW5OUYM",
+          "type": "xod/core/watch",
+          "position": {
+            "x": 34,
+            "y": 204
+          }
+        },
+        "ryqW5_8Yf": {
+          "id": "ryqW5_8Yf",
+          "type": "xod/core/watch",
+          "position": {
+            "x": 68,
+            "y": 204
+          }
+        },
+        "BysW9_8tz": {
+          "id": "BysW9_8tz",
+          "type": "xod/core/watch",
+          "position": {
+            "x": 102,
+            "y": 204
+          }
+        }
+      },
+      "links": {
+        "Bk9lcuIFM": {
+          "id": "Bk9lcuIFM",
+          "output": {
+            "nodeId": "H1aycuItf",
+            "pinKey": "BygU5tOLFM"
+          },
+          "input": {
+            "nodeId": "HJDe9OUKM",
+            "pinKey": "ry3zLA_Bv1Z"
+          }
+        },
+        "HJWb9dLtf": {
+          "id": "HJWb9dLtf",
+          "output": {
+            "nodeId": "rklpKuIFz",
+            "pinKey": "BygU5tOLFM"
+          },
+          "input": {
+            "nodeId": "By1Z9OIKM",
+            "pinKey": "SJrDuKuUtM"
+          }
+        },
+        "B17ZqdIKf": {
+          "id": "B17ZqdIKf",
+          "output": {
+            "nodeId": "H1jy5dUKf",
+            "pinKey": "BygU5tOLFM"
+          },
+          "input": {
+            "nodeId": "By1Z9OIKM",
+            "pinKey": "rJGw_FOItM"
+          }
+        },
+        "rJN-9dLFz": {
+          "id": "rJN-9dLFz",
+          "output": {
+            "nodeId": "HJDe9OUKM",
+            "pinKey": "r1if8ROSDJ-"
+          },
+          "input": {
+            "nodeId": "By1Z9OIKM",
+            "pinKey": "H1ewOKO8YG"
+          }
+        },
+        "rkCZ9OUKf": {
+          "id": "rkCZ9OUKf",
+          "output": {
+            "nodeId": "By1Z9OIKM",
+            "pinKey": "SJmD_Yu8Kz"
+          },
+          "input": {
+            "nodeId": "HyDW5OUYM",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "B1kfc_UKM": {
+          "id": "B1kfc_UKM",
+          "output": {
+            "nodeId": "By1Z9OIKM",
+            "pinKey": "ryVPutOLYf"
+          },
+          "input": {
+            "nodeId": "ryqW5_8Yf",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "B1lMquUKG": {
+          "id": "B1lMquUKG",
+          "output": {
+            "nodeId": "By1Z9OIKM",
+            "pinKey": "B1-w_KdIFz"
+          },
+          "input": {
+            "nodeId": "BysW9_8tz",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "path": "@/example-encoder-usage",
+      "description": "Example of usage the encoder ky040 patch with pullup input patches"
+    }
+  },
+  "version": "0.0.6"
+}

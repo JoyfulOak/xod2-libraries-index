@@ -1,0 +1,1058 @@
+{
+  "description": "First version for BME280 sensor. Based on Wayland BMP280-barometer",
+  "name": "bme280-sensor",
+  "patches": {
+    "@/bme280-device": {
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/adafruit/Adafruit_Sensor\"\n#pragma XOD require \"https://github.com/adafruit/Adafruit_BME280_Library\"\n\n//Include C++ libraries\n{{#global}}\n#include <Adafruit_Sensor.h>\n#include <Adafruit_BME280.h>\n{{/global}}\n\n// Reserve memory to store an instance of the Adafruit_BMP280 class,\n// and create the instance later:\nstruct State {\n    uint8_t mem[sizeof(Adafruit_BME280)];\n};\n\n// Define our custom type as a pointer on the class instance.\nusing Type = Adafruit_BME280*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // It should be evaluated only once on the first (setup) transaction\n    if (!isSettingUp())\n        return;\n\n    auto state = getState(ctx);\n\n    // Create a new object in the memory area reserved previously.\n    Type bme = new (state->mem) Adafruit_BME280();\n\n    if (!bme->begin(0x76)) {\n      raiseError(ctx);\n      return;\n    }\n    uint8_t mode = getValue<input_MODE>(ctx);\n    uint8_t temp = getValue<input_OST>(ctx);\n    uint8_t pressure = getValue<input_OSP>(ctx);\n    uint8_t humidity = getValue<input_OSH>(ctx);\n    uint8_t filter = getValue<input_FILT>(ctx);\n    uint8_t standby = getValue<input_STDBY>(ctx);\n    bme -> setSampling(mode, temp, pressure, humidity, filter, standby);\n    emitValue<output_DEV>(ctx, bme);\n}\n"
+        }
+      ],
+      "nodes": {
+        "S1mOzsMSD": {
+          "id": "S1mOzsMSD",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "B1eXdzszBv": {
+          "id": "B1eXdzszBv",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "B1b7dzjGHw": {
+          "boundLiterals": {
+            "__out__": "05h"
+          },
+          "description": "Oversampling rate for pressure sensor. Options: \nno over-sampling = 00h, \n1x over-sampling = 01h, \n2x over-sampling = 02h, \n4x over-sampling = 03h, \n8x over-sampling = 04h, \n16x over-sampling = 05h.",
+          "id": "B1b7dzjGHw",
+          "label": "OSP",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "r1MmdMoMSw": {
+          "boundLiterals": {
+            "__out__": "02h"
+          },
+          "description": "Oversampling rate for temperature sensor. Options: \nno over-sampling = 00h, \n1x over-sampling = 01h, \n2x over-sampling = 02h, \n4x over-sampling = 03h, \n8x over-sampling = 04h, \n16x over-sampling = 05h.",
+          "id": "r1MmdMoMSw",
+          "label": "OST",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "SkX7OMsMrw": {
+          "boundLiterals": {
+            "__out__": "04h"
+          },
+          "description": "Standby duration in milliseconds. Options: \n1 ms = 00h, \n62.5 ms = 01h, \n125 ms = 02h, \n250 ms = 03h, \n500 ms = 04h, \n1000 ms = 05h, \n2000 ms = 06h, \n4000 ms = 07h.",
+          "id": "SkX7OMsMrw",
+          "label": "STDBY",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HkV7OMjfrP": {
+          "boundLiterals": {
+            "__out__": "03h"
+          },
+          "description": "Operating mode for the sensor. Options: \nforced mode = 01h, \nnormal mode = 03h.",
+          "id": "HkV7OMjfrP",
+          "label": "MODE",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "rkrQOGjMSw": {
+          "boundLiterals": {
+            "__out__": "04h"
+          },
+          "description": "Filtering level for sensor data. Options: \nno filtering = 00h, \n2x filtering = 01h, \n4x filtering = 02h, \n8x filtering = 03h, \n16x filtering = 04h.",
+          "id": "rkrQOGjMSw",
+          "label": "FILT",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HkG6XhMrw": {
+          "boundLiterals": {
+            "__out__": "05h"
+          },
+          "description": "Oversampling rate for humidity sensor. Options: \nno over-sampling = 00h, \n1x over-sampling = 01h, \n2x over-sampling = 02h, \n4x over-sampling = 03h, \n8x over-sampling = 04h, \n16x over-sampling = 05h.",
+          "id": "HkG6XhMrw",
+          "label": "OSH",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "path": "@/bme280-device"
+    },
+    "@/read-pressure": {
+      "nodes": {
+        "rkL9XsfHP": {
+          "description": "Pulse on read.",
+          "id": "rkL9XsfHP",
+          "label": "DONE",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SJxU5XiMSD": {
+          "description": "Update. Trigger read.",
+          "id": "SJxU5XiMSD",
+          "label": "UPD",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkbI9Xjfrw": {
+          "description": "Atmospheric pressure in Pascal.",
+          "id": "SkbI9Xjfrw",
+          "label": "PRESS",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "H1QL5mjMBw": {
+          "id": "H1QL5mjMBw",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rkr-difHD": {
+          "id": "rkr-difHD",
+          "type": "@/input-bme280-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "A BME280 device."
+        }
+      },
+      "path": "@/read-pressure",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_BME280` class instance\n    auto bme = getValue<input_DEV>(ctx);\n    emitValue<output_PRESS>(ctx, bme->readPressure()/100.0F);\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/read-temperature": {
+      "nodes": {
+        "S1qyNofBw": {
+          "description": "Temperature in degrees Celsius.",
+          "id": "S1qyNofBw",
+          "label": "TEMP",
+          "position": {
+            "x": 0,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rkb9kViGSD": {
+          "id": "rkb9kViGSD",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "HJzc14ifHw": {
+          "description": "Update. Trigger read.",
+          "id": "HJzc14ifHw",
+          "label": "UPD",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkXqJEoGSw": {
+          "description": "Pulse on read.",
+          "id": "BkXqJEoGSw",
+          "label": "DONE",
+          "position": {
+            "x": 1,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Hy8nwjfHv": {
+          "id": "Hy8nwjfHv",
+          "type": "@/input-bme280-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "A BME280 device."
+        }
+      },
+      "path": "@/read-temperature",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_BME280` class instance\n    auto bme = getValue<input_DEV>(ctx);\n    emitValue<output_TEMP>(ctx, bme->readTemperature());\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/sensor-bme280": {
+      "nodes": {
+        "H18VXofHv": {
+          "description": "Update. Trigger read of temperature and pressure.",
+          "id": "H18VXofHv",
+          "label": "UPD",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SkbI47oMrv": {
+          "boundLiterals": {
+            "__out__": "03h"
+          },
+          "description": "Operating mode for the sensor. Options: forced mode = 01h, normal mode = 03h.",
+          "id": "SkbI47oMrv",
+          "label": "MODE",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HJfLEXjGrv": {
+          "boundLiterals": {
+            "__out__": "02h"
+          },
+          "description": "Oversampling rate for temperature sensor. Options: \nno over-sampling = 00h, \n1x over-sampling = 01h, \n2x over-sampling = 02h, \n4x over-sampling = 03h, \n8x over-sampling = 04h, \n16x over-sampling = 05h.",
+          "id": "HJfLEXjGrv",
+          "label": "OST",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HkVUE7ozrv": {
+          "boundLiterals": {
+            "__out__": "04h"
+          },
+          "description": "Filtering level for sensor data. Options: \nno filtering = 00h, \n2x filtering = 01h, \n4x filtering = 02h, \n8x filtering = 03h, \n16x filtering = 04h.",
+          "id": "HkVUE7ozrv",
+          "label": "FILT",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "ryHLE7sMBw": {
+          "description": "Atmospheric pressure in Pascal.",
+          "id": "ryHLE7sMBw",
+          "label": "PRESS",
+          "position": {
+            "x": 11,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BJUIN7ozBv": {
+          "description": "Temperature in degrees Celsius.",
+          "id": "BJUIN7ozBv",
+          "label": "TEMP",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BJDL47jzrD": {
+          "description": "Pulse on read.",
+          "id": "BJDL47jzrD",
+          "label": "DONE",
+          "position": {
+            "x": 18,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rkOIE7ifBv": {
+          "boundLiterals": {
+            "__out__": "05h"
+          },
+          "description": "Oversampling rate for pressure sensor. \nOptions: \nno over-sampling = 00h, \n1x over-sampling = 01h, \n2x over-sampling = 02h, \n4x over-sampling = 03h, \n8x over-sampling = 04h, \n16x over-sampling = 05h.",
+          "id": "rkOIE7ifBv",
+          "label": "OSP",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "H1t8NXoGSv": {
+          "boundLiterals": {
+            "__out__": "04h"
+          },
+          "description": "Standby duration in milliseconds. Options: 1 ms = 00h, 62.5 ms = 01h, 125 ms = 02h, 250 ms = 03h, 500 ms = 04h, 1000 ms = 05h, 2000 ms = 06h, 4000 ms = 07h.",
+          "id": "H1t8NXoGSv",
+          "label": "STDBY",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HyJSXjMHv": {
+          "id": "HyJSXjMHv",
+          "type": "@/bme280-device",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rk8QIizHP": {
+          "id": "rk8QIizHP",
+          "type": "@/read-temperature",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rksmujMHD": {
+          "id": "rksmujMHD",
+          "type": "@/read-pressure",
+          "position": {
+            "x": 11,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BJk6ijfrw": {
+          "description": "Humidity in %",
+          "id": "BJk6ijfrw",
+          "label": "HUM",
+          "position": {
+            "x": 14,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HyPknjMrv": {
+          "id": "HyPknjMrv",
+          "type": "@/read-humidity",
+          "position": {
+            "x": 14,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "rJH7nsfSw": {
+          "id": "rJH7nsfSw",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "HkJE3ofrw": {
+          "id": "HkJE3ofrw",
+          "type": "xod/patch-nodes/to-bus",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "S1Nc3jzBD": {
+          "id": "S1Nc3jzBD",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 11,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "rJvqhszSw": {
+          "id": "rJvqhszSw",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 14,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "Sk-3l3zBw": {
+          "id": "Sk-3l3zBw",
+          "type": "@/read-altitude",
+          "position": {
+            "x": 17,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "B183ehGrw": {
+          "description": "Altitude in ft",
+          "id": "B183ehGrw",
+          "label": "ALT",
+          "position": {
+            "x": 17,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "B1GCgnMBw": {
+          "id": "B1GCgnMBw",
+          "type": "xod/patch-nodes/from-bus",
+          "position": {
+            "x": 17,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV"
+        },
+        "Hyis7nGrw": {
+          "boundLiterals": {
+            "__out__": "05h"
+          },
+          "description": "Oversampling rate for humidity sensor. Options: \nno over-sampling = 00h, \n1x over-sampling = 01h, \n2x over-sampling = 02h, \n4x over-sampling = 03h, \n8x over-sampling = 04h, \n16x over-sampling = 05h.",
+          "id": "Hyis7nGrw",
+          "label": "OSH",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        }
+      },
+      "links": {
+        "ByDH7iMBw": {
+          "id": "ByDH7iMBw",
+          "output": {
+            "nodeId": "SkbI47oMrv",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HyJSXjMHv",
+            "pinKey": "HkV7OMjfrP"
+          }
+        },
+        "B1tH7jzSD": {
+          "id": "B1tH7jzSD",
+          "output": {
+            "nodeId": "HJfLEXjGrv",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HyJSXjMHv",
+            "pinKey": "r1MmdMoMSw"
+          }
+        },
+        "HkjBXizrD": {
+          "id": "HkjBXizrD",
+          "output": {
+            "nodeId": "rkOIE7ifBv",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HyJSXjMHv",
+            "pinKey": "B1b7dzjGHw"
+          }
+        },
+        "Hy6SQiGSw": {
+          "id": "Hy6SQiGSw",
+          "output": {
+            "nodeId": "HkVUE7ozrv",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HyJSXjMHv",
+            "pinKey": "rkrQOGjMSw"
+          }
+        },
+        "SJeUQoGHD": {
+          "id": "SJeUQoGHD",
+          "output": {
+            "nodeId": "H1t8NXoGSv",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HyJSXjMHv",
+            "pinKey": "SkX7OMsMrw"
+          }
+        },
+        "r1oyOifrP": {
+          "id": "r1oyOifrP",
+          "output": {
+            "nodeId": "H18VXofHv",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rk8QIizHP",
+            "pinKey": "HJzc14ifHw"
+          }
+        },
+        "BJmVujzHv": {
+          "id": "BJmVujzHv",
+          "output": {
+            "nodeId": "rk8QIizHP",
+            "pinKey": "S1qyNofBw"
+          },
+          "input": {
+            "nodeId": "BJUIN7ozBv",
+            "pinKey": "__in__"
+          }
+        },
+        "By_VuizSv": {
+          "id": "By_VuizSv",
+          "output": {
+            "nodeId": "rksmujMHD",
+            "pinKey": "SkbI9Xjfrw"
+          },
+          "input": {
+            "nodeId": "ryHLE7sMBw",
+            "pinKey": "__in__"
+          }
+        },
+        "r1ZHuifrP": {
+          "id": "r1ZHuifrP",
+          "output": {
+            "nodeId": "rk8QIizHP",
+            "pinKey": "BkXqJEoGSw"
+          },
+          "input": {
+            "nodeId": "rksmujMHD",
+            "pinKey": "SJxU5XiMSD"
+          }
+        },
+        "BkcX3ifBw": {
+          "id": "BkcX3ifBw",
+          "output": {
+            "nodeId": "rJH7nsfSw",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rk8QIizHP",
+            "pinKey": "Hy8nwjfHv"
+          }
+        },
+        "SyfNhifSw": {
+          "id": "SyfNhifSw",
+          "output": {
+            "nodeId": "HyJSXjMHv",
+            "pinKey": "B1eXdzszBv"
+          },
+          "input": {
+            "nodeId": "HkJE3ofrw",
+            "pinKey": "__in__"
+          }
+        },
+        "HkH82oGrv": {
+          "id": "HkH82oGrv",
+          "output": {
+            "nodeId": "rksmujMHD",
+            "pinKey": "rkL9XsfHP"
+          },
+          "input": {
+            "nodeId": "HyPknjMrv",
+            "pinKey": "HylODsjGBP"
+          }
+        },
+        "SkU53sGBv": {
+          "id": "SkU53sGBv",
+          "output": {
+            "nodeId": "S1Nc3jzBD",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "rksmujMHD",
+            "pinKey": "rkr-difHD"
+          }
+        },
+        "S1Y9hiGSD": {
+          "id": "S1Y9hiGSD",
+          "output": {
+            "nodeId": "rJvqhszSw",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HyPknjMrv",
+            "pinKey": "SJm_PoszrP"
+          }
+        },
+        "r1Zi3izSw": {
+          "id": "r1Zi3izSw",
+          "output": {
+            "nodeId": "HyPknjMrv",
+            "pinKey": "BkZODsjzrP"
+          },
+          "input": {
+            "nodeId": "BJk6ijfrw",
+            "pinKey": "__in__"
+          }
+        },
+        "B1zrTg3zSv": {
+          "id": "B1zrTg3zSv",
+          "output": {
+            "nodeId": "Sk-3l3zBw",
+            "pinKey": "SJZjzl3MBv"
+          },
+          "input": {
+            "nodeId": "B183ehGrw",
+            "pinKey": "__in__"
+          }
+        },
+        "r1o6x3GBD": {
+          "id": "r1o6x3GBD",
+          "output": {
+            "nodeId": "Sk-3l3zBw",
+            "pinKey": "ryszxnfSv"
+          },
+          "input": {
+            "nodeId": "BJDL47jzrD",
+            "pinKey": "__in__"
+          }
+        },
+        "S11ClnfrD": {
+          "id": "S11ClnfrD",
+          "output": {
+            "nodeId": "HyPknjMrv",
+            "pinKey": "B1dvssfSw"
+          },
+          "input": {
+            "nodeId": "Sk-3l3zBw",
+            "pinKey": "rygozehfBP"
+          }
+        },
+        "HJBAgnGrw": {
+          "id": "HJBAgnGrw",
+          "output": {
+            "nodeId": "B1GCgnMBw",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "Sk-3l3zBw",
+            "pinKey": "rJXjfehzSD"
+          }
+        },
+        "rJBZuhGBD": {
+          "id": "rJBZuhGBD",
+          "output": {
+            "nodeId": "Hyis7nGrw",
+            "pinKey": "__out__"
+          },
+          "input": {
+            "nodeId": "HyJSXjMHv",
+            "pinKey": "HkG6XhMrw"
+          }
+        }
+      },
+      "path": "@/sensor-bme280"
+    },
+    "@/example-test-sensor-bme280": {
+      "nodes": {
+        "S16TOizBw": {
+          "id": "S16TOizBw",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "BJlp6doMrD": {
+          "id": "BJlp6doMrD",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "Hy-paujGHP": {
+          "id": "Hy-paujGHP",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "rkGaTdsMBP": {
+          "id": "rkGaTdsMBP",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "B14aT_iGHv": {
+          "boundLiterals": {
+            "B13SCNhl-": "0.5"
+          },
+          "id": "B14aT_iGHv",
+          "position": {
+            "x": 6,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "S18C_izHw": {
+          "id": "S18C_izHw",
+          "type": "@/sensor-bme280",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "H1t8NXoGSv": "00h",
+            "HkVUE7ozrv": "03h"
+          }
+        },
+        "H1ujnoGrw": {
+          "id": "H1ujnoGrw",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "S1DkZnzSD": {
+          "id": "S1DkZnzSD",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        }
+      },
+      "links": {
+        "SJOTT_ozBw": {
+          "id": "SJOTT_ozBw",
+          "input": {
+            "nodeId": "S16TOizBw",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "rkGaTdsMBP",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "r1c0uiGrD": {
+          "id": "r1c0uiGrD",
+          "output": {
+            "nodeId": "B14aT_iGHv",
+            "pinKey": "HJU8CE2lW"
+          },
+          "input": {
+            "nodeId": "S18C_izHw",
+            "pinKey": "H18VXofHv"
+          }
+        },
+        "ByJJFjMrD": {
+          "id": "ByJJFjMrD",
+          "output": {
+            "nodeId": "S18C_izHw",
+            "pinKey": "BJUIN7ozBv"
+          },
+          "input": {
+            "nodeId": "Hy-paujGHP",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "r171FozHP": {
+          "id": "r171FozHP",
+          "output": {
+            "nodeId": "S18C_izHw",
+            "pinKey": "ryHLE7sMBw"
+          },
+          "input": {
+            "nodeId": "BJlp6doMrD",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "ByiktjMSD": {
+          "id": "ByiktjMSD",
+          "output": {
+            "nodeId": "S18C_izHw",
+            "pinKey": "BJDL47jzrD"
+          },
+          "input": {
+            "nodeId": "rkGaTdsMBP",
+            "pinKey": "HJAq-A_8-"
+          }
+        },
+        "ByijhiGHP": {
+          "id": "ByijhiGHP",
+          "output": {
+            "nodeId": "S18C_izHw",
+            "pinKey": "BJk6ijfrw"
+          },
+          "input": {
+            "nodeId": "H1ujnoGrw",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "Sk5JbnMSw": {
+          "id": "Sk5JbnMSw",
+          "output": {
+            "nodeId": "S18C_izHw",
+            "pinKey": "B183ehGrw"
+          },
+          "input": {
+            "nodeId": "S1DkZnzSD",
+            "pinKey": "HkXK-dGob"
+          }
+        }
+      },
+      "comments": {
+        "Hy5TTOjfSw": {
+          "content": "The count node records the number of readings.",
+          "id": "Hy5TTOjfSw",
+          "position": {
+            "x": 11,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 4,
+            "units": "slots"
+          }
+        }
+      },
+      "path": "@/example-test-sensor-bme280"
+    },
+    "@/read-humidity": {
+      "nodes": {
+        "B1dvssfSw": {
+          "description": "Pulse on read.",
+          "id": "B1dvssfSw",
+          "label": "DONE",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "HylODsjGBP": {
+          "description": "Update. Trigger read.",
+          "id": "HylODsjGBP",
+          "label": "UPD",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "BkZODsjzrP": {
+          "description": "Relative Humidity in %",
+          "id": "BkZODsjzrP",
+          "label": "HUM",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "BJfOwsizHv": {
+          "id": "BJfOwsizHv",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJm_PoszrP": {
+          "id": "SJm_PoszrP",
+          "type": "@/input-bme280-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "A BME280 device."
+        }
+      },
+      "path": "@/read-humidity",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_BME280` class instance\n    auto bme = getValue<input_DEV>(ctx);\n    emitValue<output_HUM>(ctx, bme->readHumidity());\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    },
+    "@/read-altitude": {
+      "nodes": {
+        "ryszxnfSv": {
+          "description": "Pulse on read.",
+          "id": "ryszxnfSv",
+          "label": "DONE",
+          "position": {
+            "x": 1,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "rygozehfBP": {
+          "description": "Update. Trigger read.",
+          "id": "rygozehfBP",
+          "label": "UPD",
+          "position": {
+            "x": 1,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SJZjzl3MBv": {
+          "description": "Altitude in ft\n0 to 30.000 ft (+-1 meter accuracy)",
+          "id": "SJZjzl3MBv",
+          "label": "ALT",
+          "position": {
+            "x": 0,
+            "y": 1.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rkGsGenfrD": {
+          "id": "rkGsGenfrD",
+          "position": {
+            "x": 0,
+            "y": 0.75,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJXjfehzSD": {
+          "id": "rJXjfehzSD",
+          "type": "@/input-bme280-device",
+          "position": {
+            "x": 0,
+            "y": -0.25,
+            "units": "slots"
+          },
+          "label": "DEV",
+          "description": "A BME280 device."
+        }
+      },
+      "path": "@/read-altitude",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#define SEALEVELPRESSURE_HPA (1013.25)\n\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `Adafruit_BME280` class instance\n    auto bme = getValue<input_DEV>(ctx);\n    emitValue<output_ALT>(ctx, bme->readAltitude(SEALEVELPRESSURE_HPA));\n    emitValue<output_DONE>(ctx, 1);\n}\n"
+        }
+      ]
+    }
+  },
+  "version": "1.0.1"
+}

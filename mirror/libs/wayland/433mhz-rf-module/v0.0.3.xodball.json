@@ -1,0 +1,1292 @@
+{
+  "description": "Arduino library for 433MHz RF transmitter and receiver modules. Wraps the RH_ASK driver from the RadioHead Packet Radio library for embedded microprocessors (https://www.airspayce.com/mikem/arduino/RadioHead/). ",
+  "license": "GNU General Public License, version 2",
+  "name": "433mhz-rf-module",
+  "patches": {
+    "@/433-rf-device": {
+      "attachments": [
+        {
+          "content": "// Tell XOD where it could download the library:\n#pragma XOD require \"https://github.com/adafruit/RadioHead\"\n\n\n//Include C++ libraries\n{{#global}}\n#include <RH_ASK.h>\n#include <SPI.h>\n{{/global}}\n\n//Reserve memory to store an instance of the class RH_ASK\nstruct State {\n    uint8_t mem[sizeof(RH_ASK)];\n};\n\n// Define our custom type as a pointer on the class instance.\nusing Type = RH_ASK*;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    if (!isSettingUp()) return;\n\n    auto state = getState(ctx);\n\n    // Create a new object in the memory area reserved previously.\n    Type driver = new (state->mem) RH_ASK();\n\n    if (!driver->init()) {\n      raiseError(ctx);\n      return;\n    }\n\n    emitValue<output_DEV>(ctx, driver);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Create a 433-rf-device. Can be used as transmitter or receiver. Arduino will use pin 12 to send data to the transmitter and pin 11 to get data from the receiver.",
+      "nodes": {
+        "Bk9wbiutB": {
+          "description": "A 433-rf-device.",
+          "id": "Bk9wbiutB",
+          "label": "DEV",
+          "position": {
+            "x": -15,
+            "y": -2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        },
+        "S1uAuquKB": {
+          "id": "S1uAuquKB",
+          "position": {
+            "x": -15,
+            "y": -3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/433-rf-device"
+    },
+    "@/433-rf-receive": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n    uint8_t buf[RH_ASK_MAX_MESSAGE_LEN];\n    CStringView view;\n    State() : view(buf) {}\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto state = getState(ctx);\n\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n    // Get a pointer to the `RH_ASK` class instance\n    auto driver = getValue<input_DEV>(ctx);\n\n    uint8_t buflen = sizeof(state->buf);\n\n    // clear buffer\n    memset(state->buf, 0, buflen);\n\n    if (driver->recv(state->buf, &buflen)) // Non-blocking\n    {\n        emitValue<output_MSG>(ctx, XString(&state->view));\n        emitValue<output_REC>(ctx, 1);\n    }\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Receive a message as a string. Pin 11 of the Arduino should be connected to the data pin of the receiver.",
+      "nodes": {
+        "B1H5ioOYB": {
+          "description": "A 433-rf-device.\n",
+          "id": "B1H5ioOYB",
+          "label": "DEV",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-433-rf-device"
+        },
+        "B1aP2idKS": {
+          "description": "Update. Check if new message has been received.",
+          "id": "B1aP2idKS",
+          "label": "UPD",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "S1injjdtr": {
+          "description": "Message. The message that has been received.",
+          "id": "S1injjdtr",
+          "label": "MSG",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "SJfKoj_Yr": {
+          "id": "SJfKoj_Yr",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "Skwm-2OtH": {
+          "description": "Received. Pulse on reception of message.",
+          "id": "Skwm-2OtH",
+          "label": "REC",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/433-rf-receive"
+    },
+    "@/433-rf-transmit": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    // The node responds only if there is an input pulse\n    if (!isInputDirty<input_SEND>(ctx))\n        return;\n\n    // Get a pointer to the `RH_ASK` class instance\n    auto driver = getValue<input_DEV>(ctx);\n\n    auto xString = getValue<input_MSG>(ctx);\n    int N=length(xString) + 1;\n    char cString[N];\n    for(int i=0;i<N;i++)\n    cString[i]=0;\n    dump(xString, cString);\n    driver->send(cString, strlen(cString));\n    driver->waitPacketSent();\n\n    emitValue<output_SENT>(ctx, 1);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Transmit a string using 433-rf-device. Pin 12 of Arduino should be connected to the data pin of the transmitter.",
+      "nodes": {
+        "BkragsdKH": {
+          "description": "Send message on pulse.",
+          "id": "BkragsdKH",
+          "label": "SEND",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "H17PloOtS": {
+          "boundLiterals": {
+            "__out__": "\"Hello world!\""
+          },
+          "description": "Message to be transmitted.",
+          "id": "H17PloOtS",
+          "label": "MSG",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "SJmJ-i_FH": {
+          "description": "Pulse on each message sent.",
+          "id": "SJmJ-i_FH",
+          "label": "SENT",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "Sk1Llj_YB": {
+          "id": "Sk1Llj_YB",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rkjlziOKS": {
+          "description": "A 433-rf-device.",
+          "id": "rkjlziOKS",
+          "label": "DEV",
+          "position": {
+            "x": -1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-433-rf-device"
+        }
+      },
+      "path": "@/433-rf-transmit"
+    },
+    "@/example1-receiver": {
+      "description": "Simple test of receiver. Should be paired with example1-transmitter. Run this patch in debug mode on the Arduino connected to the receiver. Watch nodes will be updated with the latest message received and the number of messages received.",
+      "links": {
+        "SJOCWn_Fr": {
+          "id": "SJOCWn_Fr",
+          "input": {
+            "nodeId": "HJzAZh_tB",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "ryU5Whutr",
+            "pinKey": "Skwm-2OtH"
+          }
+        },
+        "rJ6TWh_Yr": {
+          "id": "rJ6TWh_Yr",
+          "input": {
+            "nodeId": "rJKTb2dYS",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "ryU5Whutr",
+            "pinKey": "S1injjdtr"
+          }
+        },
+        "rkCAW3_YH": {
+          "id": "rkCAW3_YH",
+          "input": {
+            "nodeId": "HysCW2uFH",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "HJzAZh_tB",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "rkps-nOKH": {
+          "id": "rkps-nOKH",
+          "input": {
+            "nodeId": "ryU5Whutr",
+            "pinKey": "B1H5ioOYB"
+          },
+          "output": {
+            "nodeId": "HyIj-nOYS",
+            "pinKey": "Bk9wbiutB"
+          }
+        }
+      },
+      "nodes": {
+        "HJzAZh_tB": {
+          "id": "HJzAZh_tB",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        },
+        "HyIj-nOYS": {
+          "id": "HyIj-nOYS",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/433-rf-device"
+        },
+        "HysCW2uFH": {
+          "id": "HysCW2uFH",
+          "position": {
+            "x": 7,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "rJKTb2dYS": {
+          "id": "rJKTb2dYS",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 5,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "ryU5Whutr": {
+          "boundLiterals": {
+            "B1aP2idKS": "Continuously"
+          },
+          "id": "ryU5Whutr",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/433-rf-receive"
+        }
+      },
+      "path": "@/example1-receiver"
+    },
+    "@/example1-transmitter": {
+      "comments": {
+        "Byhm89aYr": {
+          "content": "In debug mode the watch node will indicate how many times the message has been sent.",
+          "id": "Byhm89aYr",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 6,
+            "units": "slots"
+          }
+        }
+      },
+      "description": "Simple test of transmitter. Should be paired with example1-receiver. Upload this patch to the Arduino connected to the transmitter. The message \"Hello world!\" will be repeatedly transmitted at a frequency specified by the clock node. ",
+      "links": {
+        "Bkw1LsdKB": {
+          "id": "Bkw1LsdKB",
+          "input": {
+            "nodeId": "Sy2sHiuYH",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "r1pRro_YS",
+            "pinKey": "r1yhZRd8W"
+          }
+        },
+        "H1EiHjdtH": {
+          "id": "H1EiHjdtH",
+          "input": {
+            "nodeId": "HkMorjOYH",
+            "pinKey": "rkjlziOKS"
+          },
+          "output": {
+            "nodeId": "r11oHouFS",
+            "pinKey": "Bk9wbiutB"
+          }
+        },
+        "HJSJLjdKS": {
+          "id": "HJSJLjdKS",
+          "input": {
+            "nodeId": "r1pRro_YS",
+            "pinKey": "HJAq-A_8-"
+          },
+          "output": {
+            "nodeId": "HkMorjOYH",
+            "pinKey": "SJmJ-i_FH"
+          }
+        },
+        "r1qTHsOFB": {
+          "id": "r1qTHsOFB",
+          "input": {
+            "nodeId": "HkMorjOYH",
+            "pinKey": "BkragsdKH"
+          },
+          "output": {
+            "nodeId": "HJVaridKS",
+            "pinKey": "HJU8CE2lW"
+          }
+        }
+      },
+      "nodes": {
+        "HJVaridKS": {
+          "boundLiterals": {
+            "B13SCNhl-": "0.5"
+          },
+          "id": "HJVaridKS",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "HkMorjOYH": {
+          "id": "HkMorjOYH",
+          "position": {
+            "x": -1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/433-rf-transmit"
+        },
+        "Sy2sHiuYH": {
+          "id": "Sy2sHiuYH",
+          "position": {
+            "x": -1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "r11oHouFS": {
+          "id": "r11oHouFS",
+          "position": {
+            "x": -1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/433-rf-device"
+        },
+        "r1pRro_YS": {
+          "id": "r1pRro_YS",
+          "position": {
+            "x": -1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/count"
+        }
+      },
+      "path": "@/example1-transmitter"
+    },
+    "@/example2-receiver": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    //auto inValue = getValue<input_IN>(ctx);\n    //emitValue<output_OUT>(ctx, inValue);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Reception of sensor data. Should be paired with example2-transmitter. Each message received is a string comprising three measurements in comma-separeted format. Each of the three measurements are extracted from the message string and reformatted for display on an LCD screen.",
+      "links": {
+        "Bkz5rnjFH": {
+          "id": "Bkz5rnjFH",
+          "input": {
+            "nodeId": "BJV9b73iYr",
+            "pinKey": "BkeKcj6ZZ"
+          },
+          "output": {
+            "nodeId": "ryyOBssKH",
+            "pinKey": "By7JLrioYr"
+          }
+        },
+        "ByVcShjYH": {
+          "id": "ByVcShjYH",
+          "input": {
+            "nodeId": "BJV9b73iYr",
+            "pinKey": "BkeKcj6ZZ-$2"
+          },
+          "output": {
+            "nodeId": "ByjOHsoKH",
+            "pinKey": "By7JLrioYr"
+          }
+        },
+        "SJBsShstB": {
+          "id": "SJBsShstB",
+          "input": {
+            "nodeId": "rJ89S3str",
+            "pinKey": "BkeKcj6ZZ"
+          },
+          "output": {
+            "nodeId": "rk2uBjitB",
+            "pinKey": "By7JLrioYr"
+          }
+        },
+        "Sk1cKlTFr": {
+          "id": "Sk1cKlTFr",
+          "input": {
+            "nodeId": "ryyOBssKH",
+            "pinKey": "BkGJLrssFB"
+          },
+          "output": {
+            "nodeId": "ryxPqJWitS",
+            "pinKey": "S1injjdtr"
+          }
+        },
+        "Sy-Dq1boFr": {
+          "id": "Sy-Dq1boFr",
+          "input": {
+            "nodeId": "ryxPqJWitS",
+            "pinKey": "B1H5ioOYB"
+          },
+          "output": {
+            "nodeId": "ryPc1WiKH",
+            "pinKey": "Bk9wbiutB"
+          }
+        },
+        "Sye5Ke6FH": {
+          "id": "Sye5Ke6FH",
+          "input": {
+            "nodeId": "ByjOHsoKH",
+            "pinKey": "BkGJLrssFB"
+          },
+          "output": {
+            "nodeId": "ryxPqJWitS",
+            "pinKey": "S1injjdtr"
+          }
+        },
+        "rym9KgaYH": {
+          "id": "rym9KgaYH",
+          "input": {
+            "nodeId": "rk2uBjitB",
+            "pinKey": "BkGJLrssFB"
+          },
+          "output": {
+            "nodeId": "ryxPqJWitS",
+            "pinKey": "S1injjdtr"
+          }
+        },
+        "SyHzU449S": {
+          "id": "SyHzU449S",
+          "output": {
+            "nodeId": "BJV9b73iYr",
+            "pinKey": "rksccsp-W"
+          },
+          "input": {
+            "nodeId": "rylb8V4cH",
+            "pinKey": "BJ3DAE1QS"
+          }
+        },
+        "Hyvz8N4cS": {
+          "id": "Hyvz8N4cS",
+          "output": {
+            "nodeId": "rJ89S3str",
+            "pinKey": "rksccsp-W"
+          },
+          "input": {
+            "nodeId": "rylb8V4cH",
+            "pinKey": "rJgnw0417B"
+          }
+        }
+      },
+      "nodes": {
+        "BJV9b73iYr": {
+          "arityLevel": 3,
+          "boundLiterals": {
+            "BkeKcj6ZZ": "\" \"",
+            "BkeKcj6ZZ-$1": "\"  Y: \"",
+            "BkeKcj6ZZ-$2": "\"\"",
+            "BkeKcj6ZZ-$3": "\" Z:\"",
+            "BkeKcj6ZZ-$6": "\"   \"",
+            "Hkqu9oaWb": "\"X: \""
+          },
+          "id": "BJV9b73iYr",
+          "position": {
+            "x": 0,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/concat"
+        },
+        "ByjOHsoKH": {
+          "boundLiterals": {
+            "B1y8HssYS": "2Ch",
+            "Bkgk8BisYS": "1"
+          },
+          "id": "ByjOHsoKH",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/parse-tabular-mtw"
+        },
+        "rJ89S3str": {
+          "boundLiterals": {
+            "BkeKcj6ZZ": "\" \"",
+            "BkeKcj6ZZ-$1": "\" Y:\"",
+            "BkeKcj6ZZ-$2": "\"\"",
+            "BkeKcj6ZZ-$3": "\" Z:\"",
+            "BkeKcj6ZZ-$6": "\"   \"",
+            "Hkqu9oaWb": "\"Z: \""
+          },
+          "id": "rJ89S3str",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/concat"
+        },
+        "rk2uBjitB": {
+          "boundLiterals": {
+            "B1y8HssYS": "2Ch",
+            "Bkgk8BisYS": "2"
+          },
+          "id": "rk2uBjitB",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/parse-tabular-mtw"
+        },
+        "ryPc1WiKH": {
+          "id": "ryPc1WiKH",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/433-rf-device"
+        },
+        "ryxPqJWitS": {
+          "boundLiterals": {
+            "B1aP2idKS": "Continuously"
+          },
+          "id": "ryxPqJWitS",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/433-rf-receive"
+        },
+        "ryyOBssKH": {
+          "boundLiterals": {
+            "B1y8HssYS": "2Ch"
+          },
+          "id": "ryyOBssKH",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/parse-tabular-mtw"
+        },
+        "rylb8V4cH": {
+          "id": "rylb8V4cH",
+          "type": "xod-dev/text-lcd/text-lcd-i2c-16x2",
+          "position": {
+            "x": 0,
+            "y": 4,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "rkedCVkXS": "38h",
+            "BJ3DAE1QS": "\"Message:\""
+          }
+        }
+      },
+      "path": "@/example2-receiver"
+    },
+    "@/example2-transmitter": {
+      "description": "Transmission of sensor data. Should be paired with example2-receiver. Three measurements from the sensor are formatted as a comma-separated string prior to transmission.",
+      "links": {
+        "BkTqQv5FB": {
+          "id": "BkTqQv5FB",
+          "input": {
+            "nodeId": "HJpq0S9FS",
+            "pinKey": "BJlHojaWZ"
+          },
+          "output": {
+            "nodeId": "ryLHXDqtS",
+            "pinKey": "HkW8a73Y7V"
+          }
+        },
+        "ByiXkI5tH": {
+          "id": "ByiXkI5tH",
+          "input": {
+            "nodeId": "B16M1L9tS",
+            "pinKey": "BkeKcj6ZZ-$1"
+          },
+          "output": {
+            "nodeId": "Sy3qASctB",
+            "pinKey": "r1H_oipZb"
+          }
+        },
+        "HJYzwL5tr": {
+          "id": "HJYzwL5tr",
+          "input": {
+            "nodeId": "HyxNOJ85Fr",
+            "pinKey": "H17PloOtS"
+          },
+          "output": {
+            "nodeId": "B16M1L9tS",
+            "pinKey": "rksccsp-W"
+          }
+        },
+        "HkQE_y8ctH": {
+          "id": "HkQE_y8ctH",
+          "input": {
+            "nodeId": "HyxNOJ85Fr",
+            "pinKey": "rkjlziOKS"
+          },
+          "output": {
+            "nodeId": "S14OyL9tH",
+            "pinKey": "Bk9wbiutB"
+          }
+        },
+        "HkRKmD9YH": {
+          "id": "HkRKmD9YH",
+          "input": {
+            "nodeId": "r14qCH5tr",
+            "pinKey": "BJlHojaWZ"
+          },
+          "output": {
+            "nodeId": "ryLHXDqtS",
+            "pinKey": "SyU6QhK7N"
+          }
+        },
+        "Hy2cXv9tS": {
+          "id": "Hy2cXv9tS",
+          "input": {
+            "nodeId": "Sy3qASctB",
+            "pinKey": "BJlHojaWZ"
+          },
+          "output": {
+            "nodeId": "ryLHXDqtS",
+            "pinKey": "B1xUpXhF7V"
+          }
+        },
+        "S127yL9FB": {
+          "id": "S127yL9FB",
+          "input": {
+            "nodeId": "B16M1L9tS",
+            "pinKey": "BkeKcj6ZZ-$3"
+          },
+          "output": {
+            "nodeId": "HJpq0S9FS",
+            "pinKey": "r1H_oipZb"
+          }
+        },
+        "SkOoQv5KH": {
+          "id": "SkOoQv5KH",
+          "input": {
+            "nodeId": "HyxNOJ85Fr",
+            "pinKey": "BkragsdKH"
+          },
+          "output": {
+            "nodeId": "ryLHXDqtS",
+            "pinKey": "r1mR7ht7V"
+          }
+        },
+        "rkFmJI9tH": {
+          "id": "rkFmJI9tH",
+          "input": {
+            "nodeId": "B16M1L9tS",
+            "pinKey": "Hkqu9oaWb"
+          },
+          "output": {
+            "nodeId": "r14qCH5tr",
+            "pinKey": "r1H_oipZb"
+          }
+        }
+      },
+      "nodes": {
+        "B16M1L9tS": {
+          "arityLevel": 4,
+          "boundLiterals": {
+            "BkeKcj6ZZ": "\",\"",
+            "BkeKcj6ZZ-$2": "\",\"",
+            "BkeKcj6ZZ-$4": "\",\""
+          },
+          "id": "B16M1L9tS",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/concat"
+        },
+        "HJpq0S9FS": {
+          "boundLiterals": {
+            "HJTIija-W": "0"
+          },
+          "id": "HJpq0S9FS",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/format-number"
+        },
+        "HyxNOJ85Fr": {
+          "id": "HyxNOJ85Fr",
+          "position": {
+            "x": 8,
+            "y": 5,
+            "units": "slots"
+          },
+          "type": "@/433-rf-transmit"
+        },
+        "S14OyL9tH": {
+          "id": "S14OyL9tH",
+          "position": {
+            "x": 8,
+            "y": 4,
+            "units": "slots"
+          },
+          "type": "@/433-rf-device"
+        },
+        "Sy3qASctB": {
+          "boundLiterals": {
+            "HJTIija-W": "0"
+          },
+          "id": "Sy3qASctB",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/format-number"
+        },
+        "r14qCH5tr": {
+          "boundLiterals": {
+            "HJTIija-W": "0"
+          },
+          "id": "r14qCH5tr",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/format-number"
+        },
+        "ryLHXDqtS": {
+          "boundLiterals": {
+            "HybUMnFmN": "1"
+          },
+          "id": "ryLHXDqtS",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "wayland/bno055-aos/abs-orient-sensor"
+        }
+      },
+      "path": "@/example2-transmitter"
+    },
+    "@/example3-receiver": {
+      "description": "Test of reception of messages of different lengths. Should be paired with example3-transmitter. Each message received is displayed on lower line of LCD.",
+      "links": {
+        "r1T7c7GX9S": {
+          "id": "r1T7c7GX9S",
+          "input": {
+            "nodeId": "HkSm9XfQ5S",
+            "pinKey": "B1H5ioOYB"
+          },
+          "output": {
+            "nodeId": "SJV7qQGX5S",
+            "pinKey": "Bk9wbiutB"
+          }
+        },
+        "r1SirNV5H": {
+          "id": "r1SirNV5H",
+          "output": {
+            "nodeId": "HkSm9XfQ5S",
+            "pinKey": "S1injjdtr"
+          },
+          "input": {
+            "nodeId": "By2Ir4E9H",
+            "pinKey": "rJgnw0417B"
+          }
+        }
+      },
+      "nodes": {
+        "HkSm9XfQ5S": {
+          "boundLiterals": {
+            "B1aP2idKS": "Continuously"
+          },
+          "id": "HkSm9XfQ5S",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/433-rf-receive"
+        },
+        "SJV7qQGX5S": {
+          "id": "SJV7qQGX5S",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/433-rf-device"
+        },
+        "By2Ir4E9H": {
+          "id": "By2Ir4E9H",
+          "type": "xod-dev/text-lcd/text-lcd-i2c-16x2",
+          "position": {
+            "x": -1,
+            "y": 2,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "rkedCVkXS": "38h",
+            "BJ3DAE1QS": "\"Message:\""
+          }
+        }
+      },
+      "path": "@/example3-receiver"
+    },
+    "@/example3-transmitter": {
+      "description": "Test of transmission of messages of different lengths. Should be paired with example3-receiver. ",
+      "links": {
+        "BJPEQ8GQcr": {
+          "id": "BJPEQ8GQcr",
+          "input": {
+            "nodeId": "rkgVX8G7qB",
+            "pinKey": "BkragsdKH"
+          },
+          "output": {
+            "nodeId": "ByEXIGX5r",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "BkSEmLzXcH": {
+          "id": "BkSEmLzXcH",
+          "input": {
+            "nodeId": "rkgVX8G7qB",
+            "pinKey": "rkjlziOKS"
+          },
+          "output": {
+            "nodeId": "HyfEQLMmqr",
+            "pinKey": "Bk9wbiutB"
+          }
+        },
+        "SJyCYMXcH": {
+          "id": "SJyCYMXcH",
+          "input": {
+            "nodeId": "BkhMYGQ9r",
+            "pinKey": "ryTIROHwkW"
+          },
+          "output": {
+            "nodeId": "ByEXIGX5r",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "SyIPtzQ9H": {
+          "id": "SyIPtzQ9H",
+          "input": {
+            "nodeId": "rkV1FfQ5B",
+            "pinKey": "ryTeUROHD1b"
+          },
+          "output": {
+            "nodeId": "H1FEFGmqr",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "rJG_YzX9H": {
+          "id": "rJG_YzX9H",
+          "input": {
+            "nodeId": "rkgVX8G7qB",
+            "pinKey": "H17PloOtS"
+          },
+          "output": {
+            "nodeId": "rkV1FfQ5B",
+            "pinKey": "S13xLCuHvkW"
+          }
+        },
+        "rJOvYf75S": {
+          "id": "rJOvYf75S",
+          "input": {
+            "nodeId": "rkV1FfQ5B",
+            "pinKey": "r1AgIROHDJW"
+          },
+          "output": {
+            "nodeId": "H1W8YG7cS",
+            "pinKey": "B1x2RV3eZ"
+          }
+        },
+        "ryQvKMmqB": {
+          "id": "ryQvKMmqB",
+          "input": {
+            "nodeId": "rkV1FfQ5B",
+            "pinKey": "S1yZIA_rDJZ"
+          },
+          "output": {
+            "nodeId": "BkhMYGQ9r",
+            "pinKey": "HkyxURuSPyW"
+          }
+        }
+      },
+      "nodes": {
+        "BkhMYGQ9r": {
+          "id": "BkhMYGQ9r",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "ByEXIGX5r": {
+          "boundLiterals": {
+            "B13SCNhl-": "2"
+          },
+          "id": "ByEXIGX5r",
+          "position": {
+            "x": 1,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "H1FEFGmqr": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "\"XOD\""
+          },
+          "id": "H1FEFGmqr",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-string"
+        },
+        "H1W8YG7cS": {
+          "boundLiterals": {
+            "B1x2RV3eZ": "\"https://xod.io/\""
+          },
+          "id": "H1W8YG7cS",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          },
+          "size": {
+            "height": 1,
+            "width": 3,
+            "units": "slots"
+          },
+          "type": "xod/core/constant-string"
+        },
+        "HyfEQLMmqr": {
+          "id": "HyfEQLMmqr",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/433-rf-device"
+        },
+        "rkV1FfQ5B": {
+          "id": "rkV1FfQ5B",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/core/if-else"
+        },
+        "rkgVX8G7qB": {
+          "id": "rkgVX8G7qB",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/433-rf-transmit"
+        }
+      },
+      "path": "@/example3-transmitter"
+    },
+    "@/parse-tabular-mtw": {
+      "attachments": [
+        {
+          "content": "class SplitCStringView : public ListView<char> {\n  public:\n      class Cursor : public detail::Cursor<char> {\n      public:\n        Cursor(Iterator<char>&& ptr, char del, int n)\n            : _ptr(std::move(ptr))\n\t    , _del(del)\n\t    , _n(n)\n\t    , _curn(0)\n        {\n            while (_curn < _n && isValid()) next();\n        }\n\n        bool isValid() const override {\n\t\t    return _curn <= _n && (bool)_ptr;\n        }\n\n        bool value(char* out) const override {\n            if (_curn > _n) return false;\n\t        return _ptr.value(out);\n\t    }\n\n        void next() override {\n \t\t    ++_ptr;\n            char c;\n            while (_ptr.value(&c) && c == _del) {\n                ++_curn;\n                ++_ptr;\n            }\n\t    }\n\n      private:\n        Iterator<char> _ptr;\n\tchar _del;\n\tint _n;\n\tint _curn;\n    };\n\n  public:\n    SplitCStringView() { }\n\n    SplitCStringView(List<char> str, char del, int n)\n        : _str(str)\n\t, _del(del)\n\t, _n(n)\n    { }\n\n    SplitCStringView& operator=(const SplitCStringView& rhs) {\n        _str = rhs._str;\n\t_del = rhs._del;\n\t_n = rhs._n;\n        return *this;\n    }\n\n    virtual Iterator<char> iterate() const override {\n        return Iterator<char>(new Cursor(_str.iterate(), _del, _n));\n    }\n\n  private:\n    friend class Cursor;\n    List<char> _str;\n    char _del;\n    int _n;\n};\n\nstruct State {\n    SplitCStringView view;\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto state = getState(ctx);\n    auto str = getValue<input_STR>(ctx);\n    auto num = getValue<input_IDX>(ctx);\n    auto del = getValue<input_D>(ctx);\n    state->view = SplitCStringView(str,del,num);\n    emitValue<output_OUT>(ctx,XString(&state->view));\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Splits string based on specified delimiter character. Corrected version of gabbapeople/uart-led-control/parse-tabular. In the original the name of the output in code (output_PRT) didn't match the name of the output pin (OUT).",
+      "nodes": {
+        "B1y8HssYS": {
+          "description": "Delimiter character.",
+          "id": "B1y8HssYS",
+          "label": "D",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "BkGJLrssFB": {
+          "description": "A string line to be split.",
+          "id": "BkGJLrssFB",
+          "label": "STR",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-string"
+        },
+        "Bkgk8BisYS": {
+          "description": "A number of the string line part  to output. The numbering of the parts starts with 0.",
+          "id": "Bkgk8BisYS",
+          "label": "IDX",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "By7JLrioYr": {
+          "description": "A part of a splitted string line.",
+          "id": "By7JLrioYr",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-string"
+        },
+        "HyZkISjjYH": {
+          "id": "HyZkISjjYH",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        }
+      },
+      "path": "@/parse-tabular-mtw"
+    },
+    "@/string-to-number": {
+      "nodes": {
+        "HkBE787qH": {
+          "id": "HkBE787qH",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BkRr7LXcB": {
+          "id": "BkRr7LXcB",
+          "type": "xod/patch-nodes/input-string",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "label": "STR",
+          "description": "String"
+        },
+        "ByMvmI7qB": {
+          "id": "ByMvmI7qB",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "label": "NUM",
+          "description": "Number"
+        }
+      },
+      "path": "@/string-to-number",
+      "description": "Convert string to number",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    auto state = getState(ctx);\n    auto xString = getValue<input_STR>(ctx);\n\n    int N=length(xString) + 1;\n    char cString[N];\n    for(int i=0;i<N;i++)\n    cString[i]=0;\n    dump(xString,cString);\n    emitValue<output_NUM>(ctx, atof(cString));\n}\n\n\n"
+        }
+      ]
+    },
+    "@/example4-transmitter": {
+      "description": "Transmit potentiometer value. Should be paired with example4-receiver.",
+      "links": {
+        "BkQ_jSXcH": {
+          "id": "BkQ_jSXcH",
+          "input": {
+            "nodeId": "By3vsSXcS",
+            "pinKey": "H17PloOtS"
+          },
+          "output": {
+            "nodeId": "HJPLir7cH",
+            "pinKey": "H1sM2A12-"
+          }
+        },
+        "rJauiB7qB": {
+          "id": "rJauiB7qB",
+          "input": {
+            "nodeId": "By3vsSXcS",
+            "pinKey": "BkragsdKH"
+          },
+          "output": {
+            "nodeId": "HJPLir7cH",
+            "pinKey": "rJ-z2dIl7"
+          }
+        },
+        "rybdsr7qB": {
+          "id": "rybdsr7qB",
+          "input": {
+            "nodeId": "By3vsSXcS",
+            "pinKey": "rkjlziOKS"
+          },
+          "output": {
+            "nodeId": "ByWDoHm9S",
+            "pinKey": "Bk9wbiutB"
+          }
+        }
+      },
+      "nodes": {
+        "By3vsSXcS": {
+          "id": "By3vsSXcS",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "@/433-rf-transmit"
+        },
+        "ByWDoHm9S": {
+          "id": "ByWDoHm9S",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/433-rf-device"
+        },
+        "HJPLir7cH": {
+          "id": "HJPLir7cH",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/common-hardware/pot"
+        }
+      },
+      "path": "@/example4-transmitter"
+    },
+    "@/example4-receiver": {
+      "nodes": {
+        "HyOILIQcS": {
+          "id": "HyOILIQcS",
+          "type": "@/433-rf-device",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "H1K8UIXqB": {
+          "id": "H1K8UIXqB",
+          "type": "@/433-rf-receive",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B1aP2idKS": "Continuously"
+          }
+        },
+        "H1NYIU75B": {
+          "id": "H1NYIU75B",
+          "type": "xod/common-hardware/led",
+          "position": {
+            "x": -1,
+            "y": 3,
+            "units": "slots"
+          },
+          "boundLiterals": {
+            "B1oqkTnIb": "D6"
+          }
+        },
+        "BJdKrP7cS": {
+          "id": "BJdKrP7cS",
+          "type": "@/string-to-number",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "r1oL8ImqH": {
+          "id": "r1oL8ImqH",
+          "output": {
+            "nodeId": "HyOILIQcS",
+            "pinKey": "Bk9wbiutB"
+          },
+          "input": {
+            "nodeId": "H1K8UIXqB",
+            "pinKey": "B1H5ioOYB"
+          }
+        },
+        "ryGE07EcH": {
+          "id": "ryGE07EcH",
+          "output": {
+            "nodeId": "H1K8UIXqB",
+            "pinKey": "S1injjdtr"
+          },
+          "input": {
+            "nodeId": "BJdKrP7cS",
+            "pinKey": "BkRr7LXcB"
+          }
+        },
+        "SkeSWE45H": {
+          "id": "SkeSWE45H",
+          "output": {
+            "nodeId": "BJdKrP7cS",
+            "pinKey": "ByMvmI7qB"
+          },
+          "input": {
+            "nodeId": "H1NYIU75B",
+            "pinKey": "HyYh1a3LZ"
+          }
+        }
+      },
+      "path": "@/example4-receiver",
+      "description": "Set luminance of LED to value received by 433-rf-device. Should be paired with example4-transmitter. String received by 433-rf-device is converted to a number, which is fed into the LUM pin of the dimmable LED."
+    }
+  },
+  "version": "0.0.3"
+}

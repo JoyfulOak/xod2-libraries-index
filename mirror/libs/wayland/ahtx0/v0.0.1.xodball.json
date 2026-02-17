@@ -1,0 +1,580 @@
+{
+  "patches": {
+    "@/ahtx0-device": {
+      "nodes": {
+        "Byskc_l1C": {
+          "id": "Byskc_l1C",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BkxOs_eJA": {
+          "description": "An AHTX0 device.",
+          "label": "DEV",
+          "id": "BkxOs_eJA",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-self"
+        }
+      },
+      "path": "@/ahtx0-device",
+      "description": "Create an AHTX0 device.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "// Tell XOD where it can download the libraries:\n#pragma XOD require \"https://github.com/adafruit/Adafruit_BusIO\"\n#pragma XOD require \"https://github.com/adafruit/Adafruit_Sensor\"\n#pragma XOD require \"https://github.com/adafruit/Adafruit_AHTX0\"\n\n//Include C++ libraries\n#include <Adafruit_AHTX0.h>\n\nnode {\n    meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = Adafruit_AHTX0*;\n    }\n    // Keep Adafruit_SHT4x object in state\n    Adafruit_AHTX0 sensor = Adafruit_AHTX0();\n\n    void evaluate(Context ctx) {\n        // It should be evaluated only once on the first (setup) transaction\n        if (!isSettingUp())\n            return;\n        emitValue<output_DEV>(ctx, &sensor);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/read": {
+      "nodes": {
+        "rJmP2dxJ0": {
+          "id": "rJmP2dxJ0",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "SJtPnux1R": {
+          "description": "An AHTX0 device.",
+          "label": "DEV",
+          "id": "SJtPnux1R",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ahtx0-device"
+        },
+        "Skd_2dgyA": {
+          "description": "Update. Pulse triggers read.",
+          "label": "UPD",
+          "id": "Skd_2dgyA",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "rkM33OlkC": {
+          "description": "Relative humidity (%).",
+          "label": "RH",
+          "id": "rkM33OlkC",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "HJTJpOlkR": {
+          "description": "Temperature (°C).",
+          "label": "Temp",
+          "id": "HJTJpOlkR",
+          "position": {
+            "x": 3,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "S1Gl8YxyR": {
+          "description": "Pulse on read.",
+          "label": "Done",
+          "id": "S1Gl8YxyR",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "path": "@/read",
+      "description": "Read relative humidity and temperature.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "\n#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_UPD\n\nnode {\n\n    void evaluate(Context ctx) {\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_UPD>(ctx))\n            return;\n\n        sensors_event_t humidity, temp;\n\n        auto sensor = getValue<input_DEV>(ctx);\n        sensor->getEvent(&humidity, &temp);\n        \n        emitValue<output_RH>(ctx, humidity.relative_humidity);\n        emitValue<output_Temp>(ctx, temp.temperature);\n        emitValue<output_Done>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/init": {
+      "nodes": {
+        "BJ_Bgte10": {
+          "id": "BJ_Bgte10",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "rJkDetlk0": {
+          "description": "I²C bus",
+          "label": "I2C",
+          "id": "rJkDetlk0",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/i2c/input-i2c"
+        },
+        "BJFwxtx10": {
+          "description": "An AHTX0 device.",
+          "label": "DEV",
+          "id": "BJFwxtx10",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/input-ahtx0-device"
+        },
+        "Hk_hxtxJC": {
+          "description": "Pulse on initialization.",
+          "label": "OK",
+          "id": "Hk_hxtxJC",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "SJicQtgJ0": {
+          "boundLiterals": {
+            "__out__": "38h"
+          },
+          "description": "I²C address of AHTX0 device.",
+          "label": "ADDR",
+          "id": "SJicQtgJ0",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "B1VhEKlyR": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Initialize",
+          "label": "INIT",
+          "id": "B1VhEKlyR",
+          "position": {
+            "x": 5,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        }
+      },
+      "path": "@/init",
+      "description": "Initialize AHTX0 device.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD evaluate_on_pin disable\n#pragma XOD evaluate_on_pin enable input_INIT\n\nnode {\n\n    void evaluate(Context ctx) {\n\n        // The node responds only if there is an input pulse\n        if (!isInputDirty<input_INIT>(ctx))\n            return;\n        \n        auto sensor = getValue<input_DEV>(ctx);\n        auto wire = getValue<input_I2C>(ctx);\n        auto address = getValue<input_ADDR>(ctx);\n\n        // Attempt to initialize ahtx0 module; if attempt fails emit error\n        if (!sensor->begin(wire,0,address)) {\n            raiseError(ctx);\n            return;\n        }\n        \n        emitValue<output_OK>(ctx, 1);\n    }\n}\n"
+        }
+      ]
+    },
+    "@/hygrometer-thermometer": {
+      "nodes": {
+        "BkszSYekC": {
+          "id": "BkszSYekC",
+          "position": {
+            "x": 1,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "@/ahtx0-device"
+        },
+        "HJaGHYlkA": {
+          "id": "HJaGHYlkA",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/init"
+        },
+        "Hk3HHYgyC": {
+          "description": "I²C bus",
+          "label": "I2C",
+          "id": "Hk3HHYgyC",
+          "position": {
+            "x": 2,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/i2c/input-i2c"
+        },
+        "HkxnSrtgy0": {
+          "boundLiterals": {
+            "__out__": "38h"
+          },
+          "description": "I²C address of AHTX0 device.",
+          "label": "ADDR",
+          "id": "HkxnSrtgy0",
+          "position": {
+            "x": 3,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-byte"
+        },
+        "HJbhSSYe1R": {
+          "boundLiterals": {
+            "__out__": "On Boot"
+          },
+          "description": "Initialize",
+          "label": "INIT",
+          "id": "HJbhSSYe1R",
+          "position": {
+            "x": 4,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "r1EvHtlkC": {
+          "id": "r1EvHtlkC",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/read"
+        },
+        "rksdSYxyA": {
+          "description": "Update. Pulse triggers read.",
+          "label": "UPD",
+          "id": "rksdSYxyA",
+          "position": {
+            "x": 7,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-pulse"
+        },
+        "SyF9Stg1C": {
+          "id": "SyF9Stg1C",
+          "position": {
+            "x": 7,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/gate"
+        },
+        "SJPiSFgk0": {
+          "id": "SJPiSFgk0",
+          "position": {
+            "x": 1,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "rJIhHteJC": {
+          "label": "init",
+          "id": "rJIhHteJC",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/to-bus"
+        },
+        "rygTBKeJC": {
+          "label": "init",
+          "id": "rygTBKeJC",
+          "position": {
+            "x": 8,
+            "y": -1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/from-bus"
+        },
+        "Byv0rFg1C": {
+          "description": "Relative humidity (%).",
+          "label": "RH",
+          "id": "Byv0rFg1C",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "SyxwCHYe10": {
+          "description": "Temperature (°C).",
+          "label": "Temp",
+          "id": "SyxwCHYe10",
+          "position": {
+            "x": 7,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        },
+        "rJ-v0SKl1R": {
+          "description": "Pulse on read.",
+          "label": "Done",
+          "id": "rJ-v0SKl1R",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        }
+      },
+      "links": {
+        "B1kQSYlkC": {
+          "id": "B1kQSYlkC",
+          "input": {
+            "nodeId": "HJaGHYlkA",
+            "pinKey": "BJFwxtx10"
+          },
+          "output": {
+            "nodeId": "BkszSYekC",
+            "pinKey": "BkxOs_eJA"
+          }
+        },
+        "rJ7LHteyA": {
+          "id": "rJ7LHteyA",
+          "input": {
+            "nodeId": "HJaGHYlkA",
+            "pinKey": "rJkDetlk0"
+          },
+          "output": {
+            "nodeId": "Hk3HHYgyC",
+            "pinKey": "__out__"
+          }
+        },
+        "ryBLSKlyR": {
+          "id": "ryBLSKlyR",
+          "input": {
+            "nodeId": "HJaGHYlkA",
+            "pinKey": "SJicQtgJ0"
+          },
+          "output": {
+            "nodeId": "HkxnSrtgy0",
+            "pinKey": "__out__"
+          }
+        },
+        "rJw8SFxJC": {
+          "id": "rJw8SFxJC",
+          "input": {
+            "nodeId": "HJaGHYlkA",
+            "pinKey": "B1VhEKlyR"
+          },
+          "output": {
+            "nodeId": "HJbhSSYe1R",
+            "pinKey": "__out__"
+          }
+        },
+        "HJRtrtgJC": {
+          "id": "HJRtrtgJC",
+          "input": {
+            "nodeId": "r1EvHtlkC",
+            "pinKey": "SJtPnux1R"
+          },
+          "output": {
+            "nodeId": "BkszSYekC",
+            "pinKey": "BkxOs_eJA"
+          }
+        },
+        "Hkp9BFekC": {
+          "id": "Hkp9BFekC",
+          "input": {
+            "nodeId": "SyF9Stg1C",
+            "pinKey": "SJ-1mZPTz"
+          },
+          "output": {
+            "nodeId": "rksdSYxyA",
+            "pinKey": "__out__"
+          }
+        },
+        "HJ05HKly0": {
+          "id": "HJ05HKly0",
+          "input": {
+            "nodeId": "r1EvHtlkC",
+            "pinKey": "Skd_2dgyA"
+          },
+          "output": {
+            "nodeId": "SyF9Stg1C",
+            "pinKey": "OkPg7GDaW"
+          }
+        },
+        "SJosrtgyA": {
+          "id": "SJosrtgyA",
+          "input": {
+            "nodeId": "SJPiSFgk0",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "HJaGHYlkA",
+            "pinKey": "Hk_hxtxJC"
+          }
+        },
+        "ry52SYgJ0": {
+          "id": "ry52SYgJ0",
+          "input": {
+            "nodeId": "rJIhHteJC",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "SJPiSFgk0",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "SyNaSYlyC": {
+          "id": "SyNaSYlyC",
+          "input": {
+            "nodeId": "SyF9Stg1C",
+            "pinKey": "B1P1nFwaM"
+          },
+          "output": {
+            "nodeId": "rygTBKeJC",
+            "pinKey": "__out__"
+          }
+        },
+        "Bk2AHKgkA": {
+          "id": "Bk2AHKgkA",
+          "input": {
+            "nodeId": "Byv0rFg1C",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1EvHtlkC",
+            "pinKey": "rkM33OlkC"
+          }
+        },
+        "HJpArKxyR": {
+          "id": "HJpArKxyR",
+          "input": {
+            "nodeId": "SyxwCHYe10",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1EvHtlkC",
+            "pinKey": "HJTJpOlkR"
+          }
+        },
+        "SyhlUKxk0": {
+          "id": "SyhlUKxk0",
+          "input": {
+            "nodeId": "rJ-v0SKl1R",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "r1EvHtlkC",
+            "pinKey": "S1Gl8YxyR"
+          }
+        }
+      },
+      "path": "@/hygrometer-thermometer",
+      "description": "Combines low level nodes to create a simple to use hygrometer and thermometer."
+    },
+    "@/01-example-hygrometer-thermometer": {
+      "nodes": {
+        "S1JzUC-1A": {
+          "id": "S1JzUC-1A",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/hygrometer-thermometer"
+        },
+        "ry5o7-zJ0": {
+          "boundLiterals": {
+            "B13SCNhl-": "2"
+          },
+          "id": "ry5o7-zJ0",
+          "position": {
+            "x": 8,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/core/clock"
+        },
+        "ryY3Q-fk0": {
+          "id": "ryY3Q-fk0",
+          "position": {
+            "x": 5,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "rJTnQ-MyR": {
+          "id": "rJTnQ-MyR",
+          "position": {
+            "x": 6,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        }
+      },
+      "links": {
+        "BJCiXWfJA": {
+          "id": "BJCiXWfJA",
+          "input": {
+            "nodeId": "S1JzUC-1A",
+            "pinKey": "rksdSYxyA"
+          },
+          "output": {
+            "nodeId": "ry5o7-zJ0",
+            "pinKey": "HJU8CE2lW"
+          }
+        },
+        "B1JaXbM10": {
+          "id": "B1JaXbM10",
+          "input": {
+            "nodeId": "ryY3Q-fk0",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "S1JzUC-1A",
+            "pinKey": "Byv0rFg1C"
+          }
+        },
+        "BkbTmWMJ0": {
+          "id": "BkbTmWMJ0",
+          "input": {
+            "nodeId": "rJTnQ-MyR",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "S1JzUC-1A",
+            "pinKey": "SyxwCHYe10"
+          }
+        }
+      },
+      "path": "@/01-example-hygrometer-thermometer",
+      "description": "Patch to test the hygrometer-thermometer node. Run in debugger."
+    }
+  },
+  "license": "BSD",
+  "version": "0.0.1",
+  "description": "Library for AHT10 and AHT20 temperature and humidity sensors. Wraps https://github.com/adafruit/Adafruit_AHTX0",
+  "name": "ahtx0"
+}

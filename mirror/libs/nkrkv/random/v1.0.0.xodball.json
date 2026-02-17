@@ -1,0 +1,181 @@
+{
+  "description": "Random numbers generation",
+  "license": "AGPL-3",
+  "name": "random",
+  "patches": {
+    "@/random": {
+      "nodes": {
+        "ryegt8FwM": {
+          "id": "ryegt8FwM",
+          "type": "xod/patch-nodes/input-number",
+          "position": {
+            "x": 68,
+            "y": 0
+          },
+          "label": "SEED",
+          "description": "A new seed value for the generator in range [0; 1]. Used only on `RST` pulse.",
+          "boundValues": {
+            "__out__": 1
+          }
+        },
+        "Sy7Zt8YDz": {
+          "id": "Sy7Zt8YDz",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "label": "RST",
+          "description": "Initializes the generator with a new `SEED` value. You should initialize with a truly random value at least once (usually on boot), otherwise you’ll get the same number sequence on each program run.",
+          "boundValues": {
+            "__out__": "ON_BOOT"
+          }
+        },
+        "HywfKIYPG": {
+          "id": "HywfKIYPG",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 68,
+            "y": 102
+          }
+        },
+        "rkJ7YItPM": {
+          "id": "rkJ7YItPM",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 68,
+            "y": 204
+          },
+          "description": "The last pseudo-random value in range [0; 1)"
+        },
+        "ByP7F8FPG": {
+          "id": "ByP7F8FPG",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 136,
+            "y": 0
+          },
+          "label": "UPD",
+          "description": "Triggers output update, that is generates the next pseudo-random number.",
+          "boundValues": {
+            "__out__": "CONTINUOUSLY"
+          }
+        }
+      },
+      "path": "@/random",
+      "description": "Generates pseudo-random numbers in range [0; 1). Uses a linear congruential generator algorithm.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\n{{#global}}\n#include <limits.h>\n{{/global}}\n\nusing State = unsigned long;\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    unsigned long* seedp = getState(ctx);\n    if (isInputDirty<input_RST>(ctx))\n        *seedp = (unsigned long)(getValue<input_SEED>(ctx) * ULONG_MAX);\n\n    if (isInputDirty<input_UPD>(ctx)) {\n        int rnd = rand_r(seedp);\n        emitValue<output_OUT>(ctx, (Number)rnd / ((Number)RAND_MAX + 1.0));\n    }\n}\n"
+        }
+      ]
+    },
+    "@/random-example": {
+      "nodes": {
+        "r1IBKUKwG": {
+          "id": "r1IBKUKwG",
+          "type": "@/random",
+          "position": {
+            "x": 102,
+            "y": 102
+          }
+        },
+        "HkcUYItPz": {
+          "id": "HkcUYItPz",
+          "type": "xod/core/watch",
+          "position": {
+            "x": 102,
+            "y": 204
+          }
+        },
+        "BkWvFLtvf": {
+          "id": "BkWvFLtvf",
+          "type": "xod/common-hardware/button",
+          "position": {
+            "x": 170,
+            "y": -102
+          },
+          "boundValues": {
+            "ByNiWkt8Z": 2
+          }
+        },
+        "HJ3rRIFwG": {
+          "id": "HJ3rRIFwG",
+          "type": "xod/core/analog-input",
+          "position": {
+            "x": 102,
+            "y": 0
+          },
+          "boundValues": {
+            "SyKd0E2x-": "ON_BOOT"
+          }
+        }
+      },
+      "links": {
+        "BkA8tUtDM": {
+          "id": "BkA8tUtDM",
+          "output": {
+            "nodeId": "r1IBKUKwG",
+            "pinKey": "rkJ7YItPM"
+          },
+          "input": {
+            "nodeId": "HkcUYItPz",
+            "pinKey": "HkXK-dGob"
+          }
+        },
+        "H1QPFIFPG": {
+          "id": "H1QPFIFPG",
+          "output": {
+            "nodeId": "BkWvFLtvf",
+            "pinKey": "BJ--G1tI-"
+          },
+          "input": {
+            "nodeId": "r1IBKUKwG",
+            "pinKey": "ByP7F8FPG"
+          }
+        },
+        "H118RLYPz": {
+          "id": "H118RLYPz",
+          "output": {
+            "nodeId": "HJ3rRIFwG",
+            "pinKey": "SyBtREhlW"
+          },
+          "input": {
+            "nodeId": "r1IBKUKwG",
+            "pinKey": "ryegt8FwM"
+          }
+        }
+      },
+      "comments": {
+        "ry7iCLYPf": {
+          "id": "ry7iCLYPf",
+          "position": {
+            "x": 272,
+            "y": -102
+          },
+          "size": {
+            "width": 238,
+            "height": 51
+          },
+          "content": "A button click on port 2 leads to new number generation."
+        },
+        "rJ800UKPG": {
+          "id": "rJ800UKPG",
+          "position": {
+            "x": -170,
+            "y": 0
+          },
+          "size": {
+            "width": 238,
+            "height": 153
+          },
+          "content": "Analog port A0 is used on boot to initialize the pseudo-random number generator. Connect a floating wire to it or an analog sensor providing some sort of random data."
+        }
+      },
+      "path": "@/random-example"
+    }
+  },
+  "version": "1.0.0"
+}

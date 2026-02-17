@@ -1,0 +1,287 @@
+{
+  "description": "Hysteresis node to filter the input signal",
+  "license": "AGPL-3",
+  "name": "hysteresis",
+  "patches": {
+    "@/hysteresis": {
+      "attachments": [
+        {
+          "content": "\nstruct State {\n};\n\n{{ GENERATED_CODE }}\n\nvoid evaluate(Context ctx) {\n    static Logic state = false;\n\n    /* Check inputs */\n    Number x = getValue<input_X>(ctx);\n    Number low = getValue<input_LOW>(ctx);\n    Number high = getValue<input_HIGH>(ctx);\n\n    /* Determine state */\n    if (x < low)\n      state = false;\n    else if (x > high)\n      state = true;\n\n    /* Update outputs */\n    emitValue<output_OUT>(ctx, state);\n}\n",
+          "encoding": "utf8",
+          "filename": "patch.cpp"
+        }
+      ],
+      "description": "Filters the input signal, so that the output reacts less rapidly, making system more stable.",
+      "links": {
+        "BJYj3nuL9f": {
+          "id": "BJYj3nuL9f",
+          "input": {
+            "nodeId": "Skxj3nO89f",
+            "pinKey": "Bkh8A_Sv1-"
+          },
+          "output": {
+            "nodeId": "SJZonh_Uqz",
+            "pinKey": "B19RYS3lW"
+          }
+        },
+        "HJijnn_85M": {
+          "id": "HJijnn_85M",
+          "input": {
+            "nodeId": "Hkzo32dUcG",
+            "pinKey": "__in__"
+          },
+          "output": {
+            "nodeId": "Skxj3nO89f",
+            "pinKey": "HkyxURuSPyW"
+          }
+        },
+        "S19s32d89f": {
+          "id": "S19s32d89f",
+          "input": {
+            "nodeId": "SJZonh_Uqz",
+            "pinKey": "rJg00Nhe-"
+          },
+          "output": {
+            "nodeId": "ry7ih2uL9f",
+            "pinKey": "__out__"
+          }
+        },
+        "SJ2in2dIcG": {
+          "id": "SJ2in2dIcG",
+          "input": {
+            "nodeId": "SyEo23dLqM",
+            "pinKey": "HJjZLRdBw1-"
+          },
+          "output": {
+            "nodeId": "ry7ih2uL9f",
+            "pinKey": "__out__"
+          }
+        },
+        "SkIo3nOU9f": {
+          "id": "SkIo3nOU9f",
+          "input": {
+            "nodeId": "Skxj3nO89f",
+            "pinKey": "B1RU0OrDkb"
+          },
+          "output": {
+            "nodeId": "SyEo23dLqM",
+            "pinKey": "HktZUCdrPkZ"
+          }
+        },
+        "rJ_o3hdL5z": {
+          "id": "rJ_o3hdL5z",
+          "input": {
+            "nodeId": "SJZonh_Uqz",
+            "pinKey": "HJbACN3gb"
+          },
+          "output": {
+            "nodeId": "Bkron3OLqG",
+            "pinKey": "__out__"
+          }
+        },
+        "rJwj22u8qf": {
+          "id": "rJwj22u8qf",
+          "input": {
+            "nodeId": "SyEo23dLqM",
+            "pinKey": "SJqZ8COrDkW"
+          },
+          "output": {
+            "nodeId": "Sks22uU5M",
+            "pinKey": "__out__"
+          }
+        }
+      },
+      "nodes": {
+        "Bkron3OLqG": {
+          "description": "Border value",
+          "id": "Bkron3OLqG",
+          "label": "HIGH",
+          "position": {
+            "x": 271,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Hkzo32dUcG": {
+          "description": "Output is 'false' if 'X < LOW' and 'true' if 'X > HIGH'. Output doesn't change while 'LOW < X < HIGH'.",
+          "id": "Hkzo32dUcG",
+          "label": "OUT",
+          "position": {
+            "x": 101,
+            "y": 509
+          },
+          "type": "xod/patch-nodes/output-boolean"
+        },
+        "SJZonh_Uqz": {
+          "id": "SJZonh_Uqz",
+          "position": {
+            "x": 237,
+            "y": 101
+          },
+          "type": "xod/core/greater"
+        },
+        "Sks22uU5M": {
+          "description": "Border value",
+          "id": "Sks22uU5M",
+          "label": "LOW",
+          "position": {
+            "x": 135,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        },
+        "Skxj3nO89f": {
+          "id": "Skxj3nO89f",
+          "position": {
+            "x": 101,
+            "y": 305
+          },
+          "type": "xod/core/flip-flop"
+        },
+        "SyEo23dLqM": {
+          "id": "SyEo23dLqM",
+          "position": {
+            "x": -1,
+            "y": 101
+          },
+          "type": "xod/core/less"
+        },
+        "ry7ih2uL9f": {
+          "description": "Raw values",
+          "id": "ry7ih2uL9f",
+          "label": "X",
+          "position": {
+            "x": -1,
+            "y": -1
+          },
+          "type": "xod/patch-nodes/input-number"
+        }
+      },
+      "path": "@/hysteresis"
+    },
+    "@/hysteresis-example": {
+      "links": {
+        "HkEepu89M": {
+          "id": "HkEepu89M",
+          "input": {
+            "nodeId": "BJZ1fwZcf",
+            "pinKey": "HyYh1a3LZ"
+          },
+          "output": {
+            "nodeId": "Sk7k6_IcM",
+            "pinKey": "Hkzo32dUcG"
+          }
+        },
+        "HyaqV9M9G": {
+          "id": "HyaqV9M9G",
+          "input": {
+            "nodeId": "B1N5N5f5G",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "ryrwV5Mqz",
+            "pinKey": "SyBtREhlW"
+          }
+        },
+        "SkYk6_L5z": {
+          "id": "SkYk6_L5z",
+          "input": {
+            "nodeId": "Sk7k6_IcM",
+            "pinKey": "Sks22uU5M"
+          },
+          "output": {
+            "nodeId": "B1r0-wWcz",
+            "pinKey": "H1sM2A12-"
+          }
+        },
+        "SkyoE9z9f": {
+          "id": "SkyoE9z9f",
+          "input": {
+            "nodeId": "HyYcVqf5z",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "B1r0-wWcz",
+            "pinKey": "H1sM2A12-"
+          }
+        },
+        "ryr16dIqG": {
+          "id": "ryr16dIqG",
+          "input": {
+            "nodeId": "Sk7k6_IcM",
+            "pinKey": "ry7ih2uL9f"
+          },
+          "output": {
+            "nodeId": "ryrwV5Mqz",
+            "pinKey": "SyBtREhlW"
+          }
+        }
+      },
+      "nodes": {
+        "B1N5N5f5G": {
+          "id": "B1N5N5f5G",
+          "position": {
+            "x": 102,
+            "y": 204
+          },
+          "type": "xod/core/watch"
+        },
+        "B1r0-wWcz": {
+          "boundValues": {
+            "Hkry2AJhW": 0
+          },
+          "id": "B1r0-wWcz",
+          "position": {
+            "x": 272,
+            "y": 102
+          },
+          "type": "xod/common-hardware/pot"
+        },
+        "BJZ1fwZcf": {
+          "boundValues": {
+            "B1oqkTnIb": 3
+          },
+          "id": "BJZ1fwZcf",
+          "position": {
+            "x": 136,
+            "y": 306
+          },
+          "type": "xod/common-hardware/led"
+        },
+        "HyYcVqf5z": {
+          "id": "HyYcVqf5z",
+          "position": {
+            "x": 306,
+            "y": 204
+          },
+          "type": "xod/core/watch"
+        },
+        "Sk7k6_IcM": {
+          "boundValues": {
+            "Bkron3OLqG": 0.5
+          },
+          "id": "Sk7k6_IcM",
+          "position": {
+            "x": 170,
+            "y": 204
+          },
+          "type": "@/hysteresis"
+        },
+        "ryrwV5Mqz": {
+          "boundValues": {
+            "BJuORNheZ": 1
+          },
+          "id": "ryrwV5Mqz",
+          "label": "photoresistor",
+          "position": {
+            "x": 136,
+            "y": 102
+          },
+          "type": "xod/core/analog-input"
+        }
+      },
+      "path": "@/hysteresis-example"
+    }
+  },
+  "version": "1.0.1"
+}

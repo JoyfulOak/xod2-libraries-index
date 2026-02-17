@@ -1,0 +1,467 @@
+{
+  "patches": {
+    "@/main": {
+      "nodes": {
+        "Hyh4K2g75": {
+          "id": "Hyh4K2g75",
+          "type": "@/as7265x-device",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          },
+          "description": "This node works to set up any of the three sensors embedded in the as7265x system (as72651, as72652 or as7263)."
+        },
+        "B1n7U3Wmc": {
+          "id": "B1n7U3Wmc",
+          "type": "@/as72651",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          }
+        },
+        "BkM4I3W7c": {
+          "id": "BkM4I3W7c",
+          "type": "@/as72653",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          }
+        },
+        "BkydI3Z79": {
+          "id": "BkydI3Z79",
+          "type": "@/as72652",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          }
+        }
+      },
+      "links": {
+        "HJamUhWX9": {
+          "id": "HJamUhWX9",
+          "output": {
+            "nodeId": "Hyh4K2g75",
+            "pinKey": "rkcmG2eX5"
+          },
+          "input": {
+            "nodeId": "B1n7U3Wmc",
+            "pinKey": "S1LLAX2Wmq"
+          }
+        },
+        "B1vE82b7c": {
+          "id": "B1vE82b7c",
+          "output": {
+            "nodeId": "Hyh4K2g75",
+            "pinKey": "rkcmG2eX5"
+          },
+          "input": {
+            "nodeId": "BkM4I3W7c",
+            "pinKey": "S1eKaB2WX5"
+          }
+        },
+        "HJbOI2ZXq": {
+          "id": "HJbOI2ZXq",
+          "output": {
+            "nodeId": "Hyh4K2g75",
+            "pinKey": "rkcmG2eX5"
+          },
+          "input": {
+            "nodeId": "BkydI3Z79",
+            "pinKey": "B1Norh-mq"
+          }
+        }
+      },
+      "path": "@/main"
+    },
+    "@/as7265x-device": {
+      "nodes": {
+        "SJSaenlQc": {
+          "id": "SJSaenlQc",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 4,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "rkcmG2eX5": {
+          "id": "rkcmG2eX5",
+          "type": "xod/patch-nodes/output-self",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "description": "Pin node to connect with any as7265x device (as72651, as72652 or as72653)."
+        }
+      },
+      "path": "@/as7265x-device",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "#pragma XOD require \"https://github.com/sparkfun/SparkFun_AS7265x_Arduino_Library\"\n#include \"SparkFun_AS7265X.h\"\n\nnode {\n\n        meta {\n        // Define our custom type as a pointer on the class instance.\n        using Type = AS7265X*;\n    }\n\n    // Create an object of class Adafruit_TSL2591\n    AS7265X sensor = AS7265X();\n\n\n    \n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n\nsensor.begin();\n\nemitValue<output_OUT>(ctx, &sensor);\n        \n\n        \n    }\n}\n"
+        }
+      ]
+    },
+    "@/as72651": {
+      "nodes": {
+        "r1LAX3-Qq": {
+          "id": "r1LAX3-Qq",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 3,
+            "y": 1.938095238095238,
+            "units": "slots"
+          }
+        },
+        "S1LLAX2Wmq": {
+          "id": "S1LLAX2Wmq",
+          "type": "@/input-as7265x-device",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "description": "Pin to set up the device. Has to be connected to the as7265x-device node."
+        },
+        "Hyd8CXhb75": {
+          "id": "Hyd8CXhb75",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "UPD"
+        },
+        "BJ-51E2-X9": {
+          "id": "BJ-51E2-X9",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 1,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "610nm",
+          "description": "Displays wavelength intensity at 610 nm."
+        },
+        "H1XqJV2bQ5": {
+          "id": "H1XqJV2bQ5",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 2,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "680nm",
+          "description": "Displays wavelength intensity at 680 nm."
+        },
+        "H1H9JNhZ79": {
+          "id": "H1H9JNhZ79",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 3,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "730nm",
+          "description": "Displays wavelength intensity at 730 nm."
+        },
+        "ryUcJE3bmq": {
+          "id": "ryUcJE3bmq",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "760nm",
+          "description": "Displays wavelength intensity at 760 nm."
+        },
+        "Skwq1Eh-m9": {
+          "id": "Skwq1Eh-m9",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 5,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "810nm",
+          "description": "Displays wavelength intensity at 810 nm."
+        },
+        "BJ_ckEh-Xc": {
+          "id": "BJ_ckEh-Xc",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 6,
+            "y": 3,
+            "units": "slots"
+          },
+          "label": "860nm",
+          "description": "Displays wavelength intensity at 860 nm."
+        },
+        "BJqdX1fQ5": {
+          "id": "BJqdX1fQ5",
+          "type": "xod/patch-nodes/input-boolean",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "LED",
+          "description": "Pin to set up LED. If 0, the LED will be on. if 1, the LED will be off."
+        }
+      },
+      "path": "@/as72651",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n\n        if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n        auto sensor = getValue<input_IN>(ctx);\n        auto LED = getValue<input_LED>(ctx);\n\n        if (LED == 1){\n        sensor->disableIndicator();\n        sensor->takeMeasurementsWithBulb();\n                    \n        }\n\n        \n        if (LED == 0){\n        sensor->takeMeasurements();\n\n        }\n        \n        \n\n        emitValue<output_610nm>(ctx, sensor->getCalibratedR());\n        emitValue<output_680nm>(ctx, sensor->getCalibratedS());\n        emitValue<output_730nm>(ctx, sensor->getCalibratedT());\n        emitValue<output_760nm>(ctx, sensor->getCalibratedU());\n        emitValue<output_810nm>(ctx, sensor->getCalibratedV());\n        emitValue<output_860nm>(ctx, sensor->getCalibratedW());\n\n\n\n        \n    }\n}\n"
+        }
+      ]
+    },
+    "@/as72652": {
+      "nodes": {
+        "r1lhN3W7c": {
+          "id": "r1lhN3W7c",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 3,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "SJLghEn-75": {
+          "id": "SJLghEn-75",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 1,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "560nm",
+          "description": "Displays wavelength intensity at 560 nm."
+        },
+        "Sya2V3W7q": {
+          "id": "Sya2V3W7q",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 2,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "585nm",
+          "description": "Displays wavelength intensity at 585 nm."
+        },
+        "SJWphE2-Xc": {
+          "id": "SJWphE2-Xc",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 3,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "645nm",
+          "description": "Displays wavelength intensity at 645 nm."
+        },
+        "rkmpnNhbmc": {
+          "id": "rkmpnNhbmc",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "705nm",
+          "description": "Displays wavelength intensity at 705 nm."
+        },
+        "ByOa2E2bX9": {
+          "id": "ByOa2E2bX9",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "900nm",
+          "description": "Displays wavelength intensity at 900 nm."
+        },
+        "SktTnEnZQc": {
+          "id": "SktTnEnZQc",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "940nm",
+          "description": "Displays wavelength intensity at 940 nm."
+        },
+        "B1Norh-mq": {
+          "id": "B1Norh-mq",
+          "type": "@/input-as7265x-device",
+          "position": {
+            "x": 2,
+            "y": -1,
+            "units": "slots"
+          },
+          "description": "Pin to set up the device. Has to be connected to the as7265x-device node."
+        },
+        "SkbNjHh-m9": {
+          "id": "SkbNjHh-m9",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 4,
+            "y": -1,
+            "units": "slots"
+          },
+          "label": "UPD"
+        },
+        "BkO5QyGQc": {
+          "id": "BkO5QyGQc",
+          "type": "xod/patch-nodes/input-boolean",
+          "position": {
+            "x": 3,
+            "y": -1,
+            "units": "slots"
+          },
+          "label": "LED",
+          "description": "Pin to set up LED. If 0, the LED will be on. if 1, the LED will be off."
+        }
+      },
+      "path": "@/as72652",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n\n        if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n        auto sensor = getValue<input_IN>(ctx);\n        auto LED = getValue<input_LED>(ctx);\n\n        if (LED == 1){\n        sensor->disableIndicator();\n        sensor->takeMeasurementsWithBulb();\n                    \n        }\n\n        \n        if (LED == 0){\n        sensor->takeMeasurements();\n\n        }\n        \n        \n        emitValue<output_560nm>(ctx, sensor->getCalibratedG());\n        emitValue<output_585nm>(ctx, sensor->getCalibratedH());\n        emitValue<output_645nm>(ctx, sensor->getCalibratedI());\n        emitValue<output_705nm>(ctx, sensor->getCalibratedJ());\n        emitValue<output_900nm>(ctx, sensor->getCalibratedK());\n        emitValue<output_940nm>(ctx, sensor->getCalibratedL());\n\n\n\n        \n    }\n}\n"
+        }
+      ]
+    },
+    "@/as72653": {
+      "nodes": {
+        "BJsKBn-m9": {
+          "id": "BJsKBn-m9",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "510nm",
+          "description": "Displays wavelength intensity at 510 nm."
+        },
+        "HygiKB3Zm9": {
+          "id": "HygiKB3Zm9",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 9,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "535nm",
+          "description": "Displays wavelength intensity at 535 nm."
+        },
+        "r1J3Sn-m9": {
+          "id": "r1J3Sn-m9",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "410nm",
+          "description": "Displays wavelength intensity at 410 nm."
+        },
+        "rJly2ShW75": {
+          "id": "rJly2ShW75",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 5,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "435nm",
+          "description": "Displays wavelength intensity at 435 nm."
+        },
+        "rk-JhB3WX5": {
+          "id": "rk-JhB3WX5",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 6,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "460nm",
+          "description": "Displays wavelength intensity at 460 nm."
+        },
+        "BJM1hHn-Q5": {
+          "id": "BJM1hHn-Q5",
+          "type": "xod/patch-nodes/output-number",
+          "position": {
+            "x": 7,
+            "y": 1,
+            "units": "slots"
+          },
+          "label": "485nm",
+          "description": "Displays wavelength intensity at 485 nm."
+        },
+        "rJtTHh-mc": {
+          "id": "rJtTHh-mc",
+          "type": "xod/patch-nodes/not-implemented-in-xod",
+          "position": {
+            "x": 6,
+            "y": 0,
+            "units": "slots"
+          }
+        },
+        "S1eKaB2WX5": {
+          "id": "S1eKaB2WX5",
+          "type": "@/input-as7265x-device",
+          "position": {
+            "x": 5,
+            "y": -1,
+            "units": "slots"
+          }
+        },
+        "SyGYTr3bQq": {
+          "id": "SyGYTr3bQq",
+          "type": "xod/patch-nodes/input-pulse",
+          "position": {
+            "x": 7,
+            "y": -1,
+            "units": "slots"
+          },
+          "label": "UPD"
+        },
+        "SJY5X1fXc": {
+          "id": "SJY5X1fXc",
+          "type": "xod/patch-nodes/input-boolean",
+          "position": {
+            "x": 6,
+            "y": -1,
+            "units": "slots"
+          },
+          "label": "LED",
+          "description": "Pin to set up LED. If 0, the LED will be on. if 1, the LED will be off."
+        }
+      },
+      "path": "@/as72653",
+      "description": "Pin to set up the device. Has to be connected to the as7265x-device node.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf-8",
+          "content": "\nnode {\n    // Internal state variables defined at this level persists across evaluations\n    Number foo;\n    uint8_t bar = 5;\n\n    void evaluate(Context ctx) {\n        bar += 42;\n\n        if (isSettingUp()) {\n            // This run once\n            foo = (Number)(bar + 1);\n        }\n\n        if (!isInputDirty<input_UPD>(ctx))\n        return;\n\n        auto sensor = getValue<input_IN>(ctx);\n        auto LED = getValue<input_LED>(ctx);\n\n        if (LED == 1){\n        sensor->disableIndicator();\n        sensor->takeMeasurementsWithBulb();\n                    \n        }\n\n        \n        if (LED == 0){\n        sensor->takeMeasurements();\n\n        }\n\n        emitValue<output_410nm>(ctx, sensor->getCalibratedA());\n        emitValue<output_435nm>(ctx, sensor->getCalibratedB());\n        emitValue<output_460nm>(ctx, sensor->getCalibratedC());\n        emitValue<output_485nm>(ctx, sensor->getCalibratedD());\n        emitValue<output_510nm>(ctx, sensor->getCalibratedE());\n        emitValue<output_535nm>(ctx, sensor->getCalibratedF());\n\n\n        \n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "name": "spectrometer-as7265x-triad"
+}

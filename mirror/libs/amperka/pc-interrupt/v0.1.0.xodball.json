@@ -1,0 +1,408 @@
+{
+  "patches": {
+    "@/change-interrupt": {
+      "nodes": {
+        "Byn6U93P7_": {
+          "id": "Byn6U93P7_",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BySJxpwmu": {
+          "description": "Board port to attach interrupt to. Board port to attach interrupt to. Note that not all pins support hardware interrupts. Refer to your board specs to learn which are compatible.",
+          "label": "PORT",
+          "id": "BySJxpwmu",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rJgSkl6wQu": {
+          "description": "Fires a pulse on the next transaction after the interrupt occurred.",
+          "id": "rJgSkl6wQu",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BJWHJepPXu": {
+          "description": "Time in microseconds of the latest interrupt.",
+          "label": "T",
+          "id": "BJWHJepPXu",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/output-micros"
+        },
+        "BkGBJlpw7u": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "When ACT is true the node is watching for interrupts.",
+          "label": "ACT",
+          "id": "BkGBJlpw7u",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rk7H1xTPmu": {
+          "description": "The number of interrupts that occurred before the node fired a pulse.",
+          "label": "NUM",
+          "id": "rk7H1xTPmu",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/change-interrupt",
+      "description": "Attaches the interrupt to the specified port in the CHANGE mode. It triggers whenever the pin changes its value. The change increments a counter and stores the time in microseconds of the latest interrupt. The node emits these values and a pulse as soon as possible, but not right at the moment when the interrupt occurred.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD require \"https://github.com/GreyGnome/EnableInterrupt\"\n\n#include <EnableInterrupt.h>\n\nnodespace {\n    template<uint8_t PORT>\n    struct Interrupt {\n        volatile static uint32_t lastMicros;\n        volatile static uint8_t counter;\n        static bool attached;\n\n        static void handler() {\n            ++counter;\n            lastMicros = micros();\n        }\n    };\n\n    template<uint8_t PORT>\n    volatile uint32_t Interrupt<PORT>::lastMicros = 0;\n\n    template<uint8_t PORT>\n    volatile uint8_t Interrupt<PORT>::counter = 0;\n\n    template<uint8_t PORT>\n    bool Interrupt<PORT>::attached = false;\n}\n\nnode {\n    uint32_t lastVal = 0;\n\n    void evaluate(Context ctx) {\n        bool act = getValue<input_ACT>(ctx);\n\n        if (act && !Interrupt<constant_input_PORT>::attached) {\n            // Attach the interrupt if it is not attached yet\n            ::pinMode(constant_input_PORT, INPUT);\n            enableInterrupt(constant_input_PORT, Interrupt<constant_input_PORT>::handler, CHANGE);\n            Interrupt<constant_input_PORT>::attached = true;\n        } else if (!act && Interrupt<constant_input_PORT>::attached) {\n            // Detach the interrupt if it was attached and ACT is false now\n            disableInterrupt(constant_input_PORT);\n            Interrupt<constant_input_PORT>::attached = false;\n        }\n\n        // Check is the interrupt occurred and emit values and pulse\n        uint32_t value = Interrupt<constant_input_PORT>::lastMicros;\n        if (lastVal != value) {\n            emitValue<output_OUT>(ctx, 1);\n            emitValue<output_T>(ctx, value);\n            emitValue<output_NUM>(ctx, Interrupt<constant_input_PORT>::counter);\n            lastVal = value;\n            Interrupt<constant_input_PORT>::counter = 0;\n        }\n\n        // Make it dirty on each transaction as long as ACT is true\n        if (act) {\n            setImmediate();\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/example": {
+      "nodes": {
+        "Hy12e6vQd": {
+          "boundLiterals": {
+            "BySJxpwmu": "D2"
+          },
+          "id": "Hy12e6vQd",
+          "position": {
+            "x": 4,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/rise-interrupt"
+        },
+        "Hkung6vQd": {
+          "id": "Hkung6vQd",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/to-seconds"
+        },
+        "HJj3e6PQu": {
+          "id": "HJj3e6PQu",
+          "position": {
+            "x": 4,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "SkJpxpDQ_": {
+          "boundLiterals": {
+            "BySJxpwmu": "A15"
+          },
+          "id": "SkJpxpDQ_",
+          "position": {
+            "x": 8,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/rise-interrupt"
+        },
+        "SJeypxpvQu": {
+          "id": "SJeypxpvQu",
+          "position": {
+            "x": 8,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/to-seconds"
+        },
+        "rk-J6lTD7d": {
+          "id": "rk-J6lTD7d",
+          "position": {
+            "x": 8,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        },
+        "S1r6l6PmO": {
+          "boundLiterals": {
+            "BySJxpwmu": "D15"
+          },
+          "id": "S1r6l6PmO",
+          "position": {
+            "x": 12,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "@/fall-interrupt"
+        },
+        "By5agTPmu": {
+          "id": "By5agTPmu",
+          "position": {
+            "x": 12,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/to-seconds"
+        },
+        "BklqalpwXd": {
+          "id": "BklqalpwXd",
+          "position": {
+            "x": 12,
+            "y": 3,
+            "units": "slots"
+          },
+          "type": "xod/debug/watch"
+        }
+      },
+      "links": {
+        "rycneTDX_": {
+          "id": "rycneTDX_",
+          "input": {
+            "nodeId": "Hkung6vQd",
+            "pinKey": "HkqdI2iMu"
+          },
+          "output": {
+            "nodeId": "Hy12e6vQd",
+            "pinKey": "BJWHJepPXu"
+          }
+        },
+        "ryChgTDmO": {
+          "id": "ryChgTDmO",
+          "input": {
+            "nodeId": "HJj3e6PQu",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "Hkung6vQd",
+            "pinKey": "SJbYIhsGO"
+          }
+        },
+        "H1zy6eaDmu": {
+          "id": "H1zy6eaDmu",
+          "input": {
+            "nodeId": "SJeypxpvQu",
+            "pinKey": "HkqdI2iMu"
+          },
+          "output": {
+            "nodeId": "SkJpxpDQ_",
+            "pinKey": "BJWHJepPXu"
+          }
+        },
+        "Sk71pg6wQu": {
+          "id": "Sk71pg6wQu",
+          "input": {
+            "nodeId": "rk-J6lTD7d",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "SJeypxpvQu",
+            "pinKey": "SJbYIhsGO"
+          }
+        },
+        "S1Z5pgpv7_": {
+          "id": "S1Z5pgpv7_",
+          "input": {
+            "nodeId": "BklqalpwXd",
+            "pinKey": "HkXK-dGob"
+          },
+          "output": {
+            "nodeId": "By5agTPmu",
+            "pinKey": "SJbYIhsGO"
+          }
+        },
+        "BJnTlawm_": {
+          "id": "BJnTlawm_",
+          "input": {
+            "nodeId": "By5agTPmu",
+            "pinKey": "HkqdI2iMu"
+          },
+          "output": {
+            "nodeId": "S1r6l6PmO",
+            "pinKey": "BJWHJepPXu"
+          }
+        }
+      },
+      "path": "@/example"
+    },
+    "@/fall-interrupt": {
+      "nodes": {
+        "Byn6U93P7_": {
+          "id": "Byn6U93P7_",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BySJxpwmu": {
+          "description": "Board port to attach interrupt to. Board port to attach interrupt to. Note that not all pins support hardware interrupts. Refer to your board specs to learn which are compatible.",
+          "label": "PORT",
+          "id": "BySJxpwmu",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rJgSkl6wQu": {
+          "description": "Fires a pulse on the next transaction after the interrupt occurred.",
+          "id": "rJgSkl6wQu",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BJWHJepPXu": {
+          "description": "Time in microseconds of the latest interrupt.",
+          "label": "T",
+          "id": "BJWHJepPXu",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/output-micros"
+        },
+        "BkGBJlpw7u": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "When ACT is true the node is watching for interrupts.",
+          "label": "ACT",
+          "id": "BkGBJlpw7u",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rk7H1xTPmu": {
+          "description": "The number of interrupts that occurred before the node fired a pulse.",
+          "label": "NUM",
+          "id": "rk7H1xTPmu",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/fall-interrupt",
+      "description": "Attaches the interrupt to the specified port in the RISING mode. It triggers whenever the pin goes from low to high. The change increments a counter and stores the time in microseconds of the latest interrupt. The node emits these values and a pulse as soon as possible, but not right at the moment when the interrupt occurred.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD require \"https://github.com/GreyGnome/EnableInterrupt\"\n\n#include <EnableInterrupt.h>\n\nnodespace {\n    template<uint8_t PORT>\n    struct Interrupt {\n        volatile static uint32_t lastMicros;\n        volatile static uint8_t counter;\n        static bool attached;\n\n        static void handler() {\n            ++counter;\n            lastMicros = micros();\n        }\n    };\n\n    template<uint8_t PORT>\n    volatile uint32_t Interrupt<PORT>::lastMicros = 0;\n\n    template<uint8_t PORT>\n    volatile uint8_t Interrupt<PORT>::counter = 0;\n\n    template<uint8_t PORT>\n    bool Interrupt<PORT>::attached = false;\n}\n\nnode {\n    uint32_t lastVal = 0;\n\n    void evaluate(Context ctx) {\n        bool act = getValue<input_ACT>(ctx);\n\n        if (act && !Interrupt<constant_input_PORT>::attached) {\n            // Attach the interrupt if it is not attached yet\n            ::pinMode(constant_input_PORT, INPUT);\n            enableInterrupt(constant_input_PORT, Interrupt<constant_input_PORT>::handler, FALLING);\n            Interrupt<constant_input_PORT>::attached = true;\n        } else if (!act && Interrupt<constant_input_PORT>::attached) {\n            // Detach the interrupt if it was attached and ACT is false now\n            disableInterrupt(constant_input_PORT);\n            Interrupt<constant_input_PORT>::attached = false;\n        }\n\n        // Check is the interrupt occurred and emit values and pulse\n        uint32_t value = Interrupt<constant_input_PORT>::lastMicros;\n        if (lastVal != value) {\n            emitValue<output_OUT>(ctx, 1);\n            emitValue<output_T>(ctx, value);\n            emitValue<output_NUM>(ctx, Interrupt<constant_input_PORT>::counter);\n            lastVal = value;\n            Interrupt<constant_input_PORT>::counter = 0;\n        }\n\n        // Make it dirty on each transaction as long as ACT is true\n        if (act) {\n            setImmediate();\n        }\n    }\n}\n"
+        }
+      ]
+    },
+    "@/rise-interrupt": {
+      "nodes": {
+        "Byn6U93P7_": {
+          "id": "Byn6U93P7_",
+          "position": {
+            "x": 0,
+            "y": 1,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/not-implemented-in-xod"
+        },
+        "BySJxpwmu": {
+          "description": "Board port to attach interrupt to. Board port to attach interrupt to. Note that not all pins support hardware interrupts. Refer to your board specs to learn which are compatible.",
+          "label": "PORT",
+          "id": "BySJxpwmu",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-port"
+        },
+        "rJgSkl6wQu": {
+          "description": "Fires a pulse on the next transaction after the interrupt occurred.",
+          "id": "rJgSkl6wQu",
+          "position": {
+            "x": 4,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-pulse"
+        },
+        "BJWHJepPXu": {
+          "description": "Time in microseconds of the latest interrupt.",
+          "label": "T",
+          "id": "BJWHJepPXu",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/core/output-micros"
+        },
+        "BkGBJlpw7u": {
+          "boundLiterals": {
+            "__out__": "True"
+          },
+          "description": "When ACT is true the node is watching for interrupts.",
+          "label": "ACT",
+          "id": "BkGBJlpw7u",
+          "position": {
+            "x": 2,
+            "y": 0,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/input-boolean"
+        },
+        "rk7H1xTPmu": {
+          "description": "The number of interrupts that occurred before the node fired a pulse.",
+          "label": "NUM",
+          "id": "rk7H1xTPmu",
+          "position": {
+            "x": 2,
+            "y": 2,
+            "units": "slots"
+          },
+          "type": "xod/patch-nodes/output-number"
+        }
+      },
+      "path": "@/rise-interrupt",
+      "description": "Attaches the interrupt to the specified port in the FALLING mode. It triggers whenever the pin goes from high to low. The change increments a counter and stores the time in microseconds of the latest interrupt. The node emits these values and a pulse as soon as possible, but not right at the moment when the interrupt occurred.",
+      "attachments": [
+        {
+          "filename": "patch.cpp",
+          "encoding": "utf8",
+          "content": "#pragma XOD require \"https://github.com/GreyGnome/EnableInterrupt\"\n\n#include <EnableInterrupt.h>\n\nnodespace {\n    template<uint8_t PORT>\n    struct Interrupt {\n        volatile static uint32_t lastMicros;\n        volatile static uint8_t counter;\n        static bool attached;\n\n        static void handler() {\n            ++counter;\n            lastMicros = micros();\n        }\n    };\n\n    template<uint8_t PORT>\n    volatile uint32_t Interrupt<PORT>::lastMicros = 0;\n\n    template<uint8_t PORT>\n    volatile uint8_t Interrupt<PORT>::counter = 0;\n\n    template<uint8_t PORT>\n    bool Interrupt<PORT>::attached = false;\n}\n\nnode {\n    uint32_t lastVal = 0;\n\n    void evaluate(Context ctx) {\n        bool act = getValue<input_ACT>(ctx);\n\n        if (act && !Interrupt<constant_input_PORT>::attached) {\n            // Attach the interrupt if it is not attached yet\n            ::pinMode(constant_input_PORT, INPUT);\n            enableInterrupt(constant_input_PORT, Interrupt<constant_input_PORT>::handler, RISING);\n            Interrupt<constant_input_PORT>::attached = true;\n        } else if (!act && Interrupt<constant_input_PORT>::attached) {\n            // Detach the interrupt if it was attached and ACT is false now\n            disableInterrupt(constant_input_PORT);\n            Interrupt<constant_input_PORT>::attached = false;\n        }\n\n        // Check is the interrupt occurred and emit values and pulse\n        uint32_t value = Interrupt<constant_input_PORT>::lastMicros;\n        if (lastVal != value) {\n            emitValue<output_OUT>(ctx, 1);\n            emitValue<output_T>(ctx, value);\n            emitValue<output_NUM>(ctx, Interrupt<constant_input_PORT>::counter);\n            lastVal = value;\n            Interrupt<constant_input_PORT>::counter = 0;\n        }\n\n        // Make it dirty on each transaction as long as ACT is true\n        if (act) {\n            setImmediate();\n        }\n    }\n}\n"
+        }
+      ]
+    }
+  },
+  "license": "AGPL-3.0",
+  "version": "0.1.0",
+  "description": "The library provides attaching the interrupt handlers to pins, which supports either interrupts or pin change interrupts. Works only on AVR platform. If you use this library do not use interrupts from `xod/gpio`, because it will have conflicts and the code won't compile.",
+  "name": "pc-interrupt"
+}
